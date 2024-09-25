@@ -1,117 +1,169 @@
 import { generateTokenAndSetCookie } from '../lib/utils/generateToken.js';
 import User from '../models/user.model.js';
 import bcrypt from 'bcryptjs';
+import * as Yup from 'yup';
 
+const validDomains = ['gmail.com', 'yahoo.com', 'outlook.com', 'hotmail.com', 'icloud.com'];
+
+// Esquema de validación usando Yup
+const userValidationSchema = Yup.object().shape({
+  nombre: Yup.string()
+    .required('El nombre es obligatorio.')
+    .min(3, 'El nombre debe tener al menos 3 caracteres.')
+    .max(50, 'El nombre no puede tener más de 50 caracteres.')
+    .matches(/^[a-zA-Z0-9]+$/, 'El nombre solo puede contener letras y números.'),
+  
+  nombreCompleto: Yup.string()
+    .required('El nombre completo es obligatorio.')
+    .min(5, 'El nombre completo debe tener al menos 5 caracteres.')
+    .max(100, 'El nombre completo no puede exceder los 100 caracteres.'),
+
+    correo: Yup.string()
+    .required('El correo es obligatorio.')
+    .email('Formato de correo inválido.')
+    .test('valid-domain', 'Dominio de correo no válido.', (value) => {
+      if (!value) return false;
+      const domain = value.split('@')[1];
+      return validDomains.includes(domain);
+    }),
+  contrasena: Yup.string()
+    .required('La contraseña es obligatoria.')
+    .min(8, 'La contraseña debe tener al menos 8 caracteres.')
+    .matches(/[a-z]/, 'La contraseña debe tener al menos una letra minúscula.')
+    .matches(/[A-Z]/, 'La contraseña debe tener al menos una letra mayúscula.')
+    .matches(/\d/, 'La contraseña debe tener al menos un número.')
+    .matches(/[!@#$%^&*(),.?":{}|<>]/, 'La contraseña debe tener al menos un carácter especial.'),
+
+  pais: Yup.string()
+    .required('El país es obligatorio.')
+    .min(3, 'El país debe tener al menos 3 caracteres.')
+    .max(56, 'El país no puede exceder los 56 caracteres.')
+});
+
+// Sign up - Registro
 export const signup = async (req, res) => {
-    try {
-        const{nombre, correo, contrasena, pais,roles} = req.body;
+  try {
+    const { nombre, nombreCompleto, correo, contrasena, pais } = req.body;
 
-        const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-        if (!emailRegex.test(correo)) {
-			return res.status(400).json({ error: "Formato del correo invalido" });
-		}
+    // Validación con Yup
+    await userValidationSchema.validate(req.body, { abortEarly: false });
 
-        const existingUser = await User.findOne({ nombre });
-		if (existingUser) {
-			return res.status(400).json({ error: "nombre de usuario ya existe" });
-
-		}
-
-		const existingEmail = await User.findOne({ correo });
-		if (existingEmail) {
-			return res.status(400).json({ error: "correo ya existente" });
-		}
-
-		if (contrasena.length < 6) {
-			return res.status(400).json({ error: "Password must be at least 6 characters long" });
-		}
-
-		const salt = await bcrypt.genSalt(10);
-		const hashedPassword = await bcrypt.hash(contrasena, salt);
-
-        const newUser =new User({
-            nombre ,
-            correo ,
-            contrasena: hashedPassword,
-            pais,
-            roles,
-        })
-
-        if(newUser){
-            generateTokenAndSetCookie(newUser._id, res);
-			await newUser.save();
-
-			res.status(201).json({
-                _id: newUser._id,
-                nombre: newUser.nombre,
-                correo: newUser.correo,
-                pais: newUser.pais,
-                fotoPerfil: newUser.fotoPerfil,
-                fotoPerfilBan: newUser.fotoPerfilBan,
-                generoLiterarioPreferido: newUser.generoLiterarioPreferido,
-                seguidos: newUser.seguidos,
-                seguidores: newUser.seguidores,
-                estado: newUser.estado,
-                roles: newUser.roles,
-            });
-        }else{
-            res.status(400).json({error:"Datos de usuario invalidos"})
-        }
-    
-    } catch (error) {
-        console.log("Error in signup controller",error.message);
-        res.status(500).json({error:"Datos de usuario invalidos"});
+    // Verificar si el nombre de usuario ya existe
+    const existingUser = await User.findOne({ nombre });
+    if (existingUser) {
+      return res.status(400).json({ error: 'El nombre de usuario ya existe.' });
     }
-}
 
+    // Verificar si el correo ya existe
+    const existingEmail = await User.findOne({ correo });
+    if (existingEmail) {
+      return res.status(400).json({ error: 'El correo ya está registrado.' });
+    }
+
+    // Cifrar la contraseña
+    const salt = await bcrypt.genSalt(10);
+    const hashedPassword = await bcrypt.hash(contrasena, salt);
+
+    // Crear un nuevo usuario
+    const newUser = new User({
+      nombre,
+      nombreCompleto,
+      correo,
+      contrasena: hashedPassword,
+      pais,
+      roles: 'usuario', // Asignar roles como corresponda
+    });
+
+    // Guardar el usuario
+    await newUser.save();
+
+    // Generar token y guardar en cookie
+    generateTokenAndSetCookie(newUser._id, res);
+
+    // Respuesta de éxito
+    return res.status(201).json({
+      _id: newUser._id,
+      nombre: newUser.nombre,
+      nombreCompleto: newUser.nombreCompleto,
+      correo: newUser.correo,
+      pais: newUser.pais,
+      fotoPerfil: newUser.fotoPerfil,
+      fotoPerfilBan: newUser.fotoPerfilBan,
+      generoLiterarioPreferido: newUser.generoLiterarioPreferido,
+      seguidos: newUser.seguidos,
+      seguidores: newUser.seguidores,
+      estado: newUser.estado,
+      roles: newUser.roles,
+    });
+  } catch (error) {
+    if (error.name === 'ValidationError') {
+      // Error de validación de Yup
+      return res.status(400).json({ error: error.errors.join(', ') });
+    }
+    console.error("Error in signup controller:", error.message);
+    return res.status(500).json({ error: "Error en el servidor." });
+  }
+};
+
+// Login - Inicio de sesión
 export const login = async (req, res) => {
-    try {
+  try {
+    const { correo, contrasena } = req.body;
 
-        const {correo, contrasena} = req.body;
-        const user =await User.findOne({correo});
-        const isPasswordCorrect = await bcrypt.compare(contrasena, user?.contrasena || "" )
-
-        if(!user || !isPasswordCorrect){
-            return res.status(400).json({error:"correo o contraseña incorreactos "})
-        }
-
-        generateTokenAndSetCookie(user._id, res);
-
-        res.status(200).json({
-            _id: user._id,
-            nombre: user.nombre,
-            correo: user.correo,
-            pais: user.pais,
-            fotoPerfil: user.fotoPerfil,
-            fotoPerfilBan: user.fotoPerfilBan,
-            generoLiterarioPreferido: user.generoLiterarioPreferido,
-            amigos: user.amigos,
-            seguidores: user.seguidores,
-            estado: user.estado,
-            roles: user.roles,
-        });
-
-    } catch (error) {
-        console.log("Error in login controller",error.message);
-        res.status(500).json({error:"Datos de usuario invalidos"});
+    // Buscar usuario por correo
+    const user = await User.findOne({ correo });
+    if (!user) {
+      return res.status(400).json({ error: 'Correo o contraseña incorrectos.' });
     }
-}
 
+    // Comparar contraseñas
+    const isPasswordCorrect = await bcrypt.compare(contrasena, user.contrasena);
+    if (!isPasswordCorrect) {
+      return res.status(400).json({ error: 'Correo o contraseña incorrectos.' });
+    }
+
+    // Generar token y guardar en cookie
+    generateTokenAndSetCookie(user._id, res);
+
+    // Respuesta de éxito
+    return res.status(200).json({
+      _id: user._id,
+      nombre: user.nombre,
+      nombreCompleto: user.nombreCompleto,
+      correo: user.correo,
+      pais: user.pais,
+      fotoPerfil: user.fotoPerfil,
+      fotoPerfilBan: user.fotoPerfilBan,
+      generoLiterarioPreferido: user.generoLiterarioPreferido,
+      amigos: user.amigos,
+      seguidores: user.seguidores,
+      estado: user.estado,
+      roles: user.roles,
+    });
+  } catch (error) {
+    console.error("Error in login controller:", error.message);
+    return res.status(500).json({ error: "Error en el servidor." });
+  }
+};
+
+// Logout - Cerrar sesión
 export const logout = async (req, res) => {
-    try {
-        res.cookie("jwt","",{maxAge:0})
-        res.status(200).json({message:"Sesion cerrada con exito"})
-    } catch (error) {
-        console.log("Error en logout controller",error.message);
-        res.status(500).json({error:"error Interno"})
-    }
-}
-export const getMe =async(req, res) => {
-    try {
-        const user = await  User.findById(req.user._id).select("-contrasena")
-        res.status(200).json(user);
-    } catch (error) {
-        console.log("Error in el getMe controller",error.message);
-        res.status(500).json({error:"Error interno server"})
-    }
-}
+  try {
+    res.cookie('jwt', '', { maxAge: 0 });
+    return res.status(200).json({ message: 'Sesión cerrada con éxito.' });
+  } catch (error) {
+    console.error("Error en logout controller:", error.message);
+    return res.status(500).json({ error: "Error en el servidor." });
+  }
+};
+
+// Obtener usuario autenticado (getMe)
+export const getMe = async (req, res) => {
+  try {
+    const user = await User.findById(req.user._id).select('-contrasena');
+    return res.status(200).json(user);
+  } catch (error) {
+    console.error("Error in getMe controller:", error.message);
+    return res.status(500).json({ error: "Error en el servidor." });
+  }
+};

@@ -16,7 +16,7 @@ const router = express.Router();
 router.get("/all",protectRoutes,getAllPosts);
 router.get("/seguidores",protectRoutes,getFollowingPosts);
 router.get("/likes/:id", protectRoutes, getLikedPosts);
-router.get("/user/:correo", protectRoutes, getUserPosts);
+router.get("/user/:nombre", protectRoutes, getUserPosts);
 router.post("/create", protectRoutes, createPost);
 router.post("/like/:id", protectRoutes, likeUnlikePost);
 router.post("/comment/:id", protectRoutes, commentOnPost);

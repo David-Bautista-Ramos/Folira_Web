@@ -9,6 +9,12 @@ const UserSchema = new mongoose.Schema(
         min: 2,
         max: 50,
       },
+      nombreCompleto: {
+        type: String,
+        required: true,
+        min: 2,
+        max: 58,
+      },
       correo: {
         type: String,
         required: true,
