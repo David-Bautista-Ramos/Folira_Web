@@ -1,3 +1,58 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+/* scroll */
+
+/* Estilos para el scrollbar en navegadores WebKit (Chrome, Safari) */
+.scrollbar-custom::-webkit-scrollbar {
+  width: 4px; /* Ancho del scrollbar */
+}
+
+.scrollbar-custom::-webkit-scrollbar-thumb {
+  background-color: rgb(235, 237, 239); /* Color del thumb (parte que se mueve) */
+  border-radius: 20px; /* Bordes redondeados para el thumb */
+}
+
+.scrollbar-custom::-webkit-scrollbar-track {
+  background: transparent; /* Fondo del track (parte donde se desliza el thumb) */
+}
+
+/* Estilos para el scrollbar en Firefox */
+.scrollbar-custom {
+  scrollbar-width: thin; /* Para que el scrollbar sea delgado */
+  scrollbar-color: rgb(17, 24, 39) transparent; /* Color del thumb y del track */
+}
+
+
+/* Estilos scroll de modal de generos de perfil */
+/* Estilos para el scrollbar en navegadores basados en WebKit */
+.modal-scrollbar {
+    max-height: 400px; /* Altura máxima del contenedor del modal */
+    overflow-y: auto; /* Habilita el scroll vertical */
+}
+
+/* Scrollbar para Chrome, Safari y Edge */
+.modal-scrollbar::-webkit-scrollbar {
+    width: 8px; /* Ancho del scrollbar */
+}
+
+.modal-scrollbar::-webkit-scrollbar-track {
+    background: rgb(235, 237, 239); /* Color de fondo del track */
+    border-radius: 10px; /* Bordes redondeados del track */
+}
+
+.modal-scrollbar::-webkit-scrollbar-thumb {
+    background: #888; /* Color del thumb (barra) */
+    border-radius: 10px; /* Bordes redondeados del thumb */
+}
+
+.modal-scrollbar::-webkit-scrollbar-thumb:hover {
+    background: #555; /* Color del thumb al pasar el mouse */
+}
+
+/* Estilos para Firefox */
+.modal-scrollbar {
+    scrollbar-width: thin; /* Espesor del scrollbar */
+    scrollbar-color:  rgb(17, 24, 39) rgb(235, 237, 239); /* Color del thumb y del track */
+}
