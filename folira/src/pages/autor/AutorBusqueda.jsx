@@ -45,13 +45,13 @@ const AutorBuscador = () => {
         />
 
         <button 
-          className="bg-gray-200 text-gray-600 rounded-l-md rounded-r-md px-3 py-2 flex items-center"
+          className="bg-gray-200 text-primary hover:bg-gray-400 rounded-l-md rounded-r-md px-3 py-2 flex items-center"
           onClick={() => setDropdownVisible(!isDropdownVisible)} // Alterna la visibilidad del menú
         >
           <FaFilter />
         </button>
 
-        <button className="boton-buscar bg-blue-500 text-white rounded-r-md rounded-l-md px-3 py-2 ml-2 mr-2">
+        <button className="boton-buscar bg-primary hover:bg-blue-950 text-white rounded-r-md rounded-l-md px-3 py-2 ml-2 mr-2">
           <FaSearch />
         </button>
 

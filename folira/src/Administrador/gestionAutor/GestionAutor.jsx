@@ -1,24 +1,24 @@
 import { useState } from "react";
-import ModalInactivarUsuario from "../gestionUsuario/ModalInactivarUsuario";
+import ModalInactivarAutor from "../gestionAutor/ModalInactivarAutor";
 import Nav from "../../components/common/Nav";
-import ModalActivarUsuario from "../gestionUsuario/ModalActivarUsuario";
-import ModalCrearUsuario from "../gestionUsuario/ModalCrearUsuario";
-import ModalActualizarUsuario from "../gestionUsuario/ModalActualizarUsuario";
+import ModalActivarAutor from "../gestionAutor/ModalActivarAutor";
+import ModalCrearAutor from "../gestionAutor/ModalCrearAutor";
+import ModalActualizarAutor from "../gestionAutor/ModalActualizarAutor";
 import { BiEdit, BiPlus, BiPowerOff, BiReset } from "react-icons/bi";
 import banner_usua from "../../assets/img/admi_banners_usua.jpeg";
 
 const usuarios = [
-  { nombre: "Alex Rodríguez", nombreUsuario: "Alex", estado: "Activo" },
-  { nombre: "Maria Pérez", nombreUsuario: "Maria", estado: "Inactivo" },
-  { nombre: "Carlos García", nombreUsuario: "Carlos", estado: "Activo" },
-  { nombre: "Lucía Fernández", nombreUsuario: "Lucía", estado: "Inactivo" },
-  { nombre: "Catalina Lucía Fernández", nombreUsuario: "Catalina", estado: "Inactivo" },
-  { nombre: "Catalina Lucía Fernández", nombreUsuario: "Catalina", estado: "Inactivo" },
+  { nombre: "Alex Rodríguez",  estado: "Activo" },
+  { nombre: "Maria Pérez",  estado: "Inactivo" },
+  { nombre: "Carlos García",  estado: "Activo" },
+  { nombre: "Lucía Fernández",  estado: "Inactivo" },
+  { nombre: "Catalina Lucía Fernández",  estado: "Inactivo" },
+  { nombre: "Catalina Lucía Fernández",  estado: "Inactivo" },
 
 ];
 
 
-function GestionUsuario() {
+function GestionAutor() {
   const [isInactivarModalOpen, setIsInactivarModalOpen] = useState(false);
   const [isActivarModalOpen, setIsActivarModalOpen] = useState(false);
   const [isCrearModalOpen, setIsCrearModalOpen] = useState(false);
@@ -55,11 +55,6 @@ function GestionUsuario() {
                         Nombre: {usuario.nombre}
                       </h2>
                     </div>
-                    <div className="mb-1">
-                      <p>
-                        Nombre Usuario: {usuario.nombreUsuario}
-                      </p>
-                    </div>
                     <p>Estado: {usuario.estado}</p>
                   </div>
                 </div>
@@ -82,25 +77,25 @@ function GestionUsuario() {
           </div>
 
           {/* Modal para Inactivar Usuario */}
-          <ModalInactivarUsuario
+          <ModalInactivarAutor
             isOpen={isInactivarModalOpen}
             onClose={() => setIsInactivarModalOpen(false)}
           />
 
           {/* Modal para Activar Usuario */}
-          <ModalActivarUsuario
+          <ModalActivarAutor
             isOpen={isActivarModalOpen}
             onClose={() => setIsActivarModalOpen(false)}
           />
 
           {/* Modal para Crear Usuario */}
-          <ModalCrearUsuario
+          <ModalCrearAutor
             isOpen={isCrearModalOpen}
             onClose={() => setIsCrearModalOpen(false)}
           />
 
           {/* Modal para Actualizar Usuario */}
-          <ModalActualizarUsuario
+          <ModalActualizarAutor
             isOpen={isActualizarModalOpen}
             onClose={() => setIsActualizarModalOpen(false)}
           />
@@ -110,4 +105,4 @@ function GestionUsuario() {
   );
 }
 
-export default GestionUsuario;
+export default GestionAutor;

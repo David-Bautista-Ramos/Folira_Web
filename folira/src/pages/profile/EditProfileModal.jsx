@@ -70,7 +70,7 @@ const EditProfileModal = ({ authUser }) => {
 			</button>
 
 			<dialog id='edit_profile_modal' className='modal'>
-				<div className='modal-box border rounded-md border-blue-950 shadow-md'>
+				<div className='modal-box border rounded-md border-blue-950 h-[500px]  shadow-md modal-scrollbar'>
 					<h3 className='text-primary font-bold text-lg my-3'>Update Profile</h3>
 					<form
 						className='text-primary flex flex-col gap-4'
@@ -180,7 +180,7 @@ const EditProfileModal = ({ authUser }) => {
 							</div>
 						</div>
 
-						<button className='btn btn-primary rounded-full btn-sm text-white'>
+						<button className='btn btn-primary rounded-full btn-sm text-white hover:bg-blue-950'>
 							{isUpdatingProfile ? "Updating..." : "Update"}
 						</button>
 					</form>
@@ -199,12 +199,14 @@ const EditProfileModal = ({ authUser }) => {
 
 					{/* Contenedor para los botones en fila */}
 					<div className="flex space-x-2 justify-center">
-						<button className='btn btn-primary rounded-full btn-sm text-white'>
-							{"Inactivar"}
+						
+
+						<button className='px-4 py-2 bg-gray-300 text-gray-800 rounded-md  hover:bg-gray-400'>
+							{"Cancelar"}
 						</button>
 
-						<button className='btn btn-primary rounded-full btn-sm text-white'>
-							{"Cancelar"}
+						<button className='px-4 py-2 border rounded bg-primary text-white hover:bg-blue-950'>
+							{"Inactivar"}
 						</button>
 					</div>
 				</div>

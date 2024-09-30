@@ -49,8 +49,8 @@ const LibroSugerido = () => {
               />
               <h2 className="text-lg font-semibold mt-4 text-center">{libro.titulo}</h2>
               <div className="flex-grow" /> {/* Esto empuja el botón hacia abajo */}
-              <button className="mt-4 bg-blue-500 text-white rounded-full px-4 py-2 hover:bg-blue-600 mb-4">
-                Agregar
+              <button className="mt-4 bg-primary text-white rounded-full px-4 py-2 hover:bg-blue-950 mb-4">
+                Guardar
               </button>
             </div>
           ))}

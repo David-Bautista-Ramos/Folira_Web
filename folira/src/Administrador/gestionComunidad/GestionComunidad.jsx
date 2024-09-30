@@ -1,24 +1,24 @@
 import { useState } from "react";
-import ModalInactivarUsuario from "../gestionUsuario/ModalInactivarUsuario";
+import ModalInactivarComunidad from "./ModalInactivarComunidad";
 import Nav from "../../components/common/Nav";
-import ModalActivarUsuario from "../gestionUsuario/ModalActivarUsuario";
-import ModalCrearUsuario from "../gestionUsuario/ModalCrearUsuario";
-import ModalActualizarUsuario from "../gestionUsuario/ModalActualizarUsuario";
+
+import banner_comuni from "../../assets/img/admi_banner_co.jpeg";
+import ModalActivarComunidad from "./ModalActivarComunidad";
+import ModalCrearComunidad from "./ModalCrearComunidad";
+import ModalActualizarComunidad from "./ModalActualizarComunidad";
 import { BiEdit, BiPlus, BiPowerOff, BiReset } from "react-icons/bi";
-import banner_usua from "../../assets/img/admi_banners_usua.jpeg";
 
 const usuarios = [
-  { nombre: "Alex Rodríguez", nombreUsuario: "Alex", estado: "Activo" },
-  { nombre: "Maria Pérez", nombreUsuario: "Maria", estado: "Inactivo" },
-  { nombre: "Carlos García", nombreUsuario: "Carlos", estado: "Activo" },
-  { nombre: "Lucía Fernández", nombreUsuario: "Lucía", estado: "Inactivo" },
-  { nombre: "Catalina Lucía Fernández", nombreUsuario: "Catalina", estado: "Inactivo" },
-  { nombre: "Catalina Lucía Fernández", nombreUsuario: "Catalina", estado: "Inactivo" },
+    { nombre: "Alex Rodríguez", nombreUsuario: "Alex", estado: "Activo" },
+    { nombre: "Maria Pérez", nombreUsuario: "Maria", estado: "Inactivo" },
+    { nombre: "Carlos García", nombreUsuario: "Carlos", estado: "Activo" },
+    { nombre: "Lucía Fernández", nombreUsuario: "Lucía", estado: "Inactivo" },
+    { nombre: "Catalina Lucía Fernández", nombreUsuario: "Catalina", estado: "Inactivo" },
+    { nombre: "Catalina Lucía Fernández", nombreUsuario: "Catalina", estado: "Inactivo" },
+  
+  ];
 
-];
-
-
-function GestionUsuario() {
+function GestionComunidad() {
   const [isInactivarModalOpen, setIsInactivarModalOpen] = useState(false);
   const [isActivarModalOpen, setIsActivarModalOpen] = useState(false);
   const [isCrearModalOpen, setIsCrearModalOpen] = useState(false);
@@ -27,22 +27,22 @@ function GestionUsuario() {
   return (
     <div>
       <Nav />
-      <div className="flex justify-center items-center mt-10">
+      <div>
       <main className="bg-white w-[100%] max-w-[1600px] mx-4 mt-20 rounded-t-2xl border border-gray-500 shadow-lg"> {/* Ajusta el margen lateral aquí */}
           <div>
             <img
               className="w-full h-[269px] rounded-t-2xl"
-              src={banner_usua}
+              src={banner_comuni}
               alt="banner"
             />
           </div>
 
           {/* Contenedor para las tarjetas */}
           <div className="flex flex-wrap justify-center gap-6 p-6">
-            {usuarios.map((usuario, index) => (
-              <div key={index} className="flex flex-col w-[45%] bg-white border border-primary p-4 rounded-md"> {/* Cambia el ancho a 45% */}
+          {usuarios.map((usuario, index) => (
+            <div key={index} className="flex flex-col w-[45%] bg-white border border-primary p-4 rounded-md">
                 <div className="flex items-center mb-4">
-                  <div className="w-24 h-24 bg-gray-300 rounded-full border border-primary  overflow-hidden mr-4">
+                  <div className="w-24 h-24 bg-gray-300 rounded-full border border-primary overflow-hidden mr-4">
                     <img
                       className="object-cover w-full h-full"
                       src={"url_de_la_imagen_usuario"}
@@ -81,26 +81,29 @@ function GestionUsuario() {
             ))}
           </div>
 
-          {/* Modal para Inactivar Usuario */}
-          <ModalInactivarUsuario
+          {/* <ContenidoGestionComunidad
+            onInactivar={() => setIsInactivarModalOpen(true)}
+            onActivar={() => setIsActivarModalOpen(true)}
+            onCrear={() => setIsCrearModalOpen(true)}
+            onActualizar={() => setIsActualizarModalOpen(true)}
+          /> */}
+
+          <ModalInactivarComunidad
             isOpen={isInactivarModalOpen}
             onClose={() => setIsInactivarModalOpen(false)}
           />
 
-          {/* Modal para Activar Usuario */}
-          <ModalActivarUsuario
+          <ModalActivarComunidad
             isOpen={isActivarModalOpen}
             onClose={() => setIsActivarModalOpen(false)}
           />
 
-          {/* Modal para Crear Usuario */}
-          <ModalCrearUsuario
+          <ModalCrearComunidad
             isOpen={isCrearModalOpen}
             onClose={() => setIsCrearModalOpen(false)}
           />
 
-          {/* Modal para Actualizar Usuario */}
-          <ModalActualizarUsuario
+          <ModalActualizarComunidad
             isOpen={isActualizarModalOpen}
             onClose={() => setIsActualizarModalOpen(false)}
           />
@@ -110,4 +113,4 @@ function GestionUsuario() {
   );
 }
 
-export default GestionUsuario;
+export default GestionComunidad;
