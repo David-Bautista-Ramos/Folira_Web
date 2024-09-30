@@ -6,12 +6,13 @@ import ModalCrearUsuario from "../gestionUsuario/ModalCrearUsuario";
 import ModalActualizarUsuario from "../gestionUsuario/ModalActualizarUsuario";
 import { BiEdit, BiPlus, BiPowerOff, BiReset } from "react-icons/bi";
 import banner_usua from "../../assets/img/admi_banners_usua.jpeg";
+import FiltrarUsuarioEstado from "../../components/common/FiltrarUsuarioEstado";
 
 const usuarios = [
   { nombre: "Alex Rodríguez", nombreUsuario: "Alex", estado: "Activo" },
-  { nombre: "Maria Pérez", nombreUsuario: "Maria", estado: "Inactivo" },
+  { nombre: "Maria Pérez", nombreUsuario: "Maria", estado: "Activo" },
   { nombre: "Carlos García", nombreUsuario: "Carlos", estado: "Activo" },
-  { nombre: "Lucía Fernández", nombreUsuario: "Lucía", estado: "Inactivo" },
+  { nombre: "Lucía Fernández", nombreUsuario: "Lucía", estado: "Activo" },
   { nombre: "Catalina Lucía Fernández", nombreUsuario: "Catalina", estado: "Inactivo" },
   { nombre: "Catalina Lucía Fernández", nombreUsuario: "Catalina", estado: "Inactivo" },
 
@@ -23,6 +24,25 @@ function GestionUsuario() {
   const [isActivarModalOpen, setIsActivarModalOpen] = useState(false);
   const [isCrearModalOpen, setIsCrearModalOpen] = useState(false);
   const [isActualizarModalOpen, setIsActualizarModalOpen] = useState(false);
+  const [isFiltroModalOpen, setIsFiltroModalOpen] = useState(false); // Nuevo estado para el modal de filtro
+  const [filteredUsuarios, setFilteredUsuarios] = useState(usuarios); // Nuevo estado para usuarios filtrados
+
+  const handleFilter = (filter) => {
+    console.log(`Filter selected: ${filter}`);
+
+    if (filter === "Restaurar") {
+      setFilteredUsuarios(usuarios); // Mostrar todos los usuarios
+    } else {
+      setFilteredUsuarios(usuarios.filter(usuario => usuario.estado === filter)); // Filtrar por estado
+    }
+
+    setIsFiltroModalOpen(false); // Cerrar el modal después de la selección
+  };
+
+  const handleRestore = () => {
+    setFilteredUsuarios(usuarios); // Restaurar todos los usuarios
+    setIsFiltroModalOpen(false); // Cerrar el modal después de restaurar
+  };
 
   return (
     <div>
@@ -37,9 +57,18 @@ function GestionUsuario() {
             />
           </div>
 
+          <div className="flex justify-end mt-4 mr-[70px]">
+            <button 
+              onClick={() => setIsFiltroModalOpen(true)}
+              className="bg-primary text-white px-4 py-2 rounded mr-3 hover:bg-blue-950"
+            >
+              Estado
+            </button>
+          </div>
+
           {/* Contenedor para las tarjetas */}
           <div className="flex flex-wrap justify-center gap-6 p-6">
-            {usuarios.map((usuario, index) => (
+          {filteredUsuarios.map((usuario, index) => (
               <div key={index} className="flex flex-col w-[45%] bg-white border border-primary p-4 rounded-md"> {/* Cambia el ancho a 45% */}
                 <div className="flex items-center mb-4">
                   <div className="w-24 h-24 bg-gray-300 rounded-full border border-primary  overflow-hidden mr-4">
@@ -103,6 +132,13 @@ function GestionUsuario() {
           <ModalActualizarUsuario
             isOpen={isActualizarModalOpen}
             onClose={() => setIsActualizarModalOpen(false)}
+          />
+
+          <FiltrarUsuarioEstado
+            isOpen={isFiltroModalOpen}
+            onClose={() => setIsFiltroModalOpen(false)}
+            onFilter={handleFilter} // Pasa el manejador de filtro
+            onRestore={handleRestore} // Pasa la función de restaurar
           />
         </main>
       </div>
