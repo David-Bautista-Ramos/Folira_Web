@@ -26,28 +26,26 @@ const FichaTecnicaLibro = ({ libro }) => {
   };
 
   return (
-    <div className="p-6 bg-white rounded-lg shadow-lg flex flex-col md:flex-row md:items-start">
-        <div className='grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6'>
- 
-            <img 
-                src={imagen} 
-                alt={titulo} 
-                className="w-full md:w-1/3 h-auto rounded-lg object-cover"
-            />
-            <div className="ml-0 md:ml-6 flex flex-col mt-4 md:mt-0">
-                <h2 className="text-2xl font-semibold">{titulo}</h2>
-                <p className="text-lg font-medium">Autor: {autor}</p>
-                <p className="text-md">Géneros: {generos.join(', ')}</p>
-                <p className="text-md">Serie: {serie || 'N/A'}</p>
-                <p className="text-md">ISBN: {isbn}</p>
-                <p className="text-md">Sinopsis: {sinopsis}</p>
-                <div className="flex items-center mt-2">
-                    <span className="text-lg font-medium">Calificación:</span>
-                    <div className="flex ml-2">{renderEstrellas()}</div>
-                </div>
-            </div>
+    <div className="flex items-center p-6 bg-white rounded-lg shadow-lg relative">
+      <img 
+        src={imagen} 
+        alt={titulo} 
+        className="w-1/3 h-[250px] rounded-lg object-cover"
+      />
+      <div className="ml-6 flex flex-col"> {/* Contenido del libro */}
+        <h2 className="text-2xl font-semibold">{titulo}</h2>
+        <p className="text-lg font-medium">Autor: {autor}</p>
+        <p className="text-md">Géneros: {generos.join(', ')}</p>
+        <p className="text-md">Serie: {serie || 'N/A'}</p>
+        <p className="text-md">ISBN: {isbn}</p>
+        <p className="text-md">Sinopsis: {sinopsis}</p>
+        <div className="flex items-center mt-2">
+          <span className="text-lg font-medium">Calificación:</span>
+          <div className="flex ml-2">{renderEstrellas()}</div>
         </div>
-      
+      </div>
+      {/* Línea vertical fuera del contenedor */}
+      <div className="absolute right-0 h-full border-l border-gray-300"></div>
     </div>
   );
 };
