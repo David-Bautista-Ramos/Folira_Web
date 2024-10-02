@@ -45,7 +45,7 @@ const AutorSugerido = () => {
             style={{ boxShadow: '0 4px 6px rgba(0, 0, 0, 0.3)' }}
           >
             {/* Enlace solo en la imagen */}
-            <Link to={`/comunidad/${autor.id}`} className="no-underline">
+            <Link to="/DetalleComunidad" className="no-underline">
               <img
                 src={autor.imagen}
                 alt={autor.nombre}
@@ -54,7 +54,7 @@ const AutorSugerido = () => {
             </Link>
 
             {/* Enlace solo en el nombre de la comunidad */}
-            <Link to={`/comunidad/${autor.id}`} className="no-underline text-inherit w-full max-w-xs">
+            <Link className="no-underline text-inherit w-full max-w-xs">
               <h2 className="text-lg font-semibold text-center flex-grow truncate w-full max-w-xs whitespace-nowrap overflow-hidden text-ellipsis">
                 {autor.nombre}
               </h2>

@@ -18,6 +18,8 @@ import GestionResenas from './Administrador/gestionReseñas/GestionResena.jsx';
 import GestionNotificacion from './Administrador/gestionNotificaciones/GestionNotificacion.jsx';
 import GestionDenuncias from './Administrador/gestionDenuncia/GestionDenuncia.jsx';
 import FichaTecnicaLibro from './pages/libro/FichaLibro.jsx';
+import FichaTecnicaAutor from './pages/autor/FichaAutor.jsx';
+import DetallesComunidad from  './pages/comunidad/DetalleComunidad.jsx';
 
 
 import { Toaster } from 'react-hot-toast';
@@ -100,6 +102,9 @@ function App() {
               <Route path='/libro' element={authUser ? <Libro /> : <Navigate to='/login' />} />
               <Route path='/autor' element={authUser ? <Autor /> : <Navigate to='/login' />} />
               <Route path='/fichaLibro' element={authUser ? <FichaTecnicaLibro /> : <Navigate to='/login' />} />
+              <Route path='/fichaAutor' element={authUser ? <FichaTecnicaAutor /> : <Navigate to='/login' />} />
+              <Route path='/detalleComunidad' element={authUser ? <DetallesComunidad /> : <Navigate to='/login' />} />
+
 
             </Routes>
           </main>

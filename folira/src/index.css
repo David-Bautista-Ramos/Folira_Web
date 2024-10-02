@@ -164,6 +164,32 @@
   overflow-y: auto;
 }
 
+/* MODAL RESEÑAS */
+/* Estilos para el scroll en Chrome, Safari y Edge */
+.modal-reviews::-webkit-scrollbar {
+  width: 8px; /* Ancho de la barra de desplazamiento */
+}
+
+.modal-reviews::-webkit-scrollbar-thumb {
+  background-color:  rgb(17, 24, 39); /* Color del "thumb" (la parte que se mueve) */
+  border-radius: 4px; /* Bordes redondeados */
+}
+
+.modal-reviews::-webkit-scrollbar-thumb:hover {
+  background-color:  rgb(17, 24, 39); /* Color del "thumb" al pasar el mouse */
+}
+
+.modal-reviews::-webkit-scrollbar-track {
+  background: #f1f1f1; /* Color del fondo de la barra de desplazamiento */
+}
+
+/* Estilos para el scroll en Firefox */
+.modal-reviews {
+  scrollbar-width: thin; /* Estilo del scrollbar */
+  scrollbar-color: rgb(17, 24, 39) #f1f1f1; /* Color del "thumb" y el fondo */
+}
+
+
 
 
 
