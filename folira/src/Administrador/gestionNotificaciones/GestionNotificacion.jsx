@@ -8,7 +8,7 @@ import ModalActivarNotificacion from "./ModalActivarNotificacion";
 import ModalActualizarNotificacion from "./ModalActualizarNotificacion";
 import ModalCrearNotificacion from "./ModalCrearNotificacion";
 import ModalInactivarNotificacion from "./ModalInactivarNotificacion";
-import banner_usua from "../../assets/img/admi_banners_usua.jpeg";
+import banner_notificacion from "../../assets/img/gestionNotificacion.jpeg"; 
 import ModalFiltrarEstado from '../../components/common/FiltrarNotificacionEstado'; // Importamos el nuevo modal
 
 const publicaciones = [
@@ -243,7 +243,7 @@ function GestionNotificacion() {
       <div className="flex justify-center items-center mt-10">
         <main className="bg-white w-[100%] max-w-[1600px] mx-2 mt-20 rounded-t-2xl border border-gray-500 shadow-lg">
           <div>
-            <img className="w-full h-64 rounded-t-2xl" src={banner_usua} alt="banner" />
+            <img className="w-full h-64 rounded-t-2xl" src={banner_notificacion} alt="banner" />
           </div>
 
           <div className="flex justify-end mt-4 mr-[70px]">

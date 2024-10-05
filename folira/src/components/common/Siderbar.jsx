@@ -50,7 +50,7 @@ const Sidebar = () => {
 							className='flex gap-3 items-center hover:bg-gray-200 transition-all rounded-full duration-300 py-2 pl-2 pr-4 max-w-fit cursor-pointer'
 						>
 							<MdHomeFilled className='text-blue-950  w-8 h-8' />
-							<span className='text-lg hidden md:block'>Home</span>
+							<span className='text-lg hidden md:block'>Inicio</span>
 						</Link>
 					</li>
 					
@@ -60,7 +60,7 @@ const Sidebar = () => {
 							className='flex gap-3 items-center hover:bg-gray-200 transition-all rounded-full duration-300 py-2 pl-2 pr-4 max-w-fit cursor-pointer'
 						>
 							<IoNotifications className='text-blue-950 w-6 h-6' />
-							<span className='text-lg hidden md:block'>Notifications</span>
+							<span className='text-lg hidden md:block'>Notificaciones</span>
 						</Link>
 					</li>
 
@@ -70,7 +70,7 @@ const Sidebar = () => {
 							className='flex gap-3 items-center hover:bg-gray-200 transition-all rounded-full duration-300 py-2 pl-2 pr-4 max-w-fit cursor-pointer'
 						>
 							<FaUser className='text-blue-950 w-6 h-6' />
-							<span className='text-lg hidden md:block'>Profile</span>
+							<span className='text-lg hidden md:block'>Perfil</span>
 						</Link>
 					</li>
 

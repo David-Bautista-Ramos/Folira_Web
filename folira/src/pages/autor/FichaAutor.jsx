@@ -2,7 +2,7 @@ import { useState } from 'react'; // Importar useState para el manejo del estado
 import ModalReseñas from '../../pages/libro/ModalReseñas';
 
 const FichaAutor = ({ autor }) => {
-  const { nombre, pais, nacimiento, anosActivos, distinciones, imagen } = autor;
+  const { nombre, seudonimo, pais, nacimiento, anosActivos, distinciones, imagen } = autor;
 
   // Estado para manejar las reseñas
   const [reseñas, setReseñas] = useState([
@@ -53,6 +53,7 @@ const FichaAutor = ({ autor }) => {
 
         <div className="ml-6 flex flex-col flex-grow"> {/* Contenido del autor */}
           <h2 className="text-2xl font-semibold">{nombre}</h2>
+          <p className="text-lg"><strong>Seudonimo:</strong> {seudonimo}</p>
           <p className="text-lg"><strong>País:</strong> {pais}</p>
           <p className="text-lg"><strong>Nacimiento:</strong> {nacimiento}</p>
           <p className="text-lg"><strong>Años Activos:</strong> {anosActivos}</p>
@@ -114,6 +115,7 @@ const FichaAutor = ({ autor }) => {
 
 // Ejemplo de uso del componente
 const ejemploAutor = {
+  seudonimo: 'N/A',
   nombre: 'Gabriel García Márquez',
   pais: 'Colombia',
   nacimiento: '6 de marzo de 1927',

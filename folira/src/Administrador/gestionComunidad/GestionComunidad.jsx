@@ -2,7 +2,7 @@ import { useState } from "react";
 import ModalInactivarComunidad from "./ModalInactivarComunidad";
 import Nav from "../../components/common/Nav";
 
-import banner_comuni from "../../assets/img/admi_banner_co.jpeg";
+import banner_comunidad from "../../assets/img/gestionComunidad.jpeg"; 
 import ModalActivarComunidad from "./ModalActivarComunidad";
 import ModalCrearComunidad from "./ModalCrearComunidad";
 import ModalActualizarComunidad from "./ModalActualizarComunidad";
@@ -54,7 +54,7 @@ function GestionComunidad() {
                     <div>
                         <img
                             className="w-full h-[269px] rounded-t-2xl"
-                            src={banner_comuni}
+                            src={banner_comunidad}
                             alt="banner"
                         />
                     </div>

@@ -20,13 +20,20 @@ import GestionDenuncias from './Administrador/gestionDenuncia/GestionDenuncia.js
 import FichaTecnicaLibro from './pages/libro/FichaLibro.jsx';
 import FichaTecnicaAutor from './pages/autor/FichaAutor.jsx';
 import DetallesComunidad from  './pages/comunidad/DetalleComunidad.jsx';
+import Index from './pages/Index.jsx';
 
 
 import { Toaster } from 'react-hot-toast';
 import { useQuery } from '@tanstack/react-query';
 import LoadingSpinner from './components/common/LoadingSpinner.jsx';
 
+// import { useState } from 'react';
+
 function App() {
+
+
+
+
   const { data: authUser, isLoading } = useQuery({
     queryKey: ['authUser'],
     queryFn: async () => {
@@ -84,32 +91,31 @@ function App() {
               <Route path='/gestionNotificacion' element={authUser ? <GestionNotificacion /> : <Navigate to='/login' />} />
               <Route path='/gestionDenuncia' element={authUser ? <GestionDenuncias /> : <Navigate to='/login' />} />
 			      </Routes>
-			
           </main>
         </div>
       ) : (
         // En las demás rutas, renderizamos Sidebar, RightPanel y las vistas correspondientes
-        <div className='flex max-w-6xl mx-auto'>
-          {authUser && <Sidebar />}
-          <main className='flex-1'>
-            <Routes>
-              <Route path='/' element={authUser ? <HomePage /> : <Navigate to='/login' />} />
-              <Route path='/login' element={!authUser ? <LoginPage /> : <Navigate to='/' />} />
-              <Route path='/signup' element={!authUser ? <SignUpPage /> : <Navigate to='/' />} />
-              <Route path='/notifications' element={authUser ? <NotificationPage /> : <Navigate to='/login' />} />
-              <Route path='/profile/:nombre' element={authUser ? <ProfilePage /> : <Navigate to='/login' />} />
-              <Route path='/comunidad' element={authUser ? <Comunidad /> : <Navigate to='/login' />} />
-              <Route path='/libro' element={authUser ? <Libro /> : <Navigate to='/login' />} />
-              <Route path='/autor' element={authUser ? <Autor /> : <Navigate to='/login' />} />
-              <Route path='/fichaLibro' element={authUser ? <FichaTecnicaLibro /> : <Navigate to='/login' />} />
-              <Route path='/fichaAutor' element={authUser ? <FichaTecnicaAutor /> : <Navigate to='/login' />} />
-              <Route path='/detalleComunidad' element={authUser ? <DetallesComunidad /> : <Navigate to='/login' />} />
+          <div className='flex max-w-6xl mx-auto'>
+            {authUser && <Sidebar />}
+            <main className='flex-1'>
+              <Routes>
+                <Route path='/' element={authUser ? <HomePage /> : <Navigate to='/login' />} />
+                <Route path='/login' element={!authUser ? <LoginPage /> : <Navigate to='/' />} />
+                <Route path='/signup' element={!authUser ? <SignUpPage /> : <Navigate to='/' />} />
+                <Route path='/notifications' element={authUser ? <NotificationPage /> : <Navigate to='/login' />} />
+                <Route path='/profile/:nombre' element={authUser ? <ProfilePage /> : <Navigate to='/login' />} />
+                <Route path='/comunidad' element={authUser ? <Comunidad /> : <Navigate to='/login' />} />
+                <Route path='/libro' element={authUser ? <Libro /> : <Navigate to='/login' />} />
+                <Route path='/autor' element={authUser ? <Autor /> : <Navigate to='/login' />} />
+                <Route path='/fichaLibro' element={authUser ? <FichaTecnicaLibro /> : <Navigate to='/login' />} />
+                <Route path='/fichaAutor' element={authUser ? <FichaTecnicaAutor /> : <Navigate to='/login' />} />
+                <Route path='/detalleComunidad' element={authUser ? <DetallesComunidad /> : <Navigate to='/login' />} />
+                <Route path='/index' element={!authUser ? <Index /> : <Navigate to='/index' />} />          
+                </Routes>
+            </main>
+            {authUser && <RightPanel />}
+          </div>
 
-
-            </Routes>
-          </main>
-          {authUser && <RightPanel />}
-        </div>
       )}
 
       {/* Notificaciones globales */}

@@ -5,7 +5,7 @@ import ModalActivarUsuario from "../gestionUsuario/ModalActivarUsuario";
 import ModalCrearUsuario from "../gestionUsuario/ModalCrearUsuario";
 import ModalActualizarUsuario from "../gestionUsuario/ModalActualizarUsuario";
 import { BiEdit, BiPlus, BiPowerOff, BiReset } from "react-icons/bi";
-import banner_usua from "../../assets/img/admi_banners_usua.jpeg";
+import banner_usuario from "../../assets/img/gestionUsuario.jpeg"; 
 import FiltrarUsuarioEstado from "../../components/common/FiltrarUsuarioEstado";
 
 const usuarios = [
@@ -52,7 +52,7 @@ function GestionUsuario() {
           <div>
             <img
               className="w-full h-[269px] rounded-t-2xl"
-              src={banner_usua}
+              src={banner_usuario}
               alt="banner"
             />
           </div>

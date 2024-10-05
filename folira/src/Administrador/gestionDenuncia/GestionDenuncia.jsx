@@ -2,7 +2,7 @@ import { useState } from "react";
 import ModalActivarDenuncia from "./ModalActivarDenuncia";
 import ModalActualizarDenuncia from "./ModalActualizarDenuncia";
 import ModalInactivarDenuncia from "./ModalInactivarDenuncia";
-import banner_usua from "../../assets/img/admi_banners_usua.jpeg";
+import banner_denuncia from "../../assets/img/gestionDenuncia.jpeg";
 import { BiEdit, BiPowerOff, BiReset, BiShow, BiHide } from "react-icons/bi";
 import Nav from "../../components/common/Nav";
 import ModalFiltroEstado from "../../components/common/ModalListarDenuncia"
@@ -109,7 +109,7 @@ function GestionDenuncias() {
                 <main className="bg-white w-[100%] max-w-[1600px] mx-2 mt-10 rounded-t-2xl border border-gray-500 shadow-lg">
                     {/* Banner */}
                     <div>
-                        <img className="w-full h-64 rounded-t-2xl" src={banner_usua} alt="banner" />
+                        <img className="w-full h-64 rounded-t-2xl" src={banner_denuncia} alt="banner" />
                     </div>
 
                     <div className="flex justify-center mt-4">

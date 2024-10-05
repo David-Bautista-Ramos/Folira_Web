@@ -6,7 +6,7 @@ import ModalCrearAutor from "../gestionAutor/ModalCrearAutor";
 import ModalActualizarAutor from "../gestionAutor/ModalActualizarAutor";
 import ModalFiltroAutor from "../../components/common/ModalFiltrarAutor"; // Importa el nuevo modal de filtro
 import { BiEdit, BiPlus, BiPowerOff, BiReset } from "react-icons/bi";
-import banner_usua from "../../assets/img/admi_banners_usua.jpeg";
+import banner_autor from "../../assets/img/gestionAutor.jpeg"; 
 
 const usuarios = [
   { nombre: "Alex Rodríguez", estado: "Activo" },
@@ -49,7 +49,7 @@ function GestionAutor() {
           <div>
             <img
               className="w-full h-[269px] rounded-t-2xl"
-              src={banner_usua}
+              src={banner_autor}
               alt="banner"
             />
           </div>

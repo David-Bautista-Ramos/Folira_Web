@@ -1,7 +1,8 @@
 import { Link } from "react-router-dom";
 import { useState } from "react";
 
-import XSvg from "../../../components/svgs/X.jsx";
+import Folira_logo from "../../../assets/img/Folira_logo (1).svg"; 
+
 
 import { MdOutlineMail } from "react-icons/md";
 import { FaUser } from "react-icons/fa";
@@ -62,12 +63,12 @@ const SignUpPage = () => {
 	return (
 		<div className='max-w-screen-xl mx-auto flex h-screen px-10'>
 			<div className='flex-1 hidden lg:flex items-center  justify-center'>
-				<XSvg className=' lg:w-2/3 fill-white' />
+				<img className="w-50 h-50 cursor-pointer" src={Folira_logo} alt="logo_nav" />
 			</div>
 			<div className='flex-1 flex flex-col justify-center items-center'>
 				<form className='lg:w-2/3  mx-auto md:mx-20 flex gap-4 flex-col' onSubmit={handleSubmit}>
-					<XSvg className='w-24 lg:hidden fill-white' />
-					<h1 className='text-4xl font-extrabold text-white'>Únete hoy.</h1>
+					<img className="w-50 h-40 mt-[200px] -mb-[50px] cursor-pointer lg:hidden" src={Folira_logo} alt="logo_nav" />
+					<h1 className='text-4xl font-extrabold text-primary'>Únete hoy.</h1>
 					<label className='input input-bordered rounded flex items-center gap-2'>
 						<MdOutlineMail />
 						<input
@@ -131,9 +132,9 @@ const SignUpPage = () => {
 					{isError && <p className='text-red-500'>{error.message}</p>}
 				</form>
 				<div className='flex flex-col lg:w-2/3 gap-2 mt-4'>
-					<p className='text-white text-lg'>Ya tienes una cuenta?</p>
+					<p className='text-primary text-lg'>Ya tienes una cuenta?</p>
 					<Link to='/login'>
-						<button className='btn rounded-full btn-primary text-white btn-outline w-full'>Iniciar Sesión</button>
+						<button className='btn rounded-full btn-primary text-primary btn-outline w-full'>Iniciar Sesión</button>
 					</Link>
 				</div>
 			</div>

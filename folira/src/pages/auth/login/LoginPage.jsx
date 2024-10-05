@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { Link } from "react-router-dom";
 
-import XSvg from "../../../components/svgs/X.jsx";
+import Folira_logo from "../../../assets/img/Folira_logo (1).svg"; 
 
 import { MdOutlineMail } from "react-icons/md";
 import { MdPassword } from "react-icons/md";
@@ -61,12 +61,12 @@ const LoginPage = () => {
 	return (
 		<div className='max-w-screen-xl mx-auto flex h-screen'>
 			<div className='flex-1 hidden lg:flex items-center  justify-center'>
-				<XSvg className='lg:w-2/3 fill-blue' />
+				<img className="w-45 h-50 cursor-pointer" src={Folira_logo} alt="logo_nav" />
 			</div>
 			<div className='flex-1 flex flex-col justify-center items-center'>
 				<form className='flex gap-4 flex-col' onSubmit={handleSubmit}>
-					<XSvg className='w-27 lg:hidden text-blue-900' />
-					<h1 className=' text-blue-950 text-4xl font-extrabold '>{"Vamos"} a Iniciar.</h1>
+					<img className="w-50 h-40 mt-[100px] cursor-pointer lg:hidden" src={Folira_logo} alt="logo_nav" />
+					<h1 className='  text-4xl text-primary font-extrabold '>{"Vamos"} a Iniciar.</h1>
 					<label className='input input-bordered rounded flex items-center gap-2'>
 						<MdOutlineMail />
 						<input

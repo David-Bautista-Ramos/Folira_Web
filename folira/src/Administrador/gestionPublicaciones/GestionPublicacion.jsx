@@ -3,7 +3,7 @@ import { FaRegComment } from "react-icons/fa";
 import { BiShow, BiEdit, BiPlus, BiPowerOff, BiReset } from "react-icons/bi";
 import { Link } from "react-router-dom";
 import Nav from "../../components/common/Nav";
-import banner_usua from "../../assets/img/admi_banners_usua.jpeg";
+import banner_publicaciones from "../../assets/img/gestionPublicaciones.jpeg"; 
 import ComentariosModal from "./ComentarioPublicidad";
 import ModalActivarPublicacion from "./ModalActivarPublicacion";
 import ModalInactivarPublicacion from "./ModalInactivarPublicacion";
@@ -203,7 +203,7 @@ function GestionLibro() {
             <div className="flex justify-center items-center mt-10">
                 <main className="bg-white w-[100%] max-w-[1600px] mx-2 mt-20 rounded-t-2xl border border-gray-500 shadow-lg">
                     <div>
-                        <img className="w-full h-[269px] rounded-t-2xl" src={banner_usua} alt="banner" />
+                        <img className="w-full h-[269px] rounded-t-2xl" src={banner_publicaciones} alt="banner" />
                     </div>
 
                     <div className="flex justify-end mt-4 mr-[70px]">

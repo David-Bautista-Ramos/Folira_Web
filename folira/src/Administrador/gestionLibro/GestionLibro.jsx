@@ -7,7 +7,7 @@ import ModalGeneros from "./ModalGenerosLibros";
 import ModalFiltroLibros from "../../components/common/ModalFiltroLibros"; // Import the new modal
 import Nav from "../../components/common/Nav";
 import { BiEdit, BiPlus, BiPowerOff, BiReset } from "react-icons/bi";
-import banner_libro from "../../assets/img/admi_banner.jpeg";
+import banner_libro from "../../assets/img/gestionLibro.jpeg";
 
 const libros = [
   { 
