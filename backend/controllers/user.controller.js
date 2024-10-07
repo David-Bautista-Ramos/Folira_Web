@@ -11,6 +11,7 @@ import { fileURLToPath } from "url"; // Necesario para convertir import.meta.url
 
 
 
+
 export const getUserProfile =async (req, res) =>{
     const {nombre} = req.params;
 
@@ -297,16 +298,27 @@ const userValidationSchemaADMIN = Yup.object().shape({
   // Crear un nuevo usuario
 // Crear un nuevo usuario
 // Configuración de Nodemailer
+// Configuración del transportador de Nodemailer
 const transporter = nodemailer.createTransport({
-	service: 'gmail', // O el servicio que estés usando (Gmail, Outlook, etc.)
-	auth: {
-	  user: process.env.EMAIL_USER,
-	  pass: process.env.EMAIL_PASS,
-	},  secure: false, // Usa true para SSL
-    tls: {
-        rejectUnauthorized: false // Esto puede ayudar con algunos problemas de autenticación
-    }
-  });
+    host: 'smtp.gmail.com', // O el servicio que estés usando (Gmail, Outlook, etc.)
+    port: 465, // Cambiado 'post' a 'port'
+    secure: true, // true para SSL
+    auth: {
+        user: (process.env.EMAIL_USER = "cardenasalejando475@gmail.com"), // Asegúrate de que esto sea tu correo electrónico
+        pass: (process.env.EMAIL_PASS = "ezoo fpyr wfdv jaxc"), // Asegúrate de que esto sea tu contraseña o contraseña de aplicación
+    },
+	tls: {
+		rejectUnauthorized: false,
+	  },
+});
+
+// Verificar la conexión
+transporter.verify().then(() => {
+    console.log('Configuración de correo electrónico verificada');
+}).catch(err => {
+    console.error('Error al verificar la configuración:', err);
+});
+
 // Definir __dirname en un entorno ESM
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -372,7 +384,7 @@ export const crearUser = async (req, res) => {
 
     // Configuración del correo electrónico
     const mailOptions = {
-      from: `"Soporte de MiAplicacion" <${process.env.EMAIL_USER}>`,
+      from: (process.env.EMAIL_USER),
       to: newUser.correo,
       subject: "Bienvenido a Plataforma Folira",
       html: `
@@ -395,7 +407,7 @@ export const crearUser = async (req, res) => {
       attachments: [
         {
           filename: "logo-Folira.png",
-          path: path.resolve(__dirname, "../assets/img/admi_banner.jpeg"), // Usar path.resolve para rutas
+          path:path.join(__dirname, "../assets/img/admi_banner.jpeg"), // Usar path.join
           cid: "logoFolira", // cid para referenciar en el HTML
         },
       ],

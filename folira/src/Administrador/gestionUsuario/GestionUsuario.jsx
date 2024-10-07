@@ -222,7 +222,8 @@ function GestionUsuario() {
           {/* Modal para Crear Usuario */}
           <ModalCrearUsuario
             isOpen={isCrearModalOpen}
-            onClose={() => setIsCrearModalOpen(false)}
+            onClose={() => {setIsCrearModalOpen(false);obtenerUsuarios()}}
+            obtenerUsuarios={obtenerUsuarios} // Para refrescar la lista de usuarios
           />
 
           {/* Modal para Actualizar Usuario */}
