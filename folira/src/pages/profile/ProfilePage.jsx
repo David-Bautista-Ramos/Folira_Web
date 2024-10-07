@@ -3,8 +3,12 @@ import { Link, useParams } from "react-router-dom";
 
 import Posts from "../../components/common/Posts";
 import ProfileHeaderSkeleton from "../../components/skeletons/ProfileHeaderSkeleton";
-import EditProfileModal from "./EditProfileModal";
-import userFollow from '../../hooks/userFollow'
+import EditProfileModal from "./EditProfileModal.jsx";
+import ModalSeguidos from "./SeguidosModal";
+import ModalSeguidores from "./SeguidoresModal";
+import userFollow from '../../hooks/userFollow';
+import GenerosProfile from "./GenerosProfile";
+import GenerosModal from "./GenerosModal";
 
 
 import { POSTS } from "../../utils/db/dummy";
@@ -14,7 +18,7 @@ import { IoCalendarOutline } from "react-icons/io5";
 import { MdEdit } from "react-icons/md";
 import {  useQuery } from "@tanstack/react-query";
 import { formatMemberSinceDate } from "../../utils/date";
-import useUpdateUserProfile from "../../hooks/useUpdateUserProfile";
+import useUpdateUserProfile from "../../hooks/useUpdateUserProfile.jsx";
 
 const ProfilePage = () => {
 	const [fotoPerfilBan, setfotoPerfilBan] = useState(null);
@@ -65,9 +69,20 @@ const ProfilePage = () => {
 		}
 	};
 
+	const [modalOpen, setModalOpen] = useState(false); // Definir el estado aquí
+
+	const abrirModal = () => {
+	  setModalOpen(true);
+	};
+  
+	const cerrarModal = () => {
+	  setModalOpen(false);
+	};
+
+	
 	return (
 		<>
-			<div className='flex-[4_4_0] border-r border-gray-700 min-h-screen '>
+			<div className='flex-[4_4_0] border-r border-primary min-h-screen '>
 				{/* HEADER */}
 				{(isLoading || isRefetching) && <ProfileHeaderSkeleton />}
 				{!isLoading && !isRefetching && !user && <p className='text-center text-lg mt-4'>User not found</p>}
@@ -159,7 +174,10 @@ const ProfilePage = () => {
 								<div className='flex flex-col'>
 									<span className='font-bold text-lg'>{user?.nombreCompleto}</span>
                                     <span className='text-sm text-slate-500'>@{user?.nombre}</span>
-									<span className='text-sm my-1'>{user?.biografia}</span>
+									<span className='text-sm my-1 block break-words'
+  											style={{ maxWidth: '100%', wordBreak: 'break-word', whiteSpace: 'normal' }}>
+										{user?.biografia}
+									</span>
 									<span className='text-sm my-1'>Pais: {user?.pais}</span>
 								</div>
 
@@ -174,24 +192,47 @@ const ProfilePage = () => {
 
 								<div className='flex gap-2'>
 									<div className='flex gap-1 items-center'>
+										{/* Cantidad de seguidores */}
 										<span className='font-bold text-xs'>{user?.seguidos.length}</span>
-										<span className='text-slate-500 text-xs'>Following</span>
+
+										{/* Botón que abre el modal de seguidores */}
+										<ModalSeguidos seguidores={user?.seguidos} />
 									</div>
+
 									<div className='flex gap-1 items-center'>
 										<span className='font-bold text-xs'>{user?.seguidores.length}</span>
-										<span className='text-slate-500 text-xs'>Followers</span>
+										<ModalSeguidores seguidores={user?.seguidos} />
 									</div>
 								</div>
 
 								{/* Géneros literarios preferidos */}
-								<div className='mt-4'>
-									<span className='font-bold text-sm'>Preferred Literary Genres:</span>
-									<ul className='list-disc ml-5'>
-										{user?.generoLiterarioPreferido.map((genero) => (
-											<li key={genero} className='text-sm'>{genero}</li>
-										))}
-									</ul>
+								<div>
+									<div className='mt-4 flex items-center'>
+										<span className='font-bold text-xl mr-2'>Preferred Literary Genres:</span>
+										<div className='flex-1' /> {/* Este div tomará el espacio disponible para empujar el botón */}
+										
+										{/* Ajusta el estilo del botón */}
+										<button 
+											className='bg-primary text-white px-4 py-2 rounded-full hover:bg-blue-950 text-sm h-9 w-28'
+											style={{ marginLeft: '20px', maxWidth: 'calc(40% - 100px)' }} // Reduce el margen izquierdo para alinear con la lista
+											onClick={abrirModal} // Llama a la función para abrir el modal
+										>
+											Ver Géneros
+										</button>
+										
+										<GenerosModal isOpen={modalOpen} onClose={cerrarModal} /> {/* Pasa el estado y la función */}
+										
+										<ul className='list-disc ml-5'>
+											{user?.generoLiterarioPreferido.map((genero) => (
+												<li key={genero} className='text-sm'>{genero}</li>
+											))}
+										</ul>
+									</div>
+
+									<GenerosProfile />
 								</div>
+
+
 							</div>
 
 							<div className='flex w-full border-b border-gray-700 mt-4'>

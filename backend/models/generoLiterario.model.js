@@ -7,6 +7,10 @@ const GeneroLiterarioSchema = new mongoose.Schema(
         required: true,
         unique: true,
       },
+      fotoGenero:{
+        type: String,
+        default: "",
+      },
       descripcion: {
         type: String,
         required: true,

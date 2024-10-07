@@ -3,7 +3,12 @@ import Notification from "../models/notification.model.js";
 import User from "../models/user.model.js";
 import {v2 as cloudinary} from "cloudinary";
 import bcrypt from "bcryptjs";
+import crypto from 'crypto';
+import nodemailer from 'nodemailer'
 import * as Yup from 'yup';
+import path from 'path';
+import { fileURLToPath } from "url"; // Necesario para convertir import.meta.url a __dirname
+
 
 
 export const getUserProfile =async (req, res) =>{
@@ -64,31 +69,43 @@ export const followUnfollowUser = async (req, res) => {
 };
 
 export const getSuggestedUsers = async (req, res) => {
-	try {
-		const userId = req.user._id;
+    try {
+        const userId = req.user._id;
 
-		const usersFollowedByMe = await User.findById(userId).select("seguidos");
+        // Obtener el listado de usuarios seguidos por el usuario actual
+        const user = await User.findById(userId).populate('seguidos', '_id').populate('generoLiterarioPreferido', '_id');
 
-		const users = await User.aggregate([
-			{
-				$match: {
-					_id: { $ne: userId },
-				},
-			},
-			{ $sample: { size: 10 } },
-		]);
+        // Obtener una lista de IDs de los usuarios seguidos por el usuario actual
+        const followedUserIds = user.seguidos.map(followedUser => followedUser._id);
 
-		// 1,2,3,4,5,6,
-		const filteredUsers = users.filter((user) => !usersFollowedByMe.seguidos.includes(user._id));
-		const suggestedUsers = filteredUsers.slice(0, 4);
+        // Obtener los géneros literarios preferidos del usuario actual
+        const userPreferredGenres = user.generoLiterarioPreferido.map(genre => genre._id);
 
-		suggestedUsers.forEach((user) => (user.contrasena = null));
+        // Encontrar usuarios sugeridos, excluyendo los que ya sigue el usuario actual y excluyéndose a sí mismo,
+        // pero priorizando aquellos que comparten géneros literarios en común
+        const users = await User.aggregate([
+            {
+                $match: {
+                    _id: { $nin: [...followedUserIds, userId] }, // Excluir usuarios seguidos y el mismo usuario
+                    generoLiterarioPreferido: { $in: userPreferredGenres }, // Usuarios que comparten géneros literarios en común
+                },
+            },
+            { $sample: { size: 10 } }, // Elegir aleatoriamente 10 usuarios
+            {
+                $project: {
+                    nombre: 1,
+                    correo: 1,
+                    fotoPerfil: 1,
+                    generoLiterarioPreferido: 1, // Incluir géneros literarios en el resultado
+                }
+            }
+        ]);
 
-		res.status(200).json(suggestedUsers);
-	} catch (error) {
-		console.log("Error in getSuggestedUsers: ", error.message);
-		res.status(500).json({ error: error.message });
-	}
+        res.status(200).json(users.slice(0, 5)); // Enviar solo los primeros 4 usuarios sugeridos
+    } catch (error) {
+        console.log("Error in getSuggestedUsers: ", error.message);
+        res.status(500).json({ error: error.message });
+    }
 };
 
 export const updateUser = async (req, res) => {
@@ -251,72 +268,164 @@ const userValidationSchema = Yup.object().shape({
 	  .max(56, 'El país no puede exceder los 56 caracteres.')
   });
   
+  // Esquema de validación sin el campo contraseña
+const userValidationSchemaADMIN = Yup.object().shape({
+	nombre: Yup.string()
+	  .required('El nombre es obligatorio.')
+	  .min(3, 'El nombre debe tener al menos 3 caracteres.')
+	  .max(50, 'El nombre no puede tener más de 50 caracteres.')
+	  .matches(/^[a-zA-Z0-9]+$/, 'El nombre solo puede contener letras y números.'),
+	
+	nombreCompleto: Yup.string()
+	  .required('El nombre completo es obligatorio.')
+	  .min(5, 'El nombre completo debe tener al menos 5 caracteres.')
+	  .max(100, 'El nombre completo no puede exceder los 100 caracteres.'),
+  
+	correo: Yup.string()
+	  .required('El correo es obligatorio.')
+	  .email('Formato de correo inválido.')
+	  .test('valid-domain', 'Dominio de correo no válido.', (value) => {
+		if (!value) return false;
+		const domain = value.split('@')[1];
+		return validDomains.includes(domain);
+	  }),
+  });
+  
 
 
   {/*metodos para el admin*/}
   // Crear un nuevo usuario
 // Crear un nuevo usuario
+// Configuración de Nodemailer
+const transporter = nodemailer.createTransport({
+	service: 'gmail', // O el servicio que estés usando (Gmail, Outlook, etc.)
+	auth: {
+	  user: process.env.EMAIL_USER,
+	  pass: process.env.EMAIL_PASS,
+	},  secure: false, // Usa true para SSL
+    tls: {
+        rejectUnauthorized: false // Esto puede ayudar con algunos problemas de autenticación
+    }
+  });
+// Definir __dirname en un entorno ESM
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
+
 export const crearUser = async (req, res) => {
-	try {
-	  const { nombre, nombreCompleto, correo, contrasena, pais, roles } = req.body;
-  
-	  // Validación con Yup
-	  await userValidationSchema.validate(req.body, { abortEarly: false });
-  
-	  // Verificar si el nombre de usuario ya existe
-	  const existingUser = await User.findOne({ nombre });
-	  if (existingUser) {
-		return res.status(400).json({ error: 'El nombre de usuario ya existe.' });
-	  }
-  
-	  // Verificar si el correo ya existe
-	  const existingEmail = await User.findOne({ correo });
-	  if (existingEmail) {
-		return res.status(400).json({ error: 'El correo ya está registrado.' });
-	  }
-  
-	  // Cifrar la contraseña
-	  const salt = await bcrypt.genSalt(10);
-	  const hashedPassword = await bcrypt.hash(contrasena, salt);
-  
-	  // Crear un nuevo usuario
-	  const newUser = new User({
-		nombre,
-		nombreCompleto,
-		correo,
-		contrasena: hashedPassword,
-		pais,
-		roles, // Asignar roles como corresponda
-	  });
-  
-	  // Guardar el usuario
-	  await newUser.save();
-  
-	  // Respuesta de éxito
-	  return res.status(201).json({
-		_id: newUser._id,
-		nombre: newUser.nombre,
-		nombreCompleto: newUser.nombreCompleto,
-		correo: newUser.correo,
-		pais: newUser.pais,
-		fotoPerfil: newUser.fotoPerfil,
-		fotoPerfilBan: newUser.fotoPerfilBan,
-		generoLiterarioPreferido: newUser.generoLiterarioPreferido,
-		seguidos: newUser.seguidos,
-		seguidores: newUser.seguidores,
-		estado: newUser.estado,
-		roles: newUser.roles,
-		message: "Usuario creado con éxito", // Mensaje opcional
-	  });
-	} catch (error) {
-	  if (error.name === 'ValidationError') {
-		// Error de validación de Yup
-		return res.status(400).json({ error: error.errors.join(', ') });
-	  }
-	  console.error("Error in signup controller:", error.message);
-	  return res.status(500).json({ error: "Error en el servidor." });
+  try {
+    const { nombre, nombreCompleto, correo, pais, roles } = req.body;
+    let { fotoPerfil, fotoPerfilBan } = req.body;
+
+    // Validación con Yup
+    await userValidationSchemaADMIN.validate(
+      { nombre, nombreCompleto, correo, pais, roles },
+      { abortEarly: false }
+    );
+
+    // Verificar si el nombre de usuario ya existe
+    const existingUser = await User.findOne({ nombre });
+    if (existingUser) {
+      return res.status(400).json({ error: "El nombre de usuario ya existe." });
+    }
+
+    // Verificar si el correo ya existe
+    const existingEmail = await User.findOne({ correo });
+    if (existingEmail) {
+      return res.status(400).json({ error: "El correo ya está registrado." });
+    }
+
+    // Subir fotos de perfil y banner si se proporcionan
+    let fotoPerfilURL = "";
+    let fotoPerfilBanURL = "";
+
+    if (fotoPerfil) {
+      const uploadedResponse = await cloudinary.uploader.upload(fotoPerfil);
+      fotoPerfilURL = uploadedResponse.secure_url;
+    }
+
+    if (fotoPerfilBan) {
+      const uploadedResponse = await cloudinary.uploader.upload(fotoPerfilBan);
+      fotoPerfilBanURL = uploadedResponse.secure_url;
+    }
+
+    // Generar una contraseña aleatoria
+    const randomPassword = crypto.randomBytes(8).toString("hex"); // Contraseña de 16 caracteres
+
+    // Cifrar la contraseña
+    const salt = await bcrypt.genSalt(10);
+    const hashedPassword = await bcrypt.hash(randomPassword, salt);
+
+    // Crear un nuevo usuario
+    const newUser = new User({
+      nombre,
+      nombreCompleto,
+      correo,
+      contrasena: hashedPassword,
+	  pais,
+      roles, // Asignar roles como corresponda
+      fotoPerfil: fotoPerfilURL,
+      fotoPerfilBan: fotoPerfilBanURL,
+    });
+
+    // Guardar el usuario
+    await newUser.save();
+
+    // Configuración del correo electrónico
+    const mailOptions = {
+      from: `"Soporte de MiAplicacion" <${process.env.EMAIL_USER}>`,
+      to: newUser.correo,
+      subject: "Bienvenido a Plataforma Folira",
+      html: `
+      <div style="font-family: Arial, sans-serif; text-align: center;">
+        <img src="cid:logoFolira" alt="Logo Folira" style="width: 150px; margin-bottom: 20px; border-radius:100px;">
+        <h1 style="color: #1e3799;">¡Bienvenido a la Plataforma!</h1>
+        <p style="font-size: 16px; color: #34495e;">Hola y Bienvenid@ <strong>${nombreCompleto}</strong>.</p>
+        <p style="font-size: 16px; color: #34495e;">
+          Te damos la bienvenida a nuestra plataforma. Aquí están tus credenciales de acceso:
+        </p>
+        <div style="text-align: left; max-width: 600px; margin: 0 auto; padding: 20px; background-color: #f5f5f5; border-radius: 8px;">
+          <p><strong>Correo:</strong> ${correo}</p>
+          <p><strong>Clave temporal:</strong> ${randomPassword}</p>
+          <p style="font-size: 14px; color: #e74c3c;">Se recomienda cambiar la clave al iniciar sesión.</p>
+        </div>
+        <p style="font-size: 16px; color: #34495e; margin-top: 20px;">¡Gracias por unirte a nosotros!</p>
+        <p style="font-size: 16px; color: #34495e;">Saludos,<br>El equipo de soporte.</p>
+      </div>
+    `,
+      attachments: [
+        {
+          filename: "logo-Folira.png",
+          path: path.resolve(__dirname, "../assets/img/admi_banner.jpeg"), // Usar path.resolve para rutas
+          cid: "logoFolira", // cid para referenciar en el HTML
+        },
+      ],
+    };
+
+    // Enviar el correo
+    await transporter.sendMail(mailOptions);
+
+    // Respuesta de éxito
+    return res.status(201).json({
+      _id: newUser._id,
+      nombre: newUser.nombre,
+      nombreCompleto: newUser.nombreCompleto,
+      correo: newUser.correo,
+	  pais: newUser.pais,
+      roles: newUser.roles,
+      message:
+        "Usuario creado con éxito, la contraseña ha sido enviada al correo del usuario.",
+    });
+  } catch (error) {
+	console.error("Error en el controlador de creación de usuario:", error); // Muestra el error completo en consola
+    if (error.name === "ValidationError") {
+      // Error de validación de Yup
+      return res.status(400).json({ error: Array.isArray(error.errors) ? error.errors.join(", ") : error.errors });
 	}
-  };
+    console.error("Error en el controlador de creación de usuario:", error.message);
+    return res.status(500).json({ error: "Error en el servidor." });
+  }
+};
+
   
   // Obtener todos los usuarios
 export const obtenerUsuarios = async (req, res) => {
@@ -331,7 +440,7 @@ export const obtenerUsuarios = async (req, res) => {
   // Obtener un usuario por ID
 export const obtenerUsuarioPorId = async (req, res) => {
 	try {
-	  const userId = req.params.id;
+	  const {userId} = req.params;
 	  const usuario = await User.findById(userId);
   
 	  if (!usuario) {
@@ -343,26 +452,89 @@ export const obtenerUsuarioPorId = async (req, res) => {
 	  res.status(500).json({ error: "Error al obtener usuario" });
 	}
   };
+  // Actualizar un usuario por ID
+  export const actualizarUsuario = async (req, res) => {
+	  const { nombre, nombreCompleto, correo, generoLiterarioPreferido, currentcontrasena, newcontrasena, pais, biografia} = req.body;
+	  let { fotoPerfil, fotoPerfilBan } = req.body;
+
+	  // Obtiene el ID del usuario desde los parámetros de la solicitud
+	  const userId = req.params.userId;
   
-// Actualizar un usuario por ID
-export const actualizarUsuario = async (req, res) => {
-	try {
-	  const userId = req.params.id;
-	  const actualizaciones = req.body;
+	  try {
+		  // Verifica si el usuario existe
+		  let user = await User.findById(userId);
+		  if (!user) return res.status(404).json({ message: "Usuario no encontrado" });
   
-	  const usuarioActualizado = await User.findByIdAndUpdate(userId, actualizaciones, {
-		new: true,
-	  });
+		  // Validar si el usuario que está realizando la actualización es un administrador
+		  if (req.user.roles !== 'admin' && req.user.id !== userId) {
+			  return res.status(403).json({ message: "No tienes permiso para actualizar este usuario" });
+		  }
   
-	  if (!usuarioActualizado) {
-		return res.status(404).json({ error: "Usuario no encontrado" });
+		  // Validar contraseñas
+		  if ((!newcontrasena && currentcontrasena) || (!currentcontrasena && newcontrasena)) {
+			  return res.status(400).json({ error: "Por favor, proporciona tanto la contraseña actual como la nueva" });
+		  }
+  
+		  if (currentcontrasena && newcontrasena) {
+			  const isMatch = await bcrypt.compare(currentcontrasena, user.contrasena);
+			  if (!isMatch) return res.status(400).json({ error: "La contraseña actual es incorrecta" });
+  
+			  if (newcontrasena.length < 6) {
+				  return res.status(400).json({ error: "La nueva contraseña debe tener al menos 6 caracteres" });
+			  }
+			  user.contrasena = await bcrypt.hash(newcontrasena, 10);
+		  }
+  
+		  // Actualizar nombre, correo, país y biografía
+		user.nombre = nombre || user.nombre;
+		user.nombreCompleto =nombreCompleto|| user.nombreCompleto;
+        user.correo = correo || user.correo;
+        user.pais = pais || user.pais;
+        user.biografia = biografia || user.biografia;
+        user.fotoPerfil =  fotoPerfil || user.fotoPerfil;
+        user.fotoPerfilBan = fotoPerfilBan || user.fotoPerfilBan;
+  
+		  // Actualizar foto de perfil si es necesario
+		  if (fotoPerfil) {
+			  if (user.fotoPerfil) {
+				  await cloudinary.uploader.destroy(user.fotoPerfil.split("/").pop().split(".")[0]);
+			  }
+			  const uploadedResponse = await cloudinary.uploader.upload(fotoPerfil);
+			  user.fotoPerfil = uploadedResponse.secure_url;
+		  }
+  
+		  // Actualizar foto de banner si es necesario
+		  if (fotoPerfilBan) {
+			  if (user.fotoPerfilBan) {
+				  await cloudinary.uploader.destroy(user.fotoPerfilBan.split("/").pop().split(".")[0]);
+			  }
+			  const uploadedResponse = await cloudinary.uploader.upload(fotoPerfilBan);
+			  user.fotoPerfilBan = uploadedResponse.secure_url;
+		  }
+  
+		  // Buscar los géneros literarios seleccionados
+		  if (generoLiterarioPreferido && generoLiterarioPreferido.length > 0) {
+			  const generos = await GeneroLiterario.find({ _id: { $in: generoLiterarioPreferido } });
+			  if (generos.length !== generoLiterarioPreferido.length) {
+				  return res.status(400).json({ error: "Algunos géneros literarios seleccionados son inválidos" });
+			  }
+			  user.generoLiterarioPreferido = generos.map(genero => genero._id); // Actualiza los géneros literarios del usuario
+		  }
+  
+		  // Guardar los cambios en el usuario
+		  await user.save();
+
+			user.contrasena = null;
+
+		  res.status(200).json({ message: "Usuario actualizado correctamente", user });
+	  } catch (error) {
+		  console.error(error);
+		  res.status(500).json({ error: "Error en el servidor" });
 	  }
-  
-	  res.status(200).json({ message: "Usuario actualizado con éxito", usuarioActualizado });
-	} catch (error) {
-	  res.status(500).json({ error: "Error al actualizar usuario" });
-	}
   };
+  
+
+
   
   // Activar o desactivar usuario (cambiar el estado)
 export const cambiarEstadoUsuario = async (req, res) => {
@@ -400,3 +572,26 @@ export const eliminarUsuario = async (req, res) => {
 	}
   };
   
+  export const obtenerUserAct = async (req, res) => {
+    try {
+        const estado = true;
+
+        const user = await User.find({ estado: estado });
+        res.status(200).json({ user });
+    } catch (error) {
+        console.error("Error al obtener los user:", error.message);
+        res.status(500).json({ error: "Error al obtener los user." });
+    }
+};
+
+export const obtenerUsersDes = async (req, res) => {
+    try {
+        const estado = false;
+
+        const user = await User.find({ estado: estado });
+        res.status(200).json({ user });
+    } catch (error) {
+        console.error("Error al obtener los user:", error.message);
+        res.status(500).json({ error: "Error al obtener los user." });
+    }
+};

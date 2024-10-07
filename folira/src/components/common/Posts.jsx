@@ -6,6 +6,8 @@ import { useEffect } from "react";
 const Posts = ({feedType, nombre, userId}) => {
 
 	const getPostEndpoint = () =>{
+
+		
 		switch(feedType){
 			case "forYou":
 				return "/api/posts/all";

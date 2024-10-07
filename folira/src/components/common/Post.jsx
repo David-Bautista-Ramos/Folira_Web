@@ -1,9 +1,10 @@
 import { FaRegComment, FaRegHeart, FaRegBookmark, FaTrash } from "react-icons/fa";
-import { BiRepost } from "react-icons/bi";
+import { BiError } from "react-icons/bi";
 import { useState } from "react";
 import { Link } from "react-router-dom";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import toast from 'react-hot-toast';
+import ModalDenuncia from './DenunciaModal';
 
 import LoadinSpinner from './LoadingSpinner';
 import LoadingSpinner from "./LoadingSpinner";
@@ -121,25 +122,39 @@ const Post = ({ post }) => {
     likePost();
   };
 
+  const [denuncias, setDenuncias] = useState(0); // Estado para el número de denuncias
+  // const [notificaciones, setNotificaciones] = useState([]); // Estado para las notificaciones
+
+
+   // Función que se llama al hacer una denuncia
+   const handleDenuncia = () => {
+    setDenuncias(denuncias + 1);
+    // Agregar una nueva notificación
+    // setNotificaciones((prev) => [
+    //   ...prev,
+    //   `Se ha hecho una denuncia sobre tu publicación por: ${causa}`,
+    // ]);
+  };
+
   return (
-    <div className='flex gap-2 items-start p-4 border-b border-gray-700'>
+    <div className='flex gap-2 items-start p-4 border-b border-blue-950'>
       <div className='avatar'>
-        <Link to={`/profile/${postOwner._id}`} className='w-8 rounded-full overflow-hidden'>
+        <Link to={`/profile/${postOwner._id && postOwner.nombre}`} className='w-8 rounded-full overflow-hidden'>
           <img src={postOwner.fotoPerfil || "/avatar-placeholder.png"} alt='Profile' />
         </Link>
       </div>
       <div className='flex flex-col flex-1'>
         <div className='flex gap-2 items-center'>
-          <Link to={`/profile/${postOwner._id}`} className='font-bold'>
+          <Link to={`/profile/${postOwner._id && postOwner.nombre} `} className='font-bold'>
             {postOwner.nombreCompleto}
           </Link>
-          <span className='text-gray-700 flex gap-1 text-sm'>
-            <Link to={`/profile/${postOwner._id}`}>@{postOwner.nombre}</Link>
+          <span className='text-blue-950 flex gap-1 text-sm'>
+            <Link to={`/profile/${postOwner._id && postOwner.nombre}`}>@{postOwner.nombre}</Link>
             <span>·</span>
             <span>{formattedDate}</span>
           </span>
           {isMyPost && (
-            <span className='flex justify-end flex-1'>
+            <span className='text-blue-950 flex justify-end flex-1'>
               {!isDeleting && (<FaTrash className='cursor-pointer hover:text-red-500' onClick={handleDeletePost} />)}
               
               {isDeleting && (
@@ -148,30 +163,34 @@ const Post = ({ post }) => {
             </span>
           )}
         </div>
-        <div className='flex flex-col gap-3 overflow-hidden'>
-          <span>{post.contenido}</span>
+
+        <div className='flex flex-col gap-3'>
+          <span className='text-left max-w-full overflow-hidden text-ellipsis whitespace-normal break-all'>
+            {post.contenido}
+          </span>
           {post.fotoPublicacion && (
             <img
               src={post.fotoPublicacion}
-              className='h-80 object-contain rounded-lg border border-gray-700'
+              className='h-80 object-contain rounded-lg border border-blue-950'
               alt='Post'
             />
           )}
         </div>
+
         <div className='flex justify-between mt-3'>
           <div className='flex gap-4 items-center w-2/3 justify-between'>
             <div
               className='flex gap-1 items-center cursor-pointer group'
               onClick={() => document.getElementById("comments_modal" + post._id).showModal()}
             >
-              <FaRegComment className='w-4 h-4 text-slate-500 group-hover:text-sky-400' />
-              <span className='text-sm text-slate-500 group-hover:text-sky-400'>
+              <FaRegComment className='w-4 h-4 text-slate-500 group-hover:text-blue-950' /> 
+              <span className='text-sm text-slate-500 group-hover:text-blue-950'>
                 {post.comentarios ? post.comentarios.length : 0}
               </span>
             </div>
 
             <dialog id={`comments_modal${post._id}`} className='modal border-none outline-none'>
-              <div className='modal-box rounded border border-gray-600'>
+              <div className='modal-box rounded border border-blue-950'>
                 <h3 className='font-bold text-lg mb-4'>COMMENTS</h3>
                 <div className='flex flex-col gap-3 max-h-60 overflow-auto'>
                   {post.comentarios.length === 0 && (
@@ -180,25 +199,37 @@ const Post = ({ post }) => {
                     </p>
                   )}
                   {post.comentarios.map((comentarios) => (
+                    
                     <div key={comentarios._id} className='flex gap-2 items-start'>
-                      <div className='avatar'>
-                        <div className='w-8 rounded-full'>
-                          <img src={comentarios.user.fotoPerfil || "/avatar-placeholder.png"} alt='Profile' />
-                        </div>
-                      </div>
-                      <div className='flex flex-col'>
-                        <div className='flex items-center gap-1'>
-                          <span className='font-bold'>{comentarios.user.nombreCompleto}</span>
-                          <span className='text-gray-700 text-sm'>@{comentarios.user.nombre}</span>
-                        </div>
-                        <div className='text-sm'>{comentarios.text}</div>
+                    <div className='avatar'>
+                      <div className='w-8 rounded-full'>
+                        <img src={comentarios.user.fotoPerfil || "/avatar-placeholder.png"} alt='Profile' />
                       </div>
                     </div>
+                    <div className='flex flex-col'>
+                      <div className='flex items-center gap-1'>
+                        <span className='font-bold mr-2'>{comentarios.user.nombreCompleto}</span> {/* Añadido margin-right */}
+                        <span className='text-blue-950 text-sm'>@{comentarios.user.nombre}</span>
+                        
+                        {/* Agregar el icono de eliminar al lado del nombre del usuario */}
+                        <span className='text-blue-950 flex  flex-1 ml-14'> {/* Añadido ml-auto para mover el ícono al extremo derecho */}
+                          {!isDeleting && (
+                            <FaTrash className='cursor-pointer hover:text-red-500' onClick={handleDeletePost} />
+                          )}
+                          {isDeleting && (
+                            <LoadinSpinner size="sm" />
+                          )}
+                        </span>
+                      </div>
+                      <div className='text-sm'>{comentarios.text}</div>
+                    </div>
+                  </div>
+
                   ))}
                 </div>
-                <form className='flex gap-2 items-center mt-4 border-t border-gray-600 pt-2' onSubmit={handlePostComment}>
+                <form className='flex gap-2 items-center mt-4 border-t border-blue-950 pt-2' onSubmit={handlePostComment}>
                   <textarea
-                    className='textarea w-full p-1 rounded text-md resize-none border focus:outline-none border-gray-800'
+                    className='textarea w-full p-1 rounded text-md resize-none border focus:outline-none border-blue-950'
                     placeholder='Add a comment...'
                     value={comentarios}
                     onChange={(e) => setComentarios(e.target.value)}
@@ -212,11 +243,32 @@ const Post = ({ post }) => {
                 <button className='outline-none'>close</button>
               </form>
             </dialog>
-
+ 
+            <div>
+            {/* Aquí está el ícono que abrirá el modal */}
             <div className='flex gap-1 items-center group cursor-pointer'>
-              <BiRepost className='w-6 h-6 text-slate-500 group-hover:text-green-500' />
-              <span className='text-sm text-slate-500 group-hover:text-green-500'>0</span>
+                <BiError 
+                  className='w-6 h-6 text-slate-500 group-hover:text-yellow-500 '  
+                  onClick={() => document.getElementById("denuncia_modal").showModal()} // Abre el modal al hacer clic
+                />
+                <span className='text-sm text-slate-500 group-hover:text-yellow-500'>{denuncias}</span> {/* Muestra el número de denuncias */}
+              </div>
+
+              {/* Llama al ModalDenuncia aquí y pasa la función de denuncia */}
+              <ModalDenuncia onDenuncia={handleDenuncia} />
+
+              {/* Mostrar las notificaciones */}
+              {/* <div className='mt-4'>
+                {notificaciones.map((notificacion, index) => (
+                  <div key={index} className='notification'>
+                    {notificacion}
+                  </div>
+                ))}
+              </div> */}
             </div>
+
+
+
             <div className='flex gap-2 items-center group cursor-pointer' onClick={handleLikePost}>
             {isLiking && <LoadingSpinner size='sm' />}
 								{!isLiked && !isLiking && (

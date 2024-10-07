@@ -1,3 +1,172 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+/* scroll */
+
+/* Estilos para el scrollbar en navegadores WebKit (Chrome, Safari) */
+.scrollbar-custom::-webkit-scrollbar {
+  width: 4px; /* Ancho del scrollbar */
+}
+
+.scrollbar-custom::-webkit-scrollbar-thumb {
+  background-color: rgb(235, 237, 239); /* Color del thumb (parte que se mueve) */
+  border-radius: 20px; /* Bordes redondeados para el thumb */
+}
+
+.scrollbar-custom::-webkit-scrollbar-track {
+  background: transparent; /* Fondo del track (parte donde se desliza el thumb) */
+}
+
+/* Estilos para el scrollbar en Firefox */
+.scrollbar-custom {
+  scrollbar-width: thin; /* Para que el scrollbar sea delgado */
+  scrollbar-color: rgb(17, 24, 39) transparent; /* Color del thumb y del track */
+}
+
+
+/* Estilos scroll de modal de generos de perfil */
+/* Estilos para el scrollbar en navegadores basados en WebKit */
+.modal-scrollbar {
+    max-height: 400px; /* Altura máxima del contenedor del modal */
+    overflow-y: auto; /* Habilita el scroll vertical */
+}
+
+/* Scrollbar para Chrome, Safari y Edge */
+.modal-scrollbar::-webkit-scrollbar {
+    width: 8px; /* Ancho del scrollbar */
+}
+
+.modal-scrollbar::-webkit-scrollbar-track {
+    background: rgb(235, 237, 239); /* Color de fondo del track */
+    border-radius: 10px; /* Bordes redondeados del track */
+}
+
+.modal-scrollbar::-webkit-scrollbar-thumb {
+    background: #888; /* Color del thumb (barra) */
+    border-radius: 10px; /* Bordes redondeados del thumb */
+}
+
+.modal-scrollbar::-webkit-scrollbar-thumb:hover {
+    background: #555; /* Color del thumb al pasar el mouse */
+}
+
+/* Estilos para Firefox */
+.modal-scrollbar {
+    scrollbar-width: thin; /* Espesor del scrollbar */
+    scrollbar-color:  rgb(17, 24, 39) rgb(235, 237, 239); /* Color del thumb y del track */
+}
+
+
+/* ----------------------------------------- */
+
+/* Gestion notificacion */
+
+/* MODAL LIKES */
+
+.fixed {
+  position: fixed;
+}
+
+.inset-0 {
+  top: 0;
+  right: 0;
+  bottom: 0;
+  left: 0;
+}
+
+.bg-black {
+  background-color: rgba(0, 0, 0, 0.5);
+}
+
+.flex {
+  display: flex;
+}
+
+.justify-center {
+  justify-content: center;
+}
+
+.items-center {
+  align-items: center;
+}
+
+.z-50 {
+  z-index: 50;
+}
+
+.bg-white {
+  background-color: #fff;
+}
+
+.rounded-lg {
+  border-radius: 0.5rem;
+}
+
+.shadow-lg {
+  box-shadow: 0 10px 15px rgba(0, 0, 0, 0.1);
+}
+
+.p-4 {
+  padding: 1rem;
+}
+
+.w-96 {
+  width: 24rem;
+}
+
+.text-xl {
+  font-size: 1.25rem;
+}
+
+.font-semibold {
+  font-weight: 600;
+}
+
+.mb-4 {
+  margin-bottom: 1rem;
+}
+
+.py-2 {
+  padding-top: 0.5rem;
+  padding-bottom: 0.5rem;
+}
+
+.border-b {
+  border-bottom: 1px solid #e2e8f0;
+}
+
+.absolute {
+  position: absolute;
+}
+
+.top-2 {
+  top: 0.5rem;
+}
+
+.right-2 {
+  right: 0.5rem;
+}
+
+.text-lg {
+  font-size: 1.125rem;
+}
+
+.font-bold {
+  font-weight: 700;
+}
+
+.max-h-60 {
+  max-height: 15rem;
+}
+
+.overflow-y-auto {
+  overflow-y: auto;
+}
+
+
+
+
+
+
+
