@@ -1,60 +1,46 @@
-import { Link } from "react-router-dom";
+import { Link, Navigate } from "react-router-dom";
 import { useState } from "react";
-
-import Folira_logo from "../../../assets/img/Folira_logo (1).svg"; 
-
-
-import { MdOutlineMail } from "react-icons/md";
+import Folira_logo from "../../../assets/img/Folira_logo (1).svg";
+import { MdOutlineMail, MdPassword, MdDriveFileRenameOutline } from "react-icons/md";
 import { FaUser } from "react-icons/fa";
-import { MdPassword } from "react-icons/md";
-import { MdDriveFileRenameOutline } from "react-icons/md";
 import { useMutation } from "@tanstack/react-query";
 import toast from "react-hot-toast";
 
-
 const SignUpPage = () => {
+	const [redirectToHome, setRedirectToHome] = useState(false); // Agrega este estado
 	const [formData, setFormData] = useState({
-		correo: "",
-		nombre: "",
-		nombreCompleto:"",
-		pais: "",
-		contrasena: "",
+	  correo: "",
+	  nombre: "",
+	  nombreCompleto: "",
+	  pais: "",
+	  contrasena: "",
 	});
-
+  
 	const { mutate, isError, isPending, error } = useMutation({
-		mutationFn: async ({ correo, nombre, nombreCompleto, pais, contrasena }) => {
-			try {
-				const res = await fetch("/api/auth/signup", {
-					method: "POST",
-					headers: {
-						"Content-Type": "application/json",
-					},
-					body: JSON.stringify({ correo,  nombre, nombreCompleto, pais, contrasena}),
-				});
-
-				const data = await res.json();
-				if (!res.ok) throw new Error(data.error || "Failed to create account");
-				console.log(data);
-				return data;
-			} catch (error) {
-				console.error(error);
-				throw error;
-			}
-		},
-		onSuccess: () => {
-			toast.success("Account created successfully");
-
-			// {
-			// 	/* Added this line below, after recording the video. I forgot to add this while recording, sorry, thx. */
-			// }
-			// queryClient.invalidateQueries({ queryKey: ["authUser"] });
-		},
+	  mutationFn: async ({ correo, nombre, nombreCompleto, pais, contrasena }) => {
+		const res = await fetch("/api/auth/signup", {
+		  method: "POST",
+		  headers: { "Content-Type": "application/json" },
+		  body: JSON.stringify({ correo, nombre, nombreCompleto, pais, contrasena }),
+		});
+		const data = await res.json();
+		if (!res.ok) throw new Error(data.error || "Failed to create account");
+		return data;
+	  },
+	  onSuccess: () => {
+		toast.success("Cuenta creada exitosamente");
+		setRedirectToHome(true); // Configura la redirección al inicio
+	  },
 	});
-
+  
 	const handleSubmit = (e) => {
-		e.preventDefault();
-		mutate(formData);
+	  e.preventDefault();
+	  mutate(formData);
 	};
+  
+	if (redirectToHome) {
+	  return <Navigate to="/" />; // Redirecciona al inicio
+	}
 
 	const handleInputChange = (e) => {
 		setFormData({ ...formData, [e.target.name]: e.target.value });
@@ -62,11 +48,11 @@ const SignUpPage = () => {
 
 	return (
 		<div className='max-w-screen-xl mx-auto flex h-screen px-10'>
-			<div className='flex-1 hidden lg:flex items-center  justify-center'>
+			<div className='flex-1 hidden lg:flex items-center justify-center'>
 				<img className="w-50 h-50 cursor-pointer" src={Folira_logo} alt="logo_nav" />
 			</div>
 			<div className='flex-1 flex flex-col justify-center items-center'>
-				<form className='lg:w-2/3  mx-auto md:mx-20 flex gap-4 flex-col' onSubmit={handleSubmit}>
+				<form className='lg:w-2/3 mx-auto md:mx-20 flex gap-4 flex-col' onSubmit={handleSubmit}>
 					<img className="w-50 h-40 mt-[200px] -mb-[50px] cursor-pointer lg:hidden" src={Folira_logo} alt="logo_nav" />
 					<h1 className='text-4xl font-extrabold text-primary'>Únete hoy.</h1>
 					<label className='input input-bordered rounded flex items-center gap-2'>
@@ -85,7 +71,7 @@ const SignUpPage = () => {
 							<FaUser />
 							<input
 								type='text'
-								className='grow '
+								className='grow'
 								placeholder='Nombre de Usuario'
 								name='nombre'
 								onChange={handleInputChange}
@@ -96,7 +82,7 @@ const SignUpPage = () => {
 							<FaUser />
 							<input
 								type='text'
-								className='grow '
+								className='grow'
 								placeholder='Nombre Completo'
 								name='nombreCompleto'
 								onChange={handleInputChange}
@@ -141,4 +127,5 @@ const SignUpPage = () => {
 		</div>
 	);
 };
+
 export default SignUpPage;

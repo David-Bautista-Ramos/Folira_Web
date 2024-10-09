@@ -1,43 +1,55 @@
-import { generateTokenAndSetCookie } from '../lib/utils/generateToken.js';
-import User from '../models/user.model.js';
-import bcrypt from 'bcryptjs';
-import * as Yup from 'yup';
+import { generateTokenAndSetCookie } from "../lib/utils/generateToken.js";
+import User from "../models/user.model.js";
+import bcrypt from "bcryptjs";
+import * as Yup from "yup";
 
-const validDomains = ['gmail.com', 'yahoo.com', 'outlook.com', 'hotmail.com', 'icloud.com'];
+const validDomains = [
+  "gmail.com",
+  "yahoo.com",
+  "outlook.com",
+  "hotmail.com",
+  "icloud.com",
+];
 
 // Esquema de validación usando Yup
 const userValidationSchema = Yup.object().shape({
   nombre: Yup.string()
-    .required('El nombre es obligatorio.')
-    .min(3, 'El nombre debe tener al menos 3 caracteres.')
-    .max(50, 'El nombre no puede tener más de 50 caracteres.')
-    .matches(/^[a-zA-Z0-9]+$/, 'El nombre solo puede contener letras y números.'),
-  
-  nombreCompleto: Yup.string()
-    .required('El nombre completo es obligatorio.')
-    .min(5, 'El nombre completo debe tener al menos 5 caracteres.')
-    .max(100, 'El nombre completo no puede exceder los 100 caracteres.'),
+    .required("El nombre es obligatorio.")
+    .min(3, "El nombre debe tener al menos 3 caracteres.")
+    .max(50, "El nombre no puede tener más de 50 caracteres.")
+    .matches(
+      /^[a-zA-Z0-9]+$/,
+      "El nombre solo puede contener letras y números."
+    ),
 
-    correo: Yup.string()
-    .required('El correo es obligatorio.')
-    .email('Formato de correo inválido.')
-    .test('valid-domain', 'Dominio de correo no válido.', (value) => {
+  nombreCompleto: Yup.string()
+    .required("El nombre completo es obligatorio.")
+    .min(5, "El nombre completo debe tener al menos 5 caracteres.")
+    .max(100, "El nombre completo no puede exceder los 100 caracteres."),
+
+  correo: Yup.string()
+    .required("El correo es obligatorio.")
+    .email("Formato de correo inválido.")
+    .test("valid-domain", "Dominio de correo no válido.", (value) => {
       if (!value) return false;
-      const domain = value.split('@')[1];
+      const domain = value.split("@")[1];
       return validDomains.includes(domain);
     }),
   contrasena: Yup.string()
-    .required('La contraseña es obligatoria.')
-    .min(8, 'La contraseña debe tener al menos 8 caracteres.')
-    .matches(/[a-z]/, 'La contraseña debe tener al menos una letra minúscula.')
-    .matches(/[A-Z]/, 'La contraseña debe tener al menos una letra mayúscula.')
-    .matches(/\d/, 'La contraseña debe tener al menos un número.')
-    .matches(/[!@#$%^&*(),.?":{}|<>]/, 'La contraseña debe tener al menos un carácter especial.'),
+    .required("La contraseña es obligatoria.")
+    .min(8, "La contraseña debe tener al menos 8 caracteres.")
+    .matches(/[a-z]/, "La contraseña debe tener al menos una letra minúscula.")
+    .matches(/[A-Z]/, "La contraseña debe tener al menos una letra mayúscula.")
+    .matches(/\d/, "La contraseña debe tener al menos un número.")
+    .matches(
+      /[!@#$%^&*(),.?":{}|<>]/,
+      "La contraseña debe tener al menos un carácter especial."
+    ),
 
   pais: Yup.string()
-    .required('El país es obligatorio.')
-    .min(3, 'El país debe tener al menos 3 caracteres.')
-    .max(56, 'El país no puede exceder los 56 caracteres.')
+    .required("El país es obligatorio.")
+    .min(3, "El país debe tener al menos 3 caracteres.")
+    .max(56, "El país no puede exceder los 56 caracteres."),
 });
 
 // Sign up - Registro
@@ -51,13 +63,13 @@ export const signup = async (req, res) => {
     // Verificar si el nombre de usuario ya existe
     const existingUser = await User.findOne({ nombre });
     if (existingUser) {
-      return res.status(400).json({ error: 'El nombre de usuario ya existe.' });
+      return res.status(400).json({ error: "El nombre de usuario ya existe." });
     }
 
     // Verificar si el correo ya existe
     const existingEmail = await User.findOne({ correo });
     if (existingEmail) {
-      return res.status(400).json({ error: 'El correo ya está registrado.' });
+      return res.status(400).json({ error: "El correo ya está registrado." });
     }
 
     // Cifrar la contraseña
@@ -71,7 +83,7 @@ export const signup = async (req, res) => {
       correo,
       contrasena: hashedPassword,
       pais,
-      roles: 'usuario', // Asignar roles como corresponda
+      roles: "usuario", // Asignar roles como corresponda
     });
 
     // Guardar el usuario
@@ -96,9 +108,9 @@ export const signup = async (req, res) => {
       roles: newUser.roles,
     });
   } catch (error) {
-    if (error.name === 'ValidationError') {
+    if (error.name === "ValidationError") {
       // Error de validación de Yup
-      return res.status(400).json({ error: error.errors.join(', ') });
+      return res.status(400).json({ error: error.errors.join(", ") });
     }
     console.error("Error in signup controller:", error.message);
     return res.status(500).json({ error: "Error en el servidor." });
@@ -113,13 +125,17 @@ export const login = async (req, res) => {
     // Buscar usuario por correo
     const user = await User.findOne({ correo });
     if (!user) {
-      return res.status(400).json({ error: 'Correo o contraseña incorrectos.' });
+      return res
+        .status(400)
+        .json({ error: "Correo o contraseña incorrectos." });
     }
 
     // Comparar contraseñas
     const isPasswordCorrect = await bcrypt.compare(contrasena, user.contrasena);
     if (!isPasswordCorrect) {
-      return res.status(400).json({ error: 'Correo o contraseña incorrectos.' });
+      return res
+        .status(400)
+        .json({ error: "Correo o contraseña incorrectos." });
     }
 
     // Generar token y guardar en cookie
@@ -149,8 +165,8 @@ export const login = async (req, res) => {
 // Logout - Cerrar sesión
 export const logout = async (req, res) => {
   try {
-    res.cookie('jwt', '', { maxAge: 0 });
-    return res.status(200).json({ message: 'Sesión cerrada con éxito.' });
+    res.cookie("jwt", "", { maxAge: 0 });
+    return res.status(200).json({ message: "Sesión cerrada con éxito." });
   } catch (error) {
     console.error("Error en logout controller:", error.message);
     return res.status(500).json({ error: "Error en el servidor." });
@@ -160,7 +176,7 @@ export const logout = async (req, res) => {
 // Obtener usuario autenticado (getMe)
 export const getMe = async (req, res) => {
   try {
-    const user = await User.findById(req.user._id).select('-contrasena');
+    const user = await User.findById(req.user._id).select("-contrasena");
     return res.status(200).json(user);
   } catch (error) {
     console.error("Error in getMe controller:", error.message);

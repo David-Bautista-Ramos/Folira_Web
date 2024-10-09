@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import ModalActivarDenuncia from "./ModalActivarDenuncia";
 import ModalActualizarDenuncia from "./ModalActualizarDenuncia";
 import ModalInactivarDenuncia from "./ModalInactivarDenuncia";
@@ -7,68 +7,70 @@ import { BiEdit, BiPowerOff, BiReset, BiShow, BiHide } from "react-icons/bi";
 import Nav from "../../components/common/Nav";
 import ModalFiltroEstado from "../../components/common/ModalListarDenuncia"
 
-const denuncias = [
-    {
-        tipo: "usuario",
-        denunciante: {
-            nombreCompleto: "Juan Pérez",
-            fotoPerfil: "https://example.com/perfil-juan.jpg"
-        },
-        denunciado: {
-            nombreCompleto: "Carlos López",
-            motivo: "Comportamiento inapropiado",
-        },
-        estado: "activo", 
-    },
-    {
-        tipo: "publicacion",
-        denunciante: {
-            nombreCompleto: "Maria García",
-            fotoPerfil: "https://example.com/perfil-maria.jpg"
-        },
-        denunciado: {
-            nombreCompleto: "Luis Martínez",
-            contenido: "¡Estoy disfrutando de 'Cien años de soledad' de Gabriel García Márquez!",
-            fotoPublicacion: "https://example.com/cien-anos-soledad.jpg",
-            motivo: "Contenido ofensivo"
-        },
-        estado: "inactivo", 
-    },
-    {
-        tipo: "comunidad",
-        denunciante: {
-            nombreCompleto: "Ana Torres",
-            fotoPerfil: "https://example.com/perfil-ana.jpg"
-        },
-        denunciado: {
-            nombreCompleto: "Comunidad Literaria",
-            motivo: "Spam"
-        },
-        estado: "activo", 
-    },
-    {
-        tipo: "resena",
-        denunciante: {
-            nombreCompleto: "Carlos Díaz",
-            fotoPerfil: "https://example.com/perfil-carlos.jpg"
-        },
-        denunciado: {
-            nombreCompleto: "Maria García",
-            contenido: "Una reseña muy mal escrita y sin fundamento.",
-            motivo: "Falsedad"
-        },
-        estado: "inactivo", 
-    },
-];
 
 function GestionDenuncias() {
-    const [modalUsuarioOpen, setModalUsuarioOpen] = useState(false);
-    const [modalPublicacionOpen, setModalPublicacionOpen] = useState(false);
-    const [modalInactivarOpen, setModalInactivarOpen] = useState(false); 
+ 
+    const [ denuncias, setDenuncias] = useState ([]); //para obtener el arrays
+    const [selectedDenunciasId, setsSelectedDenunciasId] = useState (null); //guardara el ID de loq ue queramos actualiza , eliminar
+
+    const [isModalUsuarioOpen, setModalUsuarioOpen] = useState(false);
+    const [isModalPublicacionOpen, setModalPublicacionOpen] = useState(false);
+    const [isModalInactivarOpen, setModalInactivarOpen] = useState(false); 
+
     const [expandedPosts, setExpandedPosts] = useState({}); 
     const [selectedDenuncia, setSelectedDenuncia] = useState(null); 
     const [filterModalOpen, setFilterModalOpen] = useState(false);
     const [estadoFiltrado, setEstadoFiltrado] = useState(null);
+    const [isLoading, setIsLoading] = useState(true);
+
+    // Metodo para llamar a todo lo que necesitamos
+    const obtenerDenuncias = async () => {
+        setIsLoading(true);
+        try {
+            const response = await fetch('/api/denuncias/denuncia', {
+                method: 'GET',
+                headers: {
+                    'Content-type': 'application/json',
+                }
+            });
+
+            if (!response.ok) {
+                throw new Error('Error al obtener las denuncias');
+            }
+
+            const data = await response.json();
+
+            // Asegúrate de que data sea un array
+            if (Array.isArray(data)) {
+                setDenuncias(data); // Asigna los usuarios obtenidos al estado
+                setFilterModalOpen(data); // También asigna a usuarios filtrados
+            } else {
+                console.error('La respuesta de lod libros no es un array:', data);
+            }
+        } catch (error) {
+            console.error('Error', error);
+        }finally{
+            setIsLoading(false);
+        }
+    }
+
+    // Crear un efecto
+    useEffect(()=> {
+        obtenerDenuncias();
+    }, []);
+
+    //filtrado por estado
+    const handleFilter = (filter) => {
+        console.log(`Filter selected: ${filter}`);
+        setIsLoading(true);
+
+        try {
+            
+        } catch (error) {
+            
+        }
+    }
+
 
     const handleActivar = (denuncia) => {
         setSelectedDenuncia(denuncia);
@@ -198,17 +200,17 @@ function GestionDenuncias() {
 
             {/* Modales para gestionar denuncias */}
             <ModalActivarDenuncia
-                isOpen={modalUsuarioOpen}
+                isOpen={isModalUsuarioOpen}
                 onClose={() => setModalUsuarioOpen(false)}
                 denuncia={selectedDenuncia}
             />
             <ModalInactivarDenuncia
-                isOpen={modalInactivarOpen}
+                isOpen={isModalInactivarOpen}
                 onClose={() => setModalInactivarOpen(false)}
                 denuncia={selectedDenuncia}
             />
             <ModalActualizarDenuncia
-                isOpen={modalPublicacionOpen}
+                isOpen={isModalPublicacionOpen}
                 onClose={() => setModalPublicacionOpen(false)}
                 denuncia={selectedDenuncia}
             />

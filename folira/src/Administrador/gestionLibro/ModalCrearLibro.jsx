@@ -1,172 +1,300 @@
-import { useState } from "react";
+import { useState, useRef, useEffect } from "react";
+import useCreateLibro from "../../hooks/useCreateLibro";
 
-function ModalCrearLibro({ isOpen, onClose }) {
-  const [image, setImage] = useState("");
-  const [name, setName] = useState("");
-  const [isbn, setIsbn] = useState("");
-  const [saga, setSaga] = useState("");
+function ModalCrearLibro({ isOpen, onClose, token }) {
+  const [formData, setFormData] = useState({
+    titulo: "",
+    isbn: "",
+    saga: "",
+    fechaPublicacion: "",
+    editorial: "",
+    autor: "",
+    sinopsis: "",
+  });
+
+  const [fotoLibro, setFotoLibro] = useState("");
+  const [availableGeneros, setAvailableGeneros] = useState([]); // Store available genres
+  const [availableAutor, setAvailableAutores] = useState([]); // Store available genres
   const [selectedGeneros, setSelectedGeneros] = useState([]);
+  const [selectedAutores, setSelectedAutores] = useState([]);
   const [showGeneros, setShowGeneros] = useState(false);
+  const [showAutores, setshowAutores] = useState(false);
+  const fotoLibroRef = useRef(null);
+  const { createLibro, isCreatingLibro } = useCreateLibro();
 
-  const generosDisponibles = [
-    "Ficción",
-    "No ficción",
-    "Ciencia ficción",
-    "Fantasía",
-    "Misterio",
-    "Romance",
-    "Terror",
-    "Biografía",
-  ];
-
-  if (!isOpen) return null;
-
-  const handleImageChange = (e) => {
-    setImage(URL.createObjectURL(e.target.files[0]));
+  const handleInputChange = (e) => {
+    const { name, value } = e.target;
+    setFormData((prevData) => ({
+      ...prevData,
+      [name]: value,
+    }));
   };
 
-  const handleGeneroChange = (genero) => {
-    if (selectedGeneros.includes(genero)) {
-      setSelectedGeneros(selectedGeneros.filter((g) => g !== genero));
-    } else {
-      setSelectedGeneros([...selectedGeneros, genero]);
+  const handleImgChange = (e) => {
+    const file = e.target.files[0];
+    if (file) {
+      const reader = new FileReader();
+      reader.onload = () => {
+        setFotoLibro(reader.result);
+      };
+      reader.readAsDataURL(file);
     }
   };
 
-  const toggleGeneros = () => {
-    setShowGeneros(!showGeneros);
+  const handleGeneroChange = (genero) => {
+    setSelectedGeneros((prevSelected) => {
+      if (prevSelected.includes(genero)) {
+        return prevSelected.filter((g) => g !== genero);
+      } else {
+        return [...prevSelected, genero];
+      }
+    });
+  };
+  const handleAutoresChange = (autor) => {
+    setSelectedAutores((prevSelected) => {
+      if (prevSelected.includes(autor)) {
+        return prevSelected.filter((g) => g !== autor);
+      } else {
+        return [...prevSelected, autor];
+      }
+    });
   };
 
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    try {
+      await createLibro({
+        ...formData,
+        generos: selectedGeneros,
+        portada: fotoLibro, // Correctly pass the fotoLibro state
+      });
+      // Optionally, clear the form after submission
+      setFormData({
+        titulo: "",
+        isbn: "",
+        saga: "",
+        fechaPublicacion: "",
+        editorial: "",
+        autor: "",
+        sinopsis: "",
+      });
+      setSelectedGeneros([]);
+      setFotoLibro("");
+      onClose(); // Close modal on successful creation
+    } catch (error) {
+      console.error("Error creating book:", error);
+    }
+  };
+
+  const toggleGeneros = () => setShowGeneros(!showGeneros);
+  const toggleAutores = () => setshowAutores(!showAutores);
+
+
+  useEffect(() => {
+    const fetchGeneros = async () => {
+      try {
+        const response = await fetch("/api/geneLiter/getgeneros", {
+          method: "GET",
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        });
+        const generos = await response.json();
+        setAvailableGeneros(generos); // Store available genres for display
+      } catch (error) {
+        console.error("Error al obtener los géneros literarios:", error);
+      }
+    };
+    fetchGeneros();
+  }, [token]);
+
+  useEffect(() => {
+    const fetchAutores = async () => {
+      try {
+        const response = await fetch("/api/autores/autores", { // Corrected URL
+          method: "GET",
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        });
+        const autores = await response.json();
+        setAvailableAutores(autores); // Set autores
+      } catch (error) {
+        console.error("Error al obtener los autores:", error);
+      }
+    };
+    fetchAutores();
+  }, [token]);
+
+  if (!isOpen) return null;
+
   return (
-    <div className="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center z-50" onClick={onClose}>
+    <div
+      className="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center z-50"
+      onClick={onClose}
+    >
       <div
         className="bg-white p-5 rounded-lg w-80 md:w-96 relative overflow-hidden"
         onClick={(e) => e.stopPropagation()}
       >
-      
         <div className="border-b-2 border-primary pb-2 mb-5">
           <h2 className="text-lg text-center text-primary">CREAR LIBRO</h2>
         </div>
-        <div className="overflow-y-auto max-h-80 mb-5 text-[#503B31] text-lg modal-scrollbar">
-          <label className="block mb-1  text-primary">Portada</label>
+        <form onSubmit={handleSubmit} className="overflow-y-auto max-h-80 text-[#503B31] text-lg modal-scrollbar">
+          <div className="relative group/cover">
+            <img
+              src={fotoLibro || "/cover.png"}
+              className="h-52 w-full object-cover"
+              alt="cover image"
+            />
+          </div>
+          <div
+            className="absolute top-2 right-2 rounded-full p-2 bg-gray-800 bg-opacity-75 cursor-pointer opacity-0 group-hover/cover:opacity-100 transition duration-200"
+            onClick={() => fotoLibroRef.current.click()}
+          >
+            <span className="w-5 h-5 text-white">Editar</span>
+          </div>
+
+          <label className="block mb-1 text-primary">Portada</label>
           <input
             type="file"
+            hidden
             accept="image/*"
-            onChange={handleImageChange}
-            className="w-full p-2 mb-3 border border-gray-300 rounded focus:border-primary focus:outline-none"
+            ref={fotoLibroRef}
+            onChange={handleImgChange}
           />
-          {image && (
-            <img
-              src={image}
-              alt="Preview"
-              className="max-w-full h-auto mb-3"
-            />
-          )}
-
-          <label className="block mb-1  text-primary">Título</label>
+          <div className="avatar absolute -bottom-16 left-4">
+            <div className="w-32 rounded-full relative group/avatar bottom-44 left-8">
+              <img src={fotoLibro || "/avatar-placeholder.png"} alt="profile avatar" />
+              <div className="absolute top-5 right-3 p-1 bg-primary rounded-full group-hover/avatar:opacity-100 opacity-0 cursor-pointer">
+                <span
+                  className="w-4 h-4 text-white"
+                  onClick={() => fotoLibroRef.current.click()}
+                >
+                  Editar
+                </span>
+              </div>
+            </div>
+          </div>
+          <label className="block mb-1 text-primary">Título</label>
           <input
             type="text"
-            value={name}
-            onChange={(e) => setName(e.target.value)}
+            name="titulo"
+            value={formData.titulo}
+            onChange={handleInputChange}
             placeholder="Nombre del libro"
-            className="w-full p-2 mb-3 border  rounded focus:border-primary focus:outline-none"
+            className="w-full p-2 mb-3 border rounded focus:border-primary focus:outline-none"
           />
 
-          <label className="block mb-1  text-primary">ISBN</label>
+          <label className="block mb-1 text-primary">ISBN</label>
           <input
             type="text"
-            value={isbn}
-            onChange={(e) => setIsbn(e.target.value)}
+            name="isbn"
+            value={formData.isbn}
+            onChange={handleInputChange}
             placeholder="ISBN del libro"
-            className="w-full p-2 mb-3 border  rounded focus:border-primary focus:outline-none"
+            className="w-full p-2 mb-3 border rounded focus:border-primary focus:outline-none"
           />
 
-          <label className="block mb-1  text-primary">Fecha de publicación</label>
+          <label className="block mb-1 text-primary">Fecha de Publicación</label>
           <input
             type="text"
-            value={name}
-            onChange={(e) => setName(e.target.value)}
+            name="fechaPublicacion"
+            value={formData.fechaPublicacion}
+            onChange={handleInputChange}
             placeholder="Fecha de publicación"
-            className="w-full p-2 mb-3 border  rounded focus:border-primary focus:outline-none"
+            className="w-full p-2 mb-3 border rounded focus:border-primary focus:outline-none"
           />
 
-          <label className="block mb-1  text-primary">Editorial</label>
+          <label className="block mb-1 text-primary">Editorial</label>
           <input
             type="text"
-            value={name}
-            onChange={(e) => setName(e.target.value)}
-            placeholder="Editorial"
-            className="w-full p-2 mb-3 border  rounded focus:border-primary focus:outline-none"
-          />
-
-          <label className="block mb-1  text-primary">Autor</label>
-          <input
-            type="text"
-            value={name}
-            onChange={(e) => setName(e.target.value)}
+            name="editorial"
+            value={formData.editorial}
+            onChange={handleInputChange}
             placeholder="Editorial"
             className="w-full p-2 mb-3 border rounded focus:border-primary focus:outline-none"
           />
 
-          <label className="block mb-1  text-primary">Sinopsis</label>
+          <label className="block mb-1 text-primary">Sinopsis</label>
           <textarea
-            value={name}
-            onChange={(e) => setName(e.target.value)}
+            name="sinopsis"
+            value={formData.sinopsis}
+            onChange={handleInputChange}
             placeholder="Sinopsis"
-            className="w-full p-2 mb-3 border  rounded focus:border-primary focus:outline-none"
+            className="w-full p-2 mb-3 border rounded focus:border-primary focus:outline-none"
           />
 
-          <label className="block mb-1  text-primary">Serie</label>
+          <label className="block mb-1 text-primary">Saga</label>
           <input
             type="text"
-            value={saga}
-            onChange={(e) => setSaga(e.target.value)}
-            placeholder="Serie"
-            className="w-full p-2 mb-3 border  rounded focus:border-primary focus:outline-none"
+            name="saga"
+            value={formData.saga}
+            onChange={handleInputChange}
+            placeholder="Saga"
+            className="w-full p-2 mb-3 border rounded focus:border-primary focus:outline-none"
           />
 
-          <div>
-            <label className="block mb-1  text-primary">Generos</label>
+        <div>
+            <label className="block mb-1 text-primary">Autores</label>
             <button
               type="button"
-              className="w-full p-2 mb-3   rounded focus:border-primary focus:outline-none text-gray-500 text-left"
-              onClick={toggleGeneros}
+              onClick={toggleAutores}
+              className="bg-primary text-white p-2 rounded mb-2"
             >
-              Seleccionar Géneros {selectedGeneros.length > 0 ? `(${selectedGeneros.join(", ")})` : ""}
+              {showAutores ? "Ocultar Autores" : "Mostrar Autores"}
             </button>
-            {showGeneros && (
-              <div className="border border-primary rounded p-2 mb-3">
-                {generosDisponibles.map((genero) => (
-                  <div key={genero} className="flex items-center text-gray-500">
+            {showAutores && (
+              <div className="flex flex-wrap">
+                {availableAutor.map((autor) => (
+                  <div key={autor.id} className="flex items-center mr-2">
                     <input
                       type="checkbox"
-                      id={genero}
-                      value={genero}
-                      checked={selectedGeneros.includes(genero)}
-                      onChange={() => handleGeneroChange(genero)}
-                      className="mr-2"
+                      checked={selectedAutores.includes(autor.name)}
+                      onChange={() => handleAutoresChange(autor.name)}
+                      className="mr-1"
                     />
-                    <label htmlFor={genero}>{genero}</label>
+                    <span>{autor.name}</span>
                   </div>
                 ))}
               </div>
             )}
           </div>
 
-          
-        </div>
+          <div>
+            <label className="block mb-1 text-primary">Géneros</label>
+            <button
+              type="button"
+              onClick={toggleGeneros}
+              className="bg-primary text-white p-2 rounded mb-2"
+            >
+              {showGeneros ? "Ocultar Géneros" : "Mostrar Géneros"}
+            </button>
+            {showGeneros && (
+              <div className="flex flex-wrap">
+                {availableGeneros.map((genero) => (
+                  <div key={genero.id} className="flex items-center mr-2">
+                    <input
+                      type="checkbox"
+                      checked={selectedGeneros.includes(genero.name)}
+                      onChange={() => handleGeneroChange(genero.name)}
+                      className="mr-1"
+                    />
+                    <span>{genero.name}</span>
+                  </div>
+                ))}
+              </div>
+            )}
+          </div>
 
-        <div className="flex justify-end gap-2">
           <button
-            className="px-4 py-2 bg-gray-300 text-gray-800 rounded-md  hover:bg-gray-400"
-            onClick={onClose}
+            type="submit"
+            className="w-full bg-primary text-white p-2 rounded mt-3"
+            disabled={isCreatingLibro}
           >
-            Cancelar
+            {isCreatingLibro ? "Creando..." : "Crear Libro"}
           </button>
-          <button className="px-4 py-2 border rounded bg-primary text-white hover:bg-blue-950">
-            Crear
-          </button>
-        </div>
+        </form>
       </div>
     </div>
   );

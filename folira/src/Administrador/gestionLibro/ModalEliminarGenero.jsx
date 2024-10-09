@@ -1,6 +1,37 @@
-function ModalEliminarGenero({ isOpen, onClose }) {
+import { useState } from "react";
+
+function ModalEliminarGenero({ isOpen, onClose, generoId, obtenerGenerosLiterarios }) {
+  const [loading, setLoading] = useState(false);
+
     if (!isOpen) return null;
   
+    const handleDelete = async () => {
+      setLoading(true);
+    try {
+      const response = await fetch(`/api/geneLiter//elimgeneros/${generoId}`, {
+        method: 'DELETE',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+      });
+
+      if (!response.ok) {
+        throw new Error("Error al Eliminar el Autor");
+      }
+
+      const data = await response.json();
+      console.log(data.message); // Mensaje de éxito o error
+      obtenerGenerosLiterarios(); // Vuelve a obtener los usuarios actualizados
+      onClose(); // Cierra el modal después de la activación
+      } catch (error) {
+        console.error("Error:", error);
+      } finally {
+        setLoading(false);
+      }
+
+    };
+
+
     return (
       <div 
         className="fixed top-0 left-0 w-full h-full bg-black bg-opacity-50 flex justify-center items-center z-50" 
@@ -20,10 +51,12 @@ function ModalEliminarGenero({ isOpen, onClose }) {
             >
               Cancelar
             </button>
-            <button 
-              className="px-4 py-2 border  rounded bg-primary text-white hover:bg-blue-950"
+            <button
+            className={`px-4 py-2 border rounded bg-primary text-white hover:bg-blue-950 ${loading ? 'opacity-50' : ''}`}
+            onClick={handleDelete}
+            disabled={loading}
             >
-              Eliminar
+              {loading ? "Eliminando..." : "Eliminar"}
             </button>
           </div>
         </div>
