@@ -61,36 +61,38 @@ function App() {
       </div>
     );
   }
+ // Verifica si la ruta actual es una de gestión
+ const isGestionRoute =
+ location.pathname.startsWith('/gestion');
 
-  // Verifica si la ruta actual es una de gestión, incluyendo gestionComunidad
-  const isGestionRoute = 
-    location.pathname === '/gestionUsuario' || 
-    location.pathname === '/gestionLibro' || 
-    location.pathname === '/gestionComunidad' ||
-    location.pathname === '/gestionAutor' ||
-    location.pathname === '/gestionPublicacion' ||
-    location.pathname === '/gestionResenas' ||
-    location.pathname === '/gestionNotificacion' ||
-    location.pathname === '/gestionDenuncia'
-	
-	; // Incluye gestionComunidad
+
+ const AdminRoute = ({ children }) => {
+  // Verifica si el usuario está autenticado y si tiene el rol de administrador
+  if (authUser && authUser.roles === 'admin') {
+    // Permite el acceso si es administrador
+    return children;
+  }
+  
+  // Si no es administrador, redirigirlo a la página principal (Home)
+  return <Navigate to='/' />;
+};
 
   return (
     <div>
-      {/* Si estamos en la ruta de gestión, solo renderizamos la vista de gestión sin Sidebar ni RightPanel */}
+      {/* Si estamos en la ruta de gestión, solo renderizamos la vista de gestión */}
       {isGestionRoute ? (
         <div className='flex max-w-6xl mx-auto'>
           <main className='flex-1'>
-            <Routes>
-              <Route path='/gestionUsuario' element={authUser ? <GestionUsuario /> : <Navigate to='/login' />} />
-              <Route path='/gestionLibro' element={authUser ? <GestionLibro /> : <Navigate to='/login' />} />
-              <Route path='/gestionComunidad' element={authUser ? <GestionComunidad /> : <Navigate to='/login' />} />
-              <Route path='/gestionAutor' element={authUser ? <GestionAutor /> : <Navigate to='/login' />} />
-              <Route path='/gestionPublicacion' element={authUser ? <GestionPublicacion /> : <Navigate to='/login' />} />
-              <Route path='/gestionResenas' element={authUser ? <GestionResenas /> : <Navigate to='/login' />} />
-              <Route path='/gestionNotificacion' element={authUser ? <GestionNotificacion /> : <Navigate to='/login' />} />
-              <Route path='/gestionDenuncia' element={authUser ? <GestionDenuncias /> : <Navigate to='/login' />} />
-			      </Routes>
+          <Routes>
+                <Route path='/gestionUsuario' element={<AdminRoute><GestionUsuario /></AdminRoute>} />
+                <Route path='/gestionLibro' element={<AdminRoute><GestionLibro /></AdminRoute>} />
+                <Route path='/gestionComunidad' element={<AdminRoute><GestionComunidad /></AdminRoute>} />
+                <Route path='/gestionAutor' element={<AdminRoute><GestionAutor /></AdminRoute>} />
+                <Route path='/gestionPublicacion' element={<AdminRoute><GestionPublicacion /></AdminRoute>} />
+                <Route path='/gestionResenas' element={<AdminRoute><GestionResenas /></AdminRoute>} />
+                <Route path='/gestionNotificacion' element={<AdminRoute><GestionNotificacion /></AdminRoute>} />
+                <Route path='/gestionDenuncia' element={<AdminRoute><GestionDenuncias /></AdminRoute>} />
+          </Routes>
           </main>
         </div>
       ) : (
@@ -100,7 +102,7 @@ function App() {
             <main className='flex-1'>
               <Routes>
                 <Route path='/' element={authUser ? <HomePage /> : <Navigate to='/login' />} />
-                <Route path='/login' element={!authUser ? <LoginPage /> : <Navigate to='/' />} />
+                <Route path='/login' element={!authUser ? <LoginPage /> :<Navigate to='/' /> } />
                 <Route path='/signup' element={!authUser ? <SignUpPage /> : <Navigate to='/' />} />
                 <Route path='/notifications' element={authUser ? <NotificationPage /> : <Navigate to='/login' />} />
                 <Route path='/profile/:nombre' element={authUser ? <ProfilePage /> : <Navigate to='/login' />} />

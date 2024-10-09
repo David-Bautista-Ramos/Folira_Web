@@ -1,160 +1,278 @@
-import { useState } from 'react';
-import { BsEye } from 'react-icons/bs';
-import { IoEyeOff } from 'react-icons/io5';
- // Importa los iconos de Bicon
+import { useEffect, useState, useRef } from "react";
+import useUpdateUsers from "../../hooks/useUpdateUsers";
 
-function ModalActualizarUsuario({ isOpen, onClose }) {
-    const [image, setImage] = useState("");
-    const [username, setUsername] = useState("");
-    const [fullName, setFullName] = useState("");
-    const [email, setEmail] = useState("");
-    const [password, setPassword] = useState("");
-    const [dob, setDob] = useState("");
-    const [bio, setBio] = useState("");
-    const [errors, setErrors] = useState({});
-    const [showPassword, setShowPassword] = useState(false); // Estado para mostrar/ocultar contraseña
+const ModalActualizarUsuario = ({ isOpen, onClose, userId, token }) => {
+    const [formData, setFormData] = useState({
+        nombre: "",
+        nombreCompleto: "",
+        correo: "",
+        pais: "",
+        biografia: "",
+        newcontrasena: "",
+        currentcontrasena: "",
+        generoLiterarioPreferido: [],
+    });
+    const [fotoPerfilBan, setFotoPerfilBan] = useState(null);
+    const [fotoPerfil, setFotoPerfil] = useState(null);
+    const [generoLiterarioPreferido, setGeneroLiterarioPreferido] = useState([]);
 
-    if (!isOpen) return null;
+    const fotoPerfilBanRef = useRef(null);
+    const fotoPerfilRef = useRef(null);
 
-    const handleImageChange = (e) => {
-        setImage(URL.createObjectURL(e.target.files[0]));
+    const handleImgChange = (e, state) => {
+        const file = e.target.files[0];
+        if (file) {
+            const reader = new FileReader();
+            reader.onload = () => {
+                state === "coverImg" && setFotoPerfilBan(reader.result);
+                state === "profileImg" && setFotoPerfil(reader.result);
+            };
+            reader.readAsDataURL(file);
+        }
     };
 
-    const validateFields = () => {
-        const newErrors = {};
-        
-        // Validar correo electrónico
-        const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-        if (!emailPattern.test(email)) {
-            newErrors.email = "Por favor, ingrese un correo electrónico válido.";
-        }
-        
-        // Validar contraseña
-        if (password.length < 6) {
-            newErrors.password = "La contraseña debe tener al menos 6 caracteres.";
-        }
+    const { updateUsers, isUpdatingUsers, isError, error } = useUpdateUsers(userId);
 
-        setErrors(newErrors);
-        return Object.keys(newErrors).length === 0; // Devuelve verdadero si no hay errores
-    };
+    useEffect(() => {
+        if (isOpen && userId) {
+            const fetchUserData = async () => {
+                try {
+                    const response = await fetch(`/api/users/user/${userId}`, {
+                        method: 'GET',
+                        headers: {
+                            Authorization: `Bearer ${token}`,
+                        },
+                    });
+                    const data = await response.json();
+                    if (data) {
+                        setFormData({
+                            nombre: data.nombre || "",
+                            nombreCompleto: data.nombreCompleto || "",
+                            correo: data.correo || "",
+                            pais: data.pais || "",
+                            biografia: data.biografia || "",
+                            newcontrasena: "",
+                            currentcontrasena: "",
+                            generoLiterarioPreferido: data.generoLiterarioPreferido || [],
+                        });
+                        setFotoPerfilBan(data.fotoPerfilBan || "");
+                        setFotoPerfil(data.fotoPerfil || "");
+                    }
+                } catch (error) {
+                    console.error("Error al obtener los datos del usuario:", error);
+                }
+            };
+            fetchUserData();
+        }
+    }, [isOpen, userId, token]);
 
-    const handleSubmit = (e) => {
-        e.preventDefault();
-        if (validateFields()) {
-            // Aquí puedes enviar los datos al servidor o realizar otra acción
-            console.log("Datos validados correctamente");
+    useEffect(() => {
+        const fetchGeneros = async () => {
+            try {
+                const response = await fetch('/api/geneLiter/getgeneros', {
+                    method: 'GET',
+                    headers: {
+                        Authorization: `Bearer ${token}`,
+                    },
+                });
+                const generos = await response.json();
+                if (generos) {
+                    setGeneroLiterarioPreferido(generos);
+                }
+            } catch (error) {
+                console.error("Error al obtener los géneros literarios:", error);
+            }
+        };
+        fetchGeneros();
+    }, [token]);
+
+    const handleInputChange = (e) => {
+        const { name, value, checked } = e.target;
+        if (name === "generos") {
+            if (checked && formData.generoLiterarioPreferido.length < 5) {
+                setFormData((prevData) => ({
+                    ...prevData,
+                    generoLiterarioPreferido: [...prevData.generoLiterarioPreferido, value],
+                }));
+            } else if (!checked) {
+                setFormData((prevData) => ({
+                    ...prevData,
+                    generoLiterarioPreferido: prevData.generoLiterarioPreferido.filter((genero) => genero !== value),
+                }));
+            }
+        } else {
+            setFormData({ ...formData, [name]: value });
         }
     };
 
     return (
-        <div className="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center z-50" onClick={onClose}>
-            <div
-                className="bg-white p-5 rounded-lg w-90 md:w-106 relative overflow-hidden"
-                onClick={(e) => e.stopPropagation()}
-            >
-               
-                <div className="border-b-2 border-primary pb-2 mb-5">
-                    <h2 className="text-lg text-center text-primary">ACTUALIZAR USUARIO</h2>
-                </div>
-                <div className="overflow-y-auto max-h-80 mb-5 text-primary text-lg modal-scrollbar">
-                    {/* Campo de imagen de perfil */}
-                    <label className="block mb-1  text-primary">Foto de perfil</label>
-                    <input
-                        type="file"
-                        accept="image/*"
-                        onChange={handleImageChange}
-                        className="w-full p-2 mb-3 border  rounded focus:border-primary focus:outline-none"
-                    />
-                    {image && (
-                        <img src={image} alt="Preview" className="max-w-full h-auto mb-3" />
-                    )}
+        <>
+        {isOpen && (
+            <dialog id='edit_profile_modal' className='modal' open>
+                <div className='modal-box border rounded-md border-blue-950 h-[500px]  shadow-md modal-scrollbar'>
+                    <h3 className='text-primary font-bold text-lg my-3'>Actualizar Usuario</h3>
+                    <form
+                        className='text-primary flex flex-col gap-4'
+                        onSubmit={(e) => {
+                            e.preventDefault();
+                            updateUsers(formData);
+                        }}
+                    >
+                        {/* COVER IMG */}
+                        <div className='relative group/cover'>
+                            <img
+                                src={fotoPerfilBan || "/cover.png"}
+                                className='h-52 w-full object-cover'
+                                alt='cover image'
+                            />
+                            <div
+                                className='absolute top-2 right-2 rounded-full p-2 bg-gray-800 bg-opacity-75 cursor-pointer opacity-0 group-hover/cover:opacity-100 transition duration-200'
+                                onClick={() => fotoPerfilBanRef.current.click()}
+                            >
+                                <span className='w-5 h-5 text-white'>Editar</span>
+                            </div>
 
-                    {/* Campo de nombre de usuario */}
-                    <label className="block mb-1  text-primary">Nombre usuario</label>
-                    <input
-                        type="text"
-                        value={username}
-                        onChange={(e) => setUsername(e.target.value)}
-                        placeholder="Nombre usuario"
-                        className="w-full p-2 mb-3 border  rounded focus:border-primary focus:outline-none"
-                    />
+                            <input
+                                type='file'
+                                hidden
+                                accept='image/*'
+                                ref={fotoPerfilBanRef}
+                                onChange={(e) => handleImgChange(e, "coverImg")}
+                            />
+                            <input
+                                type='file'
+                                hidden
+                                accept='image/*'
+                                ref={fotoPerfilRef}
+                                onChange={(e) => handleImgChange(e, "profileImg")}
+                            />
+                        </div>
 
-                    {/* Campo de nombre completo */}
-                    <label className="block mb-1  text-primary">Nombre completo</label>
-                    <input
-                        type="text"
-                        value={fullName}
-                        onChange={(e) => setFullName(e.target.value)}
-                        placeholder="Nombre completo"
-                        className="w-full p-2 mb-3 border  rounded focus:border-primary focus:outline-none"
-                    />
+                        {/* USER AVATAR */}
+                        <div className='avatar absolute -bottom-16 left-4'>
+                            <div className='w-32 rounded-full relative group/avatar bottom-44 left-8'>
+                                <img src={fotoPerfil || "/avatar-placeholder.png"} alt="profile avatar" />
+                                <div className='absolute top-5 right-3 p-1 bg-primary rounded-full group-hover/avatar:opacity-100 opacity-0 cursor-pointer'>
+                                    <span
+                                        className='w-4 h-4 text-white'
+                                        onClick={() => fotoPerfilRef.current.click()}
+                                    >
+                                        Editar
+                                    </span>
+                                </div>
+                            </div>
+                        </div>
 
-                    {/* Campo de correo electrónico */}
-                    <label className="block mb-1  text-primary">Correo electrónico</label>
-                    <input
-                        type="text"
-                        value={email}
-                        onChange={(e) => setEmail(e.target.value)}
-                        placeholder="Correo electrónico"
-                        className="w-full p-2 mb-3 border  rounded focus:border-primary focus:outline-none"
-                    />
-                    {errors.email && <p className="text-red-500 text-sm">{errors.email}</p>}
-
-                    {/* Campo de contraseña */}
-                    <label className="block mb-1  text-primary">Contraseña</label>
-                    <div className="relative mb-3">
+                        {/* FORMULARIO */}
                         <input
-                            type={showPassword ? 'text' : 'password'} // Cambia el tipo según el estado
-                            value={password}
-                            onChange={(e) => setPassword(e.target.value)}
-                            placeholder="Contraseña"
-                            className="w-full p-2 mb-3 border  rounded focus:border-primary focus:outline-none"
+                            type='text'
+                            placeholder='Nombre Usuario'
+                            className='input border border-blue-950 rounded p-2 input-md'
+                            value={formData.nombre}
+                            name='nombre'
+                            onChange={handleInputChange}
                         />
-                        <button
-                            type="button"
-                            className="absolute inset-y-0 right-0 px-3 focus:outline-none"
-                            onClick={() => setShowPassword(!showPassword)} // Alterna el estado de mostrar/ocultar
-                        >
-                            {showPassword ? (
-                                <BsEye className="w-5 h-5 text-gray-500" /> // Icono para mostrar contraseña
-                            ) : (
-                                <IoEyeOff className="w-5 h-5 text-gray-500" /> // Icono para ocultar contraseña
-                            )}
-                        </button>
-                    </div>
-                    {errors.password && <p className="text-red-500 text-sm">{errors.password}</p>}
 
-                    {/* Campo de fecha de nacimiento */}
-                    <label className="block mb-1  text-primary">Fecha de nacimiento</label>
-                    <input
-                        type="text"
-                        value={dob}
-                        onChange={(e) => setDob(e.target.value)}
-                        placeholder="Fecha de nacimiento"
-                        className="w-full p-2 mb-3 border  rounded focus:border-primary focus:outline-none"
-                    />
+                        <input
+                            type='text'
+                            placeholder='Nombre Completo'
+                            className='input border border-blue-950 rounded p-2 input-md'
+                            value={formData.nombreCompleto}
+                            name='nombreCompleto'
+                            onChange={handleInputChange}
+                        />
 
-                    {/* Campo de biografía */}
-                    <label className="block mb-1  text-primary">Biografía</label>
-                    <textarea
-                        value={bio}
-                        onChange={(e) => setBio(e.target.value)}
-                        placeholder="Biografía"
-                        className="w-full p-2 mb-3 border  rounded focus:border-primary focus:outline-none"
-                    />
+                        <textarea
+                            placeholder='Biografía'
+                            className='w-full border border-blue-950 rounded p-2 input-md'
+                            value={formData.biografia}
+                            name='biografia'
+                            onChange={handleInputChange}
+                            maxLength={200}
+                            rows={4}
+                            style={{ resize: 'none', overflowWrap: 'break-word' }}
+                        />
+
+                        <input
+                            type='email'
+                            placeholder='Correo'
+                            className='input border border-blue-950 rounded p-2 input-md'
+                            value={formData.correo}
+                            name='correo'
+                            onChange={handleInputChange}
+                        />
+
+                        <input
+                            type='password'
+                            placeholder='Contraseña Actual'
+                            className='input border border-blue-950 rounded p-2 input-md'
+                            value={formData.currentcontrasena}
+                            name='currentcontrasena'
+                            onChange={handleInputChange}
+                        />
+
+                        <input
+                            type='password'
+                            placeholder='Contraseña Nueva'
+                            className='input border border-blue-950 rounded p-2 input-md'
+                            value={formData.newcontrasena}
+                            name='newcontrasena'
+                            onChange={handleInputChange}
+                        />
+
+                        <input
+                            type='text'
+                            placeholder='País'
+                            className='input border border-blue-950 rounded p-2 input-md'
+                            value={formData.pais}
+                            name='pais'
+                            onChange={handleInputChange}
+                        />
+
+                        {/* Selección de géneros literarios */}
+                        <h4 className='font-bold'>Selecciona hasta 5 géneros literarios:</h4>
+                        <div className='grid grid-cols-2 gap-2'>
+                            {generoLiterarioPreferido.map((genero) => (
+                                <label key={genero.nombre} className='flex items-center cursor-pointer'>
+                                    <input
+                                        type='checkbox'
+                                        name='generos'
+                                        value={genero._id}
+                                        checked={formData.generoLiterarioPreferido.includes(genero._id)}
+                                        onChange={handleInputChange}
+                                        className='hidden'
+                                    />
+                                    <div
+                                        className={`flex items-center border rounded-full p-2 ${formData.generoLiterarioPreferido.includes(genero._id)
+                                            ? "bg-primary text-white"
+                                            : "border-primary text-primary"
+                                            }`}
+                                    >
+                                        <span>{genero.nombre}</span>
+                                    </div>
+                                </label>
+                            ))}
+                        </div>
+
+                        <div className='modal-action'>
+                            <button className='btn btn-primary' type='submit' disabled={isUpdatingUsers}
+                                onClick={async () => {
+                                    await updateUsers({fotoPerfil,fotoPerfilBan});
+                                }}
+                            >    
+                                {isUpdatingUsers ? "Actualizando..." : "Guardar"}
+                            </button>
+                            {isError && <p className='text-red-500'>{error.message}</p>}
+                            <button className='btn btn-outline' type='button' onClick={onClose}>
+                                Cancelar
+                            </button>
+                        </div>
+                    </form>
                 </div>
-
-                <div className="flex justify-end gap-2">
-                    <button className="px-4 py-2 bg-gray-300 text-gray-800 rounded-md  hover:bg-gray-400" onClick={onClose}>
-                        Cancelar
-                    </button>
-                    <button className="px-4 py-2 border rounded bg-primary text-white hover:bg-blue-950" onClick={handleSubmit}>
-                        Actualizar
-                    </button>
-                </div>
-            </div>
-        </div>
+            </dialog>
+        )}
+    </>
     );
-}
+};
 
 export default ModalActualizarUsuario;

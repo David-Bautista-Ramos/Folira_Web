@@ -66,6 +66,13 @@ const UserSchema = new mongoose.Schema(
           default: [],
         },
       ],
+      librosGuardados: [
+        {
+          type: mongoose.Schema.Types.ObjectId,
+          ref: "Libro", // Referencia a la colección de libros
+          default: [],
+        },
+      ],
       roles: {
         type: String,
         enum: ['usuario', 'admin'],

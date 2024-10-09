@@ -1,4 +1,35 @@
-function ModalActivarAutor({ isOpen, onClose }) {
+import { useState } from "react";
+
+function ModalActivarAutor({ isOpen, onClose, autorId,obtenerAutores}) {
+  const [loading, setLoading] = useState(false);
+
+  if (!isOpen) return null;
+
+  const handleActivarAutor = async () => {
+    setLoading(true);
+    try {
+      const response = await fetch(`/api/autror/autoresact/${autorId}`, {
+        method: 'PUT',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+      });
+
+      if (!response.ok) {
+        throw new Error("Error al activar el autor");
+      }
+
+      const data = await response.json();
+      console.log(data.message); // Mensaje de éxito o error
+      obtenerAutores(); // Vuelve a obtener los usuarios actualizados
+      onClose(); // Cierra el modal después de la activación
+    } catch (error) {
+      console.error("Error:", error);
+    } finally {
+      setLoading(false);
+    }
+  };
+
     if (!isOpen) return null;
   
     return (
@@ -10,8 +41,11 @@ function ModalActivarAutor({ isOpen, onClose }) {
             <button className="px-4 py-2 bg-gray-300 text-gray-800 rounded-md  hover:bg-gray-400" onClick={onClose}>
               Cancelar
             </button>
-            <button className="px-4 py-2 border rounded bg-primary text-white hover:bg-blue-950">
-              Activar
+            <button className={`px-4 py-2 border rounded bg-primary text-white hover:bg-blue-950" ${loading ? 'opacity-50' : ''}`}
+                onClick={handleActivarAutor}
+                disabled={loading}
+            >
+             {loading ? "Activando..." : "Activar"}
             </button>
           </div>
         </div>
