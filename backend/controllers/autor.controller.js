@@ -83,7 +83,7 @@ export const obtenerAutoresAct = async (req, res) => {
     const estado = true;
 
     const autores = await Autor.find({ estado: estado });
-    res.status(200).json({ autores });
+    res.status(200).json(autores);
   } catch (error) {
     console.error("Error al obtener los autores:", error.message);
     res.status(500).json({ error: "Error al obtener los autores." });
@@ -94,7 +94,7 @@ export const obtenerAutoresDes = async (req, res) => {
     const estado = false;
 
     const autores = await Autor.find({ estado: estado });
-    res.status(200).json({ autores });
+    res.status(200).json(autores);
   } catch (error) {
     console.error("Error al obtener los autores:", error.message);
     res.status(500).json({ error: "Error al obtener los autores." });

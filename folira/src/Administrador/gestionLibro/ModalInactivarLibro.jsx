@@ -10,13 +10,12 @@ function ModalInactivarLibro({ isOpen, onClose, libroId, obetnerLibros }) {
     setLoading(true);
     setError(null); // Limpiar errores previos
     try {
-      const response = await fetch(`/api/libro/getlibrosdes${libroId}`, {
-        method: 'POST', // Cambia el método según sea necesario (PUT/POST)
+      const response = await fetch(`/api/libro/deslibro/${libroId}`, {
+        method: 'PUT', // Cambia el método según sea necesario (PUT/POST)
         headers: {
           'Content-Type': 'application/json',
           Authorization: `Bearer token`, // Si es necesario agregar un token de autorización
         },
-        body: JSON.stringify({ nuevoEstado: false }), // Envía el estado actualizado
       });
 
       if (!response.ok) {

@@ -111,7 +111,7 @@ function ModalCrearLibro({ isOpen, onClose, token }) {
   useEffect(() => {
     const fetchAutores = async () => {
       try {
-        const response = await fetch("/api/autores/autores", { // Corrected URL
+        const response = await fetch("/api/autror/autores", { // Corrected URL
           method: "GET",
           headers: {
             Authorization: `Bearer ${token}`,

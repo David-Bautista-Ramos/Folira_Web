@@ -8,13 +8,13 @@ const ModalFiltroLibros = ({ isOpen, onClose, onFilter }) => {
       <div className="bg-white rounded-lg p-4 w-1/3">
         <h2 className="text-lg font-semibold mb-4">Filtrar Libros</h2>
         <button
-          onClick={() => onFilter("Disponible")}
+          onClick={() => onFilter("Activar")}
           className="block w-full text-left px-4 py-2 hover:bg-gray-200"
         >
           Disponible
         </button>
         <button
-          onClick={() => onFilter("No disponible")}
+          onClick={() => onFilter("Inactivar")}
           className="block w-full text-left px-4 py-2 hover:bg-gray-200"
         >
           No disponible

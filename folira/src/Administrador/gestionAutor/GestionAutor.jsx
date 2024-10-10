@@ -105,6 +105,9 @@ function GestionAutor() {
     } finally {
       setIsLoading(false); // Asegúrate de finalizar la carga
     }
+
+    setIsFiltroModalOpen(false); // Cerrar el modal después de aplicar el filtro
+
   };
 
   const handleRestore = () => {

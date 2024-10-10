@@ -74,7 +74,7 @@ export const obtenerLibrosAct = async (req, res) => {
         const estado = true;
 
         const libros = await Libro.find({ estado: estado }).populate('generos autores');
-        res.status(200).json({ libros });
+        res.status(200).json({libros});
     } catch (error) {
         console.error("Error al obtener los libros:", error.message);
         res.status(500).json({ error: "Error al obtener los libros." });
@@ -86,7 +86,7 @@ export const obtenerLibrosDes = async (req, res) => {
         const estado = false;
 
         const libros = await Libro.find({ estado: estado }).populate('generos autores');
-        res.status(200).json({ libros });
+        res.status(200).json({libros});
     } catch (error) {
         console.error("Error al obtener los libros:", error.message);
         res.status(500).json({ error: "Error al obtener los libros." });
@@ -101,7 +101,7 @@ export const obtenerLibroPorId = async (req, res) => {
         if (!libro) {
             return res.status(404).json({ error: "Libro no encontrado." });
         }
-        res.status(200).json({ libro });
+        res.status(200).json(libro);
     } catch (error) {
         console.error("Error al obtener el libro:", error.message);
         res.status(500).json({ error: "Error al obtener el libro." });
