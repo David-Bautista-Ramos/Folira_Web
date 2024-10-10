@@ -1,8 +1,11 @@
 import mongoose from "mongoose";
 import Libro from "../models/libro.model.js";
+<<<<<<< HEAD
 import Autor from "../models/autor.model.js";
 import GeneroLiterario from "../models/generoLiterario.model.js";
 
+=======
+>>>>>>> 39127464ec78322b7c404b7c9ef29be3227fe98a
 export const crearLibro = async (req, res) => {
     try {
         const { titulo, ISBN, fechaPublicacion, editorial, sinopsis, portada, calificacion, generos, autores } = req.body;
@@ -13,6 +16,7 @@ export const crearLibro = async (req, res) => {
             return res.status(400).json({ error: "El libro con este ISBN ya existe." });
         }
 
+<<<<<<< HEAD
         // Verificar que los géneros y autores sean arrays y no estén vacíos
         if (!Array.isArray(generos) || generos.length === 0) {
             return res.status(400).json({ error: "El campo 'generos' debe ser un array no vacío." });
@@ -38,6 +42,20 @@ export const crearLibro = async (req, res) => {
         const autoresObjectIds = autoresDB.map(autor => autor._id);
 
         // Crear el nuevo libro
+=======
+        // Verificar que generos y autores sean arrays
+        if (!Array.isArray(generos)) {
+            return res.status(400).json({ error: "El campo 'generos' debe ser un array." });
+        }
+        if (!Array.isArray(autores)) {
+            return res.status(400).json({ error: "El campo 'autores' debe ser un array." });
+        }
+
+        // Convertir géneros y autores a ObjectId
+        const generosObjectIds = generos.map(id => new mongoose.Types.ObjectId(id));
+        const autoresObjectIds = autores.map(id => new mongoose.Types.ObjectId(id));
+
+>>>>>>> 39127464ec78322b7c404b7c9ef29be3227fe98a
         const nuevoLibro = new Libro({
             titulo,
             ISBN,

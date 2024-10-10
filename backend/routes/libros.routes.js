@@ -14,4 +14,8 @@ router.put("/deslibro/:id", protectRoutes, desactivarLibro);
 router.put("/actlibro/:id", protectRoutes, activarLibro);
 router.delete("/deletelibro/:id", protectRoutes, eliminarLibro);
 
+<<<<<<< HEAD
 export default router; 
+=======
+export default router;
+>>>>>>> 39127464ec78322b7c404b7c9ef29be3227fe98a

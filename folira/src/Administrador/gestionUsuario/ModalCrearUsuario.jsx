@@ -55,6 +55,7 @@ const ModalCrearUsuario = ({ isOpen, onClose }) => {
       {isOpen && (
         <dialog id="create_profile_modal" className="modal" open>
           <div className="modal-box border rounded-md border-blue-950 h-[500px] shadow-md modal-scrollbar">
+<<<<<<< HEAD
             <h3 className="text-primary font-bold text-lg my-3">
               Crear Usuario
             </h3>
@@ -62,6 +63,10 @@ const ModalCrearUsuario = ({ isOpen, onClose }) => {
               className="text-primary flex flex-col gap-4"
               onSubmit={handleSubmit}
             >
+=======
+            <h3 className="text-primary font-bold text-lg my-3">Crear Usuario</h3>
+            <form className="text-primary flex flex-col gap-4" onSubmit={handleSubmit}>
+>>>>>>> 39127464ec78322b7c404b7c9ef29be3227fe98a
               {/* COVER IMG */}
               <div className="relative group/cover">
                 <img
@@ -95,10 +100,14 @@ const ModalCrearUsuario = ({ isOpen, onClose }) => {
               {/* USER AVATAR */}
               <div className="avatar absolute -bottom-16 left-4">
                 <div className="w-32 rounded-full relative group/avatar bottom-44 left-8">
+<<<<<<< HEAD
                   <img
                     src={fotoPerfil || "/avatar-placeholder.png"}
                     alt="profile avatar"
                   />
+=======
+                  <img src={fotoPerfil || "/avatar-placeholder.png"} alt="profile avatar" />
+>>>>>>> 39127464ec78322b7c404b7c9ef29be3227fe98a
                   <div className="absolute top-5 right-3 p-1 bg-primary rounded-full group-hover/avatar:opacity-100 opacity-0 cursor-pointer">
                     <span
                       className="w-4 h-4 text-white"
@@ -157,6 +166,7 @@ const ModalCrearUsuario = ({ isOpen, onClose }) => {
               />
 
               <div className="modal-action">
+<<<<<<< HEAD
                 <button
                   className="btn btn-primary"
                   type="submit"
@@ -169,6 +179,12 @@ const ModalCrearUsuario = ({ isOpen, onClose }) => {
                   type="button"
                   onClick={onClose}
                 >
+=======
+                <button className="btn btn-primary" type="submit" disabled={isCreatingUser}>
+                  {isCreatingUser ? "Creando..." : "Crear"}
+                </button>
+                <button className="btn btn-outline" type="button" onClick={onClose}>
+>>>>>>> 39127464ec78322b7c404b7c9ef29be3227fe98a
                   Cancelar
                 </button>
               </div>

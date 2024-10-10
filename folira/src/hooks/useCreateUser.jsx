@@ -38,4 +38,8 @@ function useCreateUser() {
     return { createUser, isCreatingUser };
 }
 
+<<<<<<< HEAD
 export default useCreateUser;
+=======
+export default useCreateUser;
+>>>>>>> 39127464ec78322b7c404b7c9ef29be3227fe98a

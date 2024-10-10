@@ -257,7 +257,12 @@ const ModalActualizarUsuario = ({ isOpen, onClose, userId, token }) => {
                         <div className='modal-action'>
                             <button className='btn btn-primary' type='submit' disabled={isUpdatingUsers}
                                 onClick={async () => {
+<<<<<<< HEAD
                                     await updateUsers({fotoPerfil,fotoPerfilBan});}}
+=======
+                                    await updateUsers({fotoPerfil,fotoPerfilBan});
+                                }}
+>>>>>>> 39127464ec78322b7c404b7c9ef29be3227fe98a
                             >    
                                 {isUpdatingUsers ? "Actualizando..." : "Guardar"}
                             </button>

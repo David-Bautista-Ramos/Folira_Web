@@ -3,11 +3,21 @@ import Notification from "../models/notification.model.js";
 import User from "../models/user.model.js";
 import { v2 as cloudinary } from "cloudinary";
 import bcrypt from "bcryptjs";
+<<<<<<< HEAD
 import crypto from "crypto";
 import nodemailer from "nodemailer";
 import * as Yup from "yup";
 import path from "path";
 import { fileURLToPath } from "url"; // Necesario para convertir import.meta.url a __dirname
+=======
+import crypto from 'crypto';
+import nodemailer from 'nodemailer'
+import * as Yup from 'yup';
+import path from 'path';
+import { fileURLToPath } from "url"; // Necesario para convertir import.meta.url a __dirname
+
+
+>>>>>>> 39127464ec78322b7c404b7c9ef29be3227fe98a
 
 export const getUserProfile = async (req, res) => {
   const { nombre } = req.params;
@@ -72,6 +82,7 @@ export const followUnfollowUser = async (req, res) => {
 };
 
 export const getSuggestedUsers = async (req, res) => {
+<<<<<<< HEAD
   try {
     const userId = req.user._id;
 
@@ -115,6 +126,45 @@ export const getSuggestedUsers = async (req, res) => {
     console.log("Error in getSuggestedUsers: ", error.message);
     res.status(500).json({ error: error.message });
   }
+=======
+    try {
+        const userId = req.user._id;
+
+        // Obtener el listado de usuarios seguidos por el usuario actual
+        const user = await User.findById(userId).populate('seguidos', '_id').populate('generoLiterarioPreferido', '_id');
+
+        // Obtener una lista de IDs de los usuarios seguidos por el usuario actual
+        const followedUserIds = user.seguidos.map(followedUser => followedUser._id);
+
+        // Obtener los géneros literarios preferidos del usuario actual
+        const userPreferredGenres = user.generoLiterarioPreferido.map(genre => genre._id);
+
+        // Encontrar usuarios sugeridos, excluyendo los que ya sigue el usuario actual y excluyéndose a sí mismo,
+        // pero priorizando aquellos que comparten géneros literarios en común
+        const users = await User.aggregate([
+            {
+                $match: {
+                    _id: { $nin: [...followedUserIds, userId] }, // Excluir usuarios seguidos y el mismo usuario
+                    generoLiterarioPreferido: { $in: userPreferredGenres }, // Usuarios que comparten géneros literarios en común
+                },
+            },
+            { $sample: { size: 10 } }, // Elegir aleatoriamente 10 usuarios
+            {
+                $project: {
+                    nombre: 1,
+                    correo: 1,
+                    fotoPerfil: 1,
+                    generoLiterarioPreferido: 1, // Incluir géneros literarios en el resultado
+                }
+            }
+        ]);
+
+        res.status(200).json(users.slice(0, 5)); // Enviar solo los primeros 4 usuarios sugeridos
+    } catch (error) {
+        console.log("Error in getSuggestedUsers: ", error.message);
+        res.status(500).json({ error: error.message });
+    }
+>>>>>>> 39127464ec78322b7c404b7c9ef29be3227fe98a
 };
 
 export const updateUser = async (req, res) => {
@@ -278,6 +328,7 @@ const validDomains = [
 ];
 // Esquema de validación usando Yup
 const userValidationSchema = Yup.object().shape({
+<<<<<<< HEAD
   nombre: Yup.string()
     .required("El nombre es obligatorio.")
     .min(3, "El nombre debe tener al menos 3 caracteres.")
@@ -286,6 +337,64 @@ const userValidationSchema = Yup.object().shape({
       /^[a-zA-Z0-9]+$/,
       "El nombre solo puede contener letras y números."
     ),
+=======
+	nombre: Yup.string()
+	  .required('El nombre es obligatorio.')
+	  .min(3, 'El nombre debe tener al menos 3 caracteres.')
+	  .max(50, 'El nombre no puede tener más de 50 caracteres.')
+	  .matches(/^[a-zA-Z0-9]+$/, 'El nombre solo puede contener letras y números.'),
+	
+	nombreCompleto: Yup.string()
+	  .required('El nombre completo es obligatorio.')
+	  .min(5, 'El nombre completo debe tener al menos 5 caracteres.')
+	  .max(100, 'El nombre completo no puede exceder los 100 caracteres.'),
+  
+	  correo: Yup.string()
+	  .required('El correo es obligatorio.')
+	  .email('Formato de correo inválido.')
+	  .test('valid-domain', 'Dominio de correo no válido.', (value) => {
+		if (!value) return false;
+		const domain = value.split('@')[1];
+		return validDomains.includes(domain);
+	  }),
+	contrasena: Yup.string()
+	  .required('La contraseña es obligatoria.')
+	  .min(8, 'La contraseña debe tener al menos 8 caracteres.')
+	  .matches(/[a-z]/, 'La contraseña debe tener al menos una letra minúscula.')
+	  .matches(/[A-Z]/, 'La contraseña debe tener al menos una letra mayúscula.')
+	  .matches(/\d/, 'La contraseña debe tener al menos un número.')
+	  .matches(/[!@#$%^&*(),.?":{}|<>]/, 'La contraseña debe tener al menos un carácter especial.'),
+  
+	pais: Yup.string()
+	  .required('El país es obligatorio.')
+	  .min(3, 'El país debe tener al menos 3 caracteres.')
+	  .max(56, 'El país no puede exceder los 56 caracteres.')
+  });
+  
+  // Esquema de validación sin el campo contraseña
+const userValidationSchemaADMIN = Yup.object().shape({
+	nombre: Yup.string()
+	  .required('El nombre es obligatorio.')
+	  .min(3, 'El nombre debe tener al menos 3 caracteres.')
+	  .max(50, 'El nombre no puede tener más de 50 caracteres.')
+	  .matches(/^[a-zA-Z0-9]+$/, 'El nombre solo puede contener letras y números.'),
+	
+	nombreCompleto: Yup.string()
+	  .required('El nombre completo es obligatorio.')
+	  .min(5, 'El nombre completo debe tener al menos 5 caracteres.')
+	  .max(100, 'El nombre completo no puede exceder los 100 caracteres.'),
+  
+	correo: Yup.string()
+	  .required('El correo es obligatorio.')
+	  .email('Formato de correo inválido.')
+	  .test('valid-domain', 'Dominio de correo no válido.', (value) => {
+		if (!value) return false;
+		const domain = value.split('@')[1];
+		return validDomains.includes(domain);
+	  }),
+  });
+  
+>>>>>>> 39127464ec78322b7c404b7c9ef29be3227fe98a
 
   nombreCompleto: Yup.string()
     .required("El nombre completo es obligatorio.")
@@ -347,6 +456,7 @@ const userValidationSchemaADMIN = Yup.object().shape({
   /*metodos para el admin*/
 }
 // Crear un nuevo usuario
+<<<<<<< HEAD
 // Crear un nuevo usuario
 // Configuración de Nodemailer
 // Configuración del transportador de Nodemailer
@@ -372,6 +482,29 @@ transporter
   .catch((err) => {
     console.error("Error al verificar la configuración:", err);
   });
+=======
+// Configuración de Nodemailer
+// Configuración del transportador de Nodemailer
+const transporter = nodemailer.createTransport({
+    host: 'smtp.gmail.com', // O el servicio que estés usando (Gmail, Outlook, etc.)
+    port: 465, // Cambiado 'post' a 'port'
+    secure: true, // true para SSL
+    auth: {
+        user: (process.env.EMAIL_USER = "cardenasalejando475@gmail.com"), // Asegúrate de que esto sea tu correo electrónico
+        pass: (process.env.EMAIL_PASS = "ezoo fpyr wfdv jaxc"), // Asegúrate de que esto sea tu contraseña o contraseña de aplicación
+    },
+	tls: {
+		rejectUnauthorized: false,
+	  },
+});
+
+// Verificar la conexión
+transporter.verify().then(() => {
+    console.log('Configuración de correo electrónico verificada');
+}).catch(err => {
+    console.error('Error al verificar la configuración:', err);
+});
+>>>>>>> 39127464ec78322b7c404b7c9ef29be3227fe98a
 
 // Definir __dirname en un entorno ESM
 const __filename = fileURLToPath(import.meta.url);
@@ -427,7 +560,11 @@ export const crearUser = async (req, res) => {
       nombreCompleto,
       correo,
       contrasena: hashedPassword,
+<<<<<<< HEAD
       pais,
+=======
+	  pais,
+>>>>>>> 39127464ec78322b7c404b7c9ef29be3227fe98a
       roles, // Asignar roles como corresponda
       fotoPerfil: fotoPerfilURL,
       fotoPerfilBan: fotoPerfilBanURL,
@@ -438,7 +575,11 @@ export const crearUser = async (req, res) => {
 
     // Configuración del correo electrónico
     const mailOptions = {
+<<<<<<< HEAD
       from: process.env.EMAIL_USER,
+=======
+      from: (process.env.EMAIL_USER),
+>>>>>>> 39127464ec78322b7c404b7c9ef29be3227fe98a
       to: newUser.correo,
       subject: "Bienvenido a Plataforma Folira",
       html: `
@@ -447,7 +588,11 @@ export const crearUser = async (req, res) => {
         <h1 style="color: #1e3799;">¡Bienvenido a la Plataforma!</h1>
         <p style="font-size: 16px; color: #34495e;">Hola y Bienvenid@ <strong>${nombreCompleto}</strong>.</p>
         <p style="font-size: 16px; color: #34495e;">
+<<<<<<< HEAD
           Te damos la bienvenida a nuestra plataforma Folira. Aquí están tus credenciales de acceso:
+=======
+          Te damos la bienvenida a nuestra plataforma. Aquí están tus credenciales de acceso:
+>>>>>>> 39127464ec78322b7c404b7c9ef29be3227fe98a
         </p>
         <div style="text-align: left; max-width: 600px; margin: 0 auto; padding: 20px; background-color: #f5f5f5; border-radius: 8px;">
           <p><strong>Correo:</strong> ${correo}</p>
@@ -461,7 +606,11 @@ export const crearUser = async (req, res) => {
       attachments: [
         {
           filename: "logo-Folira.png",
+<<<<<<< HEAD
           path: path.join(__dirname, "../assets/img/admi_banner.jpeg"), // Usar path.join
+=======
+          path:path.join(__dirname, "../assets/img/admi_banner.jpeg"), // Usar path.join
+>>>>>>> 39127464ec78322b7c404b7c9ef29be3227fe98a
           cid: "logoFolira", // cid para referenciar en el HTML
         },
       ],
@@ -476,12 +625,17 @@ export const crearUser = async (req, res) => {
       nombre: newUser.nombre,
       nombreCompleto: newUser.nombreCompleto,
       correo: newUser.correo,
+<<<<<<< HEAD
       pais: newUser.pais,
+=======
+	  pais: newUser.pais,
+>>>>>>> 39127464ec78322b7c404b7c9ef29be3227fe98a
       roles: newUser.roles,
       message:
         "Usuario creado con éxito, la contraseña ha sido enviada al correo del usuario.",
     });
   } catch (error) {
+<<<<<<< HEAD
     console.error("Error en el controlador de creación de usuario:", error); // Muestra el error completo en consola
     if (error.name === "ValidationError") {
       // Error de validación de Yup
@@ -497,11 +651,24 @@ export const crearUser = async (req, res) => {
       "Error en el controlador de creación de usuario:",
       error.message
     );
+=======
+	console.error("Error en el controlador de creación de usuario:", error); // Muestra el error completo en consola
+    if (error.name === "ValidationError") {
+      // Error de validación de Yup
+      return res.status(400).json({ error: Array.isArray(error.errors) ? error.errors.join(", ") : error.errors });
+	}
+    console.error("Error en el controlador de creación de usuario:", error.message);
+>>>>>>> 39127464ec78322b7c404b7c9ef29be3227fe98a
     return res.status(500).json({ error: "Error en el servidor." });
   }
 };
 
+<<<<<<< HEAD
 // Obtener todos los usuarios
+=======
+  
+  // Obtener todos los usuarios
+>>>>>>> 39127464ec78322b7c404b7c9ef29be3227fe98a
 export const obtenerUsuarios = async (req, res) => {
   try {
     const usuarios = await User.find(); // Puedes agregar filtros si es necesario
@@ -513,6 +680,7 @@ export const obtenerUsuarios = async (req, res) => {
 
 // Obtener un usuario por ID
 export const obtenerUsuarioPorId = async (req, res) => {
+<<<<<<< HEAD
   try {
     const { userId } = req.params;
     const usuario = await User.findById(userId);
@@ -647,6 +815,106 @@ export const actualizarUsuario = async (req, res) => {
 };
 
 // Activar o desactivar usuario (cambiar el estado)
+=======
+	try {
+	  const {userId} = req.params;
+	  const usuario = await User.findById(userId);
+  
+	  if (!usuario) {
+		return res.status(404).json({ error: "Usuario no encontrado" });
+	  }
+  
+	  res.status(200).json(usuario);
+	} catch (error) {
+	  res.status(500).json({ error: "Error al obtener usuario" });
+	}
+  };
+  // Actualizar un usuario por ID
+  export const actualizarUsuario = async (req, res) => {
+	  const { nombre, nombreCompleto, correo, generoLiterarioPreferido, currentcontrasena, newcontrasena, pais, biografia} = req.body;
+	  let { fotoPerfil, fotoPerfilBan } = req.body;
+
+	  // Obtiene el ID del usuario desde los parámetros de la solicitud
+	  const userId = req.params.userId;
+  
+	  try {
+		  // Verifica si el usuario existe
+		  let user = await User.findById(userId);
+		  if (!user) return res.status(404).json({ message: "Usuario no encontrado" });
+  
+		  // Validar si el usuario que está realizando la actualización es un administrador
+		  if (req.user.roles !== 'admin' && req.user.id !== userId) {
+			  return res.status(403).json({ message: "No tienes permiso para actualizar este usuario" });
+		  }
+  
+		  // Validar contraseñas
+		  if ((!newcontrasena && currentcontrasena) || (!currentcontrasena && newcontrasena)) {
+			  return res.status(400).json({ error: "Por favor, proporciona tanto la contraseña actual como la nueva" });
+		  }
+  
+		  if (currentcontrasena && newcontrasena) {
+			  const isMatch = await bcrypt.compare(currentcontrasena, user.contrasena);
+			  if (!isMatch) return res.status(400).json({ error: "La contraseña actual es incorrecta" });
+  
+			  if (newcontrasena.length < 6) {
+				  return res.status(400).json({ error: "La nueva contraseña debe tener al menos 6 caracteres" });
+			  }
+			  user.contrasena = await bcrypt.hash(newcontrasena, 10);
+		  }
+  
+		  // Actualizar nombre, correo, país y biografía
+		user.nombre = nombre || user.nombre;
+		user.nombreCompleto =nombreCompleto|| user.nombreCompleto;
+        user.correo = correo || user.correo;
+        user.pais = pais || user.pais;
+        user.biografia = biografia || user.biografia;
+        user.fotoPerfil =  fotoPerfil || user.fotoPerfil;
+        user.fotoPerfilBan = fotoPerfilBan || user.fotoPerfilBan;
+  
+		  // Actualizar foto de perfil si es necesario
+		  if (fotoPerfil) {
+			  if (user.fotoPerfil) {
+				  await cloudinary.uploader.destroy(user.fotoPerfil.split("/").pop().split(".")[0]);
+			  }
+			  const uploadedResponse = await cloudinary.uploader.upload(fotoPerfil);
+			  user.fotoPerfil = uploadedResponse.secure_url;
+		  }
+  
+		  // Actualizar foto de banner si es necesario
+		  if (fotoPerfilBan) {
+			  if (user.fotoPerfilBan) {
+				  await cloudinary.uploader.destroy(user.fotoPerfilBan.split("/").pop().split(".")[0]);
+			  }
+			  const uploadedResponse = await cloudinary.uploader.upload(fotoPerfilBan);
+			  user.fotoPerfilBan = uploadedResponse.secure_url;
+		  }
+  
+		  // Buscar los géneros literarios seleccionados
+		  if (generoLiterarioPreferido && generoLiterarioPreferido.length > 0) {
+			  const generos = await GeneroLiterario.find({ _id: { $in: generoLiterarioPreferido } });
+			  if (generos.length !== generoLiterarioPreferido.length) {
+				  return res.status(400).json({ error: "Algunos géneros literarios seleccionados son inválidos" });
+			  }
+			  user.generoLiterarioPreferido = generos.map(genero => genero._id); // Actualiza los géneros literarios del usuario
+		  }
+  
+		  // Guardar los cambios en el usuario
+		  await user.save();
+
+			user.contrasena = null;
+
+		  res.status(200).json({ message: "Usuario actualizado correctamente", user });
+	  } catch (error) {
+		  console.error(error);
+		  res.status(500).json({ error: "Error en el servidor" });
+	  }
+  };
+  
+
+
+  
+  // Activar o desactivar usuario (cambiar el estado)
+>>>>>>> 39127464ec78322b7c404b7c9ef29be3227fe98a
 export const cambiarEstadoUsuario = async (req, res) => {
   try {
     const userId = req.params.id;
@@ -673,6 +941,7 @@ export const cambiarEstadoUsuario = async (req, res) => {
 
 // Eliminar un usuario por ID
 export const eliminarUsuario = async (req, res) => {
+<<<<<<< HEAD
   try {
     const userId = req.params.id;
 
@@ -711,3 +980,43 @@ export const obtenerUsersDes = async (req, res) => {
     res.status(500).json({ error: "Error al obtener los user." });
   }
 };
+=======
+	try {
+	  const userId = req.params.id;
+  
+	  const usuarioEliminado = await User.findByIdAndDelete(userId);
+  
+	  if (!usuarioEliminado) {
+		return res.status(404).json({ error: "Usuario no encontrado" });
+	  }
+  
+	  res.status(200).json({ message: "Usuario eliminado con éxito" });
+	} catch (error) {
+	  res.status(500).json({ error: "Error al eliminar usuario" });
+	}
+  };
+  
+  export const obtenerUserAct = async (req, res) => {
+    try {
+        const estado = true;
+
+        const user = await User.find({ estado: estado });
+        res.status(200).json({ user });
+    } catch (error) {
+        console.error("Error al obtener los user:", error.message);
+        res.status(500).json({ error: "Error al obtener los user." });
+    }
+};
+
+export const obtenerUsersDes = async (req, res) => {
+    try {
+        const estado = false;
+
+        const user = await User.find({ estado: estado });
+        res.status(200).json({ user });
+    } catch (error) {
+        console.error("Error al obtener los user:", error.message);
+        res.status(500).json({ error: "Error al obtener los user." });
+    }
+};
+>>>>>>> 39127464ec78322b7c404b7c9ef29be3227fe98a

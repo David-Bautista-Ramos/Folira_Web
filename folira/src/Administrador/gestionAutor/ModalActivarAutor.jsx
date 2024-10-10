@@ -20,7 +20,10 @@ function ModalActivarAutor({ isOpen, onClose, autorId,obtenerAutores}) {
       }
 
       const data = await response.json();
+<<<<<<< HEAD
       
+=======
+>>>>>>> 39127464ec78322b7c404b7c9ef29be3227fe98a
       console.log(data.message); // Mensaje de éxito o error
       obtenerAutores(); // Vuelve a obtener los usuarios actualizados
       onClose(); // Cierra el modal después de la activación

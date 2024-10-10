@@ -4,7 +4,10 @@ import Notification from "../models/notification.model.js";
 import Post from "../models/post.model.js";
 import Resena from "../models/resena.model.js";
 
+<<<<<<< HEAD
 
+=======
+>>>>>>> 39127464ec78322b7c404b7c9ef29be3227fe98a
 // Crear una nueva denuncia
 export const crearDenuncia = async (req, res) => {
     try {
