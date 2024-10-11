@@ -34,8 +34,6 @@ const Sidebar = () => {
 
     const { data: authUser } = useQuery({ queryKey: ["authUser"] });
 
-    const ADMIN_EMAIL = "cataNG@gmail.com"; // Correo del admin
-
     return (
         <div className='md:flex-[2_2_0] w-18 max-w-52'>
             <div className='sticky top-0 left-0 h-screen flex flex-col border-r border-primary w-20 md:w-full'>
@@ -65,7 +63,7 @@ const Sidebar = () => {
 
                     <li className='flex justify-center md:justify-start'>
                         <Link
-                            to={`/profile/${authUser?.nombre}`}
+                            to={`/profile/${authUser?.nombre}`} // Cambié a authUser?.nombre
                             className='flex gap-3 items-center hover:bg-gray-200 transition-all rounded-full duration-300 py-2 pl-2 pr-4 max-w-fit cursor-pointer'
                         >
                             <FaUser className='text-blue-950 w-6 h-6' />
@@ -103,13 +101,11 @@ const Sidebar = () => {
                         </Link>
                     </li>
 
-					
-
                     {/* Botón de gestiones solo para admin */}
-                    {authUser && authUser.rol === 'admin' && authUser.correo === ADMIN_EMAIL && (
+                    {authUser && authUser.roles === 'admin' && (
                         <li className='flex justify-center md:justify-start'>
                             <Link
-                                to='/gestiones' // Asegúrate de que la ruta a gestiones sea correcta
+                                to='/gestionUsuario' // Asegúrate de que la ruta a gestiones sea correcta
                                 className='flex gap-3 items-center hover:bg-gray-200 transition-all rounded-full duration-300 py-2 pl-2 pr-4 max-w-fit cursor-pointer'
                             >
                                 <span className='text-lg hidden md:block'>Gestiones</span>
@@ -119,12 +115,12 @@ const Sidebar = () => {
                 </ul>
                 {authUser && (
                     <Link
-                        to={`/profile/${authUser.nombre}`}
+                        to={`/profile/${authUser.nombre}`} // Cambié a authUser?.nombre
                         className='mt-auto mb-10 flex gap-2 items-start transition-all duration-300 hover:bg-gray-200 py-2 px-4 rounded-full'
                     >
                         <div className='avatar hidden md:inline-flex'>
                             <div className='w-8 rounded-full'>
-                                <img src={authUser?.fotoPerfil || "/avatar-placeholder.png"} />
+                                <img src={authUser?.fotoPerfil || "/avatar-placeholder.png"} alt="avatar" />
                             </div>
                         </div>
                         <div className='flex justify-between flex-1'>
