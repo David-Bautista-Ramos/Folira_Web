@@ -15,6 +15,7 @@ function GestionLibro() {
 
   const [libro, setLibros] = useState([]); // Lista completa de libros
   const [selectedLibrosId, setSelectedLibrosId] = useState(null); // ID del libro seleccionado
+
   const [isInactivarModalOpen, setIsInactivarModalOpen] = useState(false);
   const [isActivarModalOpen, setIsActivarModalOpen] = useState(false);
   const [isCrearModalOpen, setIsCrearModalOpen] = useState(false);

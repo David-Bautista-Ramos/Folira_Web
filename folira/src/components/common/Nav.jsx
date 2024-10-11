@@ -16,9 +16,9 @@ function Nav() {
   return (
     <nav className="w-full h-14 bg-white border-b border-primary fixed top-0 left-0 z-50 px-7 flex items-center">
       {/* Logo */}
-      <div className="flex items-center">
+      <Link to="/" className="flex items-center">
         <img className="w-20 h-40 cursor-pointer" src={Folira_general} alt="logo_nav" />
-      </div>
+      </Link>
 
       {/* Opciones de navegación */}
       <div className="flex items-center justify-center space-x-12 flex-grow">
