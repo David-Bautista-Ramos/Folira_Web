@@ -7,7 +7,7 @@ const LibroSchema = new mongoose.Schema(
         required: true,
         max: 100,
       },
-      ISBN: {
+      isbn: {
         type: String,
         required: true,
         unique: true,
@@ -25,7 +25,6 @@ const LibroSchema = new mongoose.Schema(
         required: true,
       },
       portada: String,
-      portadaURL: String,
       calificacion: {
         type: Number,
         min: 0,
