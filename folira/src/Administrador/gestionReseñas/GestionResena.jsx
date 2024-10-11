@@ -1,5 +1,5 @@
-import { useState } from "react";
-import { BiEdit, BiPlus, BiPowerOff, BiReset, BiShow,  } from "react-icons/bi"; // Importa los íconos de ver más y ver menos
+import { useEffect, useState } from "react";
+import { BiEdit, BiPlus, BiPowerOff, BiReset, BiTrash } from "react-icons/bi"; 
 import { Link } from "react-router-dom";
 import Nav from "../../components/common/Nav";
 import banner_resenas from "../../assets/img/gestionResena.jpeg"; 
@@ -7,124 +7,145 @@ import ModalActivarReseña from "./ModalActivarReseña";
 import ModalInactivarReseña from "./ModalInactivarReseña";
 import ModalCrearReseña from "./ModalCrearReseña";
 import ModalActualizarReseña from "./ModalActualizarReseña";
+import ModalEliminarResena from "./ModalEliminarResena";
 import FiltrarResenaEstado from "../../components/common/FiltrarResenaEstado";
-
-const reseñas = [
-    {
-        _id: "7",
-        contenido: "¡Estoy disfrutando de 'Cien años de soledad' de Gabriel García Márquez! Es una obra maestra de la literatura.",
-        fotoLibro: "https://example.com/cien-anos-soledad.jpg",
-        usuario: {
-            _id: "7",
-            nombreCompleto: "Juan Pérez",
-            nombreUsuario: "juanp",
-            fotoPerfil: "https://example.com/perfil-juan.jpg"
-        },
-        estado: "Activo"
-    },
-    {
-        _id: "5",
-        contenido: "Recomiendo 'El túnel' de Ernesto Sabato. Es una lectura intensa y profunda.",
-        fotoLibro: "https://example.com/el-tunel.jpg",
-        usuario: {
-            _id: "5",
-            nombreCompleto: "Ana Martínez",
-            nombreUsuario: "ana_martinez",
-            fotoPerfil: "https://example.com/perfil-ana.jpg"
-        },
-        estado: "Activo"
-    },
-    {
-        _id: "3",
-        contenido: "Me encantó 'Fahrenheit 451' de Ray Bradbury. La temática es muy relevante para los tiempos modernos.",
-        fotoLibro: null, // No hay imagen para esta reseña
-        usuario: {
-            _id: "3",
-            nombreCompleto: "Carlos López",
-            nombreUsuario: "carlos_lopez",
-            fotoPerfil: "https://example.com/perfil-carlos.jpg"
-        },
-        estado: "Activo"
-    },
-    {
-        _id: "4",
-        contenido: "Me encantó 'Fahrenheit 451' de Ray Bradbury. La temática es muy relevante para los tiempos modernos.para los tiempos modernos.para los tiempos modernos.para los tiempos modernos.",
-        fotoLibro: null, // No hay imagen para esta reseña
-        usuario: {
-            _id: "4",
-            nombreCompleto: "Carlos López",
-            nombreUsuario: "carlos_lopez",
-            fotoPerfil: "https://example.com/perfil-carlos.jpg"
-        },
-        estado: "Activo"
-    },
-    {
-        _id: "1",
-        contenido: "¡Estoy disfrutando de 'Cien años de soledad' de Gabriel García Márquez! Es una obra maestra de la literatura.",
-        fotoLibro: "https://example.com/cien-anos-soledad.jpg",
-        usuario: {
-            _id: "1",
-            nombreCompleto: "Juan Pérez",
-            nombreUsuario: "juanp",
-            fotoPerfil: "https://example.com/perfil-juan.jpg"
-        },
-        estado: "Inactivo"
-    },
-   
-];
-
+import GestionSkeleton from "../../components/skeletons/GestionSkeleton";
 
 function GestionResenas() {
     const [isActivarModalOpen, setIsActivarModalOpen] = useState(false);
     const [isInactivarModalOpen, setIsInactivarModalOpen] = useState(false);
     const [isCrearModalOpen, setIsCrearModalOpen] = useState(false);
     const [isActualizarModalOpen, setIsActualizarModalOpen] = useState(false);
-    const [reseñaSeleccionada, setReseñaSeleccionada] = useState(null);
-    const [expandedPost] = useState(null); 
+    const [isEliminarModalOpen, setIsEliminarModalOpen] = useState(false);
+    
+    const [selectedResenaId, setSelectedResenaId] = useState(null);
+    const [resenas, setResenas] = useState([]);
     const [isFilterModalOpen, setIsFilterModalOpen] = useState(false);
-    const [filteredState, setFilteredState] = useState("Todos"); // Estado para el filtro de estado
+    const [filteredResenas, setFilteredResenas] = useState([]);
+    const [isLoading, setIsLoading] = useState(true);
+    
+    const obtenerResenas = async () => {
+        setIsLoading(true);
+        try {
+            const response = await fetch("/api/resenas/getresenas", {
+                method: "GET",
+                headers: {
+                    "Content-Type": "application/json",
+                },
+            });
+        
+            if (!response.ok) {
+                throw new Error("Error al obtener las reseñas");
+            }
+        
+            const data = await response.json();
+            console.log(data); // Imprimir la respuesta para depurar
+    
+            // Verificar si la respuesta es un array
+            if (data && Array.isArray(data)) {
+                setResenas(data);
+                setFilteredResenas(data);
+            } else {
+                console.error("La respuesta no contiene un array de reseñas:", data);
+            }
+            
+        } catch (error) {
+            console.error("Error", error);
+        } finally {
+            setIsLoading(false);
+        }
+    };
 
-
-    // const toggleExpandPost = (postId) => {
-    //     setExpandedPost(expandedPost === postId ? null : postId);
-    // };
-
-    const handleActualizarClick = (reseña) => {
-        setReseñaSeleccionada(reseña);
-        setIsActualizarModalOpen(true);
+    useEffect(() => {
+        obtenerResenas();
+    }, []);
+    
+    const handleFilter = async (filter) => {
+        console.log(`Filter selected: ${filter}`);
+        setIsLoading(true);
+    
+        try {
+            let response;
+    
+            if (filter === "Activo") {
+                response = await fetch("/api/resenas/getresenasact", {
+                    method: "GET",
+                    headers: {
+                        "Content-Type": "application/json",
+                    },
+                });
+            } else if (filter === "Inactivo") {
+                response = await fetch("/api/resenas/getresenasdes", {
+                    method: "GET",
+                    headers: {
+                        "Content-Type": "application/json",
+                    },
+                });
+            } else if (filter === "Restaurar") {
+                setFilteredResenas(resenas);
+                setIsFilterModalOpen(false);
+                setIsLoading(false);
+                return;
+            }
+    
+            if (!response.ok) {
+                throw new Error("Error al filtrar las reseñas");
+            }
+    
+            const data = await response.json();
+    
+            if (data && Array.isArray(data.resenas)) {
+                setFilteredResenas(data.resenas);
+            } else {
+                console.error("La respuesta no contiene un array de reseñas:", data);
+            }
+        } catch (error) {
+            console.error("Error al filtrar", error);
+        } finally {
+            setIsLoading(false);
+        }
+        setIsFilterModalOpen(false);
     };
 
     const [expandedPosts, setExpandedPosts] = useState({});
 
     const toggleExpandPost = (postId) => {
         setExpandedPosts((prev) => ({
-        ...prev,
-        [postId]: !prev[postId],
+            ...prev,
+            [postId]: !prev[postId],
         }));
     };
 
     const isPostExpanded = (postId) => expandedPosts[postId] || false;
 
-      // Filtrar publicaciones por estado
-      const filteredPublicaciones = reseñas.filter((libro) =>
-        filteredState === "Todos" || libro.estado === filteredState
-    );
+    const filteredPublicaciones = filteredResenas.length > 0 ? filteredResenas : resenas;
 
-    // Lógica para abrir el modal de filtro
-    const handleFilterClick = () => {
-        setIsFilterModalOpen(true);
-    };
-    // Lógica para aplicar el filtro
-    const handleFilterSelect = (estado) => {
-        setFilteredState(estado);
-        setIsFilterModalOpen(false); // Cerrar el modal después de seleccionar un estado
-    };
-
-    // Lógica para restaurar la vista completa de publicaciones
     const handleRestore = () => {
-        setFilteredState("Todos");
-        setIsFilterModalOpen(false);  // Cerrar el modal
+        setFilteredResenas(resenas);
+        setIsFilterModalOpen(false);
     };
+      
+    const handleOpenActivarModal = (resenaId) => {
+        setSelectedResenaId(resenaId);
+        setIsActivarModalOpen(true);
+    };
+    
+    const handleOpenDeleteModal = (resenaId) => {
+        setSelectedResenaId(resenaId);
+        setIsEliminarModalOpen(true);
+    };
+    
+    const handleOpenDesactiveModal = (resenaId) => {
+        setSelectedResenaId(resenaId);
+        setIsInactivarModalOpen(true);
+    };
+    
+    const handleOpenActualizarModal = (resenaId) => {
+        setSelectedResenaId(resenaId);
+        setIsActualizarModalOpen(true);
+    };
+
+    const obtenerEstadoTexto = (estado) => estado ? "Activo" : "Inactivo";
 
     return (
         <div>
@@ -136,108 +157,130 @@ function GestionResenas() {
                     </div>
 
                     <div className="flex justify-end mt-4 mr-[70px]">
+                    <button onClick={() => setIsCrearModalOpen(true)} title="Crear">
+                            <BiPlus className="text-xl mr-3" />
+                        </button>
                         <button
-                        onClick={handleFilterClick}
-                        className="bg-primary text-white px-4 py-2 rounded mr-3 hover:bg-blue-950"
+                            onClick={() => setIsFilterModalOpen(true)}
+                            className="bg-primary text-white px-4 py-2 rounded mr-3 hover:bg-blue-950"
                         >
-                        Estado
+                            Estado
                         </button>
                     </div>
 
-                    <div className="flex flex-wrap justify-center gap-10 p-2">
-                        {filteredPublicaciones.map((reseña) => {  
-                            const isExpanded = isPostExpanded(reseña._id);
-                            const contenidoMostrado = isExpanded
-                            ? reseña.contenido
-                            : `${reseña.contenido.substring(0, 100)}...`;
+                    <div className="flex flex-wrap justify-center gap-6 p-6">
+                        {isLoading ? (
+                            <GestionSkeleton />
+                        ) : filteredPublicaciones.length > 0 ? (
+                            filteredPublicaciones.map((resena) => {
+                                const isExpanded = isPostExpanded(resena._id);
+                                const contenidoMostrado = isExpanded
+                                    ? resena.contenido
+                                    : `${resena.contenido.substring(0, 100)}...`;
+                                const conteoPalabras = resena.contenido.split(" ").length;
 
-                            return (
-                                <div
-                                key={reseña._id}
-                                className="bg-white shadow-lg rounded-lg w-[320px] min-h-[450px] p-4 mb-4 border border-gray-300 flex flex-col justify-between">
-                                    <div className="flex gap-4">
-                                        <div className="flex flex-col w-full">
-                                            <div className="avatar">
-                                                <Link to={`/profile/${reseña.usuario._id}`} className="w-8 rounded-full overflow-hidden">
-                                                    <img src={reseña.usuario.fotoPerfil} alt="Profile" />
+                                return (
+                                    <div
+                                        key={resena._id}
+                                        className="flex flex-col w-[45%] bg-white border border-gray-300 p-4 rounded-md shadow-lg"
+                                    >
+                                        <div className="flex items-center mb-4">
+                                            <div className="w-24 h-24 bg-gray-300 rounded-full border border-primary overflow-hidden mr-4">
+                                                <Link to={`/profile/${resena.idUsuario._id}`}>
+                                                    <img
+                                                        className="object-cover w-full h-full"
+                                                        src={resena.idUsuario.fotoPerfil || "url_de_imagen_predeterminada"}
+                                                        alt="Perfil"
+                                                    />
                                                 </Link>
                                             </div>
-                                            <div className="flex flex-col flex-1">
-                                                <div className="flex gap-2 items-center">
-                                                    <Link to={`/profile/${reseña.usuario._id}`} className="font-bold">
-                                                        {reseña.usuario.nombreCompleto}
-                                                    </Link>
-                                                </div>
-
-                                                {/* Mostrar contenido truncado o completo */}
-                                                <div className="text-left">
-                                                    {expandedPost === reseña._id
-                                                        ? reseña.contenido
-                                                        : reseña.contenido.length > 50
-                                                        ? `${reseña.contenido.substring(0, 50)}...`
-                                                        : reseña.contenido}
-                                                </div>
-
-                                                {/* Texto de la publicación (Descripción) */}
-                                                <p className="text-gray-700 mb-2">{contenidoMostrado}</p>
-
-                                                {/* Botón de ver más o ver menos */}
-                                                <button
-                                                    className="text-primary flex items-center mt-1"
-                                                    onClick={() => toggleExpandPost(reseña._id)}
-                                                >
-                                                    <BiShow className="text-xl" />
-                                                    <span className="ml-1">
-                                                        {expandedPost === reseña._id ? "Ver menos" : "Ver más"}
-                                                    </span>
-                                                </button>
-
-                                                {reseña.fotoLibro && (
-                                                    <img
-                                                        src={reseña.fotoLibro}
-                                                        className="h-[300px] object-contain rounded-lg border border-blue-950 mt-2"
-                                                        alt="Libro"
-                                                    />
-                                                )}
+                                            <div>
+                                                <h2 className="font-semibold">{resena.idUsuario.nombreCompleto}</h2>
+                                                <p>Estado: {obtenerEstadoTexto(resena.estado)}</p>
                                             </div>
                                         </div>
-                                    </div>
-                                    
-                                    <div className="flex justify-end items-center gap-3 mt-3">
-                                        <button onClick={() => setIsActivarModalOpen(true)} title="Activar">
-                                            <BiPowerOff className="text-xl" />
-                                        </button>
-                                        <button onClick={() => setIsInactivarModalOpen(true)} title="Inactivar">
-                                            <BiReset className="text-xl" />
-                                        </button>
-                                        <button onClick={() => setIsCrearModalOpen(true)} title="Crear">
-                                            <BiPlus className="text-xl" />
-                                        </button>
-                                        <button onClick={() => handleActualizarClick(reseña)} title="Actualizar">
-                                            <BiEdit className="text-xl" />
-                                        </button>
-                                    </div>
 
-                                </div>
-                            );
-                        })}
+                                        <div className="mb-2 text-gray-700">
+                                            {contenidoMostrado}{" "}
+                                            <span className="text-sm text-gray-500">({conteoPalabras} palabras)</span>
+                                        </div>
 
+                                        <button
+                                            className="text-primary flex items-center mt-1"
+                                            onClick={() => toggleExpandPost(resena._id)}
+                                        >
+                                            {isExpanded ? "Ocultar contenido" : "Ver más"}
+                                        </button>
+
+                                        <div className="flex justify-center gap-3">
+                                            <button
+                                                onClick={() => handleOpenActivarModal(resena._id)}
+                                                title="Activar"
+                                            >
+                                                <BiPowerOff className="text-xl" />
+                                            </button>
+                                            <button
+                                                onClick={() => handleOpenDesactiveModal(resena._id)}
+                                                title="Inactivar"
+                                            >
+                                                <BiReset className="text-xl" />
+                                            </button>
+                                            <button
+                                                onClick={() => handleOpenActualizarModal(resena._id)}
+                                                title="Actualizar"
+                                            >
+                                                <BiEdit className="text-xl" />
+                                            </button>
+                                            <button
+                                                onClick={() => handleOpenDeleteModal(resena._id)}
+                                                title="Eliminar"
+                                            >
+                                                <BiTrash className="text-xl" />
+                                            </button>
+                                        </div>
+                                    </div>
+                                );
+                            })
+                        ) : (
+                            <p className="text-center">No hay reseñas disponibles.</p>
+                        )}
                     </div>
 
-                    {/* Modales para activar, inactivar, crear y actualizar reseñas */}
-                    <ModalActivarReseña isOpen={isActivarModalOpen} onClose={() => setIsActivarModalOpen(false)} />
-                    <ModalInactivarReseña isOpen={isInactivarModalOpen} onClose={() => setIsInactivarModalOpen(false)} />
-                    <ModalCrearReseña isOpen={isCrearModalOpen} onClose={() => setIsCrearModalOpen(false)} />
+                    {/* Modals */}
+                    <ModalActivarReseña
+                        isOpen={isActivarModalOpen}
+                        onClose={() => setIsActivarModalOpen(false)}
+                        resenaId={selectedResenaId}
+                        obtenerResenas={obtenerResenas}
+                        
+                    />
+                    <ModalInactivarReseña
+                        isOpen={isInactivarModalOpen}
+                        onClose={() => setIsInactivarModalOpen(false)}
+                        resenaId={selectedResenaId}
+                        obtenerResenas={obtenerResenas}
+                    />
+                    <ModalCrearReseña
+                        isOpen={isCrearModalOpen}
+                        onClose={() => setIsCrearModalOpen(false)}
+                        obtenerResenas={obtenerResenas}
+                    />
                     <ModalActualizarReseña
                         isOpen={isActualizarModalOpen}
                         onClose={() => setIsActualizarModalOpen(false)}
-                        reseña={reseñaSeleccionada}
+                        resenaId={selectedResenaId}
+                        obtenerResenas={obtenerResenas}
                     />
-
+                    <ModalEliminarResena
+                        isOpen={isEliminarModalOpen}
+                        onClose={() => setIsEliminarModalOpen(false)}
+                        resenaId={selectedResenaId}
+                        obtenerResenas={obtenerResenas}
+                    />
                     <FiltrarResenaEstado
                         isOpen={isFilterModalOpen}
                         onClose={() => setIsFilterModalOpen(false)}
-                        onFilter={handleFilterSelect}
+                        onFilter={handleFilter}
                         onRestore={handleRestore}
                     />
                 </main>

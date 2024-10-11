@@ -1,44 +1,102 @@
-import React from 'react';
+import { useState } from "react";
+import useCreateGenero from "../../hooks/useCreateGenero";
 
-function ModalCrearGenero({ isOpen, onClose, onCreate }) {
-  const [nombre, setNombre] = React.useState('');
-
-  const handleCreate = () => {
-    onCreate(nombre);
-    setNombre('');
-    onClose();
-  };
+function ModalCrearGenero({ isOpen, onClose , obtenerGenerosLiterarios}) {
+  const [formData, setFormData] = useState({
+    nombre: "",
+    descripcion: "",
+  });
+  const [fotoGenero, setFotoGenero] = useState(null);
+  const { createComuniad, isCreatingComunidad } = useCreateGenero();
 
   if (!isOpen) return null;
 
+  const handleInputChange = (e) => {
+    const { name, value } = e.target;
+    setFormData((prevData) => ({ ...prevData, [name]: value }));
+  };
+
+  const handleImgChange = (e) => {
+    const file = e.target.files[0];
+    if (file) {
+      const reader = new FileReader();
+      reader.onload = () => setFotoGenero(reader.result);
+      reader.readAsDataURL(file);
+    }
+  };
+
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    createComuniad({ ...formData, fotoGenero });
+    setFormData({ nombre: "", descripcion: "" });
+    setFotoGenero(null);
+    onClose();
+    obtenerGenerosLiterarios();
+  };
+
   return (
-    <div className="fixed inset-0 flex items-center justify-center z-50 bg-black bg-opacity-50">
-      <div className="bg-white p-5 rounded-lg max-w-sm w-full shadow-lg">
-        <h2 className="text-2xl text-gray-800 mb-4">Crear Género</h2>
+    <div
+      className="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center z-50"
+      onClick={onClose}
+    >
+      <form
+        className="bg-white p-5 rounded-lg max-w-md w-full shadow-lg relative"
+        onClick={(e) => e.stopPropagation()}
+        onSubmit={handleSubmit}
+      >
+        <h2 className="text-lg text-center text-gray-800 mb-4">Crear Género</h2>
+
+        <label className="block mb-1 text-gray-700">Foto del género</label>
+        <input
+          type="file"
+          accept="image/*"
+          onChange={handleImgChange}
+          className="w-full p-2 mb-3 border rounded focus:border-primary"
+        />
+        {fotoGenero && (
+          <img
+            src={fotoGenero}
+            alt="Preview"
+            className="w-24 h-24 rounded-full object-cover mx-auto mb-3" // Estilo circular
+          />
+        )}
+
+        <label className="block mb-1 text-gray-700">Nombre del género</label>
         <input
           type="text"
-          value={nombre}
-          onChange={(e) => setNombre(e.target.value)}
+          name="nombre"
+          value={formData.nombre}
+          onChange={handleInputChange}
           placeholder="Nombre del género"
-          className="w-full p-2 border border-primary rounded-md mb-4"
+          className="w-full p-2 mb-3 border rounded focus:border-primary focus:outline-none"
         />
+
+        <label className="block mb-1 text-gray-700">Descripción</label>
+        <textarea
+          name="descripcion"
+          value={formData.descripcion}
+          onChange={handleInputChange}
+          placeholder="Descripción"
+          className="w-full p-2 mb-3 border rounded focus:border-primary focus:outline-none"
+        />
+
         <div className="flex justify-end gap-2">
           <button
+            className="px-4 py-2 bg-gray-300 text-gray-800 rounded-md hover:bg-gray-400"
             onClick={onClose}
-            className="px-4 py-2 bg-gray-300 text-gray-800 rounded-md  hover:bg-gray-400" 
-
+            type="button"
           >
             Cancelar
           </button>
-
           <button
-            onClick={handleCreate}
-            className="bg-primary text-white py-2 px-4 rounded-md hover:bg-blue-950 mr-2 ml-2 "
+            type="submit"
+            className="px-4 py-2 bg-primary text-white rounded-md hover:bg-blue-950"
+            disabled={isCreatingComunidad}
           >
-            Crear
+            {isCreatingComunidad ? "Creando..." : "Crear Género"}
           </button>
         </div>
-      </div>
+      </form>
     </div>
   );
 }

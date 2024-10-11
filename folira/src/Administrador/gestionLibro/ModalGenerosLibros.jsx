@@ -63,6 +63,7 @@ function ModalGeneros({ isOpen, onClose }) {
   const handleUpdate = (generoId) => {
     setSelectedGenerosId(generoId);
     setIsUpdateModalOpen(true);
+    obtenerGenerosLiterarios();
   };
 
   const handleInactivate = (generoId) => {
@@ -87,21 +88,28 @@ function ModalGeneros({ isOpen, onClose }) {
   const handleCloseUpdateModal = () => {
     setIsUpdateModalOpen(false);
     setSelectedGenerosId(null);
+    obtenerGenerosLiterarios(); // Llamar para actualizar la lista después de inactivar
   };
 
   const handleCloseInactivateModal = () => {
     setIsInactivateModalOpen(false);
     setSelectedGenerosId(null);
+    obtenerGenerosLiterarios(); // Llamar para actualizar la lista después de inactivar
   };
 
   const handleCloseActivateModal = () => {
     setIsActivateModalOpen(false);
     setSelectedGenerosId(null);
+    obtenerGenerosLiterarios(); // Llamar para actualizar la lista después de inactivar
   };
 
   const handleCloseDeleteModal = () => {
     setIsDeleteModalOpen(false);
     setSelectedGenerosId(null);
+  };
+   // Función para convertir estado booleano a texto
+   const obtenerEstadoTexto = (estado) => {
+    return estado ? "Activo" : "Inactivo";
   };
 
   if (!isOpen) return null;
@@ -123,33 +131,39 @@ function ModalGeneros({ isOpen, onClose }) {
                   key={genero.id}
                   className="flex flex-col bg-white border border-primary p-4 rounded-md mb-4"
                 >
-                  <div className="flex justify-between items-center mb-4 text-lg">
-                    <span className="mr-4">{genero.nombre}</span>
+                  <div className="flex justify-between items-center mb-5 text-lg">
+                  <img
+                    className="object-cover w-16 h-16 rounded-full" // Cambiado para hacer la imagen circular
+                    src={genero.fotoGenero || "url_de_la_imagen_autor"}
+                    alt="Género"
+                  />
+                    <span className="mr-5">{genero.nombre}</span>
+                    <span className="mr-5">{obtenerEstadoTexto(genero.estado)}</span>
                     <div className="flex gap-2">
                       <button
                         className="bg-primary text-secondary border border-[#503B31] rounded px-2 py-1 hover:bg-blue-950"
-                        onClick={() => handleActivate(genero)}
+                        onClick={() => handleActivate(genero._id)}
                         title="Activar"
                       >
                         <BiPowerOff className="text-xl" />
                       </button>
                       <button
                         className="bg-primary text-secondary border border-[#503B31] rounded px-2 py-1 hover:bg-blue-950"
-                        onClick={() => handleInactivate(genero)}
+                        onClick={() => handleInactivate(genero._id)}
                         title="Inactivar"
                       >
                         <BiReset className="text-xl" />
                       </button>
                       <button
                         className="bg-primary text-secondary border border-primary rounded px-2 py-1 hover:bg-blue-950"
-                        onClick={() => handleUpdate(genero)}
+                        onClick={() => handleUpdate(genero._id)}
                         title="Actualizar"
                       >
                         <BiEdit className="text-xl" />
                       </button>
                       <button
                         className="bg-primary text-secondary border border-primary rounded px-2 py-1 hover:bg-blue-950"
-                        onClick={() => handleDelete(genero)} // Llamar a la función de eliminación
+                        onClick={() => handleDelete(genero._id)} // Llamar a la función de eliminación
                         title="Eliminar"
                       >
                         <BiTrash className="text-xl" />
@@ -178,7 +192,8 @@ function ModalGeneros({ isOpen, onClose }) {
       {/* Modales para Crear, Actualizar, Inactivar, Activar y Eliminar Género */}
       <ModalCrearGenero
         isOpen={isCreateModalOpen}
-        onClose={handleCloseCreateModal}
+        onClose={()=>{handleCloseCreateModal(false); obtenerGenerosLiterarios()}}
+        obtenerGenerosLiterarios={obtenerGenerosLiterarios}
         onCreate={(nuevoGenero) => {
           console.log('Género creado:', nuevoGenero);
           handleCloseCreateModal();
@@ -187,7 +202,8 @@ function ModalGeneros({ isOpen, onClose }) {
       {selectedGenerosId && (
         <ModalActualizarGenero
           isOpen={isUpdateModalOpen}
-          onClose={handleCloseUpdateModal}
+          onClose={()=>{handleCloseActivateModal; obtenerGenerosLiterarios()}}
+          obtenerGenerosLiterarios={obtenerGenerosLiterarios}
           onUpdate={(updatedGenero) => {
             console.log('Género actualizado:', updatedGenero);
             handleCloseUpdateModal();
@@ -200,6 +216,7 @@ function ModalGeneros({ isOpen, onClose }) {
           isOpen={isInactivateModalOpen}
           onClose={handleCloseInactivateModal}
           generoId={selectedGenerosId}
+          obtenerGenerosLiterarios={obtenerGenerosLiterarios}
           onConfirm={() => {
             console.log(`Género ${selectedGenerosId.nombre} inactivado.`);
             handleCloseInactivateModal();
@@ -211,6 +228,7 @@ function ModalGeneros({ isOpen, onClose }) {
           isOpen={isActivateModalOpen}
           onClose={handleCloseActivateModal}
           generoId={selectedGenerosId}
+          obtenerGenerosLiterarios={obtenerGenerosLiterarios}
           onConfirm={() => {
             console.log(`Género ${selectedGenerosId.nombre} activado.`);
             handleCloseActivateModal();
@@ -222,6 +240,7 @@ function ModalGeneros({ isOpen, onClose }) {
           isOpen={isDeleteModalOpen}
           onClose={handleCloseDeleteModal}
           generoId={selectedGenerosId}
+          obtenerGenerosLiterarios={obtenerGenerosLiterarios}
           onConfirm={() => {
             console.log(`Género ${selectedGenerosId.nombre} eliminado.`);
             handleCloseDeleteModal();

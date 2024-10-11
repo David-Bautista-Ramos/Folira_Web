@@ -11,7 +11,7 @@ function ModalInactivarComunidad({ isOpen, onClose, comunidadId, obtenerComunida
     setLoading(true);
     setError(null); // Limpiar errores previos
     try {
-      const response = await fetch(`/api/autror/autoresdes/${comunidadId}`, {
+      const response = await fetch(`/api/comunidad/comunidaddes/${comunidadId}`, {
         method: 'PUT', // Cambia el método según sea necesario (PUT/POST)
         headers: {
           'Content-Type': 'application/json',

@@ -101,7 +101,8 @@ function App() {
             {authUser && <Sidebar />}
             <main className='flex-1'>
               <Routes>
-                <Route path='/' element={authUser ? <HomePage /> : <Navigate to='/login' />} />
+                <Route path='/index' element={ <Index />} />  
+                <Route path='/' element={authUser ? <HomePage /> : <Navigate to='/index' />} />
                 <Route path='/login' element={!authUser ? <LoginPage /> :<Navigate to='/' /> } />
                 <Route path='/signup' element={!authUser ? <SignUpPage /> : <Navigate to='/' />} />
                 <Route path='/notifications' element={authUser ? <NotificationPage /> : <Navigate to='/login' />} />
@@ -111,8 +112,7 @@ function App() {
                 <Route path='/autor' element={authUser ? <Autor /> : <Navigate to='/login' />} />
                 <Route path='/fichaLibro' element={authUser ? <FichaTecnicaLibro /> : <Navigate to='/login' />} />
                 <Route path='/fichaAutor' element={authUser ? <FichaTecnicaAutor /> : <Navigate to='/login' />} />
-                <Route path='/detalleComunidad' element={authUser ? <DetallesComunidad /> : <Navigate to='/login' />} />
-                <Route path='/index' element={!authUser ? <Index /> : <Navigate to='/index' />} />          
+                <Route path='/detalleComunidad' element={authUser ? <DetallesComunidad /> : <Navigate to='/login' />} />        
                 </Routes>
             </main>
             {authUser && <RightPanel />}

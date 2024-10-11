@@ -68,7 +68,7 @@ function GestionAutor() {
 
       if (filter === "Activo") {
         // Obtener autores activos
-        response = await fetch("/api/autror/autoresact", {
+        response = await fetch("/api/autror/getresenasact", {
           method: "GET",
           headers: {
             "Content-Type": "application/json",
@@ -76,7 +76,7 @@ function GestionAutor() {
         });
       } else if (filter === "Inactivo") {
         // Obtener autores inactivos
-        response = await fetch("/api/autror/autoresdes", {
+        response = await fetch("/api/autror/getresenasdes", {
           method: "GET",
           headers: {
             "Content-Type": "application/json",

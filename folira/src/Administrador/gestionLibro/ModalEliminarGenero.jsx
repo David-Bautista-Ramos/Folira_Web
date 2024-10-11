@@ -8,7 +8,7 @@ function ModalEliminarGenero({ isOpen, onClose, generoId, obtenerGenerosLiterari
     const handleDelete = async () => {
       setLoading(true);
     try {
-      const response = await fetch(`/api/geneLiter//elimgeneros/${generoId}`, {
+      const response = await fetch(`/api/geneLiter/elimgeneros/${generoId}`, {
         method: 'DELETE',
         headers: {
           'Content-Type': 'application/json',

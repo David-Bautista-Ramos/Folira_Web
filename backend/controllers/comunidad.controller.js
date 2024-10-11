@@ -1,4 +1,5 @@
 import Comunidad from "../models/comunidad.model.js";
+import cloudinary from 'cloudinary';
 
 // Crear una nueva comunidad
 export const crearComunidad = async (req, res) => {
@@ -11,11 +12,30 @@ export const crearComunidad = async (req, res) => {
             return res.status(400).json({ error: 'La comunidad ya existe.' });
         }
 
+        // Manejar la subida de las fotos, si existen
+        let fotoComunidadUrl = null;
+        let fotoBannerUrl = null;
+
+        if (fotoComunidad) {
+            const uploadedComunidadResponse = await cloudinary.uploader.upload(fotoComunidad, {
+                folder: "comunidades", // Cambia este nombre de carpeta según tus necesidades
+            });
+            fotoComunidadUrl = uploadedComunidadResponse.secure_url;
+        }
+
+        if (fotoBanner) {
+            const uploadedBannerResponse = await cloudinary.uploader.upload(fotoBanner, {
+                folder: "comunidades", // Cambia este nombre de carpeta según tus necesidades
+            });
+            fotoBannerUrl = uploadedBannerResponse.secure_url;
+        }
+
+        // Crear la nueva comunidad
         const nuevaComunidad = new Comunidad({
             nombre,
             descripcion,
-            fotoComunidad,
-            fotoBanner,
+            fotoComunidad: fotoComunidadUrl, // Guardar la URL de la foto de la comunidad subida
+            fotoBanner: fotoBannerUrl, // Guardar la URL del banner de la comunidad subida
             generoLiterarios,
             admin
         });
@@ -114,13 +134,44 @@ export const editarComunidad = async (req, res) => {
         const { id } = req.params;
         const { nombre, descripcion, fotoComunidad, fotoBanner, generoLiterarios, estado } = req.body;
 
-        const comunidadActualizada = await Comunidad.findByIdAndUpdate(id, { nombre, descripcion, fotoComunidad, fotoBanner,generoLiterarios, estado }, { new: true, runValidators: true });
+        // Inicializar las URLs de las fotos
+        let fotoComunidadUrl = null;
+        let fotoBannerUrl = null;
 
-        if (!comunidadActualizada) {
+        // Manejar la subida de la foto de la comunidad, si se proporciona
+        if (fotoComunidad) {
+            const uploadedComunidadResponse = await cloudinary.uploader.upload(fotoComunidad, {
+                folder: "comunidades", // Cambia este nombre de carpeta según tus necesidades
+            });
+            fotoComunidadUrl = uploadedComunidadResponse.secure_url;
+        }
+
+        // Manejar la subida del banner, si se proporciona
+        if (fotoBanner) {
+            const uploadedBannerResponse = await cloudinary.uploader.upload(fotoBanner, {
+                folder: "comunidades", // Cambia este nombre de carpeta según tus necesidades
+            });
+            fotoBannerUrl = uploadedBannerResponse.secure_url;
+        }
+
+        // Obtener la comunidad actual para realizar una actualización
+        const comunidadActual = await Comunidad.findById(id);
+        if (!comunidadActual) {
             return res.status(404).json({ error: "Comunidad no encontrada." });
         }
 
-        res.status(200).json({ message: "Comunidad actualizada con éxito", comunidad: comunidadActualizada });
+        // Actualizar los campos de la comunidad
+        comunidadActual.nombre = nombre || comunidadActual.nombre; // Mantener el valor existente si no se proporciona uno nuevo
+        comunidadActual.descripcion = descripcion || comunidadActual.descripcion;
+        comunidadActual.fotoComunidad = fotoComunidadUrl || comunidadActual.fotoComunidad; // Actualiza solo si hay una nueva URL
+        comunidadActual.fotoBanner = fotoBannerUrl || comunidadActual.fotoBanner; // Actualiza solo si hay una nueva URL
+        comunidadActual.generoLiterarios = generoLiterarios || comunidadActual.generoLiterarios;
+        comunidadActual.estado = estado || comunidadActual.estado;
+
+        // Guardar los cambios en la base de datos
+        await comunidadActual.save();
+
+        res.status(200).json({ message: "Comunidad actualizada con éxito", comunidad: comunidadActual });
     } catch (error) {
         console.error("Error al actualizar la comunidad:", error.message);
         res.status(500).json({ error: "Error al actualizar la comunidad." });

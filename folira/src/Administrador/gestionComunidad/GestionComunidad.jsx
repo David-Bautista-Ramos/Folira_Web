@@ -8,7 +8,7 @@ import ModalCrearComunidad from "./ModalCrearComunidad";
 import ModalEliminarComunidad from "./ModalEliminarComunidad";
 import ModalActualizarComunidad from "./ModalActualizarComunidad";
 import ModalFiltroComunidad from "../../components/common/ModalFiltrarComunidad"; // Importa el nuevo modal
-import { BiEdit,  BiPowerOff, BiReset, BiTrash } from "react-icons/bi";
+import { BiEdit,  BiPlus,  BiPowerOff, BiReset, BiTrash } from "react-icons/bi";
 import GestionSkeleton from "../../components/skeletons/GestionSkeleton";
 
 
@@ -45,10 +45,9 @@ function GestionComunidad() {
 
         const data = await response.json();
 
-        // Asegúrate de que data sea un array
         if (Array.isArray(data)) {
             setComunidad(data); // Asigna los autores obtenidos al estado
-            setIsFiltroModalOpen(data); // También asigna a autores filtrados
+            setFilteredComunidad(data); // Inicializa los comunidades filtrados con el mismo valor
         } else {
             console.error("La respuesta de las comunidades no es un array:", data);
         }
@@ -155,6 +154,9 @@ function GestionComunidad() {
                     </div>
 
                     <div className="flex justify-end mt-4 mr-[70px]">
+                    <button onClick={() => setIsCrearModalOpen(true)} title="Crear">
+                            <BiPlus className="text-xl mr-3" />
+                        </button>
                         <button 
                             onClick={() => setIsFiltroModalOpen(true)}
                             className="bg-primary text-white px-4 py-2 rounded mr-3 hover:bg-blue-950"
@@ -226,26 +228,26 @@ function GestionComunidad() {
                         isOpen={isInactivarModalOpen}
                         onClose={() => setIsInactivarModalOpen(false)}
                         comunidadId={selectedComunidadId}
-                        obtenerAutores={obtenerComunidades}
+                        obtenerComunidades={obtenerComunidades}
                     />
                     <ModalActivarComunidad
                         isOpen={isActivarModalOpen}
                         onClose={() => setIsActivarModalOpen(false)}
                         comunidadId={selectedComunidadId}
-                        obtenerAutores={obtenerComunidades}
+                        obtenerComunidades={obtenerComunidades}
                     />
                     <ModalCrearComunidad
                         isOpen={isCrearModalOpen}
                         onClose={() => setIsCrearModalOpen(false)}
                         comunidadId={selectedComunidadId}
-                        obtenerAutores={obtenerComunidades}
+                        obtenerComunidades={obtenerComunidades}
                     />
 
                     <ModalEliminarComunidad
                         isOpen={isEliminarModalOpen}
                         onClose={() => setIsEliminarModalOpen(false)}
                         autorId={selectedComunidadId} // Pasar el ID del usuario seleccionado
-                        obtenerAutores={obtenerComunidades} // Para refrescar la lista de usuarios
+                        obtenerComunidades={obtenerComunidades} // Para refrescar la lista de usuarios
                     />
 
 

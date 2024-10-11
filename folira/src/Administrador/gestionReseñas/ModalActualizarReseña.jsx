@@ -1,33 +1,53 @@
-import  { useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
+import useUpdateReseña from '../../hooks/useUpdateReseña'; // Custom hook for updating review
 
-const ModalActualizarReseña = ({ isOpen, onClose, reseña }) => {
+const ModalActualizarReseña = ({ isOpen, onClose, reseña, obtenerReseñasLiterarias }) => {
     const [contenido, setContenido] = useState('');
     const [fotoLibro, setFotoLibro] = useState('');
+    const [isUpdatingReseña, setIsUpdatingReseña] = useState(false); // State for loading indicator
 
-    // Cargar datos de la reseña cuando el modal se abra
+    const { updateReseña } = useUpdateReseña(); // Use your custom hook for updating the review
+
+    // Load review data when the modal opens
     useEffect(() => {
         if (isOpen && reseña) {
             setContenido(reseña.contenido);
-            setFotoLibro(reseña.fotoLibro || ''); // Si no hay imagen, establece como cadena vacía
+            setFotoLibro(reseña.fotoLibro || ''); // If no image, set as empty string
         }
     }, [isOpen, reseña]);
 
-    const handleSubmit = (e) => {
+    const handleSubmit = async (e) => {
         e.preventDefault();
-        // Aquí podrías manejar la actualización de la reseña
-        console.log("Actualizando reseña:", { contenido, fotoLibro });
-        // Luego puedes cerrar el modal
-        onClose();
+        setIsUpdatingReseña(true);
+        
+        try {
+            await updateReseña({ contenido, fotoLibro });
+            // You might want to refresh the list of reviews
+            obtenerReseñasLiterarias();
+            onClose(); // Close the modal after successful update
+        } catch (error) {
+            console.error("Error updating review:", error);
+        } finally {
+            setIsUpdatingReseña(false);
+        }
     };
 
-    if (!isOpen) return null; // Si el modal no está abierto, no mostrar nada
+    const handleImgChange = (e) => {
+        const file = e.target.files[0];
+        if (file) {
+            const reader = new FileReader();
+            reader.onload = () => setFotoLibro(reader.result);
+            reader.readAsDataURL(file);
+        }
+    };
+
+    if (!isOpen) return null; // If the modal is not open, do not show anything
 
     return (
         <div className="fixed inset-0 flex items-center justify-center z-50 bg-black bg-opacity-50">
             <div className="bg-white rounded-lg shadow-lg p-6 w-[400px]">
                 <div className="flex justify-between items-center mb-4">
                     <h2 className="text-xl font-semibold">Actualizar Reseña</h2>
-                    
                 </div>
                 <form onSubmit={handleSubmit}>
                     <div className="mb-4">
@@ -41,25 +61,39 @@ const ModalActualizarReseña = ({ isOpen, onClose, reseña }) => {
                             required
                         ></textarea>
                     </div>
+
                     <div className="mb-4">
-                        <label htmlFor="fotoLibro" className="block text-sm font-medium text-gray-700">URL de la imagen del libro (opcional)</label>
+                        <label className="block text-sm font-medium text-gray-700">Foto del libro (opcional)</label>
                         <input
-                            type="url"
-                            id="fotoLibro"
-                            value={fotoLibro}
-                            onChange={(e) => setFotoLibro(e.target.value)}
+                            type="file"
+                            accept="image/*"
+                            onChange={handleImgChange}
                             className="mt-1 block w-full p-2 border border-primary rounded-md"
                         />
-                    </div>
-                    <div className="flex justify-end gap-4 mt-4">
-                        <button className="px-4 py-2 bg-gray-300 text-gray-800 rounded-md  hover:bg-gray-400" onClick={onClose}>
-                            Cancelar
-                        </button>
-                        <button className="px-4 py-2 border rounded bg-primary text-white hover:bg-blue-950">
-                            Actualizar
-                        </button>
+                        {fotoLibro && (
+                            <img
+                                src={fotoLibro}
+                                alt="Preview"
+                                className="w-24 h-24 rounded-full object-cover mx-auto mt-3" // Circular style
+                            />
+                        )}
                     </div>
 
+                    <div className="flex justify-end gap-4 mt-4">
+                        <button
+                            className="px-4 py-2 bg-gray-300 text-gray-800 rounded-md hover:bg-gray-400"
+                            onClick={onClose}
+                        >
+                            Cancelar
+                        </button>
+                        <button
+                            type="submit"
+                            className="px-4 py-2 border rounded bg-primary text-white hover:bg-blue-950"
+                            disabled={isUpdatingReseña} // Disable button during updating
+                        >
+                            {isUpdatingReseña ? "Actualizando..." : "Actualizar"}
+                        </button>
+                    </div>
                 </form>
             </div>
         </div>

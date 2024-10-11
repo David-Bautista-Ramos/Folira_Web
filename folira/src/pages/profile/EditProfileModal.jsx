@@ -19,7 +19,7 @@ const EditProfileModal = ({ authUser }) => {
 		const { name, value, checked } = e.target;
 		if (name === "generos") {
 			if (checked) {
-				if (formData.generos.length < 5) {
+				if ((formData.generos).length < 5) {
 					setFormData((prevData) => ({
 						...prevData,
 						generos: [...prevData.generos, value],
@@ -107,7 +107,7 @@ const EditProfileModal = ({ authUser }) => {
 								rows={4}
 								style={{ resize: 'none', overflowWrap: 'break-word' }}
 							/>
-							<p>{formData.biografia.length}/200 caracteres</p>
+							<p>{(formData.biografia).length}/200 caracteres</p>
 						</div>
 						<div className='flex flex-wrap gap-2'>
 							<input

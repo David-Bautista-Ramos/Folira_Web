@@ -8,6 +8,7 @@ import {
     obtenerGenerosAct,
     obtenerGenerosDes,
     obtenerGeneros,
+    obtenerGeneroId,
   } from '../controllers/generoLiterario.controller.js';
 import { protectRoutes } from "../middleware/protectRoutes.js";
   
@@ -15,6 +16,7 @@ const router = express.Router();
   
 router.post('/generos',protectRoutes ,crearGenero); // Crear
 router.get('/getgeneros',protectRoutes,obtenerGeneros);
+router.get('/generoid/:id',protectRoutes,obtenerGeneroId);
 router.get('/generosact', protectRoutes, obtenerGenerosAct); // Obtener todos activos
 router.get('/generosdes',protectRoutes, obtenerGenerosDes); // Obtener todos inactivos
 router.put('/updgeneros/:id',protectRoutes, editarGenero); // Editar

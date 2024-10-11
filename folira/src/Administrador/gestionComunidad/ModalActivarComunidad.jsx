@@ -8,7 +8,7 @@ function ModalActivarComunidad({ isOpen, onClose, comunidadId, obtenerComunidade
   const handleOpenActivarModal = async () => {
     setLoading(true);
     try {
-      const response = await fetch(`/api/autror/autoresact/${comunidadId}`, {
+      const response = await fetch(`/api/comunidad/comunidadact/${comunidadId}`, {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json',

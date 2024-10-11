@@ -10,7 +10,7 @@ function ModalActivarGenero({ isOpen, onClose, generoId, obtenerGenerosLiterario
 
       try {
 
-        const response = await fetch(`/api/geneLiter/generos/activar/:id/${generoId}`, {
+        const response = await fetch(`/api/geneLiter/generos/activar/${generoId}`, {
           method: 'PUT',
           headers: {
           'Content-Type': 'application/json',

@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { FaRegComment } from "react-icons/fa";
 import { BiShow, BiEdit, BiPlus, BiPowerOff, BiReset } from "react-icons/bi";
 import { Link } from "react-router-dom";
@@ -10,151 +10,123 @@ import ModalInactivarPublicacion from "./ModalInactivarPublicacion";
 import ModalCrearPublicacion from "./ModalCrearPublicacion";
 import ModalActualizarPublicacion from "./ModalActualizarPublicacion";
 import ModalFiltroPublicaciones from "../../components/common/FiltroPublicacion";
+import ModalEliminarPublicacion from "./ModalEliminarPublicacion";
 
-const publicaciones = [
-    {
-        _id: "1",
-        contenido: "¡Estoy disfrutando de 'Cien años de soledad' de Gabriel García Márquez! Es una obra maestra de la literatura.",
-        fotoPublicacion: "https://example.com/cien-anos-soledad.jpg",
-        postOwner: {
-            _id: "1",
-            nombreCompleto: "Juan Pérez",
-            nombre: "juanp",
-            fotoPerfil: "https://example.com/perfil-juan.jpg"
-        },
-        comentarios: [
-            {
-                _id: "c1",
-                user: {
-                    nombreCompleto: "María López",
-                    nombre: "mari",
-                    fotoPerfil: "https://example.com/perfil-maria.jpg"
-                },
-                text: "¡Es uno de mis favoritos! La forma en que García Márquez narra la historia es increíble."
-            },
-            {
-                _id: "c2",
-                user: {
-                    nombreCompleto: "Pedro González",
-                    nombre: "pedro",
-                    fotoPerfil: "https://example.com/perfil-pedro.jpg"
-                },
-                text: "Lo leí hace años y me dejó una profunda impresión."
-            }
-        ],
-        estado: "Activo"
-    },
-    {
-        _id: "2",
-        contenido: "Recomiendo 'El túnel' de Ernesto Sabato. Es una lectura intensa y profunda.",
-        fotoPublicacion: "https://example.com/el-tunel.jpg",
-        postOwner: {
-            _id: "2",
-            nombreCompleto: "Ana Martínez",
-            nombre: "ana_martinez",
-            fotoPerfil: "https://example.com/perfil-ana.jpg"
-        },
-        comentarios: [
-            {
-                _id: "c3",
-                user: {
-                    nombreCompleto: "Luis Pérez",
-                    nombre: "luis",
-                    fotoPerfil: "https://example.com/perfil-luis.jpg"
-                },
-                text: "¡Qué gran recomendación! Lo leí hace poco y me encantó."
-            }
-        ],
-        estado: "Activo"
-    },
-    {
-        _id: "3",
-        contenido: "Acabo de terminar '1984' de George Orwell. Una novela muy poderosa y relevante.",
-        fotoPublicacion: "https://example.com/1984.jpg",
-        postOwner: {
-            _id: "3",
-            nombreCompleto: "Carla Gómez",
-            nombre: "carlag",
-            fotoPerfil: "https://example.com/perfil-carla.jpg"
-        },
-        comentarios: [],
-        estado: "Activo"
-    },
-    {
-        _id: "4",
-        contenido: "No puedo dejar de recomendar 'El amor en los tiempos del cólera'. Es una hermosa historia de amor. Espero que todos estén teniendo un gran día.",
-        fotoPublicacion: "https://example.com/amores.jpg",
-        postOwner: {
-            _id: "4",
-            nombreCompleto: "Miguel Rodríguez",
-            nombre: "miguelito",
-            fotoPerfil: "https://example.com/perfil-miguel.jpg"
-        },
-        comentarios: [
-            {
-                _id: "c4",
-                user: {
-                    nombreCompleto: "Laura Fernández",
-                    nombre: "laura",
-                    fotoPerfil: "https://example.com/perfil-laura.jpg"
-                },
-                text: "Es una historia tan conmovedora, me encanta."
-            }
-        ],
-        estado: "Activo"
-    },
-    {
-        _id: "5",
-        contenido: "Esta es una publicación solo de texto, sin imágenes. Espero que todos estén teniendo un gran día.",
-        postOwner: {
-            _id: "5",
-            nombreCompleto: "Sofía Castillo",
-            nombre: "sofia_c",
-            fotoPerfil: "https://example.com/perfil-sofia.jpg"
-        },
-        comentarios: [],
-        estado: "Inactivo" // Publicación inactiva
-    },
-    {
-        _id: "6",
-        contenido: "Esta es una publicación inactiva para mostrar el estado.",
-        postOwner: {
-            _id: "6",
-            nombreCompleto: "Carlos Pérez",
-            nombre: "carlosp",
-            fotoPerfil: "https://example.com/perfil-carlos.jpg"
-        },
-        comentarios: [],
-        estado: "Inactivo" // Publicación inactiva
-    }
-];
+import GestionSkeleton from "../../components/skeletons/GestionSkeleton";
 
 function GestionLibro() {
+
+    const [publicaciones, setPublicaciones] = useState([]); // Corregido: useState en vez de useSatate
+    const [selectedPublicacionesId, setSelectedPublicacionesId] = useState(null);
+
     const [isComentariosModalOpen, setIsComentariosModalOpen] = useState(false);
     const [comentarios, setComentarios] = useState([]);
     const [expandedPost] = useState(null);
-    const [publicacionSeleccionada, setPublicacionSeleccionada] = useState(null); 
+    // const [publicacionSeleccionada, setPublicacionSeleccionada] = useState(null);
+
     const [isFilterModalOpen, setIsFilterModalOpen] = useState(false);
-    const [filteredState, setFilteredState] = useState("Todos"); // Estado para el filtro de estado
+    const [filteredPublicacion, setFilteredPublicacion] = useState([]); // Estado para el filtro de estado
+
+    const [isLoading, setIsLoading] = useState(true); // Corregido: useState en vez de useSatate
+
 
     // Estados para los modales
     const [isActivarModalOpen, setIsActivarModalOpen] = useState(false);
     const [isInactivarModalOpen, setIsInactivarModalOpen] = useState(false);
     const [isCrearModalOpen, setIsCrearModalOpen] = useState(false);
     const [isActualizarModalOpen, setIsActualizarModalOpen] = useState(false);
+    const [isEliminarModalOpen, setIsEliminarModalOpen] = useState(false);
+
+
+    const obtenerPublicaciones = async () => {
+        setIsLoading(true);
+        try {
+          const response = await fetch("/api/posts/post", {
+            method: "GET",
+            headers: {
+              "Content-Type": "application/json",
+            },
+          });
+    
+          if (!response.ok) {
+            throw new Error("Error al obtener las publicaciones");
+          }
+    
+          const data = await response.json();
+    
+          // Asegúrate de que data sea un array
+          if (Array.isArray(data)) {
+            setPublicaciones(data); // Asigna los autores obtenidos al estado
+            setFilteredPublicacion(data); // También asigna a autores filtrados
+          } else {
+            console.error("La respuesta de las publicaciones no es un array:", data);
+          }
+        } catch (error) {
+          console.error("Error", error);
+        } finally {
+          setIsLoading(false);
+        }
+      };
+
+    useEffect(() => {
+        obtenerPublicaciones();
+      }, []);
+
+      const handleFilter = async (filter) => {
+        // Añadido async
+        console.log(`Filter selected: ${filter}`);
+        setIsLoading(true);
+    
+        try {
+          let response;
+    
+          if (filter === "Activo") {
+            // Obtener autores activos
+            response = await fetch("/api/posts/actpost", {
+              method: "GET",
+              headers: {
+                "Content-Type": "application/json",
+              },
+            });
+          } else if (filter === "Inactivo") {
+            // Obtener autores inactivos
+            response = await fetch("/api/posts/despost", {
+              method: "GET",
+              headers: {
+                "Content-Type": "application/json",
+              },
+            });
+          } else if (filter === "Restaurar") {
+            setFilteredPublicacion(publicaciones); // Restaurar la lista completa de autores
+            setIsFilterModalOpen(false); // Cerrar el modal
+            setIsLoading(false); // Finaliza la carga
+            return; // Salir de la función
+          }
+    
+          if (!response.ok) {
+            throw new Error("Error al filtrar las publicaciones");
+          }
+    
+          const data = await response.json();
+    
+          if (data && Array.isArray(data)) {
+            setFilteredPublicacion(data); // Asignar el array de autores filtrados
+          } else {
+            console.error("La respuesta no contiene un array de autores:", data);
+          }
+        } catch (error) {
+          console.error("Error al filtrar", error);
+        } finally {
+          setIsLoading(false); // Asegúrate de finalizar la carga
+        }
+    
+        setIsFilterModalOpen(false); // Cerrar el modal después de aplicar el filtro
+    
+      };
 
     const handleShowComentarios = (libroComentarios) => {
         setComentarios(libroComentarios);
         setIsComentariosModalOpen(true);
-    };
-
-    // const toggleExpandPost = (postId) => {
-    //     setExpandedPost(expandedPost === postId ? null : postId);
-    // };
-
-    const handleActualizarClick = (libro) => {
-        setPublicacionSeleccionada(libro); // Selecciona el libro
-        setIsActualizarModalOpen(true);
     };
 
     const [expandedPosts, setExpandedPosts] = useState({});
@@ -168,34 +140,38 @@ function GestionLibro() {
 
     const isPostExpanded = (postId) => expandedPosts[postId] || false;
 
-
-    const handleUpdatePublicacion = (nuevaPublicacion) => {
-        // Lógica para actualizar la publicación
-        // Actualizar los datos de la publicación con nuevaPublicacion
-        console.log("Publicación actualizada:", nuevaPublicacion);
-        setIsActualizarModalOpen(false); // Cierra el modal después de actualizar
-    };
-
       // Filtrar publicaciones por estado
     const filteredPublicaciones = publicaciones.filter((libro) =>
-        filteredState === "Todos" || libro.estado === filteredState
+        filteredPublicacion === "Todos" || libro.estado === filteredPublicacion
     );
 
-    // Lógica para abrir el modal de filtro
-    const handleFilterClick = () => {
-        setIsFilterModalOpen(true);
-    };
-    // Lógica para aplicar el filtro
-    const handleFilterSelect = (estado) => {
-        setFilteredState(estado);
-        setIsFilterModalOpen(false); // Cerrar el modal después de seleccionar un estado
-    };
-
-    // Lógica para restaurar la vista completa de publicaciones
     const handleRestore = () => {
-        setFilteredState("Todos");
-        setIsFilterModalOpen(false);  // Cerrar el modal
-    };
+        setFilteredPublicacion(publicaciones); // Restaurar todos los autores
+        setIsFilterModalOpen(false); // Cerrar el modal después de restaurar
+      };
+      
+      const handleOpenActivarModal = (publicacionId) => {
+        setSelectedPublicacionesId(publicacionId); // Guardar el ID del usuario seleccionado
+        setIsActivarModalOpen(true); // Abrir el modal
+      };
+      const handleOpenDeleteModal = (publicacionId) => {
+        setSelectedPublicacionesId(publicacionId); // Guardar el ID del usuario seleccionado
+        setIsEliminarModalOpen(true); // Abrir el modal
+      };
+      const handleOpenDesactiveModal = (publicacionId) => {
+        setSelectedPublicacionesId(publicacionId); // Guardar el ID del usuario seleccionado
+        setIsInactivarModalOpen(true); // Abrir el modal
+      };
+      const handleOpenActualizarModal = (publicacionId) => {
+        setSelectedPublicacionesId(publicacionId);
+        setIsActualizarModalOpen(true);
+      };
+    
+      // Función para convertir estado booleano a texto
+      const obtenerEstadoTexto = (estado) => {
+        return estado ? "Activo" : "Inactivo";
+      };
+
 
     return (
         <div>
@@ -208,108 +184,114 @@ function GestionLibro() {
 
                     <div className="flex justify-end mt-4 mr-[70px]">
                         <button
-                        onClick={handleFilterClick}
+                        onClick={setIsFilterModalOpen}
                         className="bg-primary text-white px-4 py-2 rounded mr-3 hover:bg-blue-950"
                         >
                         Estado
                         </button>
+                        <button onClick={() => setIsCrearModalOpen(true)} title="Crear">
+                            <BiPlus className="text-xl" />
+                        </button>
                     </div>
 
-                    <div className="flex flex-wrap justify-center gap-10 p-2">
-                    {filteredPublicaciones.map((libro) => { 
-                        const isExpanded = isPostExpanded(libro._id);
-                        const contenidoMostrado = isExpanded
-                          ? libro.contenido
-                          : `${libro.contenido.substring(0, 100)}...`;
+                    <div className="flex flex-wrap justify-center gap-6 p-6">
+                        {isLoading ? (
+                            <GestionSkeleton /> // Muestra el componente de carga mientras se obtienen los datos
+                        ) : Array.isArray(filteredPublicaciones) && filteredPublicaciones.length > 0 ? (
+                            filteredPublicaciones.map((publicacion, index) => {
+                            const isExpanded = expandedPost === publicacion._id;
+                            const contenidoMostrado = isExpanded
+                                ? publicacion.contenido
+                                : `${publicacion.contenido.substring(0, 100)}...`;
+                            const wordCount = publicacion.contenido.split(" ").length;
 
-                          return (
-                            <div key={libro._id} className="bg-white shadow-lg rounded-lg w-[320px] p-2 mb-4 border border-gray-300 flex flex-col">
-                                <div className="flex gap-4 mb-2">
-                                    <div className="avatar">
-                                        <Link to={`/profile/${libro.postOwner._id}`} className="w-8 rounded-full overflow-hidden">
-                                            <img src={libro.postOwner.fotoPerfil} alt="Profile" />
-                                        </Link>
-                                    </div>
-                                    <div className="flex flex-col flex-1">
-                                        <div className="flex gap-2 items-center">
-                                            <Link to={`/profile/${libro.postOwner._id}`} className="font-bold">
-                                                {libro.postOwner.nombreCompleto}
-                                            </Link>
-                                        </div>
-                                    </div>
-                                </div>
-
-                                {/* Contenido de la publicación (texto e imagen) */}
-                                <div className="flex flex-col flex-1">
-                                    <span className="text-left max-w-full overflow-hidden text-ellipsis whitespace-normal break-all">
-                                        {expandedPost === libro._id
-                                            ? libro.contenido
-                                            : libro.contenido.length > 50
-                                            ? `${libro.contenido.substring(0, 50)}...`
-                                            : libro.contenido}
-                                    </span>
-
-                                    {/* Texto de la publicación (Descripción) */}
-                                    <p className="text-gray-700 mb-2">{contenidoMostrado}</p>
-
-                                    <button onClick={() => toggleExpandPost(libro._id)} className="flex items-center">
-                                        <BiShow className="text-xl" />
-                                        <span className="ml-1">{expandedPost === libro._id ? "Ocultar" : "Ver más"}</span>
-                                    </button>
-                                    
-                                    {/* Aquí la imagen se coloca si existe */}
-                                    {libro.fotoPublicacion && (
+                            return (
+                                <div key={index} className="flex flex-col w-[320px] bg-white border border-gray-300 p-4 rounded-md shadow-lg">
+                                <div className="flex items-center mb-4">
+                                    <div className="w-16 h-16 bg-gray-300 rounded-full overflow-hidden mr-4">
+                                    <Link to={`/profile/${publicacion.postOwner._id}`}>
                                         <img
-                                            src={libro.fotoPublicacion}
-                                            className="h-[300px] object-contain rounded-lg border border-blue-950 mt-2 "
-                                            alt="Post"
+                                        className="object-cover w-full h-full"
+                                        src={publicacion.postOwner.fotoPerfil}
+                                        alt="Profile"
                                         />
-                                    )}
+                                    </Link>
+                                    </div>
+                                    <div>
+                                    <Link to={`/profile/${publicacion.postOwner._id}`} className="font-semibold text-lg">
+                                        {publicacion.postOwner.nombreCompleto}
+                                    </Link>
+                                    <p>Estado: {obtenerEstadoTexto(publicacion.estado)}</p>{" "}
+
+                                    <p className="text-gray-500 text-sm">Palabras: {wordCount}</p>
+                                    </div>
                                 </div>
 
-                                {/* Contenedor para íconos de comentarios y acciones en la parte inferior */}
+                                {/* Contenido de la publicación */}
+                                <p className="text-gray-700 mb-2 break-all">{contenidoMostrado}</p>
+                                <button
+                                    onClick={() => toggleExpandPost(publicacion._id)}
+                                    className="text-blue-600 hover:underline flex items-center"
+                                >
+                                    <BiShow className="text-xl" />
+                                    <span className="ml-1">{isExpanded ? "Ocultar" : "Ver más"}</span>
+                                </button>
+
+                                {/* Imagen de la publicación */}
+                                {publicacion.fotoPublicacion && (
+                                    <img
+                                    src={publicacion.fotoPublicacion}
+                                    className="h-[300px] object-contain rounded-lg border border-blue-950 mt-2"
+                                    alt="Post"
+                                    />
+                                )}
+
+                                {/* Acciones e íconos en la parte inferior */}
                                 <div className="flex justify-between items-center mt-2">
-                                    <div className="flex items-center gap-2">
-                                        <div className="flex gap-1 items-center cursor-pointer" onClick={() => handleShowComentarios(libro.comentarios)}>
-                                            <FaRegComment className="text-slate-500 hover:text-primary" />
-                                            <span className="text-sm">{libro.comentarios.length} Comentarios</span>
-                                        </div>
+                                    <div
+                                    className="flex gap-1 items-center cursor-pointer text-gray-500 hover:text-blue-600"
+                                    onClick={() => handleShowComentarios(publicacion.comentarios)}
+                                    >
+                                    <FaRegComment className="text-xl" />
+                                    <span>{publicacion.comentarios.length} Comentarios</span>
                                     </div>
-                                    {/* Íconos de acción a la derecha */}
                                     <div className="flex items-center gap-3">
-                                        <button onClick={() => setIsActivarModalOpen(true)} title="Activar">
-                                            <BiPowerOff className="text-xl" />
-                                        </button>
-                                        <button onClick={() => setIsInactivarModalOpen(true)} title="Inactivar">
-                                            <BiReset className="text-xl" />
-                                        </button>
-                                        <button onClick={() => setIsCrearModalOpen(true)} title="Crear">
-                                            <BiPlus className="text-xl" />
-                                        </button>
-                                        <button onClick={() => handleActualizarClick(libro)} title="Actualizar">
-                                            <BiEdit className="text-xl" />
-                                        </button>
+                                    <button onClick={() => handleOpenActivarModal(publicacion._id)} title="Activar">
+                                        <BiReset  className="text-xl" />
+                                    </button>
+                                    <button onClick={() => handleOpenDesactiveModal(publicacion._id)} title="Inactivar">
+                                        <BiPowerOff className="text-xl" />
+                                    </button>
+                                    <button onClick={() => handleOpenDeleteModal(publicacion._id)} title="Eliminar">
+                                        <BiPlus className="text-xl" />
+                                    </button>
+                                    <button onClick={() => handleOpenActualizarModal(publicacion._id)} title="Actualizar">
+                                        <BiEdit className="text-xl" />
+                                    </button>
                                     </div>
                                 </div>
 
-                                {/* Mostrar el modal de comentarios */}
-                                {expandedPost === libro._id && (
+                                {/* Modal de comentarios */}
+                                {isExpanded && (
                                     <div className="mt-2">
-                                        <ComentariosModal
-                                            isOpen={isComentariosModalOpen && comentarios.length > 0}
-                                            onClose={() => {
-                                                setIsComentariosModalOpen(false);
-                                                setComentarios([]);
-                                            }}
-                                            comentarios={comentarios}
-                                        />
+                                    <ComentariosModal
+                                        isOpen={isComentariosModalOpen && comentarios.length > 0}
+                                        onClose={() => {
+                                        setIsComentariosModalOpen(false);
+                                        setComentarios([]);
+                                        }}
+                                        comentarios={comentarios}
+                                    />
                                     </div>
                                 )}
-                            </div>
-                          );
-                    })}
+                                </div>
+                            );
+                            })
+                        ) : (
+                            <p>No hay publicaciones disponibles.</p> // Mensaje para cuando no hay datos
+                        )}
+                        </div>
 
-                    </div>
 
 
 
@@ -317,30 +299,49 @@ function GestionLibro() {
                     <ModalActivarPublicacion 
                         isOpen={isActivarModalOpen} 
                         onClose={() => setIsActivarModalOpen(false)}
+                        publicacionId={selectedPublicacionesId}
+                        obtenerPublicaciones={obtenerPublicaciones}
                     />
 
                     <ModalInactivarPublicacion 
                         isOpen={isInactivarModalOpen} 
                         onClose={() => setIsInactivarModalOpen(false)} 
+                        publicacionId={selectedPublicacionesId}
+                        obtenerPublicaciones={obtenerPublicaciones}
+                    />
+
+                    <ModalEliminarPublicacion 
+                        isOpen={isEliminarModalOpen}
+                        onClose={() => setIsEliminarModalOpen(false)}
+                        publicacionId={selectedPublicacionesId}
+                        obtenerPublicaciones={obtenerPublicaciones}
                     />
 
                     <ModalCrearPublicacion 
-                        isOpen={isCrearModalOpen} 
-                        onClose={() => setIsCrearModalOpen(false)} 
-                    />
+                        isOpen={isCrearModalOpen}
+                        onClose={() => {
+                          setIsCrearModalOpen(false);
+                          obtenerPublicaciones();
+                        }}
+                        obtenerPublicaciones={obtenerPublicaciones}
+                      />
+                    
 
                     <ModalActualizarPublicacion
                         isOpen={isActualizarModalOpen}
-                        onClose={() => setIsActualizarModalOpen(false)}
-                        onUpdate={handleUpdatePublicacion}
-                        publicacion={publicacionSeleccionada}
+                        onClose={() => {
+                          setIsActualizarModalOpen(false);
+                          obtenerPublicaciones();
+                        }}
+                        publicacionId={obtenerPublicaciones}
+                        obtenerAutores={obtenerPublicaciones}
                     />
 
                     <ModalFiltroPublicaciones
                         isOpen={isFilterModalOpen}
                         onClose={() => setIsFilterModalOpen(false)}
-                        onFilter={handleFilterSelect}
-                        onRestore={handleRestore}
+                        onFilter={handleFilter} // Pasa el manejador de filtro
+                        onRestore={handleRestore} // Pasa la función de restaurar
                     />
                 </main>
             </div>

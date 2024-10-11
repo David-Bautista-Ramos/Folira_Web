@@ -1,5 +1,35 @@
-const ModalActivarPublicacion = ({ isOpen, onClose, onConfirm }) => {
-  if (!isOpen) return null;
+import { useState } from "react";
+
+function ModalActivarPublicacion  ({ isOpen, onClose, publicacionId, obtenerPublicaciones })  {
+    const [loading, setLoading] = useState(false);
+
+    if (!isOpen) return null;
+  
+    const handleActivarAutor = async () => {
+      setLoading(true);
+      try {
+        const response = await fetch(`/api/autror/autoresact/${publicacionId}`, {
+          method: 'PUT',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+        });
+  
+        if (!response.ok) {
+          throw new Error("Error al activar el autor");
+        }
+  
+        const data = await response.json();
+        
+        console.log(data.message); // Mensaje de éxito o error
+        obtenerPublicaciones(); // Vuelve a obtener los usuarios actualizados
+        onClose(); // Cierra el modal después de la activación
+      } catch (error) {
+        console.error("Error:", error);
+      } finally {
+        setLoading(false);
+      }
+    };
 
   return (
       <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-75 z-50">
@@ -10,15 +40,12 @@ const ModalActivarPublicacion = ({ isOpen, onClose, onConfirm }) => {
                   <button className="px-4 py-2 bg-gray-300 text-gray-800 rounded-md  hover:bg-gray-400" onClick={onClose}>
                       Cancelar
                   </button>
-                  <button
-                      className="px-4 py-2 ml-4 border rounded bg-primary text-white hover:bg-blue-950"
-                      onClick={() => {
-                          onConfirm();
-                          onClose();
-                      }}
-                  >
-                      Activar
-                  </button>
+                  <button className={`px-4 py-2 border rounded bg-primary text-white hover:bg-blue-950" ${loading ? 'opacity-50' : ''}`}
+                    onClick={handleActivarAutor}
+                    disabled={loading}
+                    >
+                    {loading ? "Activando..." : "Activar"}
+                    </button>
               </div>
           </div>
       </div>
