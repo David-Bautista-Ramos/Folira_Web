@@ -1,6 +1,6 @@
 import { useState } from "react";
 
-function ModalEliminarGenero({ isOpen, onClose, generoId, obtenerGenerosLiterarios }) {
+function ModalEliminarLibro({ isOpen, onClose, libroId, obtenerLibros }) {
   const [loading, setLoading] = useState(false);
 
     if (!isOpen) return null;
@@ -8,7 +8,7 @@ function ModalEliminarGenero({ isOpen, onClose, generoId, obtenerGenerosLiterari
     const handleDelete = async () => {
       setLoading(true);
     try {
-      const response = await fetch(`/api/geneLiter//elimgeneros/${generoId}`, {
+      const response = await fetch(`/api/libro/deletelibro/${libroId}`, {
         method: 'DELETE',
         headers: {
           'Content-Type': 'application/json',
@@ -16,12 +16,12 @@ function ModalEliminarGenero({ isOpen, onClose, generoId, obtenerGenerosLiterari
       });
 
       if (!response.ok) {
-        throw new Error("Error al Eliminar el Genero");
+        throw new Error("Error al Eliminar el Libro");
       }
 
       const data = await response.json();
       console.log(data.message); // Mensaje de éxito o error
-      obtenerGenerosLiterarios(); // Vuelve a obtener los usuarios actualizados
+      obtenerLibros(); // Vuelve a obtener los usuarios actualizados
       onClose(); // Cierra el modal después de la activación
       } catch (error) {
         console.error("Error:", error);
@@ -42,8 +42,8 @@ function ModalEliminarGenero({ isOpen, onClose, generoId, obtenerGenerosLiterari
           onClick={(e) => e.stopPropagation()}
         >
           
-          <h2 className="mb-4 text-2xl text-gray-800">Eliminar Genero</h2>
-          <p className="mb-5 text-gray-600 text-base">¿Estás seguro de que deseas eliminar este genero?</p>
+          <h2 className="mb-4 text-2xl text-gray-800">Eliminar Libro</h2>
+          <p className="mb-5 text-gray-600 text-base">¿Estás seguro de que deseas eliminar este Libro?</p>
           <div className="flex justify-end gap-4 mt-4">
             <button 
               className="px-4 py-2 bg-gray-300 text-gray-800 rounded-md  hover:bg-gray-400" 
@@ -64,5 +64,5 @@ function ModalEliminarGenero({ isOpen, onClose, generoId, obtenerGenerosLiterari
     );
   }
   
-  export default ModalEliminarGenero;
+  export default ModalEliminarLibro;
   

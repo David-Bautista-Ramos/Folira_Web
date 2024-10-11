@@ -2,13 +2,15 @@ import mongoose from "mongoose";
 import Libro from "../models/libro.model.js";
 import Autor from "../models/autor.model.js";
 import GeneroLiterario from "../models/generoLiterario.model.js";
+import cloudinary from "cloudinary";
+
 
 export const crearLibro = async (req, res) => {
     try {
-        const { titulo, ISBN, fechaPublicacion, editorial, sinopsis, portada, calificacion, generos, autores } = req.body;
+        const { titulo, isbn, fechaPublicacion, editorial, sinopsis, portada, calificacion, generos, autores } = req.body;
 
         // Verificar si el ISBN ya existe
-        const libroExistente = await Libro.findOne({ ISBN });
+        const libroExistente = await Libro.findOne({ isbn });
         if (libroExistente) {
             return res.status(400).json({ error: "El libro con este ISBN ya existe." });
         }
@@ -40,7 +42,7 @@ export const crearLibro = async (req, res) => {
         // Crear el nuevo libro
         const nuevoLibro = new Libro({
             titulo,
-            ISBN,
+            isbn,
             fechaPublicacion,
             editorial,
             sinopsis,
@@ -111,25 +113,71 @@ export const obtenerLibroPorId = async (req, res) => {
 // Editar un libro existente
 export const editarLibro = async (req, res) => {
     try {
-        const { id } = req.params;
-        const { titulo, ISBN, fechaPublicacion, editorial, sinopsis, portada, calificacion, generos, autores, estado } = req.body;
-
-        const libroActualizado = await Libro.findByIdAndUpdate(
-            id, 
-            { titulo, ISBN, fechaPublicacion, editorial, sinopsis, portada, calificacion, generos, autores, estado }, 
-            { new: true, runValidators: true }
-        );
-
-        if (!libroActualizado) {
-            return res.status(404).json({ error: "Libro no encontrado." });
+      const { id } = req.params;
+      const {
+        titulo,
+        isbn,
+        fechaPublicacion,
+        editorial,
+        sinopsis,
+        calificacion,
+        generos,
+        autores,
+        estado,
+      } = req.body;
+      let { portada } = req.body;
+  
+      // Buscar el libro por ID
+      const libroExistente = await Libro.findById(id);
+      if (!libroExistente) {
+        return res.status(404).json({ error: "Libro no encontrado." });
+      }
+  
+      // Manejo de la portada del libro
+      if (portada) {
+        if (libroExistente.portada) {
+          // Eliminar la portada anterior de Cloudinary
+          await cloudinary.uploader.destroy(
+            libroExistente.portada.split("/").pop().split(".")[0]
+          );
         }
-
-        res.status(200).json({ message: "Libro actualizado con éxito", libro: libroActualizado });
+        // Subir la nueva portada
+        const uploadedResponse = await cloudinary.uploader.upload(portada);
+        portada = uploadedResponse.secure_url;
+      } else {
+        // Si no se actualiza la portada, conservar la anterior
+        portada = libroExistente.portada;
+      }
+  
+      // Actualizar los datos del libro
+      const libroActualizado = await Libro.findByIdAndUpdate(
+        id,
+        {
+          titulo,
+          isbn,
+          fechaPublicacion,
+          editorial,
+          sinopsis,
+          portada, // Se incluye la portada actualizada o anterior
+          calificacion,
+          generos,
+          autores,
+          estado,
+        },
+        { new: true, runValidators: true }
+      );
+  
+      if (!libroActualizado) {
+        return res.status(404).json({ error: "Libro no encontrado." });
+      }
+  
+      res.status(200).json({ message: "Libro actualizado con éxito", libro: libroActualizado });
     } catch (error) {
-        console.error("Error al actualizar el libro:", error.message);
-        res.status(500).json({ error: "Error al actualizar el libro." });
+      console.error("Error al actualizar el libro:", error.message);
+      res.status(500).json({ error: "Error al actualizar el libro." });
     }
-};
+  };
+  
 
 // Desactivar un libro
 export const desactivarLibro = async (req, res) => {

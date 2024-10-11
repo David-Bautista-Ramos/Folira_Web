@@ -9,16 +9,15 @@ function ModalActivarLibro({ isOpen, onClose, libroId, obetnerLibros }) {
   const handleOpenActivarModal = async () => {
     setLoading(true);  
     try {
-      const response = await fetch(`/api/users/estados/${libroId}`, {
-        method: 'POST',
+      const response = await fetch(`/api/libro/actlibro/${libroId}`, {
+        method: 'PUT',
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify({ nuevoEstado: true }), // Activar usuario (estado = true)
       });
 
       if (!response.ok) {
-        throw new Error("Error al activar el usuario");
+        throw new Error("Error al activar el libro");
       }
 
       const data = await response.json();
