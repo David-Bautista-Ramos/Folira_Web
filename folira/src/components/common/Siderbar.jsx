@@ -1,4 +1,3 @@
-import XSvg from "../svgs/X";
 import { MdHomeFilled, MdMessage } from "react-icons/md";
 import { IoNotifications } from "react-icons/io5";
 import { FaUser } from "react-icons/fa";
