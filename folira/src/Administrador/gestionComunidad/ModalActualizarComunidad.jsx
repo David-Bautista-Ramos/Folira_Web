@@ -1,23 +1,25 @@
 import { useState, useRef, useEffect } from 'react';
 import useUpdateComunidad from '../../hooks/useUpdateComunidad';
 
-const ModalActualizarComunidad = ({ isOpen, onClose, token, comunidadId, obtenerComunidades }) => {
+const ModalActualizarComunidad = ({ isOpen, onClose, token, comunidadId,obtenerComunidades }) => {
   const [formData, setFormData] = useState({
     nombre: "",
     descripcion: "",
     fotoComunidad: "",
     fotoBanner: "",
-    generoLiterarioPreferido: [],
+    generoLiterarios: [],
     admin: ""
   });
 
-  const { updateComunidad, isUpdatingComunidad } = useUpdateComunidad();
+  const { updatecomunidad, isUpdatingcomunidad } = useUpdateComunidad(comunidadId,obtenerComunidades);
   const [fotoComunidad, setFotoComunidad] = useState(null);
   const [fotoBanner, setFotoBanner] = useState(null);
   const fotoBannerRef = useRef(null);
   const fotoComunidadRef = useRef(null);
-  const [generoLiterarioOpciones, setGeneroLiterarioOpciones] = useState([]);
+  const [generoLiterarios, setgeneroLiterarios] = useState([]);
   const [usuarioAdminOpciones, setUsuarioAdminOpciones] = useState([]);
+  const [miembros, setMiembros] = useState([]); // Nuevo estado para los miembros
+  const [miembrosSeleccionados, setMiembrosSeleccionados] = useState([]); // Estado para los miembros seleccionados
 
   const handleImgChange = (e, type) => {
     const file = e.target.files[0];
@@ -44,7 +46,9 @@ const ModalActualizarComunidad = ({ isOpen, onClose, token, comunidadId, obtener
           },
         });
         const generos = await response.json();
-        setGeneroLiterarioOpciones(generos || []);
+        if (generos) {
+          setgeneroLiterarios(generos);
+        }
       } catch (error) {
         console.error("Error al obtener los géneros literarios:", error);
       }
@@ -70,7 +74,6 @@ const ModalActualizarComunidad = ({ isOpen, onClose, token, comunidadId, obtener
     fetchUsuarios();
   }, [token]);
 
-  // Método para obtener la información de la comunidad
   useEffect(() => {
     const fetchComunidad = async () => {
       try {
@@ -83,21 +86,23 @@ const ModalActualizarComunidad = ({ isOpen, onClose, token, comunidadId, obtener
         const comunidad = await response.json();
         if (comunidad) {
           setFormData({
-            nombre: comunidad.nombre,
-            descripcion: comunidad.descripcion,
-            fotoComunidad: comunidad.fotoComunidad,
-            fotoBanner: comunidad.fotoBanner,
-            generoLiterarioPreferido: comunidad.generoLiterarioPreferido,
-            admin: comunidad.admin
+            nombre: comunidad.nombre || "",
+            descripcion: comunidad.descripcion || "",
+            fotoComunidad: comunidad.fotoComunidad || "",
+            fotoBanner: comunidad.fotoBanner || "",
+            generoLiterarios: comunidad.generoLiterarios || [], // Asegúrate de usar este campo
+            admin: comunidad.admin?._id || "",
           });
           setFotoComunidad(comunidad.fotoComunidad);
           setFotoBanner(comunidad.fotoBanner);
+          setMiembros(comunidad.miembros || []); // Ensure this is an array
+          setMiembrosSeleccionados(comunidad.miembrosSeleccionados || []); // Nueva lógica para miembros seleccionados
         }
       } catch (error) {
         console.error("Error al obtener la comunidad:", error);
       }
     };
-
+  
     if (comunidadId) {
       fetchComunidad();
     }
@@ -105,27 +110,27 @@ const ModalActualizarComunidad = ({ isOpen, onClose, token, comunidadId, obtener
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    await updateComunidad({
+    await updatecomunidad({
       ...formData,
       fotoComunidad,
       fotoBanner,
+      miembrosSeleccionados // Enviar los miembros seleccionados al actualizar la comunidad
     });
-    obtenerComunidades();
     onClose();
   };
 
   const handleInputChange = (e) => {
     const { name, value, checked } = e.target;
-    if (name === "generoLiterarioPreferido") {
-      if (checked && formData.generoLiterarioPreferido.length < 5) {
+    if (name === "generos") {
+      if (checked && formData.generoLiterarios.length < 5) {
         setFormData((prevData) => ({
           ...prevData,
-          generoLiterarioPreferido: [...prevData.generoLiterarioPreferido, value],
+          generoLiterarios: [...prevData.generoLiterarios, value],
         }));
       } else if (!checked) {
         setFormData((prevData) => ({
           ...prevData,
-          generoLiterarioPreferido: prevData.generoLiterarioPreferido.filter((genero) => genero !== value),
+          generoLiterarios: prevData.generoLiterarios.filter((genero) => genero !== value),
         }));
       }
     } else {
@@ -135,6 +140,14 @@ const ModalActualizarComunidad = ({ isOpen, onClose, token, comunidadId, obtener
 
   const handleAdminChange = (e) => {
     setFormData({ ...formData, admin: e.target.value });
+  };
+
+  const handleMiembroSelect = (miembroId) => {
+    setMiembrosSeleccionados((prevSeleccionados) =>
+      prevSeleccionados.includes(miembroId)
+        ? prevSeleccionados.filter(id => id !== miembroId) // Deselecciona el miembro si ya está seleccionado
+        : [...prevSeleccionados, miembroId] // Selecciona el miembro
+    );
   };
 
   if (!isOpen) return null;
@@ -186,7 +199,7 @@ const ModalActualizarComunidad = ({ isOpen, onClose, token, comunidadId, obtener
         <label className="block mb-1">Nombre</label>
         <input
           type="text"
-          value={formData.nombre}
+          value={formData.nombre || ""}
           onChange={handleInputChange}
           name="nombre"
           placeholder="Nombre de la comunidad"
@@ -195,70 +208,88 @@ const ModalActualizarComunidad = ({ isOpen, onClose, token, comunidadId, obtener
 
         <label className="block mb-1">Descripción</label>
         <textarea
-          value={formData.descripcion}
+          value={formData.descripcion  || ""}
           onChange={handleInputChange}
           name="descripcion"
           placeholder="Descripción de la comunidad"
           className="w-full p-2 mb-3 border rounded focus:border-primary focus:outline-none text-sm"
         />
 
-        <h4 className="text-sm font-bold mb-2">Selecciona 1 Usuario como Administrador:</h4>
+<h4 className="text-sm font-bold mb-2">Selecciona 1 Usuario como Administrador:</h4>
         <div className="grid grid-cols-2 gap-2 mb-4 h-32 overflow-y-auto border rounded p-2">
           {usuarioAdminOpciones.map((usuario) => (
-            <label key={usuario._id} className="flex items-center cursor-pointer">
+            <label key={usuario._id || ""} className="flex items-center cursor-pointer">
               <input
                 type="radio"
                 name="admin"
-                value={usuario._id}
-                checked={formData.admin === usuario._id}
+                value={formData.admin || usuario._id }
+                checked={formData.admin === usuario._id }
                 onChange={handleAdminChange}
                 className="hidden"
               />
               <div
-                className={`flex items-center border rounded-full p-1 px-2 text-xs ${formData.admin === usuario._id ? "bg-primary text-white" : "border-primary text-primary"}`}
+                className={`flex items-center border rounded-full p-1 px-2 text-xs ${formData.admin === usuario._id ? "bg-primary text-white" : "bg-gray-200"}`}
               >
-                {usuario.nombre}
+                <img
+                  src={usuario.fotoPerfil || "/default-avatar.png"}
+                  className="w-8 h-8 rounded-full mr-2"
+                  alt={usuario.nombre}
+                />
+                <span>{usuario.nombre}</span>
               </div>
             </label>
           ))}
         </div>
 
-        <h4 className="text-sm font-bold mb-2">Selecciona hasta 5 géneros literarios:</h4>
+        <h4 className='font-bold'>Selecciona hasta 5 géneros literarios:</h4>
+<div className='grid grid-cols-2 gap-2'>
+  {generoLiterarios.map((genero) => (
+    <label key={genero._id} className='flex items-center cursor-pointer'>
+      <input
+        type='checkbox'
+        name='generos'
+        value={genero._id}
+        checked={formData.generoLiterarios.includes(genero._id)} // Verifica si el género está en los géneros preferidos
+        onChange={handleInputChange}
+        className='hidden'
+      />
+      <div
+        className={`flex items-center border rounded-full p-2 ${
+          formData.generoLiterarios.includes(genero._id)
+            ? "bg-primary text-white" // Estilo si está seleccionado
+            : "border-primary text-primary" // Estilo si no está seleccionado
+        } ${!formData.generoLiterarios.includes(genero._id) ? "bg-gray-200" : ""}`} // Marca visual para géneros no seleccionados
+      >
+        <span>{genero.nombre}</span>
+      </div>
+    </label>
+  ))}
+</div>
+
+
+        {/* Selección de miembros */}
+        <h4 className="text-sm font-bold mb-2">Selecciona Miembros de la Comunidad:</h4>
         <div className="grid grid-cols-2 gap-2 mb-4 h-32 overflow-y-auto border rounded p-2">
-          {generoLiterarioOpciones.map((genero) => (
-            <label key={genero._id} className="flex items-center cursor-pointer">
+          {miembros.map((miembro) => (
+            <label key={miembro._id} className="flex items-center cursor-pointer">
               <input
                 type="checkbox"
-                name="generoLiterarioPreferido"
-                value={genero._id}
-                checked={formData.generoLiterarioPreferido.includes(genero._id)}
-                onChange={handleInputChange}
-                className="hidden"
+                checked={miembrosSeleccionados.includes(miembro._id)}
+                onChange={() => handleMiembroSelect(miembro._id)}
+                className="mr-2"
               />
-              <div
-                className={`flex items-center border rounded-full p-1 px-2 text-xs ${formData.generoLiterarioPreferido.includes(genero._id) ? "bg-primary text-white" : "border-primary text-primary"}`}
-              >
-                {genero.nombre}
-              </div>
+              <span>{miembro.nombre}</span>
             </label>
           ))}
         </div>
 
-        <div className="flex justify-between">
-          <button
-            className="bg-gray-300 p-2 rounded hover:bg-gray-400"
-            onClick={onClose}
-          >
-            Cancelar
-          </button>
-          <button
-            className="bg-primary text-white p-2 rounded hover:bg-secondary"
-            onClick={handleSubmit}
-            disabled={isUpdatingComunidad}
-          >
-            {isUpdatingComunidad ? 'Actualizando...' : 'Actualizar'}
-          </button>
-        </div>
+        <button
+          onClick={handleSubmit}
+          disabled={isUpdatingcomunidad}
+          className={`bg-primary text-white p-2 rounded ${isUpdatingcomunidad ? "opacity-50 cursor-not-allowed" : ""}`}
+        >
+          {isUpdatingcomunidad ? "Actualizando..." : "Actualizar Comunidad"}
+        </button>
       </div>
     </div>
   );

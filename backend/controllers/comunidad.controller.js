@@ -1,5 +1,6 @@
 import Comunidad from "../models/comunidad.model.js";
 import cloudinary from "cloudinary";
+import GeneroLiterario from "../models/generoLiterario.model.js";
 
 // Crear una nueva comunidad
 export const crearComunidad = async (req, res) => {
@@ -9,8 +10,9 @@ export const crearComunidad = async (req, res) => {
       descripcion,
       fotoComunidad,
       fotoBanner,
-      generoLiterarios,
+      generoLiterarios, // Asegúrate de que este nombre sea correcto
       admin,
+      miembros,
     } = req.body;
 
     // Verificar si ya existe una comunidad con el mismo nombre
@@ -43,14 +45,34 @@ export const crearComunidad = async (req, res) => {
       fotoBannerUrl = uploadedBannerResponse.secure_url;
     }
 
+    // Inicializar un array para almacenar los IDs de los géneros literarios
+    let generosGuardados = [];
+
+    // Buscar los géneros literarios seleccionados
+    if (generoLiterarios && generoLiterarios.length > 0) {
+      const generos = await GeneroLiterario.find({
+        _id: { $in: generoLiterarios },
+      });
+      if (generos.length !== generoLiterarios.length) {
+        return res
+          .status(400)
+          .json({
+            error: "Algunos géneros literarios seleccionados son inválidos.",
+          });
+      }
+      // Guardar los géneros literarios de la comunidad
+      generosGuardados = generos.map((genero) => genero._id);
+    }
+
     // Crear la nueva comunidad
     const nuevaComunidad = new Comunidad({
       nombre,
       descripcion,
       fotoComunidad: fotoComunidadUrl, // Guardar la URL de la foto de la comunidad subida
       fotoBanner: fotoBannerUrl, // Guardar la URL del banner de la comunidad subida
-      generoLiterarios,
+      generoLiterarios: generosGuardados, // Asegúrate de guardar el array aquí
       admin,
+      miembros,
     });
 
     // Guardar la comunidad en la base de datos
@@ -83,7 +105,7 @@ export const obtenerComunidadesAct = async (req, res) => {
     const comunidades = await Comunidad.find({ estado: estado })
       .populate({ path: "miembros", select: "-contrasena" })
       .populate({ path: "admin", select: "-contrasena" });
-    res.status(200).json({ comunidades });
+    res.status(200).json(comunidades);
   } catch (error) {
     console.error("Error al obtener las comunidades:", error.message);
     res.status(500).json({ error: "Error al obtener las comunidades." });
@@ -96,7 +118,7 @@ export const obtenerComunidadesDes = async (req, res) => {
     const comunidades = await Comunidad.find({ estado: estado })
       .populate({ path: "miembros", select: "-contrasena" })
       .populate({ path: "admin", select: "-contrasena" });
-    res.status(200).json({ comunidades });
+    res.status(200).json(comunidades);
   } catch (error) {
     console.error("Error al obtener las comunidades:", error.message);
     res.status(500).json({ error: "Error al obtener las comunidades." });
@@ -115,7 +137,7 @@ export const obtenerComunidadPorId = async (req, res) => {
       return res.status(404).json({ error: "Comunidad no encontrada." });
     }
 
-    res.status(200).json({ comunidad });
+    res.status(200).json(comunidad);
   } catch (error) {
     console.error("Error al obtener la comunidad:", error.message);
     res.status(500).json({ error: "Error al obtener la comunidad." });
@@ -203,9 +225,11 @@ export const editarComunidad = async (req, res) => {
     // Actualizar los campos de la comunidad
     comunidadActual.nombre = nombre || comunidadActual.nombre; // Mantener el valor existente si no se proporciona uno nuevo
     comunidadActual.descripcion = descripcion || comunidadActual.descripcion;
-    comunidadActual.fotoComunidad = fotoComunidadUrl || comunidadActual.fotoComunidad; // Actualiza solo si hay una nueva URL
+    comunidadActual.fotoComunidad =
+      fotoComunidadUrl || comunidadActual.fotoComunidad; // Actualiza solo si hay una nueva URL
     comunidadActual.fotoBanner = fotoBannerUrl || comunidadActual.fotoBanner; // Actualiza solo si hay una nueva URL
-    comunidadActual.generoLiterarios = generoLiterarios || comunidadActual.generoLiterarios;
+    comunidadActual.generoLiterarios =
+      generoLiterarios || comunidadActual.generoLiterarios;
     comunidadActual.estado = estado || comunidadActual.estado;
 
     // Guardar los cambios en la base de datos

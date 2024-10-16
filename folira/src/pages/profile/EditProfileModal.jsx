@@ -112,7 +112,7 @@ const EditProfileModal = ({ authUser }) => {
 				nombreCompleto: authUser.nombreCompleto,
 				correo: authUser.correo,
 				pais: authUser.pais,
-				biografia: authUser.biografia,
+				biografia: authUser.biografia || "",
 				newcontrasena: "",
 				currentcontrasena: "",
 				generos: authUser.generos || [],
@@ -185,7 +185,7 @@ const EditProfileModal = ({ authUser }) => {
 								style={{ resize: 'none', overflowWrap: 'break-word' }}
 							/>
 							
-							<p>{formData.biografia.length}/200 caracteres</p>
+							<p>{(formData.biografia).length}/200 caracteres</p>
 
 						</div>
 

@@ -146,14 +146,14 @@ function GestionUsuario() {
           </div>
 
           <div className="flex justify-end mt-4 mr-[70px]">
+          <button onClick={() => setIsCrearModalOpen(true)} title="Crear">
+              <BiPlus className="text-xl" />
+            </button>
             <button
               onClick={() => setIsFiltroModalOpen(true)}
               className="bg-primary text-white px-4 py-2 rounded mr-3 hover:bg-blue-950"
             >
               Estado
-            </button>
-            <button onClick={() => setIsCrearModalOpen(true)} title="Crear">
-              <BiPlus className="text-xl" />
             </button>
           </div>
 

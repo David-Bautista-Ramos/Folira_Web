@@ -109,6 +109,7 @@ function GestionComunidad() {
     } finally {
       setIsLoading(false); // Asegúrate de finalizar la carga
     }
+    setIsFiltroModalOpen(false); // Cerrar el modal
   };
 
   const handleRestore = () => {
@@ -184,7 +185,6 @@ function GestionComunidad() {
                       />
                     </div>
                     <div className="relative">
-                      x
                       <div className="mb-1">
                         <h2 className="font-semibold">
                           Nombre: {comunidad.nombre}
@@ -261,7 +261,7 @@ function GestionComunidad() {
               obtenerComunidades();
             }}
             comunidadId={selectedComunidadId}
-            obtenerAutores={obtenerComunidades}
+            obtenerComunidades={obtenerComunidades}
           />
 
           <ModalFiltroComunidad

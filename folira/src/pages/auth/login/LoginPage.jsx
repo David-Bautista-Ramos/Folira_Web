@@ -62,36 +62,43 @@ const LoginPage = () => {
                 <form className='flex gap-4 flex-col' onSubmit={handleSubmit}>
                     <img className="w-50 h-40 mt-[100px] cursor-pointer lg:hidden" src={Folira_logo} alt="logo_nav" />
                     <h1 className='text-4xl text-primary font-extrabold'>{"Vamos"} a Iniciar.</h1>
-                    <label className='input input-bordered rounded flex items-center gap-2'>
-                        <MdOutlineMail />
-                        <input
-                            type='email'
-                            className='grow'
-                            placeholder='Correo'
-                            name='correo'
-                            onChange={handleInputChange}
-                            value={formData.correo}
-                        />
+                    <label className='flex flex-col mb-2'> {/* Contenedor para el label y el input */}
+                        <span className="font-semibold">Correo:</span> {/* Label agregado */}
+                        <div className='input input-bordered rounded flex items-center gap-2'>
+                            <MdOutlineMail />
+                            <input
+                                type='email'
+                                className='grow'
+                                placeholder='Correo'
+                                name='correo'
+                                onChange={handleInputChange}
+                                value={formData.correo}
+                            />
+                        </div>
                     </label>
 
-                    <label className='input input-bordered rounded flex items-center gap-2'>
-                        <MdPassword />
-                        <input
-                            type={showPassword ? 'text' : 'password'} // Cambia entre texto y contraseña
-                            className='grow'
-                            placeholder='contraseña'
-                            name='contrasena'
-                            onChange={handleInputChange}
-                            value={formData.contrasena}
-                        />
-                        <button
-                            type='button'
-                            onClick={() => setShowPassword(!showPassword)} // Cambia el estado al hacer clic
-                            className='text-gray-600'
-                        >
-                            {showPassword ? <MdVisibilityOff /> : <MdVisibility />}
-                        </button>
+                    <label className='flex flex-col mb-2'> {/* Contenedor para el label y el input */}
+                        <span className="font-semibold">Contraseña:</span> {/* Label agregado */}
+                        <div className='input input-bordered rounded flex items-center gap-2'>
+                            <MdPassword />
+                            <input
+                                type={showPassword ? 'text' : 'password'} // Cambia entre texto y contraseña
+                                className='grow'
+                                placeholder='Contraseña'
+                                name='contrasena'
+                                onChange={handleInputChange}
+                                value={formData.contrasena}
+                            />
+                            <button
+                                type='button'
+                                onClick={() => setShowPassword(!showPassword)} // Cambia el estado al hacer clic
+                                className='text-gray-600'
+                            >
+                                {showPassword ? <MdVisibilityOff /> : <MdVisibility />}
+                            </button>
+                        </div>
                     </label>
+
                     <button className='btn rounded-full btn-primary text-white'>
                         {isPending  ? "Cargando..." : "Iniciar Sesión"}
                     </button>

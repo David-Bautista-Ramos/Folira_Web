@@ -1,14 +1,15 @@
 import { useState, useRef, useEffect } from 'react';
 import useCreateComunidad from '../../hooks/useCreateComunidad';
 
-const ModalCrearComunidad = ({ isOpen, onClose, token,obtenerComunidades }) => {
+const ModalCrearComunidad = ({ isOpen, onClose, token, obtenerComunidades }) => {
   const [formData, setFormData] = useState({
     nombre: "", 
     descripcion: "", 
     fotoComunidad: "", 
     fotoBanner: "", 
-    generoLiterarioPreferido: [],
-    admin: "" 
+    generoLiterarios: [],
+    admin: "" ,
+    miembros: []  // State to hold selected members
   });
 
   const { createComuniad, isCreatingComunidad } = useCreateComunidad();
@@ -18,6 +19,7 @@ const ModalCrearComunidad = ({ isOpen, onClose, token,obtenerComunidades }) => {
   const fotoComunidadRef = useRef(null);
   const [generoLiterarioOpciones, setGeneroLiterarioOpciones] = useState([]);
   const [usuarioAdminOpciones, setUsuarioAdminOpciones] = useState([]);
+  const [todosUsuarios, setTodosUsuarios] = useState([]); // Store all users for member selection
 
   const handleImgChange = (e, type) => {
     const file = e.target.files[0];
@@ -66,6 +68,7 @@ const ModalCrearComunidad = ({ isOpen, onClose, token,obtenerComunidades }) => {
         const usuarios = await response.json();
         if (usuarios) {
           setUsuarioAdminOpciones(usuarios);
+          setTodosUsuarios(usuarios); // Store all users for member selection
         }
       } catch (error) {
         console.error("Error al obtener los usuarios:", error);
@@ -87,16 +90,28 @@ const ModalCrearComunidad = ({ isOpen, onClose, token,obtenerComunidades }) => {
 
   const handleInputChange = (e) => {
     const { name, value, checked } = e.target;
-    if (name === "generoLiterarioPreferido") {
-      if (checked && formData.generoLiterarioPreferido.length < 5) {
+    if (name === "generoLiterarios") {
+      if (checked && formData.generoLiterarios.length < 5) {
         setFormData((prevData) => ({
           ...prevData,
-          generoLiterarioPreferido: [...prevData.generoLiterarioPreferido, value],
+          generoLiterarios: [...prevData.generoLiterarios, value],
         }));
       } else if (!checked) {
         setFormData((prevData) => ({
           ...prevData,
-          generoLiterarioPreferido: prevData.generoLiterarioPreferido.filter((genero) => genero !== value),
+          generoLiterarios: prevData.generoLiterarios.filter((genero) => genero !== value),
+        }));
+      }
+    } else if (name === "miembros") {
+      if (checked) {
+        setFormData((prevData) => ({
+          ...prevData,
+          miembros: [...prevData.miembros, value],
+        }));
+      } else {
+        setFormData((prevData) => ({
+          ...prevData,
+          miembros: prevData.miembros.filter((miembro) => miembro !== value),
         }));
       }
     } else {
@@ -203,14 +218,14 @@ const ModalCrearComunidad = ({ isOpen, onClose, token,obtenerComunidades }) => {
             <label key={genero._id} className="flex items-center cursor-pointer">
               <input
                 type="checkbox"
-                name="generoLiterarioPreferido"
+                name="generoLiterarios"
                 value={genero._id}
-                checked={formData.generoLiterarioPreferido.includes(genero._id)}
+                checked={formData.generoLiterarios.includes(genero._id)}
                 onChange={handleInputChange}
                 className="hidden"
               />
               <div
-                className={`flex items-center border rounded-full p-1 px-2 text-xs ${formData.generoLiterarioPreferido.includes(genero._id) ? "bg-primary text-white" : "border-primary text-primary"}`}
+                className={`flex items-center border rounded-full p-1 px-2 text-xs ${formData.generoLiterarios.includes(genero._id) ? "bg-primary text-white" : "border-primary text-primary"}`}
               >
                 {genero.nombre}
               </div>
@@ -218,19 +233,34 @@ const ModalCrearComunidad = ({ isOpen, onClose, token,obtenerComunidades }) => {
           ))}
         </div>
 
-        {/* Buttons */}
-        <div className="flex justify-end space-x-2">
-          <button className="px-3 py-1 text-xs bg-gray-300 text-gray-800 rounded-md hover:bg-gray-400" onClick={onClose}>
-            Cancelar
-          </button>
-          <button
-            className={`px-3 py-1 text-xs bg-primary text-white rounded-md hover:bg-blue-950 ${isCreatingComunidad ? 'opacity-50 cursor-not-allowed' : ''}`}
-            onClick={handleSubmit}
-            disabled={isCreatingComunidad}
-          >
-            {isCreatingComunidad ? 'Creando...' : 'Crear'}
-          </button>
+        <h4 className="text-sm font-bold mb-2">Selecciona los miembros:</h4>
+        <div className="grid grid-cols-2 gap-2 mb-4 h-32 overflow-y-auto border rounded p-2">
+          {todosUsuarios.map((usuario) => (
+            <label key={usuario._id} className="flex items-center cursor-pointer">
+              <input
+                type="checkbox"
+                name="miembros"
+                value={usuario._id}
+                checked={formData.miembros.includes(usuario._id)}
+                onChange={handleInputChange}
+                className="hidden"
+              />
+              <div
+                className={`flex items-center border rounded-full p-1 px-2 text-xs ${formData.miembros.includes(usuario._id) ? "bg-primary text-white" : "border-primary text-primary"}`}
+              >
+                {usuario.nombre}
+              </div>
+            </label>
+          ))}
         </div>
+
+        <button
+          onClick={handleSubmit}
+          disabled={isCreatingComunidad}
+          className={`w-full py-2 rounded bg-primary text-white hover:bg-blue-600 transition-opacity ${isCreatingComunidad ? "opacity-50 cursor-not-allowed" : ""}`}
+        >
+          {isCreatingComunidad ? "Creando..." : "Crear Comunidad"}
+        </button>
       </div>
     </div>
   );

@@ -2,15 +2,14 @@
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import toast from "react-hot-toast";
 
-const useUpdateResena = (comunidadId) => {
+const useUpdateComunidad = (comunidadId,obtenerComunidades) => {
   const queryClient = useQueryClient();
 
   const { mutateAsync: updatecomunidad, isPending: isUpdatingcomunidad } = useMutation({
     mutationFn: async (formData) => {
       try {
-        const res = await fetch(`/api/comunidad/putcomunidad/${comunidadId}`, 
-          {
-          method: "POST",
+        const res = await fetch(`/api/comunidad/putcomunidad/${comunidadId}`, {
+          method: "PUT",
           headers: {
             "Content-Type": "application/json",
           },
@@ -26,6 +25,7 @@ const useUpdateResena = (comunidadId) => {
       }
     },
     onSuccess: () => {
+       obtenerComunidades();
       toast.success("Comunidad updated successfully");
       Promise.all([
         queryClient.invalidateQueries({ queryKey: ["authUser"] }),
@@ -40,4 +40,4 @@ const useUpdateResena = (comunidadId) => {
   return { updatecomunidad, isUpdatingcomunidad };
 };
 
-export default useUpdateResena;
+export default useUpdateComunidad;
