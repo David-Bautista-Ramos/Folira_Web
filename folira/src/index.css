@@ -207,6 +207,29 @@ html, body {
   overflow-x: hidden; /* Evitar el desplazamiento horizontal */
 }
 
+/* -------------------------------------------------------------------------------------------------------------------------------------------------- */
+
+/* Scroll del sign up  */
+
+/* Estilos para el scrollbar */
+/* Estilos para el scrollbar */
+.scrollable-container::-webkit-scrollbar {
+  width: 8px; /* Ancho del scrollbar */
+}
+
+.scrollable-container::-webkit-scrollbar-track {
+  background: #f1f1f1; /* Color de fondo del track */
+}
+
+.scrollable-container::-webkit-scrollbar-thumb {
+  background: rgb(17, 24, 39); /* Color del thumb */
+  border-radius: 10px; /* Bordes redondeados del thumb */
+}
+
+.scrollable-container::-webkit-scrollbar-thumb:hover {
+  background: #555; /* Color del thumb al pasar el mouse */
+}
+
 
 
 

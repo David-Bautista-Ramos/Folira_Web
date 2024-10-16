@@ -1,7 +1,76 @@
 import { useEffect, useState } from "react";
 import useUpdateUserProfile from "../../hooks/useUpdateUserProfile";
+import Select from 'react-select';
+import dramaImg from '../../assets/icons/drama.png';
+import terrorImg from '../../assets/icons/terror.png';
+import romanceImg from '../../assets/icons/romance.png';
+import comediaImg from '../../assets/icons/comedia.png';
+import negocioImg from '../../assets/icons/negocios.png';
+import historiaImg from '../../assets/icons/historia.png';
+import cienciaFiccionImg from '../../assets/icons/ciencia_ficcion.png';
+import economiaImg from '../../assets/icons/economia.png';
+import psicologiaImg from '../../assets/icons/psicologia.png';
+import desarrolloPersonalImg from '../../assets/icons/desarrollo_personal.png';
+
+
 
 const EditProfileModal = ({ authUser }) => {
+
+	// Lista de países
+	const paises = [
+		{ value: 'Argentina', label: 'Argentina' },
+		{ value: 'Australia', label: 'Australia' },
+		{ value: 'Austria', label: 'Austria' },
+		{ value: 'Bélgica', label: 'Bélgica' },
+		{ value: 'Brasil', label: 'Brasil' },
+		{ value: 'Canadá', label: 'Canadá' },
+		{ value: 'Chile', label: 'Chile' },
+		{ value: 'China', label: 'China' },
+		{ value: 'Colombia', label: 'Colombia' },
+		{ value: 'Costa Rica', label: 'Costa Rica' },
+		{ value: 'Croacia', label: 'Croacia' },
+		{ value: 'Dinamarca', label: 'Dinamarca' },
+		{ value: 'Egipto', label: 'Egipto' },
+		{ value: 'El Salvador', label: 'El Salvador' },
+		{ value: 'España', label: 'España' },
+		{ value: 'Estados Unidos', label: 'Estados Unidos' },
+		{ value: 'Finlandia', label: 'Finlandia' },
+		{ value: 'Francia', label: 'Francia' },
+		{ value: 'Alemania', label: 'Alemania' },
+		{ value: 'Grecia', label: 'Grecia' },
+		{ value: 'Guatemala', label: 'Guatemala' },
+		{ value: 'Honduras', label: 'Honduras' },
+		{ value: 'India', label: 'India' },
+		{ value: 'Indonesia', label: 'Indonesia' },
+		{ value: 'Irlanda', label: 'Irlanda' },
+		{ value: 'Italia', label: 'Italia' },
+		{ value: 'Japón', label: 'Japón' },
+		{ value: 'México', label: 'México' },
+		{ value: 'Nueva Zelanda', label: 'Nueva Zelanda' },
+		{ value: 'Noruega', label: 'Noruega' },
+		{ value: 'Panamá', label: 'Panamá' },
+		{ value: 'Paraguay', label: 'Paraguay' },
+		{ value: 'Perú', label: 'Perú' },
+		{ value: 'Filipinas', label: 'Filipinas' },
+		{ value: 'Portugal', label: 'Portugal' },
+		{ value: 'República Checa', label: 'República Checa' },
+		{ value: 'República Dominicana', label: 'República Dominicana' },
+		{ value: 'Rumania', label: 'Rumania' },
+		{ value: 'Rusia', label: 'Rusia' },
+		{ value: 'Sudáfrica', label: 'Sudáfrica' },
+		{ value: 'Suecia', label: 'Suecia' },
+		{ value: 'Suiza', label: 'Suiza' },
+		{ value: 'Taiwán', label: 'Taiwán' },
+		{ value: 'Turquía', label: 'Turquía' },
+		{ value: 'Ucrania', label: 'Ucrania' },
+		{ value: 'Uruguay', label: 'Uruguay' },
+		{ value: 'Venezuela', label: 'Venezuela' },
+		{ value: 'Vietnam', label: 'Vietnam' },
+		{ value: 'Reino Unido', label: 'Reino Unido' },
+		{ value: 'Países Bajos', label: 'Países Bajos' },
+	  ];
+
+
 	const [formData, setFormData] = useState({
 		nombre: "",
 		nombreCompleto: "",
@@ -71,7 +140,7 @@ const EditProfileModal = ({ authUser }) => {
 
 			<dialog id='edit_profile_modal' className='modal'>
 				<div className='modal-box border rounded-md border-blue-950 h-[500px]  shadow-md modal-scrollbar'>
-					<h3 className='text-primary font-bold text-lg my-3'>Update Profile</h3>
+					<h3 className='text-primary font-bold text-lg my-3'>Actualizar mi perfil</h3>
 					<form
 						className='text-primary flex flex-col gap-4'
 						onSubmit={(e) => {
@@ -79,17 +148,23 @@ const EditProfileModal = ({ authUser }) => {
 							updateProfile(formData);
 						}}
 					>
-						<div className='flex flex-wrap gap-2'>
+						<div className='flex flex-wrap flex-col gap-y-2'>
+						
+							<label htmlFor='nombre' className='text-blue-950 font-semibold'>Nombre Usuario</label>
 							<input
 								type='text'
+								id='nombre'
 								placeholder='Nombre Usuario'
 								className='flex-1 input border border-blue-950 rounded p-2 input-md'
 								value={formData.nombre}
 								name='nombre'
 								onChange={handleInputChange}
 							/>
+
+							<label htmlFor='nombreCompleto' className='text-blue-950 font-semibold'>Nombre Completo</label>
 							<input
 								type='text'
+								id='nombreCompleto'
 								placeholder='Nombre Completo'
 								className='flex-1 input border border-blue-950 rounded p-2 input-md'
 								value={formData.nombreCompleto}
@@ -97,7 +172,9 @@ const EditProfileModal = ({ authUser }) => {
 								onChange={handleInputChange}
 							/>
 
+							<label htmlFor='biografia' className='text-blue-950 font-semibold'>Biografía</label>
 							<textarea
+								id='biografia'
 								placeholder='Biografía'
 								className='w-full border border-blue-950 rounded p-2 input-md'
 								value={formData.biografia}
@@ -107,9 +184,14 @@ const EditProfileModal = ({ authUser }) => {
 								rows={4}
 								style={{ resize: 'none', overflowWrap: 'break-word' }}
 							/>
-							<p>{(formData.biografia).length}/200 caracteres</p>
+							
+							<p>{formData.biografia.length}/200 caracteres</p>
+
 						</div>
-						<div className='flex flex-wrap gap-2'>
+
+
+						<div className='flex flex-wrap flex-col gap-y-2'>
+							<label htmlFor='correo' className='text-blue-950 font-semibold'>Correo</label>
 							<input
 								type='email'
 								placeholder='Correo'
@@ -119,7 +201,9 @@ const EditProfileModal = ({ authUser }) => {
 								onChange={handleInputChange}
 							/>
 						</div>
-						<div className='flex flex-wrap gap-2'>
+
+						<div className='flex flex-wrap flex-col gap-y-2'>
+							<label htmlFor='currentcontrasena' className='text-blue-950 font-semibold'>Contraseña actual</label>
 							<input
 								type='password'
 								placeholder='Contraseña Actual'
@@ -128,6 +212,8 @@ const EditProfileModal = ({ authUser }) => {
 								name='currentcontrasena'
 								onChange={handleInputChange}
 							/>
+
+							<label htmlFor='currentcontrasena' className='text-blue-950 font-semibold'>Contraseña nueva</label>
 							<input
 								type='password'
 								placeholder='Contraseña Nueva'
@@ -137,13 +223,17 @@ const EditProfileModal = ({ authUser }) => {
 								onChange={handleInputChange}
 							/>
 						</div>
-						<input
-							type='text'
-							placeholder='País'
-							className='flex-1 input border border-blue-950 rounded p-2 input-md'
-							value={formData.pais}
-							name='pais'
-							onChange={handleInputChange}
+
+						<label htmlFor='pais' className='text-blue-950 font-semibold'>País</label>
+						<Select
+							id='pais'
+							options={paises}
+							onChange={(selectedOption) => {
+							// Actualiza el estado cuando se selecciona un país
+							handleInputChange({ target: { name: 'pais', value: selectedOption.value } });
+							}}
+							className='flex-1'
+							placeholder='Selecciona un país'
 						/>
 
 						{/* Sección para seleccionar géneros literarios */}
@@ -151,16 +241,16 @@ const EditProfileModal = ({ authUser }) => {
 							<h4 className='font-bold'>Selecciona hasta 5 géneros literarios:</h4>
 							<div className='grid grid-cols-2 gap-2'>
 								{[
-									{ nombre: "Drama", imagen: "/path/to/drama.png" },
-									{ nombre: "Terror", imagen: "/path/to/terror.png" },
-									{ nombre: "Romance", imagen: "/path/to/romance.png" },
-									{ nombre: "Comedia", imagen: "/path/to/comedia.png" },
-									{ nombre: "Negocios", imagen: "/path/to/negocios.png" },
-									{ nombre: "Historia", imagen: "/path/to/historia.png" },
-									{ nombre: "Ciencia Ficción", imagen: "/path/to/Ciencia Ficción.png" },
-									{ nombre: "Economia", imagen: "/path/to/economia.png" },
-									{ nombre: "Psicología", imagen: "/path/to/psicología.png" },
-									{ nombre: "Desarrollo Personal", imagen: "/path/to/desarrollo.png" },
+									{ nombre: "Drama", imagen: dramaImg },
+									{ nombre: "Terror", imagen: terrorImg },
+									{ nombre: "Romance", imagen: romanceImg },
+									{ nombre: "Comedia", imagen: comediaImg },
+									{ nombre: "Negocios", imagen: negocioImg },
+									{ nombre: "Historia", imagen: historiaImg },
+									{ nombre: "Ciencia Ficción", imagen: cienciaFiccionImg },
+									{ nombre: "Economia", imagen: economiaImg },
+									{ nombre: "Psicología", imagen: psicologiaImg },
+									{ nombre: "Desarrollo Personal", imagen: desarrolloPersonalImg },
 								].map((genero) => (
 									<label key={genero.nombre} className='flex items-center cursor-pointer '>
 										<input
