@@ -526,6 +526,8 @@ export const obtenerUsuarioPorId = async (req, res) => {
     res.status(500).json({ error: "Error al obtener usuario" });
   }
 };
+
+
 // Actualizar un usuario por ID
 export const actualizarUsuario = async (req, res) => {
   const {
