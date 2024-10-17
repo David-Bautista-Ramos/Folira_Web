@@ -1,4 +1,4 @@
-import { Link } from 'react-router-dom';
+// import { Link } from 'react-router-dom';
 import conectar_personas from "../assets/icons/conectar_personas.png";
 import calificar_estrella from "../assets/icons/calificar_revisar.png";
 import explorar_titulos from "../assets/icons/explorar_titulos.png";
@@ -11,6 +11,7 @@ import libro from "../assets/img/libro.jpg";
 import escritores from "../assets/img/escritores.jpg";
 import generoIndex from "../assets/img/libro-genero.jpg"; 
 import { useNavigate } from 'react-router-dom';
+import TerminosConditionsModal from './TerminosCondiciones';
 
 function Index() {
     const navigate = useNavigate();
@@ -120,26 +121,26 @@ function Index() {
         </div>
       </section>
 
-      <footer className=" text-primary py-10 w-full bg-gray-200  ">
-        <div className="w-full grid grid-cols-1 md:grid-cols-3 gap-8 bg-gray-200 ">
-          <div>
-            <h3 className="text-xl font-semibold ml-5 mb-4">Sobre Nosotros</h3>
-            <p className='ml-5'>Nos dedicamos a conectar a los amantes de los libros y promover la interacción en un entorno seguro y respetuoso.</p>
-          </div>
-          <div>
-            <h3 className="text-xl font-semibold mb-4">Enlaces Útiles</h3>
-            <Link to="#" className="block mb-2">Términos y condiciones</Link>
-          </div>
-          <div>
-            <h3 className="text-xl font-semibold mb-4">Síguenos</h3>
-            <ul>
-              <li className="mb-2"><Link to="#" className="hover:underline">Facebook</Link></li>
-              <li className="mb-2"><Link to="#" className="hover:underline">Twitter</Link></li>
-              <li><Link to="#" className="hover:underline">Instagram</Link></li>
-            </ul>
-          </div>
-        </div>
-      </footer>
+      <footer className="text-primary py-10 w-full bg-gray-200">
+            <div className="w-full grid grid-cols-1 md:grid-cols-3 gap-8 bg-gray-200">
+                <div>
+                    <h3 className="text-xl font-semibold ml-5 mb-4">Sobre Nosotros</h3>
+                    <p className='ml-5'>Nos dedicamos a conectar a los amantes de los libros y promover la interacción en un entorno seguro y respetuoso.</p>
+                </div>
+                <div>
+                    <h3 className="text-xl font-semibold mb-4">Enlaces Útiles</h3>
+                    <TerminosConditionsModal /> {/* Aquí incluimos el modal */}
+                </div>
+                {/* <div>
+                    <h3 className="text-xl font-semibold mb-4">Síguenos</h3>
+                    <ul>
+                        <li className="mb-2"><Link to="#" className="hover:underline">Facebook</Link></li>
+                        <li className="mb-2"><Link to="#" className="hover:underline">Twitter</Link></li>
+                        <li><Link to="#" className="hover:underline">Instagram</Link></li>
+                    </ul>
+                </div> */}
+            </div>
+        </footer>
     </div>
   );
 }

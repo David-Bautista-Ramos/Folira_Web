@@ -26,9 +26,9 @@ const SignUpPage = () => {
 		{ value: 'Reino Unido', label: 'Reino Unido' },
 		{ value: 'Venezuela', label: 'Venezuela' },
 	];
-	
-	const [showPassword, setShowPassword] = useState(false);
 
+	const [showPassword, setShowPassword] = useState(false);
+	const [showConfirmPassword, setShowConfirmPassword] = useState(false); // Estado para mostrar/ocultar la confirmación de contraseña
 	const [selectedCountry, setSelectedCountry] = useState(null);
 	const [redirectToHome, setRedirectToHome] = useState(false);
 	const [formData, setFormData] = useState({
@@ -37,6 +37,7 @@ const SignUpPage = () => {
 		nombreCompleto: "",
 		pais: "",
 		contrasena: "",
+		confirmarContrasena: "", // Nuevo campo para la confirmación de contraseña
 	});
 
 	const { mutate, isError, isPending, error } = useMutation({
@@ -62,6 +63,13 @@ const SignUpPage = () => {
 		if (selectedCountry) {
 			setFormData((prev) => ({ ...prev, pais: selectedCountry.value }));
 		}
+
+		// Verifica si las contraseñas coinciden
+		if (formData.contrasena !== formData.confirmarContrasena) {
+			toast.error("Las contraseñas no coinciden");
+			return;
+		}
+
 		mutate(formData);
 	};
 
@@ -77,8 +85,6 @@ const SignUpPage = () => {
 		setSelectedCountry(selectedOption);
 	};
 
-	
-
 	return (
 		<div className='max-w-screen-xl mx-auto flex h-screen px-10 '>
 			<div className='flex-1 hidden lg:flex items-center justify-center'>
@@ -88,7 +94,7 @@ const SignUpPage = () => {
 			<div className='flex-1 flex flex-col justify-center items-center '>
 				<div className='lg:w-2/3 mx-auto md:mx-20 flex flex-col'>
 					<h1 className='text-4xl font-extrabold text-primary mb-4'>Únete hoy.</h1>
-					
+
 					{/* Contenedor scrollable */}
 					<div className='overflow-y-auto max-h-[70vh] scrollable-container'>
 						<form className='flex gap-4 flex-col' onSubmit={handleSubmit} >
@@ -156,7 +162,6 @@ const SignUpPage = () => {
 							</label>
 
 							{/* Campo de Contraseña */}
-							{/* Campo de Contraseña */}
 							<label className='flex flex-col'>
 								<span className='font-bold'>Contraseña:</span>
 								<label className='input input-bordered rounded flex items-center gap-2'>
@@ -177,18 +182,37 @@ const SignUpPage = () => {
 									)}
 								</label>
 							</label>
+
+							{/* Campo de Confirmar Contraseña */}
+							<label className='flex flex-col'>
+								<span className='font-bold'>Confirmar Contraseña:</span>
+								<label className='input input-bordered rounded flex items-center gap-2'>
+									<MdPassword />
+									<input
+										type={showConfirmPassword ? 'text' : 'password'}
+										className='grow'
+										placeholder='Confirmar Contraseña'
+										name='confirmarContrasena'
+										onChange={handleInputChange}
+										value={formData.confirmarContrasena}
+									/>
+									{/* Icono de visibilidad */}
+									{showConfirmPassword ? (
+										<FaEyeSlash onClick={() => setShowConfirmPassword(false)} className="cursor-pointer" />
+									) : (
+										<FaEye onClick={() => setShowConfirmPassword(true)} className="cursor-pointer" />
+									)}
+								</label>
+							</label>
+
 							<button className='btn rounded-full btn-primary text-white'>
 								{isPending ? "cargando..." : "Registrarse"}
-								<link rel="stylesheet" href="/" />
-							</button >
-							{isError && <p className='text-red-500'>{error.message}</p>}
+							</button>
 						</form>
-						<div className='flex flex-col lg:w-2/3 gap-2 mt-4'>
-							<p className='text-primary text-lg'>Ya tienes una cuenta?</p>
-							<Link to='/login'>
-								<button className='btn rounded-full btn-primary text-primary btn-outline w-full'>Iniciar Sesión</button>
-							</Link>
-						</div>
+						{isError && <p className="text-red-500">{error.message}</p>}
+						<p className='text-center mt-4'>
+							¿Ya tienes una cuenta? <Link to="/login" className='font-bold text-primary'>Inicia sesión</Link>
+						</p>
 					</div>
 				</div>
 			</div>

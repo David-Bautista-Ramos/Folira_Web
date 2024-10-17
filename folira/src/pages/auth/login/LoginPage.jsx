@@ -101,7 +101,7 @@ const LoginPage = () => {
 
                     {/* Enlace para recuperar contraseña */}
                     <div className="text-center">
-                        <Link to='/password-recovery' className='text-blue-950 hover:underline'>
+                        <Link to='/recuperarContrasena' className='text-blue-950 hover:underline'>
                             ¿Olvidaste tu contraseña?
                         </Link>
                     </div>

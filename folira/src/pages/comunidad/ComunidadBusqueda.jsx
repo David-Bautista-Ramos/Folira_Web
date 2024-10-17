@@ -1,24 +1,16 @@
 import { useState, useEffect, useRef } from 'react';
-import { FaSearch, FaFilter } from 'react-icons/fa';
+import { FaSearch, FaFilter, FaPlus } from 'react-icons/fa';
+import ModalCrearComunidad from './ModalCrearNuevaComunidad';
 
 const BuscadorComunidad = () => {
   const [isDropdownVisible, setDropdownVisible] = useState(false);
-  const dropdownRef = useRef(null); // Referencia para el contenedor del menú desplegable
+  const [isModalOpen, setIsModalOpen] = useState(false); // Controla la visibilidad del modal
+  const dropdownRef = useRef(null);
 
-  // Datos de tipos de comunidades
   const tiposDeComunidades = [
-    'Literatura',
-    'Ciencia',
-    'Arte',
-    'Tecnología',
-    'Historia',
-    'Filosofía',
-    'Psicología',
-    'Biografía',
-    'Novela',
+    'Literatura', 'Ciencia', 'Arte', 'Tecnología', 'Historia', 'Filosofía', 'Psicología', 'Biografía', 'Novela',
   ];
 
-  // Maneja el clic fuera del dropdown para cerrarlo
   useEffect(() => {
     const handleClickOutside = (event) => {
       if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
@@ -26,18 +18,23 @@ const BuscadorComunidad = () => {
       }
     };
 
-    // Agrega el evento de clic
     document.addEventListener('mousedown', handleClickOutside);
-
-    // Limpia el evento al desmontar
-    return () => {
-      document.removeEventListener('mousedown', handleClickOutside);
-    };
+    return () => document.removeEventListener('mousedown', handleClickOutside);
   }, []);
 
+  const handleOpenModal = () => setIsModalOpen(true);
+  const handleCloseModal = () => setIsModalOpen(false);
+
   return (
-    <div className="flex justify-end p-4 relative"> {/* Contenedor relativo */}
-      <div className="buscador flex items-center ">
+    <div className="flex justify-end p-4 relative">
+      <div className="buscador flex items-center">
+        <button 
+          className="mr-3 p-2 bg-primary text-white rounded-full hover:bg-blue-950"
+          onClick={handleOpenModal}
+        >
+          <FaPlus />
+        </button>
+
         <input 
           type="text" 
           placeholder="Buscar..." 
@@ -45,8 +42,8 @@ const BuscadorComunidad = () => {
         />
 
         <button 
-          className="bg-gray-200 text-primary hover:bg-gray-400  rounded-l-md rounded-r-md px-3 py-2 flex items-center"
-          onClick={() => setDropdownVisible(!isDropdownVisible)} // Alterna la visibilidad del menú
+          className="bg-gray-200 text-primary hover:bg-gray-400 rounded-l-md rounded-r-md px-3 py-2 flex items-center"
+          onClick={() => setDropdownVisible(!isDropdownVisible)}
         >
           <FaFilter />
         </button>
@@ -57,8 +54,8 @@ const BuscadorComunidad = () => {
 
         {isDropdownVisible && (
           <div 
-            ref={dropdownRef} // Asocia la referencia al contenedor del dropdown
-            className="absolute right-0 top-[calc(90%+0.1rem)] mr-[60px] bg-white border rounded-md shadow-lg z-10 w-48 max-h-48 overflow-y-auto scrollbar-custom" // Cambiado a modal-content-gustar
+            ref={dropdownRef}
+            className="absolute right-0 top-[calc(90%+0.1rem)] mr-[60px] bg-white border rounded-md shadow-lg z-10 w-48 max-h-48 overflow-y-auto"
           >
             <ul className="p-2">
               {tiposDeComunidades.map((tipo, index) => (
@@ -70,6 +67,9 @@ const BuscadorComunidad = () => {
           </div>
         )}
       </div>
+
+      {/* Modal para crear comunidad */}
+      <ModalCrearComunidad isOpen={isModalOpen} onClose={handleCloseModal} />
     </div>
   );
 };
