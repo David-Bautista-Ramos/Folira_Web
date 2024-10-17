@@ -444,10 +444,10 @@ export const crearUser = async (req, res) => {
       html: `
       <div style="font-family: Arial, sans-serif; text-align: center;">
         <img src="cid:logoFolira" alt="Logo Folira" style="width: 150px; margin-bottom: 20px; border-radius:100px;">
-        <h1 style="color: #1e3799;">¡Bienvenido a la Plataforma!</h1>
+        <h1 style="color: #1e3799;">¡Bienvenido a Folira!</h1>
         <p style="font-size: 16px; color: #34495e;">Hola y Bienvenid@ <strong>${nombreCompleto}</strong>.</p>
         <p style="font-size: 16px; color: #34495e;">
-          Te damos la bienvenida a nuestra plataforma Folira. Aquí están tus credenciales de acceso:
+          Te damos la bienvenida a Folira. Aquí están tus credenciales de acceso:
         </p>
         <div style="text-align: left; max-width: 600px; margin: 0 auto; padding: 20px; background-color: #f5f5f5; border-radius: 8px;">
           <p><strong>Correo:</strong> ${correo}</p>
@@ -461,7 +461,7 @@ export const crearUser = async (req, res) => {
       attachments: [
         {
           filename: "logo-Folira.png",
-          path: path.join(__dirname, "../assets/img/admi_banner.jpeg"), // Usar path.join
+          path: path.join(__dirname, "../assets/img/Folira_logo.png"), // Usar path.join
           cid: "logoFolira", // cid para referenciar en el HTML
         },
       ],
