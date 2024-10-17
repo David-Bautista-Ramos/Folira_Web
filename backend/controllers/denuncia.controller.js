@@ -86,7 +86,7 @@ export const obtenerDenunciasAct = async (req, res) => {
         const estado= true
 
         const denuncias = await Denuncia.find({estado:estado})
-            .populate('idUsuario', 'nombre')
+            .populate('idUsuario')
             .populate({path:'idPublicacion',  model: 'Post' , select:'contenido'})
             .populate('idComunidad', 'nombre')
             .populate({path:'idResena', model: 'Resenas', select:'contenido'});
