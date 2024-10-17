@@ -54,7 +54,7 @@ const ModalCrearUsuario = ({ isOpen, onClose }) => {
     <>
       {isOpen && (
         <dialog id="create_profile_modal" className="modal" open>
-          <div className="modal-box border rounded-md border-blue-950 h-[500px] shadow-md modal-scrollbar">
+          <div className="modal-box border rounded-md border-blue-950 max-h-[700px] h-[600px] shadow-md modal-scrollbar">
             <h3 className="text-primary font-bold text-lg my-3">
               Crear Usuario
             </h3>

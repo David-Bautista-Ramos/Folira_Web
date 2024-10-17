@@ -2,7 +2,7 @@ import { Link, Navigate } from "react-router-dom";
 import { useState } from "react";
 import Folira_logo from "../../../assets/img/Folira_logo (1).svg";
 import { MdOutlineMail, MdPassword } from "react-icons/md";
-import { FaUser } from "react-icons/fa";
+import { FaEye, FaEyeSlash, FaUser } from "react-icons/fa";
 import { useMutation } from "@tanstack/react-query";
 import toast from "react-hot-toast";
 import Select from 'react-select';
@@ -26,6 +26,8 @@ const SignUpPage = () => {
 		{ value: 'Reino Unido', label: 'Reino Unido' },
 		{ value: 'Venezuela', label: 'Venezuela' },
 	];
+	
+	const [showPassword, setShowPassword] = useState(false);
 
 	const [selectedCountry, setSelectedCountry] = useState(null);
 	const [redirectToHome, setRedirectToHome] = useState(false);
@@ -74,6 +76,8 @@ const SignUpPage = () => {
 	const handleChange = (selectedOption) => {
 		setSelectedCountry(selectedOption);
 	};
+
+	
 
 	return (
 		<div className='max-w-screen-xl mx-auto flex h-screen px-10 '>
@@ -152,18 +156,25 @@ const SignUpPage = () => {
 							</label>
 
 							{/* Campo de Contraseña */}
+							{/* Campo de Contraseña */}
 							<label className='flex flex-col'>
 								<span className='font-bold'>Contraseña:</span>
 								<label className='input input-bordered rounded flex items-center gap-2'>
 									<MdPassword />
 									<input
-										type='password'
+										type={showPassword ? 'text' : 'password'} // Alterna tipo de campo
 										className='grow'
 										placeholder='Contraseña'
 										name='contrasena'
 										onChange={handleInputChange}
 										value={formData.contrasena}
 									/>
+									{/* Icono de visibilidad */}
+									{showPassword ? (
+										<FaEyeSlash onClick={() => setShowPassword(false)} className="cursor-pointer" />
+									) : (
+										<FaEye onClick={() => setShowPassword(true)} className="cursor-pointer" />
+									)}
 								</label>
 							</label>
 							<button className='btn rounded-full btn-primary text-white'>

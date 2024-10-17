@@ -99,6 +99,13 @@ const LoginPage = () => {
                         </div>
                     </label>
 
+                    {/* Enlace para recuperar contraseña */}
+                    <div className="text-center">
+                        <Link to='/password-recovery' className='text-blue-950 hover:underline'>
+                            ¿Olvidaste tu contraseña?
+                        </Link>
+                    </div>
+
                     <button className='btn rounded-full btn-primary text-white'>
                         {isPending  ? "Cargando..." : "Iniciar Sesión"}
                     </button>
