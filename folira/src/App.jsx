@@ -21,6 +21,7 @@ import FichaTecnicaLibro from './pages/libro/FichaLibro.jsx';
 import FichaTecnicaAutor from './pages/autor/FichaAutor.jsx';
 import DetallesComunidad from  './pages/comunidad/DetalleComunidad.jsx';
 import Index from './pages/Index.jsx';
+import RecuperarContrasena from './pages/auth/contraseña/RecuperarContrasena.jsx';
 
 
 import { Toaster } from 'react-hot-toast';
@@ -112,7 +113,9 @@ function App() {
                 <Route path='/autor' element={authUser ? <Autor /> : <Navigate to='/login' />} />
                 <Route path='/fichaLibro' element={authUser ? <FichaTecnicaLibro /> : <Navigate to='/login' />} />
                 <Route path='/fichaAutor' element={authUser ? <FichaTecnicaAutor /> : <Navigate to='/login' />} />
-                <Route path='/detalleComunidad' element={authUser ? <DetallesComunidad /> : <Navigate to='/login' />} />        
+                <Route path='/detalleComunidad' element={authUser ? <DetallesComunidad /> : <Navigate to='/login' />} />   
+                <Route path='/recuperarContrasena' element={<RecuperarContrasena />} />
+
                 </Routes>
             </main>
             {authUser && <RightPanel />}

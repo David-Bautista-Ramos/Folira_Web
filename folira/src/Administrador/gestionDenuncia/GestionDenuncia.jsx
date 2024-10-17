@@ -252,3 +252,4 @@ function GestionDenuncia() {
 }
 
 export default GestionDenuncia;
+
