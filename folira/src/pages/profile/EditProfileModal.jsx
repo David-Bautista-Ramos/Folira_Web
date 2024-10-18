@@ -86,6 +86,7 @@ const EditProfileModal = ({ authUser }) => {
 
 	const handleInputChange = (e) => {
 		const { name, value, checked } = e.target;
+	
 		if (name === "generos") {
 			if (checked) {
 				if ((formData.generos).length < 5) {
@@ -101,10 +102,17 @@ const EditProfileModal = ({ authUser }) => {
 				}));
 			}
 		} else {
+			// Validación para permitir solo letras y espacios en el campo 'nombreCompleto'
+			if (name === "nombreCompleto") {
+				const soloLetras = /^[a-zA-ZáéíóúÁÉÍÓÚñÑ\s]*$/;
+				if (!soloLetras.test(value)) {
+					return; // Salir si el valor contiene caracteres no permitidos
+				}
+			}
 			setFormData({ ...formData, [name]: value });
 		}
 	};
-
+	
 	useEffect(() => {
 		if (authUser) {
 			setFormData({

@@ -4,11 +4,21 @@ import ModalCrearComunidad from './ModalCrearNuevaComunidad';
 
 const BuscadorComunidad = () => {
   const [isDropdownVisible, setDropdownVisible] = useState(false);
-  const [isModalOpen, setIsModalOpen] = useState(false); // Controla la visibilidad del modal
+  const [isModalOpen, setIsModalOpen] = useState(false);
   const dropdownRef = useRef(null);
 
   const tiposDeComunidades = [
     'Literatura', 'Ciencia', 'Arte', 'Tecnología', 'Historia', 'Filosofía', 'Psicología', 'Biografía', 'Novela',
+  ];
+
+  const usuarios = [
+    { _id: '1', nombre: 'Usuario 1' },
+    { _id: '2', nombre: 'Usuario 2' },
+  ];
+
+  const generos = [
+    { _id: '1', nombre: 'Ficción' },
+    { _id: '2', nombre: 'No Ficción' },
   ];
 
   useEffect(() => {
@@ -68,8 +78,13 @@ const BuscadorComunidad = () => {
         )}
       </div>
 
-      {/* Modal para crear comunidad */}
-      <ModalCrearComunidad isOpen={isModalOpen} onClose={handleCloseModal} />
+      {/* Renderiza el modal aquí y pasa las props */}
+      <ModalCrearComunidad
+        isOpen={isModalOpen}
+        onClose={handleCloseModal}
+        usuarios={usuarios}
+        generos={generos}
+      />
     </div>
   );
 };
