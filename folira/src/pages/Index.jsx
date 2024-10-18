@@ -122,25 +122,12 @@ function Index() {
       </section>
 
       <footer className="text-primary py-10 w-full bg-gray-200">
-            <div className="w-full grid grid-cols-1 md:grid-cols-3 gap-8 bg-gray-200">
-                <div>
-                    <h3 className="text-xl font-semibold ml-5 mb-4">Sobre Nosotros</h3>
-                    <p className='ml-5'>Nos dedicamos a conectar a los amantes de los libros y promover la interacción en un entorno seguro y respetuoso.</p>
-                </div>
-                <div>
-                    <h3 className="text-xl font-semibold mb-4">Enlaces Útiles</h3>
-                    <TerminosConditionsModal /> {/* Aquí incluimos el modal */}
-                </div>
-                {/* <div>
-                    <h3 className="text-xl font-semibold mb-4">Síguenos</h3>
-                    <ul>
-                        <li className="mb-2"><Link to="#" className="hover:underline">Facebook</Link></li>
-                        <li className="mb-2"><Link to="#" className="hover:underline">Twitter</Link></li>
-                        <li><Link to="#" className="hover:underline">Instagram</Link></li>
-                    </ul>
-                </div> */}
-            </div>
-        </footer>
+          <div className="w-full flex justify-center items-center space-x-4">
+              <TerminosConditionsModal /> {/* Aquí incluimos el modal */}
+              <p>© {new Date().getFullYear()} Todos los derechos reservados.</p>
+          </div>
+      </footer>
+
     </div>
   );
 }

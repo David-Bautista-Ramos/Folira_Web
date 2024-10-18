@@ -16,6 +16,7 @@ const ModalActivarDenuncia = ({ isOpen, onClose, denunciasId, obtenerDenuncias }
                     return response.json();
                 })
                 .then((data) => setDenuncia(data.denuncia)) // Accede a denuncia
+
                 .catch((err) => setError(err.message));
         }
     }, [isOpen, denunciasId]);

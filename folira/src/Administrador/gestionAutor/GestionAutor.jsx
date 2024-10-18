@@ -11,18 +11,20 @@ import GestionSkeleton from "../../components/skeletons/GestionSkeleton";
 import ModalEliminarAutor from "./ModalEliminarAutor";
 
 function GestionAutor() {
-  const [autores, setAutores] = useState([]); // Corregido: useState en vez de useSatate
+  const [autores, setAutores] = useState([]);
   const [selectedAutoresId, setSelectedAutoresId] = useState(null);
-
   const [isInactivarModalOpen, setIsInactivarModalOpen] = useState(false);
   const [isEliminarModalOpen, setIsEliminarModalOpen] = useState(false);
   const [isActivarModalOpen, setIsActivarModalOpen] = useState(false);
   const [isCrearModalOpen, setIsCrearModalOpen] = useState(false);
   const [isActualizarModalOpen, setIsActualizarModalOpen] = useState(false);
-  const [isFiltroModalOpen, setIsFiltroModalOpen] = useState(false); // Nuevo estado para el modal de filtro
-  const [filteredAutores, setFilteredAutores] = useState([]); // Inicializado correctamente
+  const [isFiltroModalOpen, setIsFiltroModalOpen] = useState(false);
+  const [filteredAutores, setFilteredAutores] = useState([]);
+  const [isLoading, setIsLoading] = useState(true);
   
-  const [isLoading, setIsLoading] = useState(true); // Corregido: useState en vez de useSatate
+  // Nuevas variables de estado
+  const [usuariosPorPagina, setUsuariosPorPagina] = useState(5); // Estado para el select
+  const [searchTerm, setSearchTerm] = useState(""); // Estado para el input de búsqueda
 
   const obtenerAutores = async () => {
     setIsLoading(true);
@@ -40,10 +42,9 @@ function GestionAutor() {
 
       const data = await response.json();
 
-      // Asegúrate de que data sea un array
       if (Array.isArray(data)) {
-        setAutores(data); // Asigna los autores obtenidos al estado
-        setFilteredAutores(data); // También asigna a autores filtrados
+        setAutores(data);
+        setFilteredAutores(data);
       } else {
         console.error("La respuesta de autores no es un array:", data);
       }
@@ -59,7 +60,6 @@ function GestionAutor() {
   }, []);
 
   const handleFilter = async (filter) => {
-    // Añadido async
     console.log(`Filter selected: ${filter}`);
     setIsLoading(true);
 
@@ -67,7 +67,6 @@ function GestionAutor() {
       let response;
 
       if (filter === "Activo") {
-        // Obtener autores activos
         response = await fetch("/api/autror/getresenasact", {
           method: "GET",
           headers: {
@@ -75,7 +74,6 @@ function GestionAutor() {
           },
         });
       } else if (filter === "Inactivo") {
-        // Obtener autores inactivos
         response = await fetch("/api/autror/getresenasdes", {
           method: "GET",
           headers: {
@@ -83,10 +81,10 @@ function GestionAutor() {
           },
         });
       } else if (filter === "Restaurar") {
-        setFilteredAutores(autores); // Restaurar la lista completa de autores
-        setIsFiltroModalOpen(false); // Cerrar el modal
-        setIsLoading(false); // Finaliza la carga
-        return; // Salir de la función
+        setFilteredAutores(autores);
+        setIsFiltroModalOpen(false);
+        setIsLoading(false);
+        return;
       }
 
       if (!response.ok) {
@@ -96,45 +94,57 @@ function GestionAutor() {
       const data = await response.json();
 
       if (data && Array.isArray(data)) {
-        setFilteredAutores(data); // Asignar el array de autores filtrados
+        setFilteredAutores(data);
       } else {
         console.error("La respuesta no contiene un array de autores:", data);
       }
     } catch (error) {
       console.error("Error al filtrar", error);
     } finally {
-      setIsLoading(false); // Asegúrate de finalizar la carga
+      setIsLoading(false);
     }
 
-    setIsFiltroModalOpen(false); // Cerrar el modal después de aplicar el filtro
-
+    setIsFiltroModalOpen(false);
   };
 
   const handleRestore = () => {
-    setFilteredAutores(autores); // Restaurar todos los autores
-    setIsFiltroModalOpen(false); // Cerrar el modal después de restaurar
+    setFilteredAutores(autores);
+    setIsFiltroModalOpen(false);
   };
-  
+
   const handleOpenActivarModal = (autorId) => {
-    setSelectedAutoresId(autorId); // Guardar el ID del usuario seleccionado
-    setIsActivarModalOpen(true); // Abrir el modal
+    setSelectedAutoresId(autorId);
+    setIsActivarModalOpen(true);
   };
   const handleOpenDeleteModal = (autorId) => {
-    setSelectedAutoresId(autorId); // Guardar el ID del usuario seleccionado
-    setIsEliminarModalOpen(true); // Abrir el modal
+    setSelectedAutoresId(autorId);
+    setIsEliminarModalOpen(true);
   };
   const handleOpenDesactiveModal = (autorId) => {
-    setSelectedAutoresId(autorId); // Guardar el ID del usuario seleccionado
-    setIsInactivarModalOpen(true); // Abrir el modal
+    setSelectedAutoresId(autorId);
+    setIsInactivarModalOpen(true);
   };
   const handleOpenActualizarModal = (autorId) => {
     setSelectedAutoresId(autorId);
     setIsActualizarModalOpen(true);
   };
 
-  // Función para convertir estado booleano a texto
   const obtenerEstadoTexto = (estado) => {
     return estado ? "Activo" : "Inactivo";
+  };
+
+  // Nuevas funciones para manejar los cambios del select y el input
+  const handleUserCountChange = (e) => {
+    setUsuariosPorPagina(Number(e.target.value));
+  };
+
+  const handleSearchChange = (e) => {
+    setSearchTerm(e.target.value);
+    // Aquí puedes implementar la lógica para filtrar los autores según el término de búsqueda.
+    const filtered = autores.filter(autor =>
+      autor.nombre.toLowerCase().includes(e.target.value.toLowerCase())
+    );
+    setFilteredAutores(filtered);
   };
 
   return (
@@ -150,16 +160,40 @@ function GestionAutor() {
             />
           </div>
 
-          <div className="flex justify-end mt-4 mr-[70px]">
-            <button
-              onClick={() => setIsFiltroModalOpen(true)}
-              className="bg-primary text-white px-4 py-2 rounded mr-3 hover:bg-blue-950"
-            >
-              Estado
-            </button>
-            <button onClick={() => setIsCrearModalOpen(true)} title="Crear">
-              <BiPlus className="text-xl" />
-            </button>
+          {/* Contenedor para el select y el input de búsqueda */}
+          <div className="flex justify-between items-center mt-4 mx-6">
+            <div className="flex items-center">
+              <select
+                value={usuariosPorPagina}
+                onChange={handleUserCountChange}
+                className="border border-gray-300 rounded px-2 py-1 mr-4"
+              >
+                <option value={5}>5 usuarios</option>
+                <option value={10}>10 usuarios</option>
+                <option value={15}>15 usuarios</option>
+                <option value={20}>20 usuarios</option>
+              </select>
+
+              <input
+                type="text"
+                placeholder="Buscar autor..."
+                value={searchTerm}
+                onChange={handleSearchChange}
+                className="border border-gray-300 rounded px-2 py-1 mr-4"
+              />
+            </div>
+
+            <div className="flex items-center">
+              <button
+                onClick={() => setIsFiltroModalOpen(true)}
+                className="bg-primary text-white px-4 py-2 rounded mr-3 hover:bg-blue-950"
+              >
+                Estado
+              </button>
+              <button onClick={() => setIsCrearModalOpen(true)} title="Crear">
+                <BiPlus className="text-xl" />
+              </button>
+            </div>
           </div>
 
           {/* Contenedor para las tarjetas */}
@@ -176,7 +210,7 @@ function GestionAutor() {
                     <div className="w-24 h-24 bg-gray-300 rounded-full border border-primary overflow-hidden mr-4">
                       <img
                         className="object-cover w-full h-full"
-                        src={autor.fotoAutor || "url_de_la_imagen_autor"} // Cambiado a autor
+                        src={autor.fotoAutor || "url_de_la_imagen_autor"}
                         alt="Autor"
                       />
                     </div>
@@ -184,14 +218,12 @@ function GestionAutor() {
                       <div className="mb-1">
                         <h2 className="font-semibold">
                           Nombre Autor: {autor.nombre}
-                        </h2>{" "}
-                        {/* Cambiado a autor */}
+                        </h2>
                       </div>
                       <div className="mb-1">
                         <p>Seudonímo: {autor.seudonimo}</p>
                       </div>
-                      <p>Estado: {obtenerEstadoTexto(autor.estado)}</p>{" "}
-                      {/* Cambiado a autor */}
+                      <p>Estado: {obtenerEstadoTexto(autor.estado)}</p>
                     </div>
                   </div>
                   <div className="flex justify-center gap-3">
@@ -223,59 +255,45 @@ function GestionAutor() {
                 </div>
               ))
             ) : (
-              <p>No hay autores disponibles.</p> // Mensaje para cuando no hay datos
+              <p>No hay autores disponibles.</p>
             )}
           </div>
 
-          {/* Modal para Inactivar Autor */}
+          {/* Modales */}
           <ModalInactivarAutor
             isOpen={isInactivarModalOpen}
             onClose={() => setIsInactivarModalOpen(false)}
             autorId={selectedAutoresId}
-            obtenerAutores={obtenerAutores}
+            onAutorInactivated={obtenerAutores} // Recargar autores
           />
           <ModalEliminarAutor
             isOpen={isEliminarModalOpen}
             onClose={() => setIsEliminarModalOpen(false)}
-            autorId={selectedAutoresId} // Pasar el ID del usuario seleccionado
-            obtenerAutores={obtenerAutores} // Para refrescar la lista de usuarios
+            autorId={selectedAutoresId}
+            onAutorDeleted={obtenerAutores} // Recargar autores
           />
-
-          {/* Modal para Activar Autor */}
           <ModalActivarAutor
             isOpen={isActivarModalOpen}
             onClose={() => setIsActivarModalOpen(false)}
             autorId={selectedAutoresId}
-            obtenerAutores={obtenerAutores}
+            onAutorActivated={obtenerAutores} // Recargar autores
           />
-
-          {/* Modal para Crear Autor */}
           <ModalCrearAutor
             isOpen={isCrearModalOpen}
-            onClose={() => {
-              setIsCrearModalOpen(false);
-              obtenerAutores();
-            }}
-            obtenerAutores={obtenerAutores}
+            onClose={() => setIsCrearModalOpen(false)}
+            onAutorCreated={obtenerAutores} // Recargar autores
           />
-
-          {/* Modal para Actualizar Autor */}
           <ModalActualizarAutor
             isOpen={isActualizarModalOpen}
-            onClose={() => {
-              setIsActualizarModalOpen(false);
-              obtenerAutores();
-            }}
+            onClose={() => setIsActualizarModalOpen(false)}
             autorId={selectedAutoresId}
-            obtenerAutores={obtenerAutores}
+            onAutorUpdated={obtenerAutores} // Recargar autores
           />
-
-          {/* Modal para Filtrar Autor */}
           <ModalFiltroAutor
             isOpen={isFiltroModalOpen}
             onClose={() => setIsFiltroModalOpen(false)}
-            onFilter={handleFilter} // Pasa el manejador de filtro
-            onRestore={handleRestore} // Pasa la función de restaurar
+            onFilterSelected={handleFilter} // Pasar la función de filtro
+            onRestore={handleRestore} // Pasar la función para restaurar
           />
         </main>
       </div>

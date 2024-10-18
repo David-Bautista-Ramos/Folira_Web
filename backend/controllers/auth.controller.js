@@ -25,7 +25,11 @@ const userValidationSchema = Yup.object().shape({
   nombreCompleto: Yup.string()
     .required("El nombre completo es obligatorio.")
     .min(5, "El nombre completo debe tener al menos 5 caracteres.")
-    .max(100, "El nombre completo no puede exceder los 100 caracteres."),
+    .max(100, "El nombre completo no puede exceder los 100 caracteres.")
+    .matches(
+      /^[a-zA-ZáéíóúÁÉÍÓÚñÑ\s]+$/,
+      "El nombre completo solo puede contener letras y espacios."
+    ),
 
   correo: Yup.string()
     .required("El correo es obligatorio.")

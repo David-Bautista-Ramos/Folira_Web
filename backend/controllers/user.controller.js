@@ -277,6 +277,7 @@ const validDomains = [
   "icloud.com",
 ];
 // Esquema de validación usando Yup
+
 const userValidationSchema = Yup.object().shape({
   nombre: Yup.string()
     .required("El nombre es obligatorio.")
@@ -290,7 +291,11 @@ const userValidationSchema = Yup.object().shape({
   nombreCompleto: Yup.string()
     .required("El nombre completo es obligatorio.")
     .min(5, "El nombre completo debe tener al menos 5 caracteres.")
-    .max(100, "El nombre completo no puede exceder los 100 caracteres."),
+    .max(100, "El nombre completo no puede exceder los 100 caracteres.")
+    .matches(
+      /^[a-zA-Z\s]+$/,
+      "El nombre completo solo puede contener letras."
+    ),
 
   correo: Yup.string()
     .required("El correo es obligatorio.")
@@ -300,6 +305,7 @@ const userValidationSchema = Yup.object().shape({
       const domain = value.split("@")[1];
       return validDomains.includes(domain);
     }),
+
   contrasena: Yup.string()
     .required("La contraseña es obligatoria.")
     .min(8, "La contraseña debe tener al menos 8 caracteres.")
@@ -331,8 +337,12 @@ const userValidationSchemaADMIN = Yup.object().shape({
   nombreCompleto: Yup.string()
     .required("El nombre completo es obligatorio.")
     .min(5, "El nombre completo debe tener al menos 5 caracteres.")
-    .max(100, "El nombre completo no puede exceder los 100 caracteres."),
-
+    .max(100, "El nombre completo no puede exceder los 100 caracteres.")
+    .matches(
+      /^[a-zA-Z\s]+$/,
+      "El nombre completo solo puede contener letras."
+    ),
+    
   correo: Yup.string()
     .required("El correo es obligatorio.")
     .email("Formato de correo inválido.")

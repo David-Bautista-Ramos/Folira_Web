@@ -8,6 +8,7 @@ import toast from "react-hot-toast";
 import Select from 'react-select';
 
 const SignUpPage = () => {
+	
 	const paises = [
 		{ value: 'Argentina', label: 'Argentina' },
 		{ value: 'Australia', label: 'Australia' },
@@ -78,8 +79,19 @@ const SignUpPage = () => {
 	}
 
 	const handleInputChange = (e) => {
-		setFormData({ ...formData, [e.target.name]: e.target.value });
-	};
+		const { name, value } = e.target;
+	  
+		// Validar que el nombre completo solo contenga letras y espacios
+		if (name === 'nombreCompleto') {
+		  const soloLetras = /^[a-zA-ZáéíóúÁÉÍÓÚñÑ\s]*$/; // Expresión regular para letras y espacios
+		  if (!soloLetras.test(value)) {
+			return; // Si contiene algo diferente a letras/espacios, no actualizar el estado
+		  }
+		}
+	  
+		setFormData({ ...formData, [name]: value });
+	  };
+	  
 
 	const handleChange = (selectedOption) => {
 		setSelectedCountry(selectedOption);
@@ -138,15 +150,16 @@ const SignUpPage = () => {
 								<label className='input input-bordered rounded flex items-center gap-2'>
 									<FaUser />
 									<input
-										type='text'
-										className='grow'
-										placeholder='Nombre Completo'
-										name='nombreCompleto'
-										onChange={handleInputChange}
-										value={formData.nombreCompleto}
+									type='text'
+									className='grow'
+									placeholder='Nombre Completo'
+									name='nombreCompleto'
+									onChange={handleInputChange}
+									value={formData.nombreCompleto}
 									/>
 								</label>
 							</label>
+
 
 							{/* Selección de País */}
 							<label className='flex flex-col'>
