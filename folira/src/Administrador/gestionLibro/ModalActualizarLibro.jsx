@@ -300,6 +300,6 @@ function ModalActualizarLibro({ isOpen, onClose, libroId, obtenerLibros, token }
       </div>
     </div>
   );
-}
+} 
 
 export default ModalActualizarLibro;

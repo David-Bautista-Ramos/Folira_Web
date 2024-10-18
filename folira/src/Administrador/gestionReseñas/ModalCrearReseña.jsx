@@ -1,14 +1,19 @@
 import { useState, useEffect } from "react";
+import useCreateResena from "../../hooks/useCreateResena";
 
 const ModalCrearReseña = ({ isOpen, onClose, token }) => {
   const [contenido, setContenido] = useState("");
   const [calificacion, setCalificacion] = useState(0);
   const [availableAutores, setAvailableAutores] = useState([]);
   const [availableLibros, setAvailableLibros] = useState([]);
+  const [availableUsuarios, setAvailableUsuarios] = useState([]); // Nuevo estado para usuarios
   const [selectedAutores, setSelectedAutores] = useState([]);
   const [selectedLibros, setSelectedLibros] = useState([]);
+  const [selectedUsuario, setSelectedUsuario] = useState(null); // Estado para el usuario seleccionado
   const [showAutores, setShowAutores] = useState(false);
   const [showLibros, setShowLibros] = useState(false);
+
+  const { createResena, isCreatingResena } = useCreateResena();
 
   useEffect(() => {
     const fetchAutores = async () => {
@@ -46,36 +51,40 @@ const ModalCrearReseña = ({ isOpen, onClose, token }) => {
     fetchLibros();
   }, [token]);
 
+  useEffect(() => {
+    const fetchUsuarios = async () => {
+      try {
+        const response = await fetch("/api/users/allUsers", { // Asegúrate de que esta ruta sea correcta
+          method: "GET",
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        });
+        const usuarios = await response.json();
+        setAvailableUsuarios(usuarios);
+      } catch (error) {
+        console.error("Error al obtener los usuarios:", error);
+      }
+    };
+    fetchUsuarios();
+  }, [token]);
+
   const handleSubmit = async (e) => {
     e.preventDefault();
     const nuevaResena = {
       contenido,
       calificacion,
+      idUsuario: selectedUsuario, // Agregar el usuario seleccionado
       autores: selectedAutores,
       libros: selectedLibros,
     };
 
     try {
-      const response = await fetch("/api/resenas/crear", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${token}`,
-        },
-        body: JSON.stringify(nuevaResena),
-      });
-
-      if (!response.ok) {
-        throw new Error("Error al crear la reseña");
-      }
-
-      const data = await response.json();
-      console.log("Reseña creada con éxito:", data);
-
-      onClose();
+      await createResena(nuevaResena, token);
+      console.log("Reseña creada con éxito");
+      onClose(); // Cerrar el modal tras crear la reseña
     } catch (error) {
       console.error("Error al crear la reseña:", error.message);
-      alert("Hubo un problema al crear la reseña.");
     }
   };
 
@@ -96,6 +105,10 @@ const ModalCrearReseña = ({ isOpen, onClose, token }) => {
         ? prev.filter((id) => id !== libroId)
         : [...prev, libroId]
     );
+  };
+
+  const handleUsuarioChange = (usuarioId) => {
+    setSelectedUsuario((prev) => (prev === usuarioId ? null : usuarioId)); // Alternar selección
   };
 
   if (!isOpen) return null;
@@ -134,6 +147,24 @@ const ModalCrearReseña = ({ isOpen, onClose, token }) => {
               required
               className="mt-1 block w-full p-2 border border-primary rounded-md"
             />
+          </div>
+          <div>
+            <label className="block mb-1 text-primary">Usuario</label>
+            <select
+              value={selectedUsuario || ""}
+              onChange={(e) => handleUsuarioChange(e.target.value)}
+              className="block w-full p-2 border border-primary rounded-md mb-4"
+              required
+            >
+              <option value="" disabled>
+                Selecciona un usuario
+              </option>
+              {availableUsuarios.map((usuario) => (
+                <option key={usuario._id} value={usuario._id}>
+                  {usuario.nombre}
+                </option>
+              ))}
+            </select>
           </div>
           <div>
             <label className="block mb-1 text-primary">Autores</label>
@@ -187,7 +218,10 @@ const ModalCrearReseña = ({ isOpen, onClose, token }) => {
             </button>
             <button
               type="submit"
-              className="px-4 py-2 border rounded bg-primary text-white hover:bg-blue-950"
+              className={`px-4 py-2 border rounded bg-primary text-white hover:bg-blue-950 ${
+                isCreatingResena ? "opacity-50 cursor-not-allowed" : ""
+              }`}
+              disabled={isCreatingResena}
             >
               Crear
             </button>

@@ -262,7 +262,7 @@ function GestionResenas() {
                     />
                     <ModalCrearReseña
                         isOpen={isCrearModalOpen}
-                        onClose={() => setIsCrearModalOpen(false)}
+                        onClose={() =>{ setIsCrearModalOpen(false),obtenerResenas()}}
                         obtenerResenas={obtenerResenas}
                     />
                     <ModalActualizarReseña

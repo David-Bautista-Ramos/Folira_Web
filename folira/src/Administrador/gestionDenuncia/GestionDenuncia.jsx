@@ -1,160 +1,173 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
+import Nav from "../../components/common/Nav";
+import GestionSkeleton from "../../components/skeletons/GestionSkeleton";
+import { BiEdit, BiPowerOff, BiReset, BiShow, BiHide,BiTrash } from "react-icons/bi";
+import banner_denuncia from "../../assets/img/gestionDenuncia.jpeg";
+import ModalFiltroDenuncias from "../../components/common/ModalListarDenuncia";
+import { formatMemberSinceDate } from "../../utils/date";
+import ModalInactivarDenuncia from "./ModalInactivarDenuncia";
 import ModalActivarDenuncia from "./ModalActivarDenuncia";
 import ModalActualizarDenuncia from "./ModalActualizarDenuncia";
-import ModalInactivarDenuncia from "./ModalInactivarDenuncia";
-import banner_denuncia from "../../assets/img/gestionDenuncia.jpeg";
-import { BiEdit, BiPowerOff, BiReset, BiShow, BiHide } from "react-icons/bi";
-import Nav from "../../components/common/Nav";
-import ModalFiltroEstado from "../../components/common/ModalListarDenuncia"
+import ModalEliminarDenuncia from "./ModalEliminarDenuncia";
 
-const denuncias = [
-    {
-        tipo: "usuario",
-        denunciante: {
-            nombreCompleto: "Juan Pérez",
-            fotoPerfil: "https://example.com/perfil-juan.jpg"
-        },
-        denunciado: {
-            nombreCompleto: "Carlos López",
-            motivo: "Comportamiento inapropiado",
-        },
-        estado: "activo", 
-    },
-    {
-        tipo: "publicacion",
-        denunciante: {
-            nombreCompleto: "Maria García",
-            fotoPerfil: "https://example.com/perfil-maria.jpg"
-        },
-        denunciado: {
-            nombreCompleto: "Luis Martínez",
-            contenido: "¡Estoy disfrutando de 'Cien años de soledad' de Gabriel García Márquez!",
-            fotoPublicacion: "https://example.com/cien-anos-soledad.jpg",
-            motivo: "Contenido ofensivo"
-        },
-        estado: "inactivo", 
-    },
-    {
-        tipo: "comunidad",
-        denunciante: {
-            nombreCompleto: "Ana Torres",
-            fotoPerfil: "https://example.com/perfil-ana.jpg"
-        },
-        denunciado: {
-            nombreCompleto: "Comunidad Literaria",
-            motivo: "Spam"
-        },
-        estado: "activo", 
-    },
-    {
-        tipo: "resena",
-        denunciante: {
-            nombreCompleto: "Carlos Díaz",
-            fotoPerfil: "https://example.com/perfil-carlos.jpg"
-        },
-        denunciado: {
-            nombreCompleto: "Maria García",
-            contenido: "Una reseña muy mal escrita y sin fundamento.",
-            motivo: "Falsedad"
-        },
-        estado: "inactivo", 
-    },
-];
 
-function GestionDenuncias() {
-    const [modalUsuarioOpen, setModalUsuarioOpen] = useState(false);
-    const [modalPublicacionOpen, setModalPublicacionOpen] = useState(false);
-    const [modalInactivarOpen, setModalInactivarOpen] = useState(false); 
-    const [expandedPosts, setExpandedPosts] = useState({}); 
-    const [selectedDenuncia, setSelectedDenuncia] = useState(null); 
-    const [filterModalOpen, setFilterModalOpen] = useState(false);
-    const [estadoFiltrado, setEstadoFiltrado] = useState(null);
+function GestionDenuncia() {
+  const [denuncias, setDenuncias] = useState([]); // Lista completa de denuncias
+  const [filteredDenuncias, setFilteredDenuncias] = useState([]); // Denuncias filtradas
+  const [isFiltroModalOpen, setIsFiltroModalOpen] = useState(false); // Modal de filtro
+  const [isLoading, setIsLoading] = useState(true); // Estado de carga
+  const [expandedPosts, setExpandedPosts] = useState({});
+  const [selectedDenunciaId, setSelectedDenunciaId] = useState(null); 
+  const [isInactivarModalOpen, setIsInactivarModalOpen] = useState(false);
+  const [isActivarModalOpen, setIsActivarModalOpen] = useState(false);
+  const [isActualizarModalOpen, setIsActualizarModalOpen] = useState(false);
+  const [isEliminarModalOpen, setIsEliminarModalOpen] = useState(false);
 
-    const handleActivar = (denuncia) => {
-        setSelectedDenuncia(denuncia);
-        setModalUsuarioOpen(true);
-    };
 
-    const handleInactivar = (denuncia) => {
-        setSelectedDenuncia(denuncia);
-        setModalInactivarOpen(true);
-    };
+  // Obtener todas las denuncias
+  const obtenerDenuncias = async () => {
+    setIsLoading(true);
+    try {
+      const response = await fetch("/api/denuncias/denuncia", {
+        method: "GET",
+        headers: { "Content-Type": "application/json" },
+      });
 
-    const handleActualizar = (denuncia) => {
-        setSelectedDenuncia(denuncia);
-        setModalPublicacionOpen(true);
-    };
+      if (!response.ok) throw new Error("Error al obtener las denuncias");
 
-    const toggleExpandPost = (postId) => {
-        setExpandedPosts((prev) => ({
-            ...prev,
-            [postId]: !prev[postId],
-        }));
-    };
+      const data = await response.json();
+      if (Array.isArray(data)) {
+        setDenuncias(data);
+        setFilteredDenuncias(data); // Mostrar todas inicialmente
+      } else {
+        console.error("La respuesta no es un array:", data);
+      }
+    } catch (error) {
+      console.error("Error:", error);
+    } finally {
+      setIsLoading(false);
+    }
+  };
 
-    
-    const handleFilterEstado = (estado) => {
-        setEstadoFiltrado(estado);
-        setFilterModalOpen(false);
-    };
+  useEffect(() => {
+    obtenerDenuncias();
+  }, []);
 
-    const denunciasFiltradas = estadoFiltrado ? denuncias.filter(d => d.estado === estadoFiltrado) : denuncias;
+  // Manejo del filtrado
+  const handleFilter = async (filter) => {
+    console.log(`Filtro seleccionado: ${filter}`);
+    setIsLoading(true);
 
-    return (
-        <div>
-            <Nav />
-            
+    try {
+      let response;
+      if (filter === "Activo") {
+        response = await fetch("/api/denuncias/denunciaact", {
+          method: "GET",
+          headers: { "Content-Type": "application/json" },
+        });
+      } else if (filter === "Inactivo") {
+        response = await fetch("/api/denuncias/denunciades", {
+          method: "GET",
+          headers: { "Content-Type": "application/json" },
+        });
+      } else if (filter === "Restaurar") {
+        setFilteredDenuncias(denuncias);
+        setIsFiltroModalOpen(false);
+        setIsLoading(false);
+        return;
+      }
 
-            <div className="flex justify-center items-center mt-10">
-                <main className="bg-white w-[100%] max-w-[1600px] mx-2 mt-10 rounded-t-2xl border border-gray-500 shadow-lg">
-                    {/* Banner */}
-                    <div>
-                        <img className="w-full h-64 rounded-t-2xl" src={banner_denuncia} alt="banner" />
+      if (!response.ok) throw new Error("Error al filtrar denuncias");
+
+      const data = await response.json();
+      if (Array.isArray(data.denuncias)) {
+        setFilteredDenuncias(data.denuncias);
+      } else {
+        console.error("La respuesta no es un array de denuncias:", data);
+      }
+    } catch (error) {
+      console.error("Error al filtrar denuncias:", error);
+    } finally {
+      setIsLoading(false);
+      setIsFiltroModalOpen(false);
+    }
+  };
+
+  const obtenerTipoDenuncia = (denuncia) => {
+    if (denuncia.idPublicacion && denuncia.idUsuario) return "Denuncia de Publicación";
+    if (denuncia.idComentario && denuncia.idUsuario) return "Denuncia de Comentario";
+    if (denuncia.idComunidad && denuncia.idUsuario) return "Denuncia de Comunidad";
+    if (denuncia.idUsuario) return "Denuncia de Usuario";
+    return "Tipo Desconocido";
+  };
+
+  const toggleExpandPost = (postId) => {
+    setExpandedPosts((prev) => ({ ...prev, [postId]: !prev[postId] }));
+  };
+  
+
+  // Restaurar todas las denuncias
+  const handleRestore = () => {
+    setFilteredDenuncias(denuncias);
+    setIsFiltroModalOpen(false);
+  };
+  // Función para abrir diferentes modales
+  const handleOpenActivarModal = (denunciasId) => {
+    setSelectedDenunciaId(denunciasId); 
+    setIsActivarModalOpen(true);
+  };
+  const handleOpenDesactiveModal = (denunciasId) =>{
+    setSelectedDenunciaId(denunciasId);
+    setIsInactivarModalOpen(true);
+  };
+  const handleOpenActualizarModal = (denunciasId) => {
+    setSelectedDenunciaId(denunciasId); 
+    setIsActualizarModalOpen(true);
+  };
+
+  const handleOpenDeleteModal = (denunciasId) => {
+    setSelectedDenunciaId(denunciasId); // Guardar el ID del usuario seleccionado
+    setIsEliminarModalOpen(true); // Abrir el modal
+  }
+  return (
+    <div>
+      <Nav />
+      <div className="flex justify-center items-center mt-10">
+        <main className="bg-white w-[100%] max-w-[1600px] mx-4 mt-20 rounded-t-2xl border border-gray-500 shadow-lg">
+          <div>
+            <img className="w-full h-[269px] rounded-t-2xl" src={banner_denuncia} alt="banner" />
+          </div>
+
+          <div className="flex justify-end mt-4 mr-[70px]">
+            <button
+              onClick={() => setIsFiltroModalOpen(true)}
+              className="bg-primary text-white px-4 py-2 rounded mr-3 hover:bg-blue-950"
+            >
+              Filtrar
+            </button>
+          </div>
+
+          <div className="flex flex-wrap justify-center gap-6 p-6">
+            {isLoading ? (
+              <GestionSkeleton />
+            ) : filteredDenuncias.length > 0 ? (
+              filteredDenuncias.map((denuncia, index) => {
+                const isExpanded = expandedPosts[index];
+                return (
+                  <div key={index} className="bg-white shadow-lg rounded-lg w-[320px] p-2 mb-4 border">
+                    <div className="flex gap-4 mb-2">
+                      <img
+                        src={denuncia.idUsuario.fotoPerfil}
+                        alt="Perfil Denunciante"
+                        className="w-8 h-8 rounded-full"
+                      />
+                      <span className="font-bold">{denuncia.idUsuario.nombreCompleto}</span>
                     </div>
-
-                    <div className="flex justify-center mt-4">
-                {/* Botón para abrir el modal de estado, con estilos similares al Nav */}
-                <button 
-                    className="px-4 py-2 border rounded bg-primary mb-2.5 ml-[890px] text-white hover:bg-blue-950"
-                    onClick={() => setFilterModalOpen(true)} 
-                >
-                         Estado
-                    </button>
-                </div>
-        
-                 
-                    <div>
-                    {/* Modal de Filtro justo debajo del banner */}
-                    {filterModalOpen && (
-                        <ModalFiltroEstado
-                            isOpen={filterModalOpen}
-                            onClose={() => setFilterModalOpen(false)}
-                            onFilter={handleFilterEstado}
-                        />
-                    )}
-
-                    </div>
-                    
-
-                    
-                    <div className="flex flex-wrap justify-center gap-10 p-2">
-                        {denunciasFiltradas.map((denuncia, index) => {
-                            const isExpanded = expandedPosts[index];
-                            return (
-                                <div key={index} className="bg-white shadow-lg rounded-lg w-[320px] p-2 mb-4 border border-gray-300 flex flex-col">
-                                    <div className="flex gap-4 mb-2">
-                                        <img
-                                            src={denuncia.denunciante.fotoPerfil}
-                                            alt="Perfil Denunciante"
-                                            className="w-8 h-8 rounded-full"
-                                        />
-                                        <span className="font-bold">{denuncia.denunciante.nombreCompleto}</span>
-                                    </div>
-                                    <div className="flex-grow"> {/* Permite que el contenido ocupe el espacio restante */}
-                                        <span className="font-semibold">Denunciado: {denuncia.denunciado.nombreCompleto}</span>
-                                        <p className="text-gray-700 mb-2">Motivo: {denuncia.denunciado.motivo}</p>
-                                        <p className="text-gray-700 mb-2">Estado: {denuncia.estado}</p>
-                                        {denuncia.tipo === "publicacion" && (
+                    <h2 className="font-semibold">Motivo: {obtenerTipoDenuncia(denuncia)}</h2>
+                    <p>Fecha: {formatMemberSinceDate(denuncia.updatedAt)}</p>
+                    <p>Estado: {denuncia.estado ? "Activo" : "Inactivo"}</p>
+                    <p>Motivo: {denuncia.motivo}</p>
+                    {denuncia.tipo === "publicacion" && (
                                             <>
                                                 <p className="text-gray-700 mb-2">
                                                     Contenido: {isExpanded ? denuncia.denunciado.contenido : denuncia.denunciado.contenido.slice(0, 50) + '...'}
@@ -176,44 +189,66 @@ function GestionDenuncias() {
                                         {denuncia.tipo === "resena" && (
                                             <p className="text-gray-700 mb-2">Contenido de la reseña: {denuncia.denunciado.contenido}</p>
                                         )}
-                                    </div>
-                                    <div className="flex justify-end items-center gap-3 mt-3">
-                                        <button onClick={() => handleActivar(denuncia)}>
-                                            <BiPowerOff className="text-xl" />
-                                        </button>
-                                        <button onClick={() => handleInactivar(denuncia)}>
-                                            <BiReset className="text-xl" />
-                                        </button>
-                                        <button onClick={() => handleActualizar(denuncia)}>
-                                            <BiEdit className="text-xl" />
-                                        </button>
-                                    </div>
-                                </div>
-                            );
-                        })}
+                    <div className="flex justify-center gap-3 mt-2">
+                    <button onClick={() => handleOpenActivarModal(denuncia._id)}>
+                          <BiPowerOff className="text-xl" />
+                      </button>
+                      <button onClick={() => handleOpenDesactiveModal(denuncia._id)}>
+                          <BiReset className="text-xl" />
+                      </button>
+                      <button onClick={() => handleOpenActualizarModal(denuncia._id)}>
+                          <BiEdit className="text-xl" />
+                      </button>
+                      <button
+                      onClick={() => handleOpenDeleteModal(denuncia._id)}
+                      title="Eliminar"
+                    >
+                      <BiTrash className="text-xl" />
+                    </button>
                     </div>
+                  </div>
+                );
+              })
+            ) : (
+              <p>No hay denuncias disponibles.</p>
+            )}
+          </div>
 
-                </main>
-            </div>
-
-            {/* Modales para gestionar denuncias */}
-            <ModalActivarDenuncia
-                isOpen={modalUsuarioOpen}
-                onClose={() => setModalUsuarioOpen(false)}
-                denuncia={selectedDenuncia}
+             {/* Modales */}
+             <ModalInactivarDenuncia
+              isOpen={isInactivarModalOpen}
+              onClose={() => setIsInactivarModalOpen(false)}
+              denunciasId={selectedDenunciaId}
+              obtenerDenuncias={obtenerDenuncias}
             />
-            <ModalInactivarDenuncia
-                isOpen={modalInactivarOpen}
-                onClose={() => setModalInactivarOpen(false)}
-                denuncia={selectedDenuncia}
+            <ModalActivarDenuncia
+              isOpen={isActivarModalOpen}
+              onClose={() => setIsActivarModalOpen(false)}
+              denunciasId={selectedDenunciaId}
+              obtenerDenuncias={obtenerDenuncias}
             />
             <ModalActualizarDenuncia
-                isOpen={modalPublicacionOpen}
-                onClose={() => setModalPublicacionOpen(false)}
-                denuncia={selectedDenuncia}
+              isOpen={isActualizarModalOpen}
+              onClose={() => { setIsActualizarModalOpen(false); obtenerDenuncias(); }} // Cambia a setIsActualizarModalOpen
+              denunciasId={selectedDenunciaId}
+              obtenerDenuncias={obtenerDenuncias}
             />
-        </div>
-    );
+             <ModalEliminarDenuncia
+                isOpen={isEliminarModalOpen}
+                onClose={() => setIsEliminarModalOpen(false)}
+                denunciasId={selectedDenunciaId} // Pasar el ID del usuario seleccionado
+                obtenerDenuncias={obtenerDenuncias} // Para refrescar la lista de usuarios
+              />
+            <ModalFiltroDenuncias
+              isOpen={isFiltroModalOpen}
+              onClose={() => setIsFiltroModalOpen(false)}
+              onFilter={handleFilter} // Pass the filter handler
+              onRestore = {handleRestore}
+            />
+        </main>
+      </div>
+    </div>
+  );
 }
 
-export default GestionDenuncias;
+export default GestionDenuncia;

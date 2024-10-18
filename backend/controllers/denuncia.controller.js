@@ -86,7 +86,7 @@ export const obtenerDenunciasAct = async (req, res) => {
         const estado= true
 
         const denuncias = await Denuncia.find({estado:estado})
-            .populate('idUsuario', 'nombre')
+            .populate('idUsuario')
             .populate({path:'idPublicacion',  model: 'Post' , select:'contenido'})
             .populate('idComunidad', 'nombre')
             .populate({path:'idResena', model: 'Resenas', select:'contenido'});
@@ -147,7 +147,7 @@ export const obtenerDenunciaPorId = async (req, res) => {
 export const editarDenuncia = async (req, res) => {
     try {
         const { id } = req.params;
-        const { motivo, solucion, idPublicacion, idComunidad, idResena, estado } = req.body;
+        const { motivo, solucion, idPublicacion, idComunidad, idResena, estado,idUsuario } = req.body;
 
         const denunciaActualizada = await Denuncia.findByIdAndUpdate(id, {
             motivo,
@@ -155,6 +155,7 @@ export const editarDenuncia = async (req, res) => {
             idPublicacion,
             idComunidad,
             idResena,
+            idUsuario,
             estado
         }, { new: true, runValidators: true });
 

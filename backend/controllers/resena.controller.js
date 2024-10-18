@@ -5,12 +5,17 @@ export const crearResena = async (req, res) => {
     try {
         const { contenido, calificacion, idUsuario, idLibro, idAutor } = req.body;
 
+        // Verificar que al menos uno de los campos idLibro o idAutor esté presente
+        if (idLibro || idAutor) {
+            return res.status(400).json({ error: "Se debe proporcionar al menos un libro o un autor." });
+        }
+
         const nuevaResena = new Resena({
             contenido,
             calificacion,
             idUsuario,
-            idLibro,
-            idAutor,
+            idLibro: idLibro || null, // Asignar null si no se proporciona idLibro
+            idAutor: idAutor || null, // Asignar null si no se proporciona idAutor
         });
 
         // Guardar la reseña en la base de datos
@@ -21,6 +26,7 @@ export const crearResena = async (req, res) => {
         res.status(500).json({ error: "Error al crear la reseña." });
     }
 };
+
 
 export const obtenerResena =async(req, res) => {
     try {
@@ -78,7 +84,7 @@ export const obtenerResenaPorId = async (req, res) => {
             return res.status(404).json({ error: "Reseña no encontrada." });
         }
 
-        res.status(200).json({ resena });
+        res.status(200).json(resena);
     } catch (error) {
         console.error("Error al obtener la reseña:", error.message);
         res.status(500).json({ error: "Error al obtener la reseña." });

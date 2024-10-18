@@ -25,7 +25,6 @@ const ResenaSchema = new mongoose.Schema(
       idLibro: {
         type: mongoose.Schema.Types.ObjectId,
         ref: 'Libro',
-        required: true,
       },
       idAutor: {
         type: mongoose.Schema.Types.ObjectId,

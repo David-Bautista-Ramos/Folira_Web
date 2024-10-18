@@ -1,4 +1,4 @@
-const ModalFiltrarEstado = ({ isOpen, onClose, onFilter, onRestore }) => {
+const ModalFiltrarEstado = ({ isOpen, onClose, onFilter }) => {
   if (!isOpen) return null;
 
   return (
@@ -20,7 +20,7 @@ const ModalFiltrarEstado = ({ isOpen, onClose, onFilter, onRestore }) => {
 
         {/* Botón de restaurar */}
         <button
-          onClick={onRestore}
+          onClick={() => onFilter('Restaurar')}
           className="block w-full text-left px-4 py-2 hover:bg-gray-200"
         >
           Restaurar

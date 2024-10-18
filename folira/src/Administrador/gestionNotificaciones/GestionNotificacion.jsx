@@ -1,379 +1,235 @@
-import { useState } from "react";
-import {
-  BiHeart, BiPowerOff, BiReset, BiPlus, BiEdit, BiHide, BiShow,
-} from "react-icons/bi";
+import { useState, useEffect } from "react";
+import { BiPowerOff, BiReset, BiPlus, BiEdit, BiTrash } from "react-icons/bi";
 import Nav from "../../components/common/Nav";
-import ModalLikes from "./ModalLikesNotificacion";
 import ModalActivarNotificacion from "./ModalActivarNotificacion";
 import ModalActualizarNotificacion from "./ModalActualizarNotificacion";
-import ModalCrearNotificacion from "./ModalCrearNotificacion";
 import ModalInactivarNotificacion from "./ModalInactivarNotificacion";
-import banner_notificacion from "../../assets/img/gestionNotificacion.jpeg"; 
-import ModalFiltrarEstado from '../../components/common/FiltrarNotificacionEstado'; // Importamos el nuevo modal
-
-const publicaciones = [
-  {
-    _id: "1",
-    contenido:
-      "¡Estoy disfrutando de 'Cien años de soledad' de Gabriel García Márquez! Es una obra maestra de la literatura.",
-    fotoPublicacion: "https://example.com/cien-anos-soledad.jpg",
-    postOwner: {
-      _id: "1",
-      nombreCompleto: "Juan Pérez",
-      nombre: "juanp",
-      fotoPerfil: "https://example.com/perfil-juan.jpg",
-    },
-    likes: [
-      {
-        user: {
-          nombreCompleto: "Tata",
-          fotoPerfil: "https://example.com/perfil-tata.jpg",
-        },
-      },
-      {
-        user: {
-          nombreCompleto: "Luis",
-          fotoPerfil: "https://example.com/perfil-luis.jpg",
-        },
-      },
-    ],
-    comentarios: [],
-    estado: "Activo"
-  },
-  {
-    _id: "2",
-    contenido:
-      "Recién terminé de leer '1984' de George Orwell. ¡Qué obra tan impactante! ¡Qué obra tan impactante! ¡Qué obra tan impactante! ¡Qué obra tan impactante!",
-    fotoPublicacion: "", // Publicación sin imagen
-    postOwner: {
-      _id: "2",
-      nombreCompleto: "Maria García",
-      nombre: "mariag",
-      fotoPerfil: "https://example.com/perfil-maria.jpg",
-    },
-    likes: [
-      {
-        user: {
-          nombreCompleto: "Carlos",
-          fotoPerfil: "https://example.com/perfil-carlos.jpg",
-        },
-      },
-      {
-        user: {
-          nombreCompleto: "Ana",
-          fotoPerfil: "https://example.com/perfil-ana.jpg",
-        },
-      },
-    ],
-    comentarios: [],
-    estado: "Inactivo"
-  },
-  {
-    _id: "3", // Cambié el ID para que sea único
-    contenido:
-      "¡Estoy disfrutando de 'Cien años de soledad' de Gabriel García Márquez! Es una obra maestra de la literatura.",
-    fotoPublicacion: "https://example.com/cien-anos-soledad.jpg",
-    postOwner: {
-      _id: "1",
-      nombreCompleto: "Juan Pérez",
-      nombre: "juanp",
-      fotoPerfil: "https://example.com/perfil-juan.jpg",
-    },
-    likes: [
-      {
-        user: {
-          nombreCompleto: "Tata",
-          fotoPerfil: "https://example.com/perfil-tata.jpg",
-        },
-      },
-      {
-        user: {
-          nombreCompleto: "Luis",
-          fotoPerfil: "https://example.com/perfil-luis.jpg",
-        },
-      },
-    ],
-    comentarios: [],
-    estado: "Inactivo"
-  },
-  {
-    _id: "6", // Cambié el ID para que sea único
-    contenido:
-      "Recién terminé de leer '1984' de George Orwell. ¡Qué obra tan impactante! ¡Qué obra tan impactante! ¡Qué obra tan impactante! ¡Qué obra tan impactante!",
-    fotoPublicacion: "", // Publicación sin imagen
-    postOwner: {
-      _id: "2",
-      nombreCompleto: "Maria García",
-      nombre: "mariag",
-      fotoPerfil: "https://example.com/perfil-maria.jpg",
-    },
-    likes: [
-      {
-        user: {
-          nombreCompleto: "Carlos",
-          fotoPerfil: "https://example.com/perfil-carlos.jpg",
-        },
-      },
-      {
-        user: {
-          nombreCompleto: "Ana",
-          fotoPerfil: "https://example.com/perfil-ana.jpg",
-        },
-      },
-    ],
-    comentarios: [],
-    estado: "Inactivo"
-  },
-  {
-      _id: "5", // Cambié el ID para que sea único
-      contenido:
-        "¡Estoy disfrutando de 'Cien años de soledad' de Gabriel García Márquez! Es una obra maestra de la literatura.",
-      fotoPublicacion: "https://example.com/cien-anos-soledad.jpg",
-      postOwner: {
-        _id: "1",
-        nombreCompleto: "Juan Pérez",
-        nombre: "juanp",
-        fotoPerfil: "https://example.com/perfil-juan.jpg",
-      },
-      likes: [
-        {
-          user: {
-            nombreCompleto: "Tata",
-            fotoPerfil: "https://example.com/perfil-tata.jpg",
-          },
-        },
-        {
-          user: {
-            nombreCompleto: "Luis",
-            fotoPerfil: "https://example.com/perfil-luis.jpg",
-          },
-        },
-      ],
-      comentarios: [],
-      estado : "Inactivo"
-    },
-    {
-      _id: "4", // Cambié el ID para que sea único
-      contenido:
-        "¡Estoy disfrutando de 'Cien años de soledad' de Gabriel García Márquez! Es una obra maestra de la literatura.",
-      fotoPublicacion: "https://example.com/cien-anos-soledad.jpg",
-      postOwner: {
-        _id: "1",
-        nombreCompleto: "Juan Pérez",
-        nombre: "juanp",
-        fotoPerfil: "https://example.com/perfil-juan.jpg",
-      },
-      likes: [
-        {
-          user: {
-            nombreCompleto: "Tata",
-            fotoPerfil: "https://example.com/perfil-tata.jpg",
-          },
-        },
-        {
-          user: {
-            nombreCompleto: "Luis",
-            fotoPerfil: "https://example.com/perfil-luis.jpg",
-          },
-        },
-      ],
-      comentarios: [],
-      estado: "Inactivo"
-    },
-];
+import banner_notificacion from "../../assets/img/gestionNotificacion.jpeg";
+import ModalFiltrarEstado from "../../components/common/FiltrarNotificacionEstado";
+import { FaUser, FaHeart, FaAward, FaTriangleExclamation, FaRegMessage } from "react-icons/fa6";
+import ModalEliminarNotificacion from "./ModalEliminarNotificacion";
+import ModalFiltroEstado from "../../components/common/ModalListarDenuncia";
+import ModalCrearNotificacion from '../gestionNotificaciones/ModalCrearNotificacion';
 
 function GestionNotificacion() {
-  const [publicacionSeleccionada, setPublicacionSeleccionada] = useState(null);
+  const [notificaciones, setNotificaciones] = useState([]);
+  const [selectedNotificacionId, setSelectedNotificacionId] = useState([]);
+  const [filteredNotificaciones, setFilteredNotificaciones] = useState([]);
+  const [isLoading, setIsLoading] = useState(true);
+  const [isFilterModalOpen, setIsFilterModalOpen] = useState(false);
   const [isActivarModalOpen, setIsActivarModalOpen] = useState(false);
   const [isInactivarModalOpen, setIsInactivarModalOpen] = useState(false);
   const [isCrearModalOpen, setIsCrearModalOpen] = useState(false);
   const [isActualizarModalOpen, setIsActualizarModalOpen] = useState(false);
-  const [isLikesModalOpen, setIsLikesModalOpen] = useState(false);
-  const [isFilterModalOpen, setIsFilterModalOpen] = useState(false); // Nuevo estado para modal de filtro
-  const [filteredState, setFilteredState] = useState("Todos"); // Estado para el filtro de estado
+  const [isEliminarModalOpen, setIsEliminarModalOpen] = useState(false);
 
-  const [expandedPosts, setExpandedPosts] = useState({});
 
-  const toggleExpandPost = (postId) => {
-    setExpandedPosts((prev) => ({
-      ...prev,
-      [postId]: !prev[postId],
-    }));
+  useEffect(() => {
+    obtenerNotificaciones();
+  }, []);
+
+  const obtenerNotificaciones = async () => {
+    try {
+      const response = await fetch("/api/notifications/notifi", {
+        method: "GET",
+        headers: { "Content-Type": "application/json" },
+      });
+      if (!response.ok) throw new Error("Error al obtener las notificaciones");
+      const data = await response.json();
+      setNotificaciones(data.notificaciones);
+      setFilteredNotificaciones(data.notificaciones);
+    } catch (error) {
+      console.error("Error:", error);
+    } finally {
+      setIsLoading(false);
+    }
   };
 
-  const isPostExpanded = (postId) => expandedPosts[postId] || false;
+  // Manejo del filtrado
+  // Manejo del filtrado
+const handleFilter = async (filter) => {
+  console.log(`Filtro seleccionado: ${filter}`);
+  setIsLoading(true);
 
-  const handleActualizarClick = (libro) => {
-    setPublicacionSeleccionada(libro);
+  try {
+    let response;
+    if (filter === "Activo") {
+      response = await fetch("/api/notifications/notifinoleact", {
+        method: "GET",
+        headers: { "Content-Type": "application/json" },
+      });
+    } else if (filter === "Inactivo") {
+      response = await fetch("/api/notifications/notifinoledes", {
+        method: "GET",
+        headers: { "Content-Type": "application/json" },
+      });
+    } else if (filter === "Restaurar") {
+      setFilteredNotificaciones(notificaciones); // Restaurar a todas las notificaciones
+      setIsFilterModalOpen(false);
+      setIsLoading(false);
+      return;
+    }
+
+    if (!response.ok) throw new Error("Error al filtrar notificaciones");
+
+    const data = await response.json();
+
+    // Verifica si hay notificacionesNoLeidas y usa su valor
+    const notificacionesArray = data.notificacionesNoLeidas || [];
+
+    if (Array.isArray(notificacionesArray)) {
+      setFilteredNotificaciones(notificacionesArray); // Actualizar con las filtradas
+    } else {
+      console.error("La respuesta no es un array de notificaciones:", notificacionesArray);
+    }
+  } catch (error) {
+    console.error("Error al filtrar notificaciones:", error);
+  } finally {
+    setIsLoading(false);
+    setIsFilterModalOpen(false);
+  }
+};
+
+
+  const getNotificationIcon = (tipo) => {
+    switch (tipo) {
+      case "seguidor":
+        return <FaUser className="text-blue-600 text-2xl" />;
+      case "like":
+        return <FaHeart className="text-red-500 text-2xl" />;
+      case "insignia":
+        return <FaAward className="text-yellow-500 text-2xl" />;
+      case "denuncia":
+        return <FaTriangleExclamation className="text-gray-600 text-2xl" />;
+      case "comentario":
+        return <FaRegMessage className="text-green-500 text-2xl" />;
+      default:
+        return null;
+    }
+  };
+
+  // Función para abrir diferentes modales
+  const handleOpenActivarModal = (notificacionId) => {
+    setSelectedNotificacionId(notificacionId); 
+    setIsActivarModalOpen(true);
+  };
+  const handleOpenDesactiveModal = (notificacionId) =>{
+    setSelectedNotificacionId(notificacionId);
+    setIsInactivarModalOpen(true);
+  };
+  const handleOpenActualizarModal = (notificacionId) => {
+    setSelectedNotificacionId(notificacionId); 
     setIsActualizarModalOpen(true);
   };
 
-  const handleUpdatePublicacion = (nuevaPublicacion) => {
-    console.log("Publicación actualizada:", nuevaPublicacion);
-    setIsActualizarModalOpen(false);
-  };
-
-  // Filtrar publicaciones por estado
-  const filteredPublicaciones = publicaciones.filter((libro) =>
-    filteredState === "Todos" || libro.estado === filteredState
-  );
-
-  // Lógica para abrir el modal de filtro
-  const handleFilterClick = () => {
-    setIsFilterModalOpen(true);
-  };
-
-  // Lógica para aplicar el filtro
-  const handleFilterSelect = (estado) => {
-    setFilteredState(estado);
-    setIsFilterModalOpen(false); // Cerrar el modal después de seleccionar un estado
-  };
-
-  // Lógica para restaurar la vista completa de publicaciones
-  const handleRestore = () => {
-    setFilteredState("Todos");
-    setIsFilterModalOpen(false);  // Cerrar el modal
-  };
-
-  
+  const handleOpenDeleteModal = (notificacionId) => {
+    setSelectedNotificacionId(notificacionId); // Guardar el ID del usuario seleccionado
+    setIsEliminarModalOpen(true); // Abrir el modal
+  }
 
   return (
     <div>
       <Nav />
       <div className="flex justify-center items-center mt-10">
-        <main className="bg-white w-[100%] max-w-[1600px] mx-2 mt-20 rounded-t-2xl border border-gray-500 shadow-lg">
+        <main className="bg-white w-full max-w-[1600px] mx-2 mt-20 rounded-t-2xl border border-gray-500 shadow-lg">
           <div>
             <img className="w-full h-64 rounded-t-2xl" src={banner_notificacion} alt="banner" />
           </div>
 
           <div className="flex justify-end mt-4 mr-[70px]">
+            <button onClick={() => setIsCrearModalOpen(true)} title="Crear">
+              <BiPlus className="text-xl" />
+            </button>
             <button
-              onClick={handleFilterClick}
+              onClick={() => setIsFilterModalOpen(true)}
               className="bg-primary text-white px-4 py-2 rounded mr-3 hover:bg-blue-950"
             >
               Estado
             </button>
           </div>
 
-          <div className="flex flex-wrap justify-center gap-10 p-2">
-            {filteredPublicaciones.map((libro) => {
-              const isExpanded = isPostExpanded(libro._id);
-              const contenidoMostrado = isExpanded
-                ? libro.contenido
-                : `${libro.contenido.substring(0, 100)}...`;
-
-              return (
-                <div key={libro._id} className="bg-white shadow-lg rounded-lg w-[320px] p-2 mb-4 border border-gray-300 flex flex-col">
-                  {/* Sección del usuario */}
-                  <div className="flex gap-4 mb-2">
-                    <img
-                      src={libro.postOwner.fotoPerfil}
-                      alt="Perfil"
-                      className="w-8 h-8 rounded-full"
-                    />
-                    <span className="font-bold">{libro.postOwner.nombreCompleto}</span>
+          {isLoading ? (
+            <div className="flex justify-center items-center my-10">
+              <p>Cargando notificaciones...</p>
+            </div>
+          ) : filteredNotificaciones.length > 0 ? (
+            <div className="flex flex-wrap justify-center gap-10 p-2">
+              {filteredNotificaciones.map((notificacion) => (
+                <div key={notificacion._id} className="bg-white shadow-lg rounded-lg w-[320px] p-2 mb-4 border border-gray-300 flex flex-col">
+                  <div className="flex items-center gap-4 mb-2">
+                    <div>{getNotificationIcon(notificacion.tipo)}</div>
+                    <div className="flex flex-col">
+                      <span className="font-bold">{notificacion.de.nombre} ha enviado una notificación</span>
+                      <span className="font-bold">{notificacion.para.nombre} ha resibido la notificación</span>
+                      <p className="text-gray-700 mb-2">
+                        Tipo: {notificacion.tipo.charAt(0).toUpperCase() + notificacion.tipo.slice(1)}
+                      </p>
+                    </div>
                   </div>
-
-                  {/* Texto de la publicación (Descripción) */}
-                  <p className="text-gray-700 mb-2">{contenidoMostrado}</p>
-
-                  {/* Botón "Ver más" / "Ver menos" */}
-                  <button
-                    className="text-blue-500 mt-1 flex items-center gap-1"
-                    onClick={() => toggleExpandPost(libro._id)}
-                  >
-                    {isExpanded ? (
-                      <>
-                        <BiHide className="text-xl" />
-                        <span>Ver menos</span>
-                      </>
-                    ) : (
-                      <>
-                        <BiShow className="text-xl" />
-                        <span>Ver más</span>
-                      </>
-                    )}
-                  </button>
-
-                  {/* Imagen de la publicación */}
-                  {libro.fotoPublicacion && (
-                    <img
-                      src={libro.fotoPublicacion}
-                      className="h-[300px] object-contain rounded-lg border mb-2 border-blue-950 mt-2"
-                      alt="Post"
-                    />
-                  )}
-
-                  {/* Sección de íconos y botones */}
+                  <p className="text-gray-600">Estado: {notificacion.leido ? "Leído" : "No leído"}</p>
                   <div className="mt-auto flex justify-between items-center">
-                  <button
-                            onClick={() => {
-                            setPublicacionSeleccionada(libro);
-                            setIsLikesModalOpen(true);
-                            }}
-                            title="Me gusta"
-                        >
-                            <BiHeart className="text-xl" />
-                        </button>
-                        {/* Mostrar la cantidad de likes */}
-                        <span className="text-gray-700 mr-[100px]">
-                            {libro.likes.length} {libro.likes.length === 1 ? 'like' : 'likes'}
-                        </span>
-
                     <div className="flex items-center gap-3">
-                      <button onClick={() => setIsActivarModalOpen(true)} title="Activar">
+                      <button onClick={() => handleOpenActivarModal(notificacion._id)} title="Activar">
                         <BiPowerOff className="text-xl" />
                       </button>
-                      <button onClick={() => setIsInactivarModalOpen(true)} title="Inactivar">
+                      <button onClick={() => handleOpenDesactiveModal(notificacion._id)} title="Inactivar">
                         <BiReset className="text-xl" />
                       </button>
-                      <button onClick={() => setIsCrearModalOpen(true)} title="Crear">
-                        <BiPlus className="text-xl" />
-                      </button>
-                      <button onClick={() => handleActualizarClick(libro)} title="Actualizar">
+                      <button onClick={() => handleOpenActualizarModal(notificacion._id)} title="Actualizar">
                         <BiEdit className="text-xl" />
                       </button>
+                      <button
+                      onClick={() => handleOpenDeleteModal(notificacion._id)}title="Eliminar"><BiTrash className="text-xl" />
+                    </button>
                     </div>
                   </div>
                 </div>
-              );
-            })}
-          </div>
-
-          {/* Modales para gestionar notificaciones */}
-          <ModalActivarNotificacion
-            isOpen={isActivarModalOpen}
-            onClose={() => setIsActivarModalOpen(false)}
-          />
+              ))}
+            </div>
+          ) : (
+            <div className="flex justify-center items-center my-10">
+              <p>No hay notificaciones para mostrar.</p>
+            </div>
+          )}
+          {/* Modales */}
           <ModalInactivarNotificacion
-            isOpen={isInactivarModalOpen}
-            onClose={() => setIsInactivarModalOpen(false)}
-          />
-          <ModalCrearNotificacion
-            isOpen={isCrearModalOpen}
-            onClose={() => setIsCrearModalOpen(false)}
-          />
-          <ModalActualizarNotificacion
-            isOpen={isActualizarModalOpen}
-            onClose={() => setIsActualizarModalOpen(false)}
-            publicacion={publicacionSeleccionada}
-            onUpdate={handleUpdatePublicacion}
-          />
-           <ModalLikes
-            isOpen={isLikesModalOpen}
-            onClose={() => setIsLikesModalOpen(false)}
-            likes={publicacionSeleccionada ? publicacionSeleccionada.likes : []}
-          />
-
-          {/* Modal de filtro por estado */}
-          <ModalFiltrarEstado
-            isOpen={isFilterModalOpen}
-            onClose={() => setIsFilterModalOpen(false)}
-            onFilter={handleFilterSelect}
-            onRestore={handleRestore}
-          />
+              isOpen={isInactivarModalOpen}
+              onClose={() => setIsInactivarModalOpen(false)}
+              NotificacionId={selectedNotificacionId}
+              obtenerNotificaciones={obtenerNotificaciones}
+            />
+            <ModalActivarNotificacion
+              isOpen={isActivarModalOpen}
+              onClose={() => setIsActivarModalOpen(false)}
+              NotificacionId={selectedNotificacionId}
+              obtenerNotificaciones={obtenerNotificaciones}
+            />
+            <ModalActualizarNotificacion
+              isOpen={isActualizarModalOpen}
+              onClose={() => { setIsActualizarModalOpen(false); obtenerNotificaciones(); }} // Cambia a setIsActualizarModalOpen
+              NotificacionId={selectedNotificacionId}
+              obtenerNotificaciones={obtenerNotificaciones}
+            />
+            <ModalCrearNotificacion
+              isOpen={isCrearModalOpen}
+              onClose={() => {setIsCrearModalOpen(false); obtenerNotificaciones () }}
+              obtenerNotificaciones={obtenerNotificaciones}
+            />
+             <ModalEliminarNotificacion
+                isOpen={isEliminarModalOpen}
+                onClose={() => setIsEliminarModalOpen(false)}
+                NotificacionId={selectedNotificacionId} // Pasar el ID del usuario seleccionado
+                obtenerNotificaciones={obtenerNotificaciones} // Para refrescar la lista de usuarios
+              />
+            <ModalFiltroEstado
+              isOpen={isFilterModalOpen}
+              onClose={() => setIsFilterModalOpen(false)}
+              onFilter={handleFilter} // Pass the filter handler
+              onRestore = {handleFilter}
+            />
         </main>
       </div>
+      {isFilterModalOpen && <ModalFiltrarEstado onClose={() => setIsFilterModalOpen(false)} onFilter={handleFilter} />}
     </div>
   );
 }

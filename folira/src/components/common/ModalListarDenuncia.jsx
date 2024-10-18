@@ -11,19 +11,19 @@ const ModalFiltroEstado = ({ isOpen, onClose, onFilter }) => {
                 <div className="flex flex-col gap-2">
                     <button 
                         className="block w-full text-left px-4 py-2 hover:bg-gray-200"
-                        onClick={() => onFilter('activo')} // Filtra por activo
+                        onClick={() => onFilter('Activo')} // Filtra por activo
                     >
                         Activo
                     </button>
                     <button 
                         className="block w-full text-left px-4 py-2 hover:bg-gray-200"
-                        onClick={() => onFilter('inactivo')} // Filtra por inactivo
+                        onClick={() => onFilter('Inactivo')} // Filtra por inactivo
                     >
                         Inactivo
                     </button>
                     <button 
                         className="block w-full text-left px-4 py-2 hover:bg-gray-200"
-                        onClick={() => onFilter(null)} // Restaura la lista sin filtros
+                        onClick={() => onFilter('Restaurar')} // Restaura la lista sin filtros
                     >
                         Restaurar
                     </button>
