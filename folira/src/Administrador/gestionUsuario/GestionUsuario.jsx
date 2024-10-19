@@ -4,7 +4,15 @@ import Nav from "../../components/common/Nav";
 import ModalActivarUsuario from "../gestionUsuario/ModalActivarUsuario";
 import ModalCrearUsuario from "../gestionUsuario/ModalCrearUsuario";
 import ModalActualizarUsuario from "../gestionUsuario/ModalActualizarUsuario";
-import { BiEdit, BiPlus, BiPowerOff, BiReset, BiTrash } from "react-icons/bi";
+import {
+  BiEdit,
+  BiLeftArrow,
+  BiPlus,
+  BiPowerOff,
+  BiReset,
+  BiRightArrow,
+  BiTrash,
+} from "react-icons/bi";
 import banner_usuario from "../../assets/img/gestionUsuario.jpeg";
 import FiltrarUsuarioEstado from "../../components/common/FiltrarUsuarioEstado";
 import GestionSkeleton from "../../components/skeletons/GestionSkeleton"; // Importar el skeleton
@@ -21,8 +29,10 @@ function GestionUsuario() {
   const [isFiltroModalOpen, setIsFiltroModalOpen] = useState(false);
   const [filteredUsuarios, setFilteredUsuarios] = useState([]);
   const [isLoading, setIsLoading] = useState(true); // Estado para controlar la carga
-  const [usuariosPorPagina, setUsuariosPorPagina] = useState(5); // Estado para la cantidad de usuarios a mostrar
-  const [searchTerm, setSearchTerm] = useState(""); // Estado para el texto de búsqueda
+  const [visibleCount, setVisibleCount] = useState(10); // Estado para el select de cantidad de usuarios visibles
+  const [searchTerm, setSearchTerm] = useState(""); // Estado para la búsqueda
+  const [currentPage, setCurrentPage] = useState(1); // Página actual
+  const [totalPages, setTotalPages] = useState(1); // Número total de páginas
 
   // Función para obtener usuarios
   const obtenerUsuarios = async () => {
@@ -56,6 +66,45 @@ function GestionUsuario() {
   useEffect(() => {
     obtenerUsuarios(); // Llama a la función cuando el componente se monta
   }, []);
+
+  // Filtrado por búsqueda
+  useEffect(() => {
+    if (searchTerm) {
+      // Filtrar los usuarios que coincidan con el término de búsqueda
+      const usuariosFiltrados = usuarios.filter(
+        (usuario) =>
+          usuario.nombre.toLowerCase().includes(searchTerm.toLowerCase()) ||
+          usuario.nombreCompleto
+            .toLowerCase()
+            .includes(searchTerm.toLowerCase())
+      );
+      setFilteredUsuarios(usuariosFiltrados);
+    } else {
+      // Si no hay búsqueda, mostramos todos los usuarios
+      setFilteredUsuarios(usuarios);
+    }
+  }, [searchTerm, usuarios]);
+
+  const handleSearchChange = (e) => {
+    setSearchTerm(e.target.value); // Actualiza el término de búsqueda
+  };
+
+  // actualizar el total de páginas cada vez que el número de usuarios filtrados o la cantidad visible cambien.
+  useEffect(() => {
+    const totalUsers = filteredUsuarios.length;
+    setTotalPages(Math.ceil(totalUsers / visibleCount));
+  }, [filteredUsuarios, visibleCount]);
+
+  // Función para cambiar la página
+  const handlePageChange = (newPage) => {
+    if (newPage >= 1 && newPage <= totalPages) {
+      setCurrentPage(newPage);
+    }
+  };
+
+  const startIndex = (currentPage - 1) * visibleCount;
+  const endIndex = startIndex + visibleCount;
+  const usuariosPaginados = filteredUsuarios.slice(startIndex, endIndex);
 
   const handleFilter = async (filter) => {
     console.log(`Filter selected: ${filter}`);
@@ -134,21 +183,8 @@ function GestionUsuario() {
     return estado ? "Activo" : "Inactivo";
   };
 
-  const handleSearchChange = (event) => {
-    const searchTerm = event.target.value.toLowerCase(); // Obtener el texto de búsqueda en minúsculas
-    setSearchTerm(searchTerm); // Actualizar el estado del texto de búsqueda
-
-    // Filtrar usuarios en función del texto de búsqueda
-    const filtered = usuarios.filter(usuario =>
-      usuario.nombre.toLowerCase().includes(searchTerm) || 
-      usuario.nombreCompleto.toLowerCase().includes(searchTerm)
-    );
-
-    setFilteredUsuarios(filtered); // Actualizar la lista de usuarios filtrados
-  };
-
-  const handleUserCountChange = (event) => {
-    setUsuariosPorPagina(Number(event.target.value)); // Actualizar el número de usuarios por página
+  const handleVisibleCountChange = (event) => {
+    setVisibleCount(Number(event.target.value)); // Actualiza la cantidad visible
   };
 
   return (
@@ -164,41 +200,42 @@ function GestionUsuario() {
             />
           </div>
 
-          <div className="flex justify-between items-center mt-4 mx-6 ml-[68px]">
-            <div className="flex items-center"> {/* Contenedor para el select y el input */}
+          <div className="flex justify-between items-center mt-4 mx-[70px]">
+            {/* Contenedor para el select y la barra de búsqueda alineados a la izquierda */}
+            <div className="flex gap-4">
+              {/* Select para elegir cuántos usuarios ver */}
               <select
-                value={usuariosPorPagina}
-                onChange={handleUserCountChange}
-                className="border border-gray-300 rounded px-2 py-1 mr-4"
+                value={visibleCount}
+                onChange={handleVisibleCountChange}
+                className="bg-white border border-gray-400 p-2 rounded"
               >
-                <option value={5}>5 usuarios</option>
-                <option value={10}>10 usuarios</option>
-                <option value={15}>15 usuarios</option>
-                <option value={20}>20 usuarios</option>
+                <option value={5}> 5 usuarios</option>
+                <option value={10}> 10 usuarios</option>
+                <option value={20}> 20 usuarios</option>
               </select>
 
+              {/* Barra de búsqueda */}
               <input
                 type="text"
                 placeholder="Buscar usuario..."
                 value={searchTerm}
                 onChange={handleSearchChange}
-                className="border border-gray-300 rounded px-2 py-1 mr-4"
+                className="p-2 border border-gray-400 rounded w-[340px]"
               />
             </div>
 
-            <div className="flex items-center gap-3 mr-[45px]">
-              <button
-                onClick={() => setIsFiltroModalOpen(true)}
-                className="bg-primary text-white px-4 py-2 rounded ml-[105px] hover:bg-blue-950"
-              >
-                Filtrar
-              </button>
-
+            {/* Contenedor para el icono de "más" y el botón "Estado" alineados a la derecha */}
+            <div className="flex items-center gap-4">
               <button onClick={() => setIsCrearModalOpen(true)} title="Crear">
                 <BiPlus className="text-xl" />
               </button>
+              <button
+                onClick={() => setIsFiltroModalOpen(true)}
+                className="bg-primary text-white px-4 py-2 rounded hover:bg-blue-950"
+              >
+                Estado
+              </button>
             </div>
-            
           </div>
 
           {/* Cargando */}
@@ -206,7 +243,7 @@ function GestionUsuario() {
             <GestionSkeleton />
           ) : (
             <div className="flex flex-wrap justify-center gap-6 p-6">
-              {filteredUsuarios.slice(0, usuariosPorPagina).map((usuario, index) => ( // Mostrar solo el número de usuarios especificado
+              {usuariosPaginados.map((usuario, index) => (
                 <div
                   key={index}
                   className="flex flex-col w-[45%] bg-white border border-primary p-4 rounded-md"
@@ -222,18 +259,16 @@ function GestionUsuario() {
                     <div className="relative">
                       <div className="mb-1">
                         <h2 className="font-semibold">
-                          Nombre: {usuario.nombre}
+                          Nombre Usuario: {usuario.nombre}
                         </h2>
                       </div>
                       <div className="mb-1">
-                        <p>Nombre Usuario: {usuario.nombreCompleto}</p>
+                        <p>Nombre : {usuario.nombreCompleto}</p>
                       </div>
                       <p>Estado: {obtenerEstadoTexto(usuario.estado)}</p>
                     </div>
                   </div>
-
                   <div className="flex justify-center gap-3">
-                    <div className="flex">
                     <button
                       onClick={() => handleOpenActivarModal(usuario._id)}
                       title="Activar"
@@ -258,61 +293,83 @@ function GestionUsuario() {
                     >
                       <BiTrash className="text-xl" />
                     </button>
-                    </div>
                   </div>
                 </div>
               ))}
             </div>
           )}
+
+          {/* Paginación */}
+          <div className="flex justify-between mb-3  items-center mt-4">
+            <button
+              disabled={currentPage === 1}
+              onClick={() => handlePageChange(currentPage - 1)}
+              className="px-2 py-2 bg-gray-300 ml-[450px] rounded hover:bg-gray-400 disabled:bg-gray-200"
+            >
+              <BiLeftArrow />
+            </button>
+
+            <span className="mx-2">
+              Página {currentPage} de {totalPages}
+            </span>
+
+            <button
+              disabled={currentPage === totalPages}
+              onClick={() => handlePageChange(currentPage + 1)}
+              className="px-2 py-2 bg-gray-300 mr-[450px] rounded hover:bg-gray-400 disabled:bg-gray-200"
+            >
+              <BiRightArrow />
+            </button>
+          </div>
+
+          {/* Modal para Inactivar Usuario */}
+          <ModalInactivarUsuario
+            isOpen={isInactivarModalOpen}
+            onClose={() => setIsInactivarModalOpen(false)}
+            userId={selectedUserId} // Pasar el ID del usuario seleccionado
+            obtenerUsuarios={obtenerUsuarios} // Para refrescar la lista de usuarios
+          />
+
+          {/* Modal para Activar Usuario */}
+          <ModalActivarUsuario
+            isOpen={isActivarModalOpen}
+            onClose={() => setIsActivarModalOpen(false)}
+            userId={selectedUserId} // Pasar el ID del usuario seleccionado
+            obtenerUsuarios={obtenerUsuarios} // Para refrescar la lista de usuarios
+          />
+          <ModalEliminarUsuario
+            isOpen={isEliminarModalOpen}
+            onClose={() => setIsEliminarModalOpen(false)}
+            userId={selectedUserId} // Pasar el ID del usuario seleccionado
+            obtenerUsuarios={obtenerUsuarios} // Para refrescar la lista de usuarios
+          />
+          {/* Modal para Crear Usuario */}
+          <ModalCrearUsuario
+            isOpen={isCrearModalOpen}
+            onClose={() => setIsCrearModalOpen(false)}
+            obtenerUsuarios={obtenerUsuarios} // Para refrescar la lista de usuarios
+          />
+
+          {/* Modal para Actualizar Usuario */}
+          <ModalActualizarUsuario
+            isOpen={isActualizarModalOpen}
+            onClose={() => {
+              setIsActualizarModalOpen(false);
+              obtenerUsuarios();
+            }}
+            userId={selectedUserId} // Pasar el ID del usuario seleccionado
+            obtenerUsuarios={obtenerUsuarios} // Para refrescar la lista de usuarios
+          />
+
+          {/* Modal para filtrar usuarios */}
+          <FiltrarUsuarioEstado
+            isOpen={isFiltroModalOpen}
+            onClose={() => setIsFiltroModalOpen(false)}
+            onFilter={handleFilter}
+            onRestore={handleRestore}
+          />
         </main>
       </div>
-
-      {/* Modal para inactivar usuario */}
-      <ModalInactivarUsuario
-        isOpen={isInactivarModalOpen}
-        setIsOpen={setIsInactivarModalOpen}
-        userId={selectedUserId}
-        onUserInactivate={obtenerUsuarios} // Llama a obtenerUsuarios para actualizar la lista después de inactivar
-      />
-
-      {/* Modal para activar usuario */}
-      <ModalActivarUsuario
-        isOpen={isActivarModalOpen}
-        setIsOpen={setIsActivarModalOpen}
-        userId={selectedUserId}
-        onUserActivate={obtenerUsuarios} // Llama a obtenerUsuarios para actualizar la lista después de activar
-      />
-
-      {/* Modal para crear usuario */}
-      <ModalCrearUsuario
-        isOpen={isCrearModalOpen}
-        setIsOpen={setIsCrearModalOpen}
-        onUserCreate={obtenerUsuarios} // Llama a obtenerUsuarios para actualizar la lista después de crear
-      />
-
-      {/* Modal para actualizar usuario */}
-      <ModalActualizarUsuario
-        isOpen={isActualizarModalOpen}
-        setIsOpen={setIsActualizarModalOpen}
-        userId={selectedUserId}
-        onUserUpdate={obtenerUsuarios} // Llama a obtenerUsuarios para actualizar la lista después de actualizar
-      />
-
-      {/* Modal para eliminar usuario */}
-      <ModalEliminarUsuario
-        isOpen={isEliminarModalOpen}
-        setIsOpen={setIsEliminarModalOpen}
-        userId={selectedUserId}
-        onUserDelete={obtenerUsuarios} // Llama a obtenerUsuarios para actualizar la lista después de eliminar
-      />
-
-      {/* Modal para filtrar usuarios */}
-      <FiltrarUsuarioEstado
-        isOpen={isFiltroModalOpen}
-        setIsOpen={setIsFiltroModalOpen}
-        onFilter={handleFilter}
-        onRestore={handleRestore} // Para restaurar todos los usuarios
-      />
     </div>
   );
 }

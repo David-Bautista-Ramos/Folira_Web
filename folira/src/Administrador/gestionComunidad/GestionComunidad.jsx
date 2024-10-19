@@ -8,7 +8,15 @@ import ModalCrearComunidad from "./ModalCrearComunidad";
 import ModalEliminarComunidad from "./ModalEliminarComunidad";
 import ModalActualizarComunidad from "./ModalActualizarComunidad";
 import ModalFiltroComunidad from "../../components/common/ModalFiltrarComunidad"; // Importa el nuevo modal
-import { BiEdit, BiPlus, BiPowerOff, BiReset, BiTrash } from "react-icons/bi";
+import {
+  BiEdit,
+  BiLeftArrow,
+  BiPlus,
+  BiPowerOff,
+  BiReset,
+  BiRightArrow,
+  BiTrash,
+} from "react-icons/bi";
 import GestionSkeleton from "../../components/skeletons/GestionSkeleton";
 
 function GestionComunidad() {
@@ -25,6 +33,10 @@ function GestionComunidad() {
   const [filteredComunidad, setFilteredComunidad] = useState([]); // Nuevo estado para usuarios filtrados
 
   const [isLoading, setIsLoading] = useState(true); // Corregido: useState en vez de useSatate
+  const [visibleCount, setVisibleCount] = useState(10); // Estado para el select de cantidad de usuarios visibles
+  const [searchTerm, setSearchTerm] = useState(""); // Estado para la búsqueda
+  const [currentPage, setCurrentPage] = useState(1); // Página actual
+  const [totalPages, setTotalPages] = useState(1); // Número total de páginas
 
   const obtenerComunidades = async () => {
     setIsLoading(true);
@@ -58,6 +70,46 @@ function GestionComunidad() {
   useEffect(() => {
     obtenerComunidades();
   }, []);
+
+  // Filtrado por búsqueda
+  useEffect(() => {
+    if (searchTerm) {
+      // Filtrar los usuarios que coincidan con el término de búsqueda
+      const usuariosFiltrados = comunidad.filter((usuario) => {
+        const nombre = usuario.nombre?.toLowerCase() || ""; // Maneja posibles undefined
+        const nombreCompleto = usuario.nombreCompleto?.toLowerCase() || ""; // Maneja posibles undefined
+        return (
+          nombre.includes(searchTerm.toLowerCase()) ||
+          nombreCompleto.includes(searchTerm.toLowerCase())
+        );
+      });
+      setFilteredComunidad(usuariosFiltrados);
+    } else {
+      // Si no hay búsqueda, mostramos todos los usuarios
+      setFilteredComunidad(comunidad);
+    }
+  }, [searchTerm, comunidad]);
+
+  const handleSearchChange = (e) => {
+    setSearchTerm(e.target.value); // Actualiza el término de búsqueda
+  };
+
+  // actualizar el total de páginas cada vez que el número de usuarios filtrados o la cantidad visible cambien.
+  useEffect(() => {
+    const totalUsers = filteredComunidad.length;
+    setTotalPages(Math.ceil(totalUsers / visibleCount));
+  }, [filteredComunidad, visibleCount]);
+
+  // Función para cambiar la página
+  const handlePageChange = (newPage) => {
+    if (newPage >= 1 && newPage <= totalPages) {
+      setCurrentPage(newPage);
+    }
+  };
+
+  const startIndex = (currentPage - 1) * visibleCount;
+  const endIndex = startIndex + visibleCount;
+  const comunidadPaginados = filteredComunidad.slice(startIndex, endIndex);
 
   const handleFilter = async (filter) => {
     // Añadido async
@@ -139,6 +191,10 @@ function GestionComunidad() {
     return estado ? "Activo" : "Inactivo";
   };
 
+  const handleVisibleCountChange = (event) => {
+    setVisibleCount(Number(event.target.value)); // Actualiza la cantidad visible
+  };
+
   return (
     <div>
       <Nav />
@@ -152,16 +208,42 @@ function GestionComunidad() {
             />
           </div>
 
-          <div className="flex justify-end mt-4 mr-[70px]">
-            <button onClick={() => setIsCrearModalOpen(true)} title="Crear">
-              <BiPlus className="text-xl mr-3" />
-            </button>
-            <button
-              onClick={() => setIsFiltroModalOpen(true)}
-              className="bg-primary text-white px-4 py-2 rounded mr-3 hover:bg-blue-950"
-            >
-              Estado
-            </button>
+          <div className="flex justify-between items-center mt-4 mx-[70px]">
+            {/* Contenedor para el select y la barra de búsqueda alineados a la izquierda */}
+            <div className="flex gap-4">
+              {/* Select para elegir cuántos usuarios ver */}
+              <select
+                value={visibleCount}
+                onChange={handleVisibleCountChange}
+                className="bg-white border border-gray-400 p-2 rounded"
+              >
+                <option value={5}> 5 comunidades</option>
+                <option value={10}> 10 comunidades</option>
+                <option value={20}> 20 comunidades</option>
+              </select>
+
+              {/* Barra de búsqueda */}
+              <input
+                type="text"
+                placeholder="Buscar comunidad..."
+                value={searchTerm}
+                onChange={handleSearchChange}
+                className="p-2 border border-gray-400 rounded w-[320px]"
+              />
+            </div>
+
+            {/* Contenedor para el icono de "más" y el botón "Estado" alineados a la derecha */}
+            <div className="flex items-center gap-4">
+              <button onClick={() => setIsCrearModalOpen(true)} title="Crear">
+                <BiPlus className="text-xl" />
+              </button>
+              <button
+                onClick={() => setIsFiltroModalOpen(true)}
+                className="bg-primary text-white px-4 py-2 rounded hover:bg-blue-950"
+              >
+                Estado
+              </button>
+            </div>
           </div>
 
           <div className="flex flex-wrap justify-center gap-6 p-6">
@@ -169,7 +251,7 @@ function GestionComunidad() {
               <GestionSkeleton /> // Muestra el componente de carga mientras se obtienen los datos
             ) : Array.isArray(filteredComunidad) &&
               filteredComunidad.length > 0 ? (
-              filteredComunidad.map((comunidad, index) => (
+              comunidadPaginados.map((comunidad, index) => (
                 <div
                   key={index}
                   className="flex flex-col w-[45%] bg-white border border-primary p-4 rounded-md"
@@ -225,6 +307,28 @@ function GestionComunidad() {
             ) : (
               <p>No hay comunidades disponibles.</p> // Mensaje para cuando no hay datos
             )}
+            {/* Paginación */}
+            <div className="flex justify-between mb-3  items-center mt-4">
+              <button
+                disabled={currentPage === 1}
+                onClick={() => handlePageChange(currentPage - 1)}
+                className="px-2 py-2 bg-gray-300 ml-[450px] rounded hover:bg-gray-400 disabled:bg-gray-200"
+              >
+                <BiLeftArrow />
+              </button>
+
+              <span className="mx-2">
+                Página {currentPage} de {totalPages}
+              </span>
+
+              <button
+                disabled={currentPage === totalPages}
+                onClick={() => handlePageChange(currentPage + 1)}
+                className="px-2 py-2 bg-gray-300 mr-[450px] rounded hover:bg-gray-400 disabled:bg-gray-200"
+              >
+                <BiRightArrow />
+              </button>
+            </div>
           </div>
 
           <ModalInactivarComunidad

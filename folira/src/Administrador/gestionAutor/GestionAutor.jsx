@@ -5,7 +5,15 @@ import ModalActivarAutor from "../gestionAutor/ModalActivarAutor";
 import ModalCrearAutor from "../gestionAutor/ModalCrearAutor";
 import ModalActualizarAutor from "../gestionAutor/ModalActualizarAutor";
 import ModalFiltroAutor from "../../components/common/ModalFiltrarAutor"; // Importa el nuevo modal de filtro
-import { BiEdit, BiPlus, BiPowerOff, BiReset, BiTrash } from "react-icons/bi";
+import {
+  BiEdit,
+  BiLeftArrow,
+  BiPlus,
+  BiPowerOff,
+  BiReset,
+  BiRightArrow,
+  BiTrash,
+} from "react-icons/bi";
 import banner_autor from "../../assets/img/gestionAutor.jpeg";
 import GestionSkeleton from "../../components/skeletons/GestionSkeleton";
 import ModalEliminarAutor from "./ModalEliminarAutor";
@@ -21,10 +29,10 @@ function GestionAutor() {
   const [isFiltroModalOpen, setIsFiltroModalOpen] = useState(false);
   const [filteredAutores, setFilteredAutores] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
-  
-  // Nuevas variables de estado
-  const [usuariosPorPagina, setUsuariosPorPagina] = useState(5); // Estado para el select
-  const [searchTerm, setSearchTerm] = useState(""); // Estado para el input de búsqueda
+  const [visibleCount, setVisibleCount] = useState(10); // Estado para el select de cantidad de usuarios visibles
+  const [searchTerm, setSearchTerm] = useState(""); // Estado para la búsqueda
+  const [currentPage, setCurrentPage] = useState(1); // Página actual
+  const [totalPages, setTotalPages] = useState(1); // Número total de páginas
 
   const obtenerAutores = async () => {
     setIsLoading(true);
@@ -59,6 +67,44 @@ function GestionAutor() {
     obtenerAutores();
   }, []);
 
+  // Filtrado por búsqueda
+  // Filtrado por búsqueda
+  useEffect(() => {
+    if (searchTerm) {
+      // Filtrar los autores que coincidan con el término de búsqueda
+      const autoresFiltrados = autores.filter(
+        (autor) =>
+          autor.nombre.toLowerCase().includes(searchTerm.toLowerCase()) ||
+          autor.seudonimo.toLowerCase().includes(searchTerm.toLowerCase())
+      );
+      setFilteredAutores(autoresFiltrados);
+    } else {
+      // Si no hay búsqueda, mostramos todos los autores
+      setFilteredAutores(autores);
+    }
+  }, [searchTerm, autores]);
+
+  const handleSearchChange = (e) => {
+    setSearchTerm(e.target.value); // Actualiza el término de búsqueda
+  };
+
+  // actualizar el total de páginas cada vez que el número de usuarios filtrados o la cantidad visible cambien.
+  useEffect(() => {
+    const totalUsers = filteredAutores.length;
+    setTotalPages(Math.ceil(totalUsers / visibleCount));
+  }, [filteredAutores, visibleCount]);
+
+  // Función para cambiar la página
+  const handlePageChange = (newPage) => {
+    if (newPage >= 1 && newPage <= totalPages) {
+      setCurrentPage(newPage);
+    }
+  };
+
+  const startIndex = (currentPage - 1) * visibleCount;
+  const endIndex = startIndex + visibleCount;
+  const autoresPaginados = filteredAutores.slice(startIndex, endIndex);
+
   const handleFilter = async (filter) => {
     console.log(`Filter selected: ${filter}`);
     setIsLoading(true);
@@ -67,14 +113,14 @@ function GestionAutor() {
       let response;
 
       if (filter === "Activo") {
-        response = await fetch("/api/autror/getresenasact", {
+        response = await fetch("/api/autror/autoresact", {
           method: "GET",
           headers: {
             "Content-Type": "application/json",
           },
         });
       } else if (filter === "Inactivo") {
-        response = await fetch("/api/autror/getresenasdes", {
+        response = await fetch("/api/autror/autoresdes", {
           method: "GET",
           headers: {
             "Content-Type": "application/json",
@@ -134,17 +180,8 @@ function GestionAutor() {
   };
 
   // Nuevas funciones para manejar los cambios del select y el input
-  const handleUserCountChange = (e) => {
-    setUsuariosPorPagina(Number(e.target.value));
-  };
-
-  const handleSearchChange = (e) => {
-    setSearchTerm(e.target.value);
-    // Aquí puedes implementar la lógica para filtrar los autores según el término de búsqueda.
-    const filtered = autores.filter(autor =>
-      autor.nombre.toLowerCase().includes(e.target.value.toLowerCase())
-    );
-    setFilteredAutores(filtered);
+  const handleVisibleCountChange = (event) => {
+    setVisibleCount(Number(event.target.value)); // Actualiza la cantidad visible
   };
 
   return (
@@ -161,37 +198,40 @@ function GestionAutor() {
           </div>
 
           {/* Contenedor para el select y el input de búsqueda */}
-          <div className="flex justify-between items-center mt-4 mx-6">
-            <div className="flex items-center">
+          <div className="flex justify-between items-center mt-4 mx-[70px]">
+            {/* Contenedor para el select y la barra de búsqueda alineados a la izquierda */}
+            <div className="flex gap-4">
+              {/* Select para elegir cuántos usuarios ver */}
               <select
-                value={usuariosPorPagina}
-                onChange={handleUserCountChange}
-                className="border border-gray-300 rounded px-2 py-1 mr-4"
+                value={visibleCount}
+                onChange={handleVisibleCountChange}
+                className="bg-white border border-gray-400 p-2 rounded"
               >
-                <option value={5}>5 usuarios</option>
-                <option value={10}>10 usuarios</option>
-                <option value={15}>15 usuarios</option>
-                <option value={20}>20 usuarios</option>
+                <option value={5}> 5 autores</option>
+                <option value={10}> 10 autores</option>
+                <option value={20}> 20 autores</option>
               </select>
 
+              {/* Barra de búsqueda */}
               <input
                 type="text"
                 placeholder="Buscar autor..."
                 value={searchTerm}
                 onChange={handleSearchChange}
-                className="border border-gray-300 rounded px-2 py-1 mr-4"
+                className="p-2 border border-gray-400 rounded w-[340px]"
               />
             </div>
 
-            <div className="flex items-center">
-              <button
-                onClick={() => setIsFiltroModalOpen(true)}
-                className="bg-primary text-white px-4 py-2 rounded mr-3 hover:bg-blue-950"
-              >
-                Estado
-              </button>
+            {/* Contenedor para el icono de "más" y el botón "Estado" alineados a la derecha */}
+            <div className="flex items-center gap-4">
               <button onClick={() => setIsCrearModalOpen(true)} title="Crear">
                 <BiPlus className="text-xl" />
+              </button>
+              <button
+                onClick={() => setIsFiltroModalOpen(true)}
+                className="bg-primary text-white px-4 py-2 rounded hover:bg-blue-950"
+              >
+                Estado
               </button>
             </div>
           </div>
@@ -201,7 +241,7 @@ function GestionAutor() {
             {isLoading ? (
               <GestionSkeleton /> // Muestra el componente de carga mientras se obtienen los datos
             ) : Array.isArray(filteredAutores) && filteredAutores.length > 0 ? (
-              filteredAutores.map((autor, index) => (
+              autoresPaginados.map((autor, index) => (
                 <div
                   key={index}
                   className="flex flex-col w-[45%] bg-white border border-primary p-4 rounded-md"
@@ -257,6 +297,29 @@ function GestionAutor() {
             ) : (
               <p>No hay autores disponibles.</p>
             )}
+
+            {/* Paginación */}
+            <div className="flex justify-between mb-3  items-center mt-4">
+              <button
+                disabled={currentPage === 1}
+                onClick={() => handlePageChange(currentPage - 1)}
+                className="px-2 py-2 bg-gray-300 ml-[430px] rounded hover:bg-gray-400 disabled:bg-gray-200"
+              >
+                <BiLeftArrow />
+              </button>
+
+              <span className="mx-2">
+                Página {currentPage} de {totalPages}
+              </span>
+
+              <button
+                disabled={currentPage === totalPages}
+                onClick={() => handlePageChange(currentPage + 1)}
+                className="px-2 py-2 bg-gray-300 mr-[430px] rounded hover:bg-gray-400 disabled:bg-gray-200"
+              >
+                <BiRightArrow />
+              </button>
+            </div>
           </div>
 
           {/* Modales */}
@@ -264,35 +327,35 @@ function GestionAutor() {
             isOpen={isInactivarModalOpen}
             onClose={() => setIsInactivarModalOpen(false)}
             autorId={selectedAutoresId}
-            onAutorInactivated={obtenerAutores} // Recargar autores
+            obtenerAutores={obtenerAutores} // Recargar autores
           />
           <ModalEliminarAutor
             isOpen={isEliminarModalOpen}
             onClose={() => setIsEliminarModalOpen(false)}
             autorId={selectedAutoresId}
-            onAutorDeleted={obtenerAutores} // Recargar autores
+            obtenerAutores={obtenerAutores} // Recargar autores
           />
           <ModalActivarAutor
             isOpen={isActivarModalOpen}
             onClose={() => setIsActivarModalOpen(false)}
             autorId={selectedAutoresId}
-            onAutorActivated={obtenerAutores} // Recargar autores
+            obtenerAutores={obtenerAutores} // Recargar autores
           />
           <ModalCrearAutor
             isOpen={isCrearModalOpen}
             onClose={() => setIsCrearModalOpen(false)}
-            onAutorCreated={obtenerAutores} // Recargar autores
+            obtenerAutores={obtenerAutores} // Recargar autores
           />
           <ModalActualizarAutor
             isOpen={isActualizarModalOpen}
             onClose={() => setIsActualizarModalOpen(false)}
             autorId={selectedAutoresId}
-            onAutorUpdated={obtenerAutores} // Recargar autores
+            obtenerAutores={obtenerAutores} // Recargar autores
           />
           <ModalFiltroAutor
             isOpen={isFiltroModalOpen}
             onClose={() => setIsFiltroModalOpen(false)}
-            onFilterSelected={handleFilter} // Pasar la función de filtro
+            onFilter={handleFilter} // Pasar la función de filtro
             onRestore={handleRestore} // Pasar la función para restaurar
           />
         </main>
