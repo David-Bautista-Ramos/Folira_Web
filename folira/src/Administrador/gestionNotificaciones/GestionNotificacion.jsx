@@ -4,7 +4,7 @@ import Nav from "../../components/common/Nav";
 import ModalActivarNotificacion from "./ModalActivarNotificacion";
 import ModalActualizarNotificacion from "./ModalActualizarNotificacion";
 import ModalInactivarNotificacion from "./ModalInactivarNotificacion";
-import banner_notificacion from "../../assets/img/gestionNotificacion.jpeg";
+import banner_notificacion from "../../assets/img/banner_gestion_notificaciones.png"; 
 import ModalFiltrarEstado from "../../components/common/FiltrarNotificacionEstado";
 import { FaUser, FaHeart, FaAward, FaTriangleExclamation, FaRegMessage } from "react-icons/fa6";
 import ModalEliminarNotificacion from "./ModalEliminarNotificacion";
@@ -210,7 +210,9 @@ const handleVisibleCountChange = (event) => {
       <div className="flex justify-center items-center mt-10">
         <main className="bg-white w-full max-w-[1600px] mx-2 mt-20 rounded-t-2xl border border-gray-500 shadow-lg">
           <div>
-            <img className="w-full h-64 rounded-t-2xl" src={banner_notificacion} alt="banner" />
+            <img className="w-full h-[350px] rounded-t-2xl border-b-2 border-primary" 
+            src={banner_notificacion} 
+            alt="banner" />
           </div>
 
           <div className="flex justify-between items-center mt-4 mx-[70px]">

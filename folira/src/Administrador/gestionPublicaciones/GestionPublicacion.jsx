@@ -3,7 +3,7 @@ import { FaRegComment } from "react-icons/fa";
 import { BiShow, BiPlus , BiEdit, BiPowerOff, BiReset, BiTrash } from "react-icons/bi";
 import { Link } from "react-router-dom";
 import Nav from "../../components/common/Nav";
-import banner_publicaciones from "../../assets/img/gestionPublicaciones.jpeg";
+import banner_publicaciones from "../../assets/img/banner_gestion_publicaciones.png"; 
 import GestionSkeleton from "../../components/skeletons/GestionSkeleton";
 import ComentariosModal from "./ComentarioPublicidad";
 import ModalActivarPublicacion from "./ModalActivarPublicacion";
@@ -155,7 +155,7 @@ function GestionPublicaciones() {
       <div className="flex justify-center items-center mt-10">
         <main className="bg-white w-full max-w-6xl mx-2 mt-20 rounded-t-2xl border shadow-lg">
           <img
-            className="w-full h-64 rounded-t-2xl"
+            className="w-full h-[350px] rounded-t-2xl border-b-2 border-primary"
             src={banner_publicaciones}
             alt="banner"
           />

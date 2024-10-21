@@ -13,7 +13,7 @@ import {
   BiRightArrow,
   BiTrash,
 } from "react-icons/bi";
-import banner_usuario from "../../assets/img/gestionUsuario.jpeg";
+import banner_usuario from "../../assets/img/banners_gestion_usuario.png"; 
 import FiltrarUsuarioEstado from "../../components/common/FiltrarUsuarioEstado";
 import GestionSkeleton from "../../components/skeletons/GestionSkeleton"; // Importar el skeleton
 import ModalEliminarUsuario from "./ModalEliminarUsuario";
@@ -194,7 +194,7 @@ function GestionUsuario() {
         <main className="bg-white w-[100%] max-w-[1600px] mx-4 mt-20 rounded-t-2xl border border-gray-500 shadow-lg">
           <div>
             <img
-              className="w-full h-[269px] rounded-t-2xl"
+              className="w-full h-[350px] rounded-t-2xl border-b-2 border-primary"
               src={banner_usuario}
               alt="banner"
             />

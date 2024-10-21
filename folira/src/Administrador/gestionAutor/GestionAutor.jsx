@@ -14,7 +14,7 @@ import {
   BiRightArrow,
   BiTrash,
 } from "react-icons/bi";
-import banner_autor from "../../assets/img/gestionAutor.jpeg";
+import banner_autor from "../../assets/img/banner_gestion_autores.png"; 
 import GestionSkeleton from "../../components/skeletons/GestionSkeleton";
 import ModalEliminarAutor from "./ModalEliminarAutor";
 
@@ -189,7 +189,7 @@ function GestionAutor() {
         <main className="bg-white w-[100%] max-w-[1600px] mx-4 mt-20 rounded-t-2xl border border-gray-500 shadow-lg">
           <div>
             <img
-              className="w-full h-[269px] rounded-t-2xl"
+              className="w-full h-[350px] rounded-t-2xl border-b-2 border-primary"
               src={banner_autor}
               alt="banner"
             />
