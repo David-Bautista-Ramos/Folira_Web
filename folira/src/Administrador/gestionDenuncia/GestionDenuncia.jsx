@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import Nav from "../../components/common/Nav";
 import GestionSkeleton from "../../components/skeletons/GestionSkeleton";
-import { BiEdit, BiPowerOff, BiReset, BiShow, BiHide,BiTrash } from "react-icons/bi";
+import { BiEdit, BiPowerOff, BiReset, BiShow, BiHide,BiTrash, BiLeftArrow, BiRightArrow } from "react-icons/bi";
 import banner_denuncia from "../../assets/img/gestionDenuncia.jpeg";
 import ModalFiltroDenuncias from "../../components/common/ModalListarDenuncia";
 import { formatMemberSinceDate } from "../../utils/date";
@@ -9,6 +9,7 @@ import ModalInactivarDenuncia from "./ModalInactivarDenuncia";
 import ModalActivarDenuncia from "./ModalActivarDenuncia";
 import ModalActualizarDenuncia from "./ModalActualizarDenuncia";
 import ModalEliminarDenuncia from "./ModalEliminarDenuncia";
+import FiltroTipoModal from "./ModalTipoDenuncia";
 
 
 function GestionDenuncia() {
@@ -22,6 +23,11 @@ function GestionDenuncia() {
   const [isActivarModalOpen, setIsActivarModalOpen] = useState(false);
   const [isActualizarModalOpen, setIsActualizarModalOpen] = useState(false);
   const [isEliminarModalOpen, setIsEliminarModalOpen] = useState(false);
+  const [selectedTipo, setSelectedTipo] = useState("");
+  const [visibleCount, setVisibleCount] = useState(3); // Estado para el select de cantidad de usuarios visibles
+  const [searchTerm, setSearchTerm] = useState(""); // Estado para la búsqueda
+  const [currentPage, setCurrentPage] = useState(1); // Página actual
+  const [totalPages, setTotalPages] = useState(1); // Número total de páginas
 
 
   // Obtener todas las denuncias
@@ -52,6 +58,44 @@ function GestionDenuncia() {
   useEffect(() => {
     obtenerDenuncias();
   }, []);
+
+  // Filtrado por búsqueda
+  useEffect(() => {
+    if (searchTerm) {
+      // Filtrar las denuncias que coincidan con el término de búsqueda
+      const denunciasFiltradas = denuncias.filter(
+        (denuncia) =>
+          denuncia.idUsuario?.nombre?.toLowerCase().includes(searchTerm.toLowerCase()) || 
+          denuncia.idUsuario?.nombreCompleto?.toLowerCase().includes(searchTerm.toLowerCase())
+      );
+      setFilteredDenuncias(denunciasFiltradas);
+    } else {
+      // Si no hay búsqueda, mostramos todas las denuncias
+      setFilteredDenuncias(denuncias);
+    }
+  }, [searchTerm, denuncias]);
+
+
+  const handleSearchChange = (e) => {
+    setSearchTerm(e.target.value); // Actualiza el término de búsqueda
+  };
+
+  // actualizar el total de páginas cada vez que el número de usuarios filtrados o la cantidad visible cambien.
+  useEffect(() => {
+    const totaldenuncias = filteredDenuncias.length;
+    setTotalPages(Math.ceil(totaldenuncias / visibleCount));
+  }, [filteredDenuncias, visibleCount]);
+
+  const startIndex = (currentPage - 1) * visibleCount;
+  const endIndex = startIndex + visibleCount;
+  const denunciaPaginados = filteredDenuncias.slice(startIndex, endIndex);
+
+  // Función para cambiar la página
+  const handlePageChange = (newPage) => {
+    if (newPage >= 1 && newPage <= totalPages) {
+      setCurrentPage(newPage);
+    }
+  };
 
   // Manejo del filtrado
   const handleFilter = async (filter) => {
@@ -129,6 +173,18 @@ function GestionDenuncia() {
     setSelectedDenunciaId(denunciasId); // Guardar el ID del usuario seleccionado
     setIsEliminarModalOpen(true); // Abrir el modal
   }
+
+  // Manejar el filtro por tipo de denuncia
+  const handleFilterByTipo = () => {
+    const filtered = denuncias.filter((denuncia) => obtenerTipoDenuncia(denuncia) === selectedTipo);
+    setFilteredDenuncias(filtered);
+    setIsFiltroModalOpen(false); // Cerrar el modal después de filtrar
+  };
+
+  const handleVisibleCountChange = (event) => {
+    setVisibleCount(Number(event.target.value)); // Actualiza la cantidad visible
+  };
+
   return (
     <div>
       <Nav />
@@ -138,20 +194,53 @@ function GestionDenuncia() {
             <img className="w-full h-[269px] rounded-t-2xl" src={banner_denuncia} alt="banner" />
           </div>
 
-          <div className="flex justify-end mt-4 mr-[70px]">
+          <div className="flex justify-between items-center mt-4 mx-[70px]">
+
+            {/* Contenedor para el select y la barra de búsqueda alineados a la izquierda */}
+            <div className="flex gap-4">
+              {/* Select para elegir cuántos usuarios ver */}
+              <select
+                value={visibleCount}
+                onChange={handleVisibleCountChange}
+                className="bg-white border border-gray-400 p-2 rounded"
+              >
+                <option value={3}> 3 usuarios</option>
+                <option value={4}> 4 usuarios</option>
+                <option value={20}> 20 usuarios</option>
+              </select>
+
+              {/* Barra de búsqueda */}
+              <input
+                type="text"
+                placeholder="Buscar usuario..."
+                value={searchTerm}
+                onChange={handleSearchChange}
+                className="p-2 border border-gray-400 rounded w-[340px]"
+              />
+            </div>
+
+            {/* Botón para abrir el modal de filtro por tipo */}
+            <button
+              onClick={() => setIsFiltroModalOpen(true)}
+              className="bg-primary text-white px-4 py-2 rounded ml-[330px] hover:bg-blue-950"
+            >
+              Tipo
+            </button>
+
             <button
               onClick={() => setIsFiltroModalOpen(true)}
               className="bg-primary text-white px-4 py-2 rounded mr-3 hover:bg-blue-950"
             >
               Filtrar
             </button>
+
           </div>
 
           <div className="flex flex-wrap justify-center gap-6 p-6">
             {isLoading ? (
               <GestionSkeleton />
             ) : filteredDenuncias.length > 0 ? (
-              filteredDenuncias.map((denuncia, index) => {
+              denunciaPaginados.map((denuncia, index) => {
                 const isExpanded = expandedPosts[index];
                 return (
                   <div key={index} className="bg-white shadow-lg rounded-lg w-[320px] p-2 mb-4 border">
@@ -212,6 +301,30 @@ function GestionDenuncia() {
             ) : (
               <p>No hay denuncias disponibles.</p>
             )}
+
+            {/* Paginación */}
+            <div className="flex justify-between mb-3  items-center mt-4">
+              <button
+                disabled={currentPage === 1}
+                onClick={() => handlePageChange(currentPage - 1)}
+                className="px-2 py-2 bg-gray-300 ml-[430px] rounded hover:bg-gray-400 disabled:bg-gray-200"
+              >
+                <BiLeftArrow />
+              </button>
+
+              <span className="mx-2">
+                Página {currentPage} de {totalPages}
+              </span>
+
+              <button
+                disabled={currentPage === totalPages}
+                onClick={() => handlePageChange(currentPage + 1)}
+                className="px-2 py-2 bg-gray-300 mr-[430px] rounded hover:bg-gray-400 disabled:bg-gray-200"
+              >
+                <BiRightArrow />
+              </button>
+            </div>
+
           </div>
 
              {/* Modales */}
@@ -244,6 +357,15 @@ function GestionDenuncia() {
               onClose={() => setIsFiltroModalOpen(false)}
               onFilter={handleFilter} // Pass the filter handler
               onRestore = {handleRestore}
+            />
+
+            {/* Modal para filtrar por tipo */}
+            <FiltroTipoModal
+              isOpen={isFiltroModalOpen}
+              onClose={() => setIsFiltroModalOpen(false)}
+              onFilter={handleFilterByTipo}
+              selectedTipo={selectedTipo}
+              setSelectedTipo={setSelectedTipo}
             />
         </main>
       </div>

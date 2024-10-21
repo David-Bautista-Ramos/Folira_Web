@@ -31,6 +31,7 @@ const ModalActualizarReseña = ({
             headers: { Authorization: `Bearer ${token}` },
           });
           const resenaData = await response.json();
+
           console.log("Reseña data:", resenaData);
 
           setFormData({
@@ -269,5 +270,4 @@ const ModalActualizarReseña = ({
     </div>
   );
 };
-
 export default ModalActualizarReseña;

@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { BiPowerOff, BiReset, BiPlus, BiEdit, BiTrash } from "react-icons/bi";
+import { BiPowerOff, BiReset, BiPlus, BiEdit, BiTrash, BiLeftArrow, BiRightArrow } from "react-icons/bi";
 import Nav from "../../components/common/Nav";
 import ModalActivarNotificacion from "./ModalActivarNotificacion";
 import ModalActualizarNotificacion from "./ModalActualizarNotificacion";
@@ -10,6 +10,7 @@ import { FaUser, FaHeart, FaAward, FaTriangleExclamation, FaRegMessage } from "r
 import ModalEliminarNotificacion from "./ModalEliminarNotificacion";
 import ModalFiltroEstado from "../../components/common/ModalListarDenuncia";
 import ModalCrearNotificacion from '../gestionNotificaciones/ModalCrearNotificacion';
+import ModalTipoNotificacion from "./ModalTipoNotificacion";
 
 function GestionNotificacion() {
   const [notificaciones, setNotificaciones] = useState([]);
@@ -17,16 +18,71 @@ function GestionNotificacion() {
   const [filteredNotificaciones, setFilteredNotificaciones] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
   const [isFilterModalOpen, setIsFilterModalOpen] = useState(false);
+  const [isFilterModalOpenTipo, setIsFilterModalOpenTipo] = useState(false);
   const [isActivarModalOpen, setIsActivarModalOpen] = useState(false);
   const [isInactivarModalOpen, setIsInactivarModalOpen] = useState(false);
   const [isCrearModalOpen, setIsCrearModalOpen] = useState(false);
   const [isActualizarModalOpen, setIsActualizarModalOpen] = useState(false);
   const [isEliminarModalOpen, setIsEliminarModalOpen] = useState(false);
+  const [selectedTipo, setSelectedTipo] = useState("");
+  const [visibleCount, setVisibleCount] = useState(6); // Estado para el select de cantidad de usuarios visibles
+  const [searchTerm, setSearchTerm] = useState(""); // Estado para la búsqueda
+  const [currentPage, setCurrentPage] = useState(1); // Página actual
+  const [totalPages, setTotalPages] = useState(1); // Número total de páginas
 
 
   useEffect(() => {
     obtenerNotificaciones();
   }, []);
+
+ /// Filtrado por búsqueda y tipo de notificación
+  useEffect(() => {
+    let denunciasFiltradas = notificaciones;
+
+    // Si hay un término de búsqueda, filtrar las denuncias por el término de búsqueda
+    if (searchTerm) {
+      denunciasFiltradas = denunciasFiltradas.filter(
+        (notificacion) =>
+          notificacion.de?.nombre?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+          notificacion.de?.nombreCompleto?.toLowerCase().includes(searchTerm.toLowerCase())
+      );
+    }
+
+    // Si hay un tipo de notificación seleccionado, aplicar el filtro por tipo
+    if (selectedTipo) {
+      denunciasFiltradas = denunciasFiltradas.filter(
+        (notificacion) => notificacion.tipo.toLowerCase() === selectedTipo.toLowerCase()
+      );
+    }
+
+    // Actualizamos las notificaciones filtradas
+    setFilteredNotificaciones(denunciasFiltradas);
+  }, [searchTerm, selectedTipo, notificaciones]);
+
+
+
+  const handleSearchChange = (e) => {
+    setSearchTerm(e.target.value); // Actualiza el término de búsqueda
+  };
+
+  // actualizar el total de páginas cada vez que el número de usuarios filtrados o la cantidad visible cambien.
+  useEffect(() => {
+    const totalnotificaciones = filteredNotificaciones.length;
+    setTotalPages(Math.ceil(totalnotificaciones / visibleCount));
+  }, [filteredNotificaciones, visibleCount]);
+
+  const startIndex = (currentPage - 1) * visibleCount;
+  const endIndex = startIndex + visibleCount;
+  const notificacionesPaginados = filteredNotificaciones.slice(startIndex, endIndex);
+
+
+   // Función para cambiar la página
+   const handlePageChange = (newPage) => {
+    if (newPage >= 1 && newPage <= totalPages) {
+      setCurrentPage(newPage);
+    }
+  };
+
 
   const obtenerNotificaciones = async () => {
     try {
@@ -46,8 +102,7 @@ function GestionNotificacion() {
   };
 
   // Manejo del filtrado
-  // Manejo del filtrado
-const handleFilter = async (filter) => {
+  const handleFilter = async (filter) => {
   console.log(`Filtro seleccionado: ${filter}`);
   setIsLoading(true);
 
@@ -127,6 +182,28 @@ const handleFilter = async (filter) => {
     setIsEliminarModalOpen(true); // Abrir el modal
   }
 
+  // Manejar el filtro por tipo de notificación
+  const handleFilterByTipo = (tipo) => {
+    if (!tipo) {
+      // Si no hay tipo seleccionado, mostrar todas las notificaciones
+      setFilteredNotificaciones(notificaciones);
+    } else {
+      const filtered = notificaciones.filter((notificacion) => {
+        return notificacion.tipo.toLowerCase() === tipo.toLowerCase();
+      });
+      setFilteredNotificaciones(filtered);
+    }
+    setSelectedTipo(tipo); // Actualiza el tipo seleccionado
+    
+    // Cerrar el modal después de seleccionar el tipo
+    setIsFilterModalOpenTipo(false); 
+  };
+  
+
+const handleVisibleCountChange = (event) => {
+  setVisibleCount(Number(event.target.value)); // Actualiza la cantidad visible
+};
+
   return (
     <div>
       <Nav />
@@ -136,16 +213,49 @@ const handleFilter = async (filter) => {
             <img className="w-full h-64 rounded-t-2xl" src={banner_notificacion} alt="banner" />
           </div>
 
-          <div className="flex justify-end mt-4 mr-[70px]">
-            <button onClick={() => setIsCrearModalOpen(true)} title="Crear">
-              <BiPlus className="text-xl" />
-            </button>
-            <button
+          <div className="flex justify-between items-center mt-4 mx-[70px]">
+
+            {/* Contenedor para el select y la barra de búsqueda alineados a la izquierda */}
+            <div className="flex gap-4">
+              {/* Select para elegir cuántos usuarios ver */}
+              <select
+                value={visibleCount}
+                onChange={handleVisibleCountChange}
+                className="bg-white border border-gray-400 p-2 rounded"
+              >
+                <option value={5}> 5 usuarios</option>
+                <option value={15}> 15 usuarios</option>
+                <option value={20}> 20 usuarios</option>
+              </select>
+
+              {/* Barra de búsqueda */}
+              <input
+                type="text"
+                placeholder="Buscar notificaciones..."
+                value={searchTerm}
+                onChange={handleSearchChange}
+                className="p-2 border border-gray-400 rounded w-[340px]"
+              />
+            </div>
+
+          <button
+            onClick={() => setIsFilterModalOpenTipo(true)}
+            className="bg-primary text-white px-4 py-2 rounded mr-3 hover:bg-blue-950"
+          >
+            Filtrar por Tipo
+          </button>
+
+          <button
               onClick={() => setIsFilterModalOpen(true)}
               className="bg-primary text-white px-4 py-2 rounded mr-3 hover:bg-blue-950"
             >
               Estado
             </button>
+
+            <button onClick={() => setIsCrearModalOpen(true)} title="Crear">
+              <BiPlus className="text-xl" />
+            </button>
+            
           </div>
 
           {isLoading ? (
@@ -154,7 +264,7 @@ const handleFilter = async (filter) => {
             </div>
           ) : filteredNotificaciones.length > 0 ? (
             <div className="flex flex-wrap justify-center gap-10 p-2">
-              {filteredNotificaciones.map((notificacion) => (
+              {notificacionesPaginados.map((notificacion) => (
                 <div key={notificacion._id} className="bg-white shadow-lg rounded-lg w-[320px] p-2 mb-4 border border-gray-300 flex flex-col">
                   <div className="flex items-center gap-4 mb-2">
                     <div>{getNotificationIcon(notificacion.tipo)}</div>
@@ -191,6 +301,30 @@ const handleFilter = async (filter) => {
               <p>No hay notificaciones para mostrar.</p>
             </div>
           )}
+          {/* Paginación */}
+          <div className="flex justify-between mb-3  items-center mt-4">
+              <button
+                disabled={currentPage === 1}
+                onClick={() => handlePageChange(currentPage - 1)}
+                className="px-2 py-2 bg-gray-300 ml-[430px] rounded hover:bg-gray-400 disabled:bg-gray-200"
+              >
+                <BiLeftArrow />
+              </button>
+
+              <span className="mx-2">
+                Página {currentPage} de {totalPages}
+              </span>
+
+              <button
+                disabled={currentPage === totalPages}
+                onClick={() => handlePageChange(currentPage + 1)}
+                className="px-2 py-2 bg-gray-300 mr-[430px] rounded hover:bg-gray-400 disabled:bg-gray-200"
+              >
+                <BiRightArrow />
+              </button>
+            </div>
+
+
           {/* Modales */}
           <ModalInactivarNotificacion
               isOpen={isInactivarModalOpen}
@@ -227,6 +361,15 @@ const handleFilter = async (filter) => {
               onFilter={handleFilter} // Pass the filter handler
               onRestore = {handleFilter}
             />
+
+            {/* Modal para filtrar por tipo */}
+            <ModalTipoNotificacion
+              isOpen={isFilterModalOpenTipo} // Controla si el modal está abierto
+              onClose={() => setIsFilterModalOpenTipo(false)} // Cierra el modal cuando sea necesario
+              onFilter={handleFilterByTipo} // Maneja el filtro y cierre del modal
+            />
+
+
         </main>
       </div>
       {isFilterModalOpen && <ModalFiltrarEstado onClose={() => setIsFilterModalOpen(false)} onFilter={handleFilter} />}
