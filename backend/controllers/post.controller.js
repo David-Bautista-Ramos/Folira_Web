@@ -41,7 +41,7 @@ export const createPost = async (req, res) => {
             user: userId,
             contenido,
             fotoPublicacion,
-            comunidad: comunidadId || null, // Si no hay comunidadId, es una publicación personal
+            idComunidad: comunidadId || null, // Si no hay comunidadId, es una publicación personal
         });
 
         // Guardar la publicación en la base de datos
@@ -53,6 +53,53 @@ export const createPost = async (req, res) => {
     }
 };
 
+export const createPostad = async (req, res) => {
+    try {
+        const { contenido, comunidadId, userId } = req.body; // Extraer userId correctamente
+        let { fotoPublicacion } = req.body;
+
+        // Verificar si el usuario existe
+        const user = await User.findById(userId);
+        if (!user) return res.status(404).json({ message: "Usuario no encontrado" });
+
+        // Verificar si el contenido o la imagen está presente
+        if (!contenido && !fotoPublicacion) {
+            return res.status(400).json({ error: "La publicación debe tener texto o imagen" });
+        }
+
+        // Manejar la subida de la imagen si existe
+        if (fotoPublicacion) {
+            const uploadedResponse = await cloudinary.uploader.upload(fotoPublicacion);
+            fotoPublicacion = uploadedResponse.secure_url;
+        }
+
+        // Si es una publicación para una comunidad
+        let comunidad = null;
+        if (comunidadId) {
+            comunidad = await Comunidad.findById(comunidadId);
+            if (!comunidad) {
+                return res.status(404).json({ message: "Comunidad no encontrada" });
+            }
+        }
+
+        // Crear la nueva publicación
+        const newPost = new Post({
+            user: userId,
+            contenido,
+            fotoPublicacion,
+            idComunidad: comunidadId || null, // Si no hay comunidadId, es una publicación personal
+        });
+
+        // Guardar la publicación en la base de datos
+        await newPost.save();
+        res.status(201).json(newPost);
+    } catch (error) {
+        console.error("Error en el controlador createPost: ", error); // Mejora en el log
+        res.status(500).json({ error: "Error interno del servidor" });
+    }
+};
+
+
 export const deletePost = async (req, res) => {
     try {
         const post = await Post.findById(req.params.id);
@@ -61,11 +108,11 @@ export const deletePost = async (req, res) => {
         }
 
         // Verificar si es una publicación de comunidad
-        const isCommunityPost = !!post.comunidad;
+        const isCommunityPost = !!post.idComunidad;
 
         if (isCommunityPost) {
             // Es una publicación en comunidad
-            const comunidad = await Comunidad.findById(post.comunidad);
+            const comunidad = await Comunidad.findById(post.idComunidad);
             if (!comunidad) {
                 return res.status(404).json({ error: "Comunidad no encontrada" });
             }
@@ -96,6 +143,56 @@ export const deletePost = async (req, res) => {
         console.log("Error en el controlador deletePost: ", error);
         res.status(500).json({ error: "Error interno del servidor." });
     }
+};
+
+export const deletePostAdm = async (req, res) => {
+    const post = req.params.id;  // Obtiene el ID de la publicación desde los parámetros de la URL.
+    try {
+        // Elimina la publicación con el ID especificado.
+        await Post.findByIdAndDelete(post);
+
+        // Responde con un mensaje de éxito si la eliminación fue exitosa.
+        res.status(200).json({ message: "Publicación eliminada con éxito" });
+    } catch (error) {
+        // Muestra el error en la consola si ocurre uno durante la eliminación.
+        console.log("Error en el controlador deletePost: ", error);
+        
+        // Envía un mensaje de error al cliente.
+        res.status(500).json({ error: "Error interno del servidor." });
+    }
+};
+
+export const commentOnPostAd = async (req, res) => {
+	try {
+		const { text, userId } = req.body;
+		const postId = req.params.id;
+
+		if (!text) {
+			return res.status(400).json({ error: "Text field is required" });
+		}
+		const post = await Post.findById(postId);
+
+		if (!post) {
+			return res.status(404).json({ error: "Post not found" });
+		}
+
+		const comment = { user: userId, text };
+
+		post.comentarios.push(comment);
+		await post.save();
+
+        const notification = new Notification({
+            de: userId,
+            para: post.user,
+            tipo: "comentario",
+        });
+        await notification.save();
+
+		res.status(200).json(post);
+	} catch (error) {
+		console.log("Error in commentOnPost controller: ", error);
+		res.status(500).json({ error: "Internal server error" });
+	}
 };
 
 export const commentOnPost = async (req, res) => {
@@ -173,7 +270,6 @@ export const likeUnlikePost = async (req, res) => {
 		res.status(500).json({ error: "Internal server error" });
 	}
 };
-
 export const getAllPosts = async (req, res) => {
 	try {
 		const posts = await Post.find()
@@ -185,6 +281,9 @@ export const getAllPosts = async (req, res) => {
 			.populate({
 				path: "comentarios.user",
 				select: "-contrasena",
+			})
+			.populate({
+				path: "idComunidad", // Aquí se hace populate para idComunidad
 			});
 
 		if (posts.length === 0) {
@@ -197,6 +296,56 @@ export const getAllPosts = async (req, res) => {
 		res.status(500).json({ error: "Internal server error" });
 	}
 };
+
+// Obtener publicaciones de una comunidad específica con estado activo
+export const getPostsByCommunity = async (req, res) => {
+    const { comunidadId } = req.params;
+  
+    try {
+      const posts = await Post.find({
+        idComunidad: comunidadId,
+        estado: true,
+      })
+        .sort({ createdAt: -1 })
+        .populate({
+          path: "user",
+          select: "-contrasena",
+        })
+        .populate({
+          path: "comentarios.user",
+          select: "-contrasena",
+        });
+  
+      res.status(200).json(posts);
+    } catch (error) {
+      console.error("Error in getPostsByCommunity controller:", error);
+      res.status(500).json({ error: "Internal server error" });
+    }
+  };
+
+  // Obtener publicaciones sin comunidad y con estado activo
+export const getPostsWithoutCommunity = async (req, res) => {
+    try {
+      const posts = await Post.find({
+        idComunidad: { $exists: false }, // No tiene comunidad asociada
+        estado: true,
+      })
+        .sort({ createdAt: -1 })
+        .populate({
+          path: "user",
+          select: "-contrasena",
+        })
+        .populate({
+          path: "comentarios.user",
+          select: "-contrasena",
+        });
+  
+      res.status(200).json(posts);
+    } catch (error) {
+      console.error("Error in getPostsWithoutCommunity controller:", error);
+      res.status(500).json({ error: "Internal server error" });
+    }
+  };
 
 export const getLikedPosts = async (req, res) => {
 	const userId = req.params.id;
@@ -291,7 +440,8 @@ export const obtenerPublicacionPorId = async (req, res) => {
 		// Busca la publicación por su ID
 		const publicacion = await Post.findById(postId)
 			.populate('user', 'nombre nombreCompleto') // Poblamos los datos del usuario que creó la publicación
-			.populate('comentarios.user', 'nombre nombreCompleto');
+			.populate('comentarios.user', 'nombre nombreCompleto')
+            .populate('idComunidad');
 
 		// Si la publicación no se encuentra, devuelve un 404
 		if (!publicacion) {
@@ -318,7 +468,7 @@ export const obtenerPublicacionPorId = async (req, res) => {
 export const actualizarPublicacion = async (req, res) => {
 	try {
 		const { postId } = req.params;
-		const { contenido, fotoPublicacion, comunidadId } = req.body;
+		const { contenido, fotoPublicacion, comunidadId, userId  } = req.body;
 
 		// Buscar la publicación
 		const publicacion = await Post.findById(postId);
@@ -333,7 +483,7 @@ export const actualizarPublicacion = async (req, res) => {
 		// Si no es admin, proceder con las verificaciones adicionales
 		if (!isAdmin) {
 			// Verificar si es una publicación de comunidad
-			const isCommunityPost = !!publicacion.idComunidad;
+			const isCommunityPost = !!publicacion.comunidadId;
 
 			if (isCommunityPost) {
 				// Verificar permisos para comunidad (admin o moderador)
@@ -373,6 +523,10 @@ export const actualizarPublicacion = async (req, res) => {
 		publicacion.fotoPublicacion = nuevaFotoPublicacion;
 		publicacion.idComunidad = comunidadId || publicacion.idComunidad;
 
+        if (userId && isAdmin) {
+            publicacion.user = userId;
+          }
+          
 		await publicacion.save();
 
 		return res.status(200).json({
@@ -471,7 +625,7 @@ export const obtenerPublicacionesAct = async (req, res) => {
 
         // Filtrar solo las publicaciones activas
         const publicaciones = await Post.find({ estado: estado })
-            .populate('user', 'nombre nombreCompleto') // Poblar datos del usuario que hizo la publicación
+            .populate('user', 'nombre nombreCompleto fotoPerfil') // Poblar datos del usuario que hizo la publicación
             .populate('idComunidad', 'nombre descripcion') // Poblar la comunidad si es que la publicación pertenece a una
             .populate('comentarios.user', 'nombre nombreCompleto') // Poblar los datos de los usuarios que comentaron
             .exec();
@@ -489,7 +643,7 @@ export const obtenerPublicacionesDes = async (req, res) => {
 
         // Filtrar solo las publicaciones inactivas
         const publicaciones = await Post.find({ estado:estado })
-            .populate('user', 'nombre nombreCompleto') // Poblar datos del usuario que hizo la publicación
+            .populate('user', 'nombre nombreCompleto fotoPerfil') // Poblar datos del usuario que hizo la publicación
             .populate('idComunidad', 'nombre descripcion') // Poblar la comunidad si es que la publicación pertenece a una
             .populate('comentarios.user', 'nombre nombreCompleto') // Poblar los datos de los usuarios que comentaron
             .exec();
@@ -503,6 +657,36 @@ export const obtenerPublicacionesDes = async (req, res) => {
 
 
 {/* ADMIN Comentarios */}
+export const obtenerComentarioPorId = async (req, res) => {
+    try {
+        const { comentarioId, postId } = req.params; // IDs de la publicación y el comentario
+
+        // Buscar la publicación, populando la comunidad y usuarios involucrados
+        const publicacion = await Post.findById(postId)
+            .populate('idComunidad', 'nombre descripcion') // Popula solo campos necesarios de la comunidad
+            .populate('user', 'nombre nombreCompleto fotoPerfil') // Popula los datos del autor de la publicación
+            .populate('comentarios.user', 'nombre fotoPerfil'); // Popula los datos del autor del comentario
+
+        if (!publicacion) {
+            return res.status(404).json({ error: "Publicación no encontrada" });
+        }
+
+        // Buscar el comentario dentro de los comentarios de la publicación
+        const comentario = publicacion.comentarios.id(comentarioId);
+        if (!comentario) {
+            return res.status(404).json({ error: "Comentario no encontrado" });
+        }
+
+        return res.status(200).json({
+            message: "Comentario encontrado",
+            comentario,
+        });
+    } catch (error) {
+        console.error("Error al obtener el comentario:", error.message);
+        return res.status(500).json({ error: "Error en el servidor." });
+    }
+};
+
 // Editar un comentario de una publicación
 // Editar un comentario de una publicación
 export const editarComentario = async (req, res) => {

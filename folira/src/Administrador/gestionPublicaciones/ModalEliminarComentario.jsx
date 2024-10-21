@@ -1,6 +1,8 @@
 import { useState } from "react";
+import toast from "react-hot-toast";
 
-function ModalEliminarPublicacion({ isOpen, onClose, publicacionId, obtenerPublicaciones }) {
+
+function ModalEliminarComentario({ isOpen, onClose, publicacionId, comentarioId, obtenerPublicaciones }) {
   const [loading, setLoading] = useState(false);
 
   if (!isOpen) return null; // Asegura que el modal no se renderice si no está abierto
@@ -8,16 +10,16 @@ function ModalEliminarPublicacion({ isOpen, onClose, publicacionId, obtenerPubli
   const handleDelete = async () => {
     setLoading(true);
     try {
-      const response = await fetch(`/api/posts/admPostDel/${publicacionId}`, {
+      const response = await fetch(`/api/posts/deletecomen/${publicacionId}/${comentarioId}`, {
         method: 'DELETE',
         headers: { 'Content-Type': 'application/json' },
       });
 
-      if (!response.ok) throw new Error("Error al eliminar la publicacion");
+      if (!response.ok) throw new Error("Error al eliminar el comentario");
 
       const data = await response.json();
       console.log(data.message); // Mensaje de éxito
-
+      toast.success("Comentario eliminado con éxito");
       obtenerPublicaciones(); // Refresca las publicaciones
       onClose(); // Cierra el modal después de eliminar
     } catch (error) {
@@ -36,8 +38,8 @@ function ModalEliminarPublicacion({ isOpen, onClose, publicacionId, obtenerPubli
         className="bg-white p-5 rounded-lg max-w-md w-full shadow-lg relative z-50 text-center"
         onClick={(e) => e.stopPropagation()}
       >
-        <h2 className="mb-4 text-2xl text-gray-800">Eliminar Publicacion</h2>
-        <p className="mb-5 text-gray-600">¿Estás seguro de que deseas eliminar esta Publicacion?</p>
+        <h2 className="mb-4 text-2xl text-gray-800">Eliminar Comentario</h2>
+        <p className="mb-5 text-gray-600">¿Estás seguro de que deseas eliminar este comentario?</p>
         <div className="flex justify-end gap-4 mt-4">
           <button
             className="px-4 py-2 bg-gray-300 text-gray-800 rounded-md hover:bg-gray-400"
@@ -60,4 +62,4 @@ function ModalEliminarPublicacion({ isOpen, onClose, publicacionId, obtenerPubli
   );
 }
 
-export default ModalEliminarPublicacion;
+export default ModalEliminarComentario;

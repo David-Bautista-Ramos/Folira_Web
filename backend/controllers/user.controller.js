@@ -361,12 +361,10 @@ const userValidationSchemaADMIN = Yup.object().shape({
 // Configuración de Nodemailer
 // Configuración del transportador de Nodemailer
 const transporter = nodemailer.createTransport({
-  host: "smtp.gmail.com", // O el servicio que estés usando (Gmail, Outlook, etc.)
-  port: 465, // Cambiado 'post' a 'port'
-  secure: true, // true para SSL
+  service:"gmail",
   auth: {
-    user: (process.env.EMAIL_USER = "cardenasalejando475@gmail.com"), // Asegúrate de que esto sea tu correo electrónico
-    pass: (process.env.EMAIL_PASS = "ezoo fpyr wfdv jaxc"), // Asegúrate de que esto sea tu contraseña o contraseña de aplicación
+    user: (process.env.EMAIL_USER = "foliraweb@gmail.com"), // Asegúrate de que esto sea tu correo electrónico
+    pass: (process.env.EMAIL_PASS = "ytle kapv jhyo gopu"), // Asegúrate de que esto sea tu contraseña o contraseña de aplicación
   },
   tls: {
     rejectUnauthorized: false,

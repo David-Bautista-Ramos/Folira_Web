@@ -10,7 +10,7 @@ function ModalInactivarPublicacion  ({ isOpen, onClose, publicacionId, obtenerPu
       setLoading(true);
       setError(null); // Limpiar errores previos
       try {
-        const response = await fetch(`/api/autror/autoresdes/${publicacionId}`, {
+        const response = await fetch(`/api/posts/despost/${publicacionId}`, {
           method: 'PUT', // Cambia el método según sea necesario (PUT/POST)
           headers: {
             'Content-Type': 'application/json',
@@ -21,13 +21,14 @@ function ModalInactivarPublicacion  ({ isOpen, onClose, publicacionId, obtenerPu
         if (!response.ok) {
           throw new Error('Error al inactivar el autor');
         }
-  
-        // Si la inactivación es exitosa, actualiza la lista de usuarios
-        await obtenerPublicaciones();
-        onClose(); // Cerrar el modal después de la actualización
+        const data = await response.json();
+
+        console.log(data.message); // Mensaje de éxito o error
+        obtenerPublicaciones(); // Vuelve a obtener los usuarios actualizados
+        onClose(); // Cierra el modal después de la activación
       } catch (error) {
-        setError('Hubo un problema al inactivar el autor.');
-        console.error('Error al inactivar el autor:', error);
+        setError('Hubo un problema al inactivar al publicacion.');
+        console.error('Error al inactivar al publicacion:', error);
       } finally {
         setLoading(false); // Deja de mostrar loading
       }

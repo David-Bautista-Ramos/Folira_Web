@@ -62,50 +62,48 @@ function GestionAutor() {
   const handleFilter = async (filter) => {
     console.log(`Filter selected: ${filter}`);
     setIsLoading(true);
-
+  
     try {
-      let response;
-
-      if (filter === "Activo") {
-        response = await fetch("/api/autror/getresenasact", {
-          method: "GET",
-          headers: {
-            "Content-Type": "application/json",
-          },
-        });
-      } else if (filter === "Inactivo") {
-        response = await fetch("/api/autror/getresenasdes", {
-          method: "GET",
-          headers: {
-            "Content-Type": "application/json",
-          },
-        });
-      } else if (filter === "Restaurar") {
-        setFilteredAutores(autores);
-        setIsFiltroModalOpen(false);
-        setIsLoading(false);
-        return;
+      let url;
+      switch (filter) {
+        case "Activo":
+          url = "/api/autror/autoresact";
+          break;
+        case "Inactivo":
+          url = "/api/autror/autoresdes";
+          break;
+        case "Restaurar":
+          setFilteredAutores(autores);
+          setIsFiltroModalOpen(false);
+          setIsLoading(false);
+          return;
+        default:
+          console.warn("Filtro no reconocido:", filter);
+          setIsLoading(false);
+          return;
       }
-
-      if (!response.ok) {
-        throw new Error("Error al filtrar los Autores");
-      }
-
+  
+      const response = await fetch(url, {
+        method: "GET",
+        headers: { "Content-Type": "application/json" },
+      });
+  
+      if (!response.ok) throw new Error("Error al filtrar los autores");
+  
       const data = await response.json();
-
-      if (data && Array.isArray(data)) {
+      if (Array.isArray(data)) {
         setFilteredAutores(data);
       } else {
-        console.error("La respuesta no contiene un array de autores:", data);
+        console.error("La respuesta no es un array:", data);
       }
     } catch (error) {
-      console.error("Error al filtrar", error);
+      console.error("Error al filtrar:", error);
     } finally {
       setIsLoading(false);
+      setIsFiltroModalOpen(false);
     }
-
-    setIsFiltroModalOpen(false);
   };
+  
 
   const handleRestore = () => {
     setFilteredAutores(autores);
@@ -185,11 +183,12 @@ function GestionAutor() {
 
             <div className="flex items-center">
               <button
-                onClick={() => setIsFiltroModalOpen(true)}
-                className="bg-primary text-white px-4 py-2 rounded mr-3 hover:bg-blue-950"
-              >
-                Estado
-              </button>
+  onClick={() => setIsFiltroModalOpen(true)}
+  className="bg-primary text-white px-4 py-2 rounded mr-3 hover:bg-blue-950"
+>
+  Estado
+</button>
+
               <button onClick={() => setIsCrearModalOpen(true)} title="Crear">
                 <BiPlus className="text-xl" />
               </button>
@@ -292,7 +291,7 @@ function GestionAutor() {
           <ModalFiltroAutor
             isOpen={isFiltroModalOpen}
             onClose={() => setIsFiltroModalOpen(false)}
-            onFilterSelected={handleFilter} // Pasar la función de filtro
+            onFilter ={handleFilter} // Pasar la función de filtro
             onRestore={handleRestore} // Pasar la función para restaurar
           />
         </main>

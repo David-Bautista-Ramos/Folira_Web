@@ -77,6 +77,7 @@ export const obtenerAutores = async (req, res) => {
   }
 };
 
+
 // Obtener todos los autores (activos o inactivos)
 export const obtenerAutoresAct = async (req, res) => {
   try {

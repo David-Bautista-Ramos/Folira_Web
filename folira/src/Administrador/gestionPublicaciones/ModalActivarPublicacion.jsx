@@ -8,7 +8,7 @@ function ModalActivarPublicacion  ({ isOpen, onClose, publicacionId, obtenerPubl
     const handleActivarAutor = async () => {
       setLoading(true);
       try {
-        const response = await fetch(`/api/autror/autoresact/${publicacionId}`, {
+        const response = await fetch(`/api/posts/actpost/${publicacionId}`, {
           method: 'PUT',
           headers: {
             'Content-Type': 'application/json',
@@ -16,7 +16,7 @@ function ModalActivarPublicacion  ({ isOpen, onClose, publicacionId, obtenerPubl
         });
   
         if (!response.ok) {
-          throw new Error("Error al activar el autor");
+          throw new Error("Error al activar al publicacion");
         }
   
         const data = await response.json();

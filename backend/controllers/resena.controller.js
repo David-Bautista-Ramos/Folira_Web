@@ -1,4 +1,5 @@
 import Resena from "../models/resena.model.js";
+import Usuario from '../models/user.model.js'
 
 // Crear una nueva reseña
 export const crearResena = async (req, res) => {
@@ -93,17 +94,36 @@ export const obtenerResenaPorId = async (req, res) => {
 
 // Editar una reseña
 export const editarResena = async (req, res) => {
-    try {
-        const { id } = req.params;
-        const { contenido, calificacion, idLibro, idAutor, estado } = req.body;
+    const { id } = req.params;
+    const { contenido, calificacion, idUsuario, idAutor, idLibro, estado } = req.body;
 
-        const resenaActualizada = await Resena.findByIdAndUpdate(id, {
+    try {
+        // Verifica que el usuario existe
+        const usuarioExiste = await Usuario.findById(idUsuario);
+        if (!usuarioExiste) {
+            return res.status(404).json({ error: "Usuario no encontrado." });
+        }
+
+        // Prepara el objeto de actualización
+        const updateData = {
             contenido,
             calificacion,
-            idLibro,
-            idAutor,
-            estado
-        }, { new: true, runValidators: true });
+            estado,
+            idUsuario
+        };
+
+        // Solo incluir idAutor o idLibro si están presentes
+        if (idAutor) {
+            updateData.idAutor = idAutor;
+        } else if (idLibro) {
+            updateData.idLibro = idLibro;
+        }
+
+        // Actualizar la reseña
+        const resenaActualizada = await Resena.findByIdAndUpdate(id, updateData, {
+            new: true,
+            runValidators: true,
+        });
 
         if (!resenaActualizada) {
             return res.status(404).json({ error: "Reseña no encontrada." });
@@ -115,6 +135,7 @@ export const editarResena = async (req, res) => {
         res.status(500).json({ error: "Error al actualizar la reseña." });
     }
 };
+
 
 // // Agregar un "like" a una reseña
 // export const agregarLike = async (req, res) => {

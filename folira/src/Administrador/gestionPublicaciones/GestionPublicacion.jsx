@@ -1,9 +1,10 @@
 import { useEffect, useState } from "react";
 import { FaRegComment } from "react-icons/fa";
-import { BiShow, BiEdit, BiPlus, BiPowerOff, BiReset } from "react-icons/bi";
+import { BiShow, BiPlus , BiEdit, BiPowerOff, BiReset, BiTrash } from "react-icons/bi";
 import { Link } from "react-router-dom";
 import Nav from "../../components/common/Nav";
-import banner_publicaciones from "../../assets/img/gestionPublicaciones.jpeg"; 
+import banner_publicaciones from "../../assets/img/gestionPublicaciones.jpeg";
+import GestionSkeleton from "../../components/skeletons/GestionSkeleton";
 import ComentariosModal from "./ComentarioPublicidad";
 import ModalActivarPublicacion from "./ModalActivarPublicacion";
 import ModalInactivarPublicacion from "./ModalInactivarPublicacion";
@@ -12,138 +13,110 @@ import ModalActualizarPublicacion from "./ModalActualizarPublicacion";
 import ModalFiltroPublicaciones from "../../components/common/FiltroPublicacion";
 import ModalEliminarPublicacion from "./ModalEliminarPublicacion";
 
-import GestionSkeleton from "../../components/skeletons/GestionSkeleton";
+function GestionPublicaciones() {
+  const [publicaciones, setPublicaciones] = useState([]);
+  const [selectedPublicacionesId, setSelectedPublicacionesId] = useState(null);
+  const [expandedPosts, setExpandedPosts] = useState({});
+  const [isFilterModalOpen, setIsFilterModalOpen] = useState(false);
+  const [filteredPublicacion, setFilteredPublicacion] = useState([]);
+  const [isLoading, setIsLoading] = useState(true);
+  const [isComentariosModalOpen, setIsComentariosModalOpen] = useState(false);
 
-function GestionLibro() {
-
-    const [publicaciones, setPublicaciones] = useState([]); // Corregido: useState en vez de useSatate
-    const [selectedPublicacionesId, setSelectedPublicacionesId] = useState(null);
-
-    const [isComentariosModalOpen, setIsComentariosModalOpen] = useState(false);
-    const [comentarios, setComentarios] = useState([]);
-    const [expandedPost] = useState(null);
-    // const [publicacionSeleccionada, setPublicacionSeleccionada] = useState(null);
-
-    const [isFilterModalOpen, setIsFilterModalOpen] = useState(false);
-    const [filteredPublicacion, setFilteredPublicacion] = useState([]); // Estado para el filtro de estado
-
-    const [isLoading, setIsLoading] = useState(true); // Corregido: useState en vez de useSatate
-
-
+  
     // Estados para los modales
     const [isActivarModalOpen, setIsActivarModalOpen] = useState(false);
     const [isInactivarModalOpen, setIsInactivarModalOpen] = useState(false);
     const [isCrearModalOpen, setIsCrearModalOpen] = useState(false);
     const [isActualizarModalOpen, setIsActualizarModalOpen] = useState(false);
     const [isEliminarModalOpen, setIsEliminarModalOpen] = useState(false);
+  
 
+  // Obtener publicaciones de la API
+  const obtenerPublicaciones = async () => {
+    setIsLoading(true);
+    try {
+      const response = await fetch("/api/posts/all");
+      if (!response.ok) throw new Error("Error al obtener las publicaciones");
 
-    const obtenerPublicaciones = async () => {
-        setIsLoading(true);
-        try {
-          const response = await fetch("/api/posts/post", {
-            method: "GET",
-            headers: {
-              "Content-Type": "application/json",
-            },
-          });
-    
-          if (!response.ok) {
-            throw new Error("Error al obtener las publicaciones");
-          }
-    
-          const data = await response.json();
-    
-          // Asegúrate de que data sea un array
-          if (Array.isArray(data)) {
-            setPublicaciones(data); // Asigna los autores obtenidos al estado
-            setFilteredPublicacion(data); // También asigna a autores filtrados
-          } else {
-            console.error("La respuesta de las publicaciones no es un array:", data);
-          }
-        } catch (error) {
-          console.error("Error", error);
-        } finally {
-          setIsLoading(false);
-        }
-      };
+      const data = await response.json();
+      setPublicaciones(Array.isArray(data) ? data : []);
+      setFilteredPublicacion(Array.isArray(data) ? data : []);
+    } catch (error) {
+      console.error("Error", error);
+    } finally {
+      setIsLoading(false);
+    }
+  };
 
-    useEffect(() => {
-        obtenerPublicaciones();
-      }, []);
+  useEffect(() => {
+    obtenerPublicaciones();
+  }, []);
 
-      const handleFilter = async (filter) => {
-        // Añadido async
-        console.log(`Filter selected: ${filter}`);
-        setIsLoading(true);
-    
-        try {
-          let response;
-    
-          if (filter === "Activo") {
-            // Obtener autores activos
-            response = await fetch("/api/posts/actpost", {
-              method: "GET",
-              headers: {
-                "Content-Type": "application/json",
-              },
-            });
-          } else if (filter === "Inactivo") {
-            // Obtener autores inactivos
-            response = await fetch("/api/posts/despost", {
-              method: "GET",
-              headers: {
-                "Content-Type": "application/json",
-              },
-            });
-          } else if (filter === "Restaurar") {
-            setFilteredPublicacion(publicaciones); // Restaurar la lista completa de autores
-            setIsFilterModalOpen(false); // Cerrar el modal
-            setIsLoading(false); // Finaliza la carga
-            return; // Salir de la función
-          }
-    
-          if (!response.ok) {
-            throw new Error("Error al filtrar las publicaciones");
-          }
-    
-          const data = await response.json();
-    
-          if (data && Array.isArray(data)) {
-            setFilteredPublicacion(data); // Asignar el array de autores filtrados
-          } else {
-            console.error("La respuesta no contiene un array de autores:", data);
-          }
-        } catch (error) {
-          console.error("Error al filtrar", error);
-        } finally {
-          setIsLoading(false); // Asegúrate de finalizar la carga
-        }
-    
-        setIsFilterModalOpen(false); // Cerrar el modal después de aplicar el filtro
-    
-      };
+  // Método para manejar el filtrado
+  const handleFilter = async (filter) => {
+    console.log(`Filter selected: ${filter}`);
+    setIsLoading(true); // Inicia la carga al filtrar
 
-    const handleShowComentarios = (libroComentarios) => {
-        setComentarios(libroComentarios);
-        setIsComentariosModalOpen(true);
-    };
+    try {
+      let response;
+  
+      if (filter === "Activo") {
+        response = await fetch('/api/posts/getactpost', {
+          method: 'GET',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+        });
+      } else if (filter === "Inactivo") {
+        response = await fetch('/api/posts/getdespost', {
+          method: 'GET',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+        });
+      } else if (filter === "Restaurar") {
+        setFilteredPublicacion(publicaciones); // Restaurar la lista completa de usuarios
+        setIsFilterModalOpen(false); // Cerrar el modal
+        setIsLoading(false); 
+        return;
+      }
+  
+      if (!response.ok) {
+        throw new Error('Error al filtrar las publicaciones');
+      }
+  
+      const data = await response.json();
+      
+      if (data && Array.isArray(data.publicaciones)) {
+        setFilteredPublicacion(data.publicaciones); // Asignar el array de usuarios filtrados
+      } else {
+        console.error('La respuesta no contiene un array de las publicaciones:', data);
+      }
+    } catch (error) {
+      console.error('Error al filtrar publicaciones:', error);
+    } finally {
+      setIsLoading(false); // Finaliza la carga
+    }
+  
+    setIsFilterModalOpen(false); // Cerrar el modal después de aplicar el filtro
+  };
 
-    const [expandedPosts, setExpandedPosts] = useState({});
+  const toggleExpandPost = (postId) => {
+    setExpandedPosts((prev) => ({
+      ...prev,
+      [postId]: !prev[postId],
+    }));
+  };
 
-    const toggleExpandPost = (postId) => {
-        setExpandedPosts((prev) => ({
-        ...prev,
-        [postId]: !prev[postId],
-        }));
-    };
+  const abrirComentarios = (publicacion) => {
+    if (publicacion.comentarios && publicacion.comentarios.length > 0) {
+      setSelectedPublicacionesId(publicacion._id); // Cambiado para almacenar solo el ID
+      setIsComentariosModalOpen(true);
+    } else {
+      console.warn("No hay comentarios para esta publicación");
+    }
+  };
 
-    const isPostExpanded = (postId) => expandedPosts[postId] || false;
-
-      // Filtrar publicaciones por estado
-    const filteredPublicaciones = publicaciones.filter((libro) =>
-        filteredPublicacion === "Todos" || libro.estado === filteredPublicacion
-    );
 
     const handleRestore = () => {
         setFilteredPublicacion(publicaciones); // Restaurar todos los autores
@@ -172,191 +145,200 @@ function GestionLibro() {
         return estado ? "Activo" : "Inactivo";
       };
 
+        // Determinar el tipo de publicación
+  const obtenerTipoPublicacion = (idComunidad) => {
+    return idComunidad ? "Comunidad" : "General";
+  }
+  return (
+    <div>
+      <Nav />
+      <div className="flex justify-center items-center mt-10">
+        <main className="bg-white w-full max-w-6xl mx-2 mt-20 rounded-t-2xl border shadow-lg">
+          <img
+            className="w-full h-64 rounded-t-2xl"
+            src={banner_publicaciones}
+            alt="banner"
+          />
+          <div className="flex justify-end mt-4 mr-16">
+            <button onClick={() =>setIsCrearModalOpen(true)} title="Crear">
+              <BiPlus className="text-xl" />
+            </button>
+            <button
+              onClick={() => setIsFilterModalOpen(true)}
+              className="bg-primary text-white px-4 py-2 rounded hover:bg-blue-900"
+            >
+              Estado
+            </button>
+          </div>
 
-    return (
-        <div>
-            <Nav />
-            <div className="flex justify-center items-center mt-10">
-                <main className="bg-white w-[100%] max-w-[1600px] mx-2 mt-20 rounded-t-2xl border border-gray-500 shadow-lg">
-                    <div>
-                        <img className="w-full h-[269px] rounded-t-2xl" src={banner_publicaciones} alt="banner" />
-                    </div>
+          <div className="flex flex-wrap justify-center gap-6 p-6">
+            {isLoading ? (
+              <GestionSkeleton />
+            ) : filteredPublicacion.length === 0 ? ( 
+              <p className="text-center text-gray-500 text-xl mt-10">No hay publicaciones</p> 
+            ) : (
+              filteredPublicacion.map((publicacion) => {
+                const isExpanded = expandedPosts[publicacion._id] || false;
+                const contenidoMostrado = isExpanded
+                  ? publicacion.contenido
+                  : `${publicacion.contenido.substring(0, 100)}...`;
 
-                    <div className="flex justify-end mt-4 mr-[70px]">
-                        <button
-                        onClick={setIsFilterModalOpen}
-                        className="bg-primary text-white px-4 py-2 rounded mr-3 hover:bg-blue-950"
+                  const tipoPublicacion = obtenerTipoPublicacion(publicacion.idComunidad);
+
+                return (
+                  <div
+                    key={publicacion._id}
+                    className="flex flex-col w-80 bg-white border p-4 rounded-md shadow-lg"
+                  >
+                    <div className="flex items-center mb-4">
+                      <Link to={`/profile/${publicacion.user._id}`}>
+                        <img
+                          className="w-16 h-16 rounded-full"
+                          src={publicacion.user.fotoPerfil}
+                          alt="Profile"
+                        />
+                      </Link>
+                      <div className="ml-4">
+                        <Link
+                          to={`/profile/${publicacion.user._id}`}
+                          className="font-semibold text-lg"
                         >
-                        Estado
-                        </button>
-                        <button onClick={() => setIsCrearModalOpen(true)} title="Crear">
-                            <BiPlus className="text-xl" />
-                        </button>
+                          {publicacion.user.nombreCompleto}
+                        </Link>
+                        <p>Estado: {obtenerEstadoTexto(publicacion.estado)}</p>
+                        <p>Tipo de publicación: {tipoPublicacion}</p> {/* Mostrar tipo de publicación */}
+
+                      </div>
                     </div>
 
-                    <div className="flex flex-wrap justify-center gap-6 p-6">
-                        {isLoading ? (
-                            <GestionSkeleton /> // Muestra el componente de carga mientras se obtienen los datos
-                        ) : Array.isArray(filteredPublicaciones) && filteredPublicaciones.length > 0 ? (
-                            filteredPublicaciones.map((publicacion, index) => {
-                            const isExpanded = expandedPost === publicacion._id;
-                            const contenidoMostrado = isExpanded
-                                ? publicacion.contenido
-                                : `${publicacion.contenido.substring(0, 100)}...`;
-                            const wordCount = publicacion.contenido.split(" ").length;
-
-                            return (
-                                <div key={index} className="flex flex-col w-[320px] bg-white border border-gray-300 p-4 rounded-md shadow-lg">
-                                <div className="flex items-center mb-4">
-                                    <div className="w-16 h-16 bg-gray-300 rounded-full overflow-hidden mr-4">
-                                    <Link to={`/profile/${publicacion.postOwner._id}`}>
-                                        <img
-                                        className="object-cover w-full h-full"
-                                        src={publicacion.postOwner.fotoPerfil}
-                                        alt="Profile"
-                                        />
-                                    </Link>
-                                    </div>
-                                    <div>
-                                    <Link to={`/profile/${publicacion.postOwner._id}`} className="font-semibold text-lg">
-                                        {publicacion.postOwner.nombreCompleto}
-                                    </Link>
-                                    <p>Estado: {obtenerEstadoTexto(publicacion.estado)}</p>{" "}
-
-                                    <p className="text-gray-500 text-sm">Palabras: {wordCount}</p>
-                                    </div>
-                                </div>
-
-                                {/* Contenido de la publicación */}
-                                <p className="text-gray-700 mb-2 break-all">{contenidoMostrado}</p>
-                                <button
-                                    onClick={() => toggleExpandPost(publicacion._id)}
-                                    className="text-blue-600 hover:underline flex items-center"
-                                >
-                                    <BiShow className="text-xl" />
-                                    <span className="ml-1">{isExpanded ? "Ocultar" : "Ver más"}</span>
-                                </button>
-
-                                {/* Imagen de la publicación */}
-                                {publicacion.fotoPublicacion && (
-                                    <img
-                                    src={publicacion.fotoPublicacion}
-                                    className="h-[300px] object-contain rounded-lg border border-blue-950 mt-2"
-                                    alt="Post"
-                                    />
-                                )}
-
-                                {/* Acciones e íconos en la parte inferior */}
-                                <div className="flex justify-between items-center mt-2">
-                                    <div
-                                    className="flex gap-1 items-center cursor-pointer text-gray-500 hover:text-blue-600"
-                                    onClick={() => handleShowComentarios(publicacion.comentarios)}
-                                    >
-                                    <FaRegComment className="text-xl" />
-                                    <span>{publicacion.comentarios.length} Comentarios</span>
-                                    </div>
-                                    <div className="flex items-center gap-3">
-                                    <button onClick={() => handleOpenActivarModal(publicacion._id)} title="Activar">
-                                        <BiReset  className="text-xl" />
-                                    </button>
-                                    <button onClick={() => handleOpenDesactiveModal(publicacion._id)} title="Inactivar">
-                                        <BiPowerOff className="text-xl" />
-                                    </button>
-                                    <button onClick={() => handleOpenDeleteModal(publicacion._id)} title="Eliminar">
-                                        <BiPlus className="text-xl" />
-                                    </button>
-                                    <button onClick={() => handleOpenActualizarModal(publicacion._id)} title="Actualizar">
-                                        <BiEdit className="text-xl" />
-                                    </button>
-                                    </div>
-                                </div>
-
-                                {/* Modal de comentarios */}
-                                {isExpanded && (
-                                    <div className="mt-2">
-                                    <ComentariosModal
-                                        isOpen={isComentariosModalOpen && comentarios.length > 0}
-                                        onClose={() => {
-                                        setIsComentariosModalOpen(false);
-                                        setComentarios([]);
-                                        }}
-                                        comentarios={comentarios}
-                                    />
-                                    </div>
-                                )}
-                                </div>
-                            );
-                            })
-                        ) : (
-                            <p>No hay publicaciones disponibles.</p> // Mensaje para cuando no hay datos
-                        )}
-                        </div>
-
-
-
-
-                    {/* Modales para activar, inactivar, crear y actualizar publicaciones */}
-                    <ModalActivarPublicacion 
-                        isOpen={isActivarModalOpen} 
-                        onClose={() => setIsActivarModalOpen(false)}
-                        publicacionId={selectedPublicacionesId}
-                        obtenerPublicaciones={obtenerPublicaciones}
-                    />
-
-                    <ModalInactivarPublicacion 
-                        isOpen={isInactivarModalOpen} 
-                        onClose={() => setIsInactivarModalOpen(false)} 
-                        publicacionId={selectedPublicacionesId}
-                        obtenerPublicaciones={obtenerPublicaciones}
-                    />
-
-                    <ModalEliminarPublicacion 
-                        isOpen={isEliminarModalOpen}
-                        onClose={() => setIsEliminarModalOpen(false)}
-                        publicacionId={selectedPublicacionesId}
-                        obtenerPublicaciones={obtenerPublicaciones}
-                    />
-
-                    <ModalCrearPublicacion 
-                        isOpen={isCrearModalOpen}
-                        onClose={() => {
-                          setIsCrearModalOpen(false);
-                          obtenerPublicaciones();
-                        }}
-                        obtenerPublicaciones={obtenerPublicaciones}
+                    <p
+                      className="text-gray-700 mb-2 break-words overflow-hidden"
+                      style={{
+                        display: "-webkit-box",
+                        WebkitLineClamp: isExpanded ? "none" : "4",
+                        WebkitBoxOrient: "vertical",
+                      }}
+                    >
+                      {contenidoMostrado}
+                    </p>
+                    {publicacion.fotoPublicacion && (
+                      <img
+                        src={publicacion.fotoPublicacion}
+                        className="w-full h-40 object-cover mt-2 rounded-md"
+                        alt="Publicación"
                       />
-                    
+                    )}
+                    <button
+                      onClick={() => toggleExpandPost(publicacion._id)}
+                      className="text-blue-600 hover:underline flex items-center mt-2"
+                    >
+                      <BiShow className="text-xl" />
+                      <span className="ml-1">
+                        {isExpanded ? "Ocultar" : "Ver más"}
+                      </span>
+                    </button>
 
-                    <ModalActualizarPublicacion
-                        isOpen={isActualizarModalOpen}
-                        onClose={() => {
-                          setIsActualizarModalOpen(false);
-                          obtenerPublicaciones();
-                        }}
-                        publicacionId={obtenerPublicaciones}
-                        obtenerAutores={obtenerPublicaciones}
-                    />
+                    <div className="flex items-center justify-between mt-4">
+                     <button
+                        onClick={() => abrirComentarios(publicacion)}
+                        className="text-gray-600 hover:text-black flex items-center"
+                      >
+                        <FaRegComment className="text-xl" />
+                        <span className="ml-1">
+                          {publicacion.comentarios.length} Comentarios
+                        </span>
+                      </button>
+                    </div>
+                    <div className="flex justify-center gap-3">
+                      <button
+                        onClick={() => handleOpenActivarModal(publicacion._id)}
+                        title="Activar"
+                      >
+                        <BiPowerOff className="text-xl" />
+                      </button>
+                      <button
+                        onClick={() => handleOpenDesactiveModal(publicacion._id)}
+                        title="Inactivar"
+                      >
+                        <BiReset className="text-xl" />
+                      </button>
+                      <button
+                        onClick={() => handleOpenActualizarModal(publicacion._id)}
+                        title="Actualizar"
+                      >
+                        <BiEdit className="text-xl" />
+                      </button>
+                      <button
+                        onClick={() => handleOpenDeleteModal(publicacion._id)}
+                        title="Eliminar"
+                      >
+                        <BiTrash className="text-xl" />
+                      </button>
+                    </div>
+                  </div>
+                );
+              })
+            )}
+          </div>
 
-                    <ModalFiltroPublicaciones
-                        isOpen={isFilterModalOpen}
-                        onClose={() => setIsFilterModalOpen(false)}
-                        onFilter={handleFilter} // Pasa el manejador de filtro
-                        onRestore={handleRestore} // Pasa la función de restaurar
-                    />
-                </main>
-            </div>
+           {/* Modales para activar, inactivar, crear y actualizar publicaciones */}
+                     {/* Modales para activar, inactivar, crear y actualizar publicaciones */}
+          <ModalActivarPublicacion 
+            isOpen={isActivarModalOpen} 
+            onClose={() => setIsActivarModalOpen(false)}
+            publicacionId={selectedPublicacionesId}
+            obtenerPublicaciones={obtenerPublicaciones}
+          />
+          <ModalInactivarPublicacion 
+            isOpen={isInactivarModalOpen} 
+            onClose={() => setIsInactivarModalOpen(false)} 
+            publicacionId={selectedPublicacionesId}
+            obtenerPublicaciones={obtenerPublicaciones}
+          />
+          <ModalEliminarPublicacion 
+            isOpen={isEliminarModalOpen}
+            onClose={() => setIsEliminarModalOpen(false)}
+            publicacionId={selectedPublicacionesId}
+            obtenerPublicaciones={obtenerPublicaciones}
+          />
+          <ModalCrearPublicacion 
+            isOpen={isCrearModalOpen}
+            onClose={() => {
+              setIsCrearModalOpen(false);
+              obtenerPublicaciones();
+            }}
+            obtenerPublicaciones={obtenerPublicaciones}
+          />
+          <ModalActualizarPublicacion
+            isOpen={isActualizarModalOpen}
+            onClose={() => {
+              setIsActualizarModalOpen(false);
+              obtenerPublicaciones();
+            }}
+            publicacionId={selectedPublicacionesId} // Pass the correct publicacionId
+            obtenerPublicaciones={obtenerPublicaciones}
+          />
+          <ModalFiltroPublicaciones
+            isOpen={isFilterModalOpen}
+            onClose={() => setIsFilterModalOpen(false)}
+            onFilter={handleFilter}
+            onRestore={handleRestore}
+          />
+        </main>
+      </div>
 
-            {/* Solo el modal de comentarios */}
-            <ComentariosModal
-                isOpen={isComentariosModalOpen}
-                onClose={() => {
-                    setIsComentariosModalOpen(false);
-                    setComentarios([]);
-                }}
-                comentarios={comentarios}
-            />
-        </div>
-    );
+      {/* Conditionally render ComentariosModal */}
+      {selectedPublicacionesId && (
+        <ComentariosModal
+          isOpen={isComentariosModalOpen}
+          onClose={() => setIsComentariosModalOpen(false)}
+          comentarios={publicaciones.find(pub => pub._id === selectedPublicacionesId)?.comentarios || []} // Use find to get the comments for the selected publication
+          publicacionId={selectedPublicacionesId}
+          obtenerPublicaciones={obtenerPublicaciones}
+        />
+      )}
+    </div>
+  );
 }
 
-export default GestionLibro;
+export default GestionPublicaciones;
