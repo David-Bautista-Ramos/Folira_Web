@@ -450,11 +450,11 @@ export const crearUser = async (req, res) => {
     const mailOptions = {
       from: process.env.EMAIL_USER,
       to: newUser.correo,
-      subject: "Bienvenido a Plataforma Folira",
+      subject: "🎉 ¡Bienvenido a Plataforma Folira! 🎉",
       html: `
       <div style="font-family: Arial, sans-serif; text-align: center;">
         <img src="cid:logoFolira" alt="Logo Folira" style="width: 150px; margin-bottom: 20px; border-radius:100px;">
-        <h1 style="color: #1e3799;">¡Bienvenido a Folira!</h1>
+        <h1 style="color: #111827;">¡Bienvenido a Folira!</h1>
         <p style="font-size: 16px; color: #34495e;">Hola y Bienvenid@ <strong>${nombreCompleto}</strong>.</p>
         <p style="font-size: 16px; color: #34495e;">
           Te damos la bienvenida a Folira. Aquí están tus credenciales de acceso:
@@ -462,10 +462,9 @@ export const crearUser = async (req, res) => {
         <div style="text-align: left; max-width: 600px; margin: 0 auto; padding: 20px; background-color: #f5f5f5; border-radius: 8px;">
           <p><strong>Correo:</strong> ${correo}</p>
           <p><strong>Clave temporal:</strong> ${randomPassword}</p>
-          <p style="font-size: 14px; color: #e74c3c;">Se recomienda cambiar la clave al iniciar sesión.</p>
+          <p style="font-size: 14px; color: #142157;">Se recomienda cambiar la clave al iniciar sesión.</p>
         </div>
         <p style="font-size: 16px; color: #34495e; margin-top: 20px;">¡Gracias por unirte a nosotros!</p>
-        <p style="font-size: 16px; color: #34495e;">Saludos,<br>El equipo de soporte.</p>
       </div>
     `,
       attachments: [
