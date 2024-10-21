@@ -43,7 +43,7 @@ router.post("/commentAd/:id",protectRoutes,commentOnPostAd)
 router.get("/userPost/:postId",protectRoutes,obtenerPublicacionPorId);
 router.get("/commenxID/:postId/:comentarioId",protectRoutes,obtenerComentarioPorId);
 router.get("/postComunidad/:comunidadId ",protectRoutes,getPostsByCommunity);
-router.get("/postsinComunidad ",protectRoutes,getPostsWithoutCommunity);
+router.get("/postsinComunidad",protectRoutes,getPostsWithoutCommunity);
 router.put("/post/:postId",protectRoutes,actualizarPublicacion);
 router.put("/editarcomen/:postId/:comentarioId",protectRoutes,editarComentario);
 router.put("/actpost/:postId", protectRoutes, cambiarEstadoPublicacionact);

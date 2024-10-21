@@ -8,7 +8,7 @@ const Posts = ({feedType, nombre, userId}) => {
 	const getPostEndpoint = () =>{
 		switch(feedType){
 			case "forYou":
-				return "/api/posts/all";
+				return "/api/posts/postsinComunidad";
 			case "following":
 				return "/api/posts/seguidores";
 			case "posts":

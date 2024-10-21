@@ -112,6 +112,34 @@ const Post = ({ post }) => {
     },
   });
 
+  const { mutate: DeletecommentPost, isPending: isDeleteCommenting } = useMutation({
+    mutationFn: async () => {
+      try {
+        const res = await fetch(`/api/posts/deletecomen/${post._id}/${comentarios._id}`, {
+          method: "DELETE",
+        });
+        const data = await res.json();
+
+        if (!res.ok) {
+          throw new Error(data.error || "Something went wrong");
+        }
+        return data;
+      } catch (error) {
+        throw new Error(error);
+      }
+    },
+    onSuccess: () => {
+      toast.success("Commentario eliminado con exito");
+      queryClient.invalidateQueries({ queryKey: ["posts"] });
+    },
+    onError: (error) => {
+      toast.error(error.message);
+    },
+  });
+
+  const handleDeletePostCoom = () => {
+    DeletecommentPost();
+  };
   const handleDeletePost = () => {
     deletePost();
   };

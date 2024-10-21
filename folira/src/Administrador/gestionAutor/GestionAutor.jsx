@@ -220,12 +220,6 @@ function GestionAutor() {
               />
             </div>
             <div className="flex items-center">
-              <button
-                onClick={() => setIsFiltroModalOpen(true)}
-                className="bg-primary text-white px-4 py-2 rounded mr-3 hover:bg-blue-950"
-              >
-                Estado
-              </button>
               <button onClick={() => setIsCrearModalOpen(true)} title="Crear">
                 <BiPlus className="text-xl" />
               </button>

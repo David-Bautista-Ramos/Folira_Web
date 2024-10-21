@@ -324,10 +324,13 @@ export const getPostsByCommunity = async (req, res) => {
   };
 
   // Obtener publicaciones sin comunidad y con estado activo
-export const getPostsWithoutCommunity = async (req, res) => {
+  export const getPostsWithoutCommunity = async (req, res) => {
     try {
       const posts = await Post.find({
-        idComunidad: { $exists: false }, // No tiene comunidad asociada
+        $or: [
+          { idComunidad: null }, // idComunidad es null
+          { idComunidad: { $exists: false } } // idComunidad no existe
+        ],
         estado: true,
       })
         .sort({ createdAt: -1 })
@@ -345,7 +348,7 @@ export const getPostsWithoutCommunity = async (req, res) => {
       console.error("Error in getPostsWithoutCommunity controller:", error);
       res.status(500).json({ error: "Internal server error" });
     }
-  };
+};
 
 export const getLikedPosts = async (req, res) => {
 	const userId = req.params.id;
