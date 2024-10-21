@@ -216,12 +216,12 @@ const handleVisibleCountChange = (event) => {
           <div className="flex justify-between items-center mt-4 mx-[70px]">
 
             {/* Contenedor para el select y la barra de búsqueda alineados a la izquierda */}
-            <div className="flex gap-4">
+            <div className="flex gap-4 ">
               {/* Select para elegir cuántos usuarios ver */}
               <select
                 value={visibleCount}
                 onChange={handleVisibleCountChange}
-                className="bg-white border border-gray-400 p-2 rounded"
+                className="bg-white border border-gray-400 p-2 rounded "
               >
                 <option value={5}> 5 usuarios</option>
                 <option value={15}> 15 usuarios</option>
@@ -238,22 +238,22 @@ const handleVisibleCountChange = (event) => {
               />
             </div>
 
-          <button
-            onClick={() => setIsFilterModalOpenTipo(true)}
-            className="bg-primary text-white px-4 py-2 rounded mr-3 hover:bg-blue-950"
-          >
-            Filtrar por Tipo
-          </button>
-
-          <button
-              onClick={() => setIsFilterModalOpen(true)}
-              className="bg-primary text-white px-4 py-2 rounded mr-3 hover:bg-blue-950"
+            <button
+              onClick={() => setIsFilterModalOpenTipo(true)}
+              className="bg-primary text-white px-4 py-2 rounded ml-[320px] hover:bg-blue-950"
             >
-              Estado
+              Tipo
             </button>
 
+            <button
+                onClick={() => setIsFilterModalOpen(true)}
+                className="bg-primary text-white px-4 py-2 rounded mr-3 hover:bg-blue-950"
+              >
+                Estado
+              </button>
+
             <button onClick={() => setIsCrearModalOpen(true)} title="Crear">
-              <BiPlus className="text-xl" />
+              <BiPlus className="text-xl -mr-[30px]" />
             </button>
             
           </div>
