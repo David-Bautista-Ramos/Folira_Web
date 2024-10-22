@@ -214,7 +214,7 @@ function GestionDenuncia() {
               {/* Barra de búsqueda */}
               <input
                 type="text"
-                placeholder="Buscar usuario..."
+                placeholder="Buscar denuncia..."
                 value={searchTerm}
                 onChange={handleSearchChange}
                 className="p-2 border border-gray-400 rounded w-[340px]"

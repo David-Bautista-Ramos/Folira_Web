@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { BiEdit, BiPlus, BiPowerOff, BiReset, BiTrash } from "react-icons/bi"; 
+import { BiEdit, BiLeftArrow, BiPlus, BiPowerOff, BiReset, BiRightArrow, BiTrash } from "react-icons/bi"; 
 import { Link } from "react-router-dom";
 import Nav from "../../components/common/Nav";
 import banner_resenas from "../../assets/img/banner_gestion_resenas.png";  
@@ -23,6 +23,12 @@ function GestionResenas() {
     const [isFilterModalOpen, setIsFilterModalOpen] = useState(false);
     const [filteredResenas, setFilteredResenas] = useState([]);
     const [isLoading, setIsLoading] = useState(true);
+
+    const [visibleCount, setVisibleCount] = useState(10); // Estado para el select de cantidad de usuarios visibles
+    const [searchTerm, setSearchTerm] = useState(""); // Estado para la búsqueda
+    const [currentPage, setCurrentPage] = useState(1); // Página actual
+    const [totalPages, setTotalPages] = useState(1); // Número total de páginas
+
     
     const obtenerResenas = async () => {
         setIsLoading(true);
@@ -59,6 +65,45 @@ function GestionResenas() {
     useEffect(() => {
         obtenerResenas();
     }, []);
+
+   // Filtrado por búsqueda de usuarios
+useEffect(() => {
+    if (searchTerm.trim()) {
+      // Filtrar las reseñas por el nombre o nombre completo del usuario que hace la reseña
+      const usuariosFiltrados = resenas.filter((resena) =>
+        [resena.idUsuario?.nombre, resena.idUsuario?.nombreCompleto]
+          .filter(Boolean) // Evita errores si algún campo es nulo
+          .some((campo) => campo.toLowerCase().includes(searchTerm.toLowerCase()))
+      );
+      setFilteredResenas(usuariosFiltrados);
+    } else {
+      // Si no hay búsqueda, mostramos todas las reseñas
+      setFilteredResenas(resenas);
+    }
+  }, [searchTerm, resenas]);
+  
+
+  // Función para cambiar el estado del término de búsqueda
+    const handleSearchChange = (e) => {
+        setSearchTerm(e.target.value); // Actualiza el término de búsqueda
+    };
+
+ // Actualizar el número total de páginas basado en la cantidad visible y los usuarios filtrados
+    useEffect(() => {
+        setTotalPages(Math.ceil(filteredResenas.length / visibleCount));
+    }, [filteredResenas.length, visibleCount]);
+
+  // Función para cambiar la página actual
+    const handlePageChange = (newPage) => {
+        if (newPage >= 1 && newPage <= totalPages) {
+        setCurrentPage(newPage);
+        }
+    };
+
+  const startIndex = (currentPage - 1) * visibleCount;
+  const endIndex = startIndex + visibleCount;
+  const resenasPaginados = filteredResenas.slice(startIndex, endIndex);
+
     
     const handleFilter = async (filter) => {
         console.log(`Filter selected: ${filter}`);
@@ -147,6 +192,10 @@ function GestionResenas() {
 
     const obtenerEstadoTexto = (estado) => estado ? "Activo" : "Inactivo";
 
+    const handleVisibleCountChange = (event) => {
+        setVisibleCount(Number(event.target.value)); // Actualiza la cantidad visible
+      };
+
     return (
         <div>
             <Nav />
@@ -158,15 +207,40 @@ function GestionResenas() {
                         alt="banner" />
                     </div>
 
-                    <div className="flex justify-end mt-4 mr-[70px]">
-                    <button onClick={() => setIsCrearModalOpen(true)} title="Crear">
-                            <BiPlus className="text-xl mr-3" />
-                        </button>
+                    <div className="flex justify-between items-center mt-4 mx-[70px]">
+
+                        {/* Contenedor para el select y la barra de búsqueda alineados a la izquierda */}
+                        <div className="flex gap-4">
+                        {/* Select para elegir cuántos usuarios ver */}
+                        <select
+                            value={visibleCount}
+                            onChange={handleVisibleCountChange}
+                            className="bg-white border border-gray-400 p-2 rounded"
+                        >
+                            <option value={5}> 5 reseñas</option>
+                            <option value={10}> 10 reseñas</option>
+                            <option value={20}> 20 reseñas</option>
+                        </select>
+
+                        {/* Barra de búsqueda */}
+                        <input
+                            type="text"
+                            placeholder="Buscar reseña..."
+                            value={searchTerm}
+                            onChange={handleSearchChange}
+                            className="p-2 border border-gray-400 rounded w-[340px]"
+                        />
+                        </div>
+                        
                         <button
                             onClick={() => setIsFilterModalOpen(true)}
-                            className="bg-primary text-white px-4 py-2 rounded mr-3 hover:bg-blue-950"
+                            className="bg-primary text-white px-4 py-2 rounded ml-[370px] hover:bg-blue-950"
                         >
                             Estado
+                        </button>
+
+                        <button onClick={() => setIsCrearModalOpen(true)} title="Crear">
+                            <BiPlus className="text-xl mr-3" />
                         </button>
                     </div>
 
@@ -174,7 +248,7 @@ function GestionResenas() {
                         {isLoading ? (
                             <GestionSkeleton />
                         ) : filteredPublicaciones.length > 0 ? (
-                            filteredPublicaciones.map((resena) => {
+                            resenasPaginados.map((resena) => {
                                 const isExpanded = isPostExpanded(resena._id);
                                 const contenidoMostrado = isExpanded
                                     ? resena.contenido
@@ -246,6 +320,29 @@ function GestionResenas() {
                         ) : (
                             <p className="text-center">No hay reseñas disponibles.</p>
                         )}
+
+                        {/* Paginación */}
+                        <div className="flex justify-between mb-3  items-center mt-4">
+                            <button
+                            disabled={currentPage === 1}
+                            onClick={() => handlePageChange(currentPage - 1)}
+                            className="px-2 py-2 bg-gray-300 ml-[450px] rounded hover:bg-gray-400 disabled:bg-gray-200"
+                            >
+                            <BiLeftArrow />
+                            </button>
+
+                            <span className="mx-2">
+                            Página {currentPage} de {totalPages}
+                            </span>
+
+                            <button
+                            disabled={currentPage === totalPages}
+                            onClick={() => handlePageChange(currentPage + 1)}
+                            className="px-2 py-2 bg-gray-300 mr-[450px] rounded hover:bg-gray-400 disabled:bg-gray-200"
+                            >
+                            <BiRightArrow />
+                            </button>
+                        </div>
                     </div>
 
                     {/* Modals */}
