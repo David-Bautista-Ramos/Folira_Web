@@ -1,12 +1,7 @@
-import { useNavigate } from 'react-router-dom'; // Asegúrate de importar useNavigate si usas React Router
+import { Link } from "react-router-dom";
 
-const ModalSeguidos = ({ seguidores }) => {
-  const navigate = useNavigate(); // Función para hacer redirección programática
 
-  // Función para redirigir al perfil del usuario
-  const handleRedirect = (username) => {
-    navigate(`/perfil/${username}`); // Suponiendo que el URL del perfil es '/perfil/:username'
-  };
+const ModalSeguidos = ({ seguidos }) => {
 
   return (
     <>
@@ -27,27 +22,29 @@ const ModalSeguidos = ({ seguidores }) => {
 
           {/* Lista de Seguidores */}
           <div className='flex flex-col gap-4'>
-            {seguidores && seguidores.length > 0 ? (
-              seguidores.map((seguidor, index) => (
+            {seguidos && seguidos.length > 0 ? (
+              seguidos.map((seguidor, index) => (
                 <div key={index} className='flex items-center gap-2'>
                   {/* Avatar del seguidor */}
                   <div className='avatar'>
                     <div className='w-10 rounded-full'>
+                      <Link  to={`/profile/${seguidor.nombre}`}
+                            className="w-8 rounded-full overflow-hidden">
                       <img
                         src={seguidor.fotoPerfil || "/avatar-placeholder.png"}
                         alt='Avatar'
                       />
+                  </Link>
+                      
                     </div>
                   </div>
 
                   {/* Nombre completo y nombre de usuario del seguidor */}
                   <div className='flex flex-col'>
-                    <span
-                      className='font-bold cursor-pointer hover:underline'
-                      onClick={() => handleRedirect(seguidor.nombre)}
-                    >
+                  <Link  to={`/profile/${seguidor.nombre}`}
+                            className="font-bold text-lg text-blue-600 hover:underline">
                       {seguidor.nombreCompleto}
-                    </span>
+                  </Link>
                     <span className='text-sm text-blue-950'>
                       @{seguidor.nombre}
                     </span>

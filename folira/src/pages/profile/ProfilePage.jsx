@@ -38,7 +38,7 @@ const ProfilePage = () => {
     refetch,
     isRefetching,
   } = useQuery({
-    queryKey: ["userProfile"],
+    queryKey: ["userProfile", nombre],
     queryFn: async () => {
       try {
         const res = await fetch(`/api/users/profile/${nombre}`);
@@ -221,14 +221,14 @@ const ProfilePage = () => {
                     </span>
 
                     {/* Botón que abre el modal de seguidores */}
-                    <ModalSeguidos seguidores={user?.seguidos} />
+                    <ModalSeguidos seguidos={user?.seguidos} />
                   </div>
 
                   <div className="flex gap-1 items-center">
                     <span className="font-bold text-xs">
                       {user?.seguidores.length}
                     </span>
-                    <ModalSeguidores seguidores={user?.seguidos} />
+                    <ModalSeguidores seguidores={user?.seguidores} />
                   </div>
                 </div>
 
@@ -245,24 +245,15 @@ const ProfilePage = () => {
                       className="bg-primary text-white px-4 py-2 rounded-full hover:bg-blue-950 text-sm h-9 w-28"
                       style={{
                         marginLeft: "20px",
-                        maxWidth: "calc(40% - 100px)",
+                        maxWidth: "calc(60% - 100px)",
                       }} // Reduce el margen izquierdo para alinear con la lista
                       onClick={abrirModal} // Llama a la función para abrir el modal
                     >
                       Ver Géneros
                     </button>
                     <GenerosModal isOpen={modalOpen} onClose={cerrarModal} />{" "}
-                    {/* Pasa el estado y la función */}
-                    <ul className="list-disc ml-5">
-                      {user?.generoLiterarioPreferido.map((genero) => (
-                        <li key={genero} className="text-sm">
-                          {genero}
-                        </li>
-                      ))}
-                    </ul>
                   </div>
-
-                  <GenerosProfile />
+                  {user && <GenerosProfile generos={user.generosPreferidos} />}
                 </div>
               </div>
 

@@ -1,4 +1,5 @@
 import { generateTokenAndSetCookie } from "../lib/utils/generateToken.js";
+import GeneroLiterario from "../models/generoLiterario.model.js";
 import User from "../models/user.model.js";
 import bcrypt from "bcryptjs";
 import * as Yup from "yup";
@@ -180,8 +181,28 @@ export const logout = async (req, res) => {
 // Obtener usuario autenticado (getMe)
 export const getMe = async (req, res) => {
   try {
+    // Encuentra el usuario sin la contraseña
     const user = await User.findById(req.user._id).select("-contrasena");
-    return res.status(200).json(user);
+
+    // Si no se encuentra el usuario, devolver un error 404
+    if (!user) {
+      return res.status(404).json({ error: "Usuario no encontrado." });
+    }
+
+    // Obtener los géneros literarios preferidos del usuario
+    const generosLiterario = await GeneroLiterario.find({
+      _id: { $in: user.generoLiterarioPreferido }
+    }).select("nombre fotoGenero"); // Selecciona solo el nombre y la foto
+
+    // Mapear los géneros literarios para incluir la información de nombre y foto
+    const generosPreferidos = generosLiterario.map(genero => ({
+      id: genero._id,
+      nombre: genero.nombre,
+      fotoGenero: genero.fotoGenero // Asegúrate de que este campo existe en tu modelo
+    }));
+
+    // Responder con el usuario y sus géneros literarios preferidos
+    return res.status(200).json({ ...user.toObject(), generosPreferidos });
   } catch (error) {
     console.error("Error in getMe controller:", error.message);
     return res.status(500).json({ error: "Error en el servidor." });

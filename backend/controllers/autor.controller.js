@@ -76,7 +76,18 @@ export const obtenerAutores = async (req, res) => {
     res.status(500).json({ message: error.message });
   }
 };
+// Obtener todos los autores (activos o inactivos)
+export const obtenerAutoresActUser = async (req, res) => {
+  try {
+    const estado = true;
 
+    const autores = await Autor.find({ estado: estado });
+    res.status(200).json({autores});
+  } catch (error) {
+    console.error("Error al obtener los autores:", error.message);
+    res.status(500).json({ error: "Error al obtener los autores." });
+  }
+};
 
 // Obtener todos los autores (activos o inactivos)
 export const obtenerAutoresAct = async (req, res) => {

@@ -1,18 +1,11 @@
-import { useNavigate } from 'react-router-dom'; // Asegúrate de importar useNavigate si usas React Router
+import { Link } from 'react-router-dom'; // Asegúrate de importar useNavigate si usas React Router
 
 const ModalSeguidores = ({ seguidores }) => {
-  const navigate = useNavigate(); // Función para hacer redirección programática
-
-  // Función para redirigir al perfil del usuario
-  const handleRedirect = (username) => {
-    navigate(`/perfil/${username}`); // Suponiendo que el URL del perfil es '/perfil/:username'
-  };
-
   return (
     <>
       {/* Botón para abrir el modal */}
       <button
-        className='btn-sm p-0 '
+        className='btn-sm p-0'
         onClick={() => document.getElementById("followers_modal").showModal()}
       >
         Seguidores
@@ -28,28 +21,33 @@ const ModalSeguidores = ({ seguidores }) => {
           {/* Lista de Seguidores */}
           <div className='flex flex-col gap-4'>
             {seguidores && seguidores.length > 0 ? (
-              seguidores.map((seguidor, index) => (
-                <div key={index} className='flex items-center gap-2'>
+              seguidores.map((seguidore) => ( // Asegúrate de usar 'seguidor' en singular
+                <div key={seguidore._id} className='flex items-center gap-2'>
                   {/* Avatar del seguidor */}
                   <div className='avatar'>
                     <div className='w-10 rounded-full'>
-                      <img
-                        src={seguidor.fotoPerfil || "/avatar-placeholder.png"}
-                        alt='Avatar'
-                      />
+                      <Link
+                        to={`/profile/${seguidore.nombre}`}
+                        className="w-8 rounded-full overflow-hidden"
+                      >
+                        <img
+                          src={seguidore.fotoPerfil || "/avatar-placeholder.png"}
+                          alt='Avatar'
+                        />
+                      </Link>
                     </div>
                   </div>
 
                   {/* Nombre completo y nombre de usuario del seguidor */}
                   <div className='flex flex-col'>
-                    <span
-                      className='font-bold cursor-pointer hover:underline'
-                      onClick={() => handleRedirect(seguidor.nombre)}
+                    <Link
+                      to={`/profile/${seguidore.nombre}`}
+                      className="font-bold text-lg text-blue-600 hover:underline"
                     >
-                      {seguidor.nombreCompleto}
-                    </span>
-                    <span className='text-sm text-blue-950'>
-                      @{seguidor.nombre}
+                      {seguidore.nombreCompleto}
+                    </Link>
+                    <span className='text-sm text-gray-500'>
+                      @{seguidore.nombre}
                     </span>
                   </div>
                 </div>

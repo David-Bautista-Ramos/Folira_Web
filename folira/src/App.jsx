@@ -126,6 +126,24 @@ function App() {
                   <Route path='/gestionNotificacion' element={<AdminRoute><GestionNotificacion /></AdminRoute>} />
                   <Route path='/gestionDenuncia' element={<AdminRoute><GestionDenuncias /></AdminRoute>} />
             </Routes>
+
+              <Routes>
+                <Route path='/index' element={ <Index />} />  
+                <Route path='/' element={authUser ? <HomePage /> : <Navigate to='/index' />} />
+                <Route path='/login' element={!authUser ? <LoginPage /> :<Navigate to='/' /> } />
+                <Route path='/signup' element={!authUser ? <SignUpPage /> : <Navigate to='/' />} />
+                <Route path='/notifications' element={authUser ? <NotificationPage /> : <Navigate to='/login' />} />
+                <Route path='/profile/:nombre' element={authUser ? <ProfilePage /> : <Navigate to='/login' />} />
+                <Route path='/comunidad' element={authUser ? <Comunidad /> : <Navigate to='/login' />} />
+                <Route path='/libro' element={authUser ? <Libro /> : <Navigate to='/login' />} />
+                <Route path='/autor' element={authUser ? <Autor /> : <Navigate to='/login' />} />
+                <Route path='/fichaLibro/:id' element={authUser ? <FichaTecnicaLibro libro={Libro} /> : <Navigate to='/login' />} />
+                <Route path='/fichaAutor/:id' element={authUser ? <FichaTecnicaAutor /> : <Navigate to='/login' />} />
+                <Route path='/detalleComunidad' element={authUser ? <DetallesComunidad /> : <Navigate to='/login' />} />   
+                <Route path='/recuperarContrasena' element={<RecuperarContrasena />} />
+
+                </Routes>
+
             </main>
           </div>
         ) : (
