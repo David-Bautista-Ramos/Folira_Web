@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import Nav from "../../components/common/Nav";
 import GestionSkeleton from "../../components/skeletons/GestionSkeleton";
 import { BiEdit, BiPowerOff, BiReset, BiShow, BiHide,BiTrash, BiLeftArrow, BiRightArrow } from "react-icons/bi";
-import banner_denuncia from "../../assets/img/gestionDenuncia.jpeg";
+import banner_denuncia from "../../assets/img/banner_gestion_denuncia.png"; 
 import ModalFiltroDenuncias from "../../components/common/ModalListarDenuncia";
 import { formatMemberSinceDate } from "../../utils/date";
 import ModalInactivarDenuncia from "./ModalInactivarDenuncia";
@@ -191,7 +191,9 @@ function GestionDenuncia() {
       <div className="flex justify-center items-center mt-10">
         <main className="bg-white w-[100%] max-w-[1600px] mx-4 mt-20 rounded-t-2xl border border-gray-500 shadow-lg">
           <div>
-            <img className="w-full h-[269px] rounded-t-2xl" src={banner_denuncia} alt="banner" />
+            <img className="w-full h-[350px] rounded-t-2xl border-b-2 border-primary" 
+            src={banner_denuncia} 
+            alt="banner" />
           </div>
 
           <div className="flex justify-between items-center mt-4 mx-[70px]">
@@ -212,7 +214,7 @@ function GestionDenuncia() {
               {/* Barra de búsqueda */}
               <input
                 type="text"
-                placeholder="Buscar usuario..."
+                placeholder="Buscar denuncia..."
                 value={searchTerm}
                 onChange={handleSearchChange}
                 className="p-2 border border-gray-400 rounded w-[340px]"

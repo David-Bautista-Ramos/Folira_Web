@@ -1,9 +1,9 @@
 import { useEffect, useState } from "react";
 import { FaRegComment } from "react-icons/fa";
-import { BiShow, BiPlus , BiEdit, BiPowerOff, BiReset, BiTrash } from "react-icons/bi";
+import { BiShow, BiPlus , BiEdit, BiPowerOff, BiReset, BiTrash, BiLeftArrow, BiRightArrow } from "react-icons/bi";
 import { Link } from "react-router-dom";
 import Nav from "../../components/common/Nav";
-import banner_publicaciones from "../../assets/img/gestionPublicaciones.jpeg";
+import banner_publicaciones from "../../assets/img/banner_gestion_publicaciones.png"; 
 import GestionSkeleton from "../../components/skeletons/GestionSkeleton";
 import ComentariosModal from "./ComentarioPublicidad";
 import ModalActivarPublicacion from "./ModalActivarPublicacion";
@@ -29,6 +29,11 @@ function GestionPublicaciones() {
     const [isCrearModalOpen, setIsCrearModalOpen] = useState(false);
     const [isActualizarModalOpen, setIsActualizarModalOpen] = useState(false);
     const [isEliminarModalOpen, setIsEliminarModalOpen] = useState(false);
+    const [visibleCount, setVisibleCount] = useState(10); // Estado para el select de cantidad de usuarios visibles
+    const [searchTerm, setSearchTerm] = useState(""); // Estado para la búsqueda
+    const [currentPage, setCurrentPage] = useState(1); // Página actual
+    const [totalPages, setTotalPages] = useState(1); // Número total de páginas
+
   
 
   // Obtener publicaciones de la API
@@ -51,6 +56,44 @@ function GestionPublicaciones() {
   useEffect(() => {
     obtenerPublicaciones();
   }, []);
+
+ // Filtrado por búsqueda
+useEffect(() => {
+  if (searchTerm) {
+    // Filtrar las publicaciones que coincidan con el término de búsqueda
+    const usuariosFiltrados = publicaciones.filter((publicacion) => {
+      const nombre = publicacion.user?.nombre?.toLowerCase() || "";
+      const nombreCompleto = publicacion.user?.nombreCompleto?.toLowerCase() || "";
+      return nombre.includes(searchTerm.toLowerCase()) || nombreCompleto.includes(searchTerm.toLowerCase());
+    });
+    setFilteredPublicacion(usuariosFiltrados);
+  } else {
+    // Si no hay búsqueda, mostramos todas las publicaciones
+    setFilteredPublicacion(publicaciones);
+  }
+}, [searchTerm, publicaciones]);
+
+  const handleSearchChange = (e) => {
+    setSearchTerm(e.target.value); // Actualiza el término de búsqueda
+  };
+
+  // actualizar el total de páginas cada vez que el número de usuarios filtrados o la cantidad visible cambien.
+  useEffect(() => {
+    const totalpublicaciones = filteredPublicacion.length;
+    setTotalPages(Math.ceil(totalpublicaciones / visibleCount));
+  }, [filteredPublicacion, visibleCount]);
+
+  // Función para cambiar la página
+  const handlePageChange = (newPage) => {
+    if (newPage >= 1 && newPage <= totalPages) {
+      setCurrentPage(newPage);
+    }
+  };
+
+  const startIndex = (currentPage - 1) * visibleCount;
+  const endIndex = startIndex + visibleCount;
+  const publicacionesPaginados = filteredPublicacion.slice(startIndex, endIndex);
+
 
   // Método para manejar el filtrado
   const handleFilter = async (filter) => {
@@ -149,25 +192,55 @@ function GestionPublicaciones() {
   const obtenerTipoPublicacion = (idComunidad) => {
     return idComunidad ? "Comunidad" : "General";
   }
+
+  const handleVisibleCountChange = (event) => {
+    setVisibleCount(Number(event.target.value)); // Actualiza la cantidad visible
+  };
+
   return (
     <div>
       <Nav />
       <div className="flex justify-center items-center mt-10">
         <main className="bg-white w-full max-w-6xl mx-2 mt-20 rounded-t-2xl border shadow-lg">
           <img
-            className="w-full h-64 rounded-t-2xl"
+            className="w-full h-[350px] rounded-t-2xl border-b-2 border-primary"
             src={banner_publicaciones}
             alt="banner"
           />
-          <div className="flex justify-end mt-4 mr-16">
-            <button onClick={() =>setIsCrearModalOpen(true)} title="Crear">
-              <BiPlus className="text-xl" />
-            </button>
+          <div className="flex justify-between items-center mt-4 mx-[70px]">
+
+            {/* Contenedor para el select y la barra de búsqueda alineados a la izquierda */}
+            <div className="flex gap-4">
+              {/* Select para elegir cuántos usuarios ver */}
+              <select
+                value={visibleCount}
+                onChange={handleVisibleCountChange}
+                className="bg-white border border-gray-400 p-2 rounded"
+              >
+                <option value={5}> 5 publicaciones</option>
+                <option value={10}> 10 publicaciones</option>
+                <option value={20}> 20 publicaciones</option>
+              </select>
+
+              {/* Barra de búsqueda */}
+              <input
+                type="text"
+                placeholder="Buscar publicación..."
+                value={searchTerm}
+                onChange={handleSearchChange}
+                className="p-2 border border-gray-400 rounded w-[340px]"
+              />
+            </div>
+            
             <button
               onClick={() => setIsFilterModalOpen(true)}
-              className="bg-primary text-white px-4 py-2 rounded hover:bg-blue-900"
+              className="bg-primary text-white px-4 py-2 ml-[360px] rounded hover:bg-blue-950"
             >
               Estado
+            </button>
+
+            <button onClick={() =>setIsCrearModalOpen(true)} title="Crear">
+              <BiPlus className="text-xl" />
             </button>
           </div>
 
@@ -177,7 +250,7 @@ function GestionPublicaciones() {
             ) : filteredPublicacion.length === 0 ? ( 
               <p className="text-center text-gray-500 text-xl mt-10">No hay publicaciones</p> 
             ) : (
-              filteredPublicacion.map((publicacion) => {
+              publicacionesPaginados.map((publicacion) => {
                 const isExpanded = expandedPosts[publicacion._id] || false;
                 const contenidoMostrado = isExpanded
                   ? publicacion.contenido
@@ -279,6 +352,29 @@ function GestionPublicaciones() {
                 );
               })
             )}
+
+            {/* Paginación */}
+            <div className="flex justify-between mb-3  items-center mt-4">
+              <button
+                disabled={currentPage === 1}
+                onClick={() => handlePageChange(currentPage - 1)}
+                className="px-2 py-2 bg-gray-300 ml-[450px] rounded hover:bg-gray-400 disabled:bg-gray-200"
+              >
+                <BiLeftArrow />
+              </button>
+
+              <span className="mx-2">
+                Página {currentPage} de {totalPages}
+              </span>
+
+              <button
+                disabled={currentPage === totalPages}
+                onClick={() => handlePageChange(currentPage + 1)}
+                className="px-2 py-2 bg-gray-300 mr-[450px] rounded hover:bg-gray-400 disabled:bg-gray-200"
+              >
+                <BiRightArrow />
+              </button>
+            </div>
           </div>
 
            {/* Modales para activar, inactivar, crear y actualizar publicaciones */}

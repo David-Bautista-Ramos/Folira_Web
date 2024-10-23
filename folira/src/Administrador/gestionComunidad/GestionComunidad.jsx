@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import ModalInactivarComunidad from "./ModalInactivarComunidad";
 import Nav from "../../components/common/Nav";
 
-import banner_comunidad from "../../assets/img/gestionComunidad.jpeg";
+import banner_comunidad from "../../assets/img/banner_gestion_comunidades.png"; 
 import ModalActivarComunidad from "./ModalActivarComunidad";
 import ModalCrearComunidad from "./ModalCrearComunidad";
 import ModalEliminarComunidad from "./ModalEliminarComunidad";
@@ -202,7 +202,7 @@ function GestionComunidad() {
         <main className="bg-white w-[100%] max-w-[1600px] mx-4 mt-20 rounded-t-2xl border border-gray-500 shadow-lg">
           <div>
             <img
-              className="w-full h-[269px] rounded-t-2xl"
+              className="w-full h-[350px] rounded-t-2xl border-b-2 border-primary"
               src={banner_comunidad}
               alt="banner"
             />
