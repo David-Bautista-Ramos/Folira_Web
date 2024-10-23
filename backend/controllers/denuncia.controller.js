@@ -6,67 +6,70 @@ import Resena from "../models/resena.model.js";
 
 
 // Crear una nueva denuncia
+// Crear una nueva denuncia
 export const crearDenuncia = async (req, res) => {
     try {
-        const { motivo, solucion, tipoDenuncia, idPublicacion, idComunidad, idResena } = req.body;
-        const userId = req.user._id; // ID del usuario que denuncia
-        console.log("Tipo de denuncia recibido:", idComunidad);
+        const { motivo, solucion, tipoDenuncia, idPublicacion, idComunidad, idResena, userId: denuncianteId } = req.body;
 
-        // Crear la nueva denuncia
-        const nuevaDenuncia = new Denuncia({
-            motivo,
-            solucion,
-            idUsuario: userId,
-            idPublicacion: tipoDenuncia === "publicacion" ? idPublicacion : null,
-            idComunidad: tipoDenuncia === "comunidad" ? idComunidad : null,
-            idResena: tipoDenuncia === "resena" ? idResena : null,
-        });
         console.log("Tipo de denuncia recibido:", tipoDenuncia);
 
         const tiposValidos = ["publicacion", "comunidad", "resena"];
         if (!tiposValidos.includes(tipoDenuncia)) {
-                return res.status(400).json({ error: "Tipo de denuncia no válido" });
+            return res.status(400).json({ error: "Tipo de denuncia no válido" });
         }
 
-        // Determinar a quién se debe notificar
-        let para;
+        // Identificar al usuario denunciado según el tipo de denuncia
+        let denunciadoId = null;
+
         if (tipoDenuncia === "publicacion" && idPublicacion) {
             const publicacion = await Post.findById(idPublicacion);
             if (publicacion) {
-                para = publicacion.user; // ID del autor de la publicación
+                denunciadoId = publicacion.user; // ID del autor de la publicación
             }
         } else if (tipoDenuncia === "comunidad" && idComunidad) {
             const comunidad = await Comunidad.findById(idComunidad);
             if (comunidad) {
-                para = comunidad.admin; // ID del admin de la comunidad
+                denunciadoId = comunidad.admin; // ID del admin de la comunidad
             }
         } else if (tipoDenuncia === "resena" && idResena) {
             const resena = await Resena.findById(idResena);
             if (resena) {
-                para = resena.user; // ID del autor de la reseña
+                denunciadoId = resena.user; // ID del autor de la reseña
             }
         }
 
-        // Crear la notificación si se encontró a quién notificar
-        if (para) {
-            const notification = new Notification({
-                de: userId,
-                para,
-                tipo: "denuncia",
-            });
-
-            // Guardar la notificación en la base de datos
-            await notification.save();
+        if (!denunciadoId) {
+            return res.status(404).json({ error: "No se encontró el usuario denunciado." });
         }
 
-        // Guardar la denuncia en la base de datos
+        // Crear la nueva denuncia con el ID del denunciado
+        const nuevaDenuncia = new Denuncia({
+            motivo,
+            solucion,
+            idUsuario: denunciadoId, // El denunciado se guarda aquí
+            idPublicacion: tipoDenuncia === "publicacion" ? idPublicacion : null,
+            idComunidad: tipoDenuncia === "comunidad" ? idComunidad : null,
+            idResena: tipoDenuncia === "resena" ? idResena : null,
+        });
+
+        // Crear una notificación para el usuario denunciado
+        const notification = new Notification({
+            de: denuncianteId, // Quien hace la denuncia
+            para: denunciadoId, // El denunciado
+            tipo: "denuncia",
+        });
+
+        // Guardar la denuncia y la notificación en la base de datos
         await nuevaDenuncia.save();
+        await notification.save();
+
         res.status(201).json({ message: "Denuncia creada con éxito", denuncia: nuevaDenuncia });
     } catch (error) {
         console.error("Error al crear la denuncia:", error.message);
         res.status(500).json({ error: "Error al crear la denuncia." });
     }
 };
+
 
 export const obtenerDenuncias =async (req, res) => {
     try {

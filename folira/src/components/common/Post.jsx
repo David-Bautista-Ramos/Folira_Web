@@ -1,7 +1,6 @@
 import {
   FaRegComment,
   FaRegHeart,
-  FaRegBookmark,
   FaTrash,
 } from "react-icons/fa";
 import { BiError } from "react-icons/bi";
@@ -11,18 +10,19 @@ import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import toast from "react-hot-toast";
 import ModalDenuncia from "./DenunciaModal";
 
-import LoadinSpinner from "./LoadingSpinner";
 import LoadingSpinner from "./LoadingSpinner";
 import { formatPostDate } from "../../utils/date";
 
 const Post = ({ post }) => {
   const [comentarios, setComentarios] = useState("");
+  const [loadingComments, setLoadingComments] = useState({});
   const { data: authUser } = useQuery({ queryKey: ["authUser"] });
   const queryClient = useQueryClient();
 
   const postOwner = post.user; // Ahora hace referencia a "usuario"
   const isLiked = post.likes.includes(authUser._id); // Cambiar según la lógica de likes
   const isMyPost = authUser._id === post.user._id; // Cambiar según la lógica de identificación del usuario
+  const isMyComm = (commentUserId) => authUser._id === commentUserId;
 
   const formattedDate = formatPostDate(post.createdAt); // Cambiar según el tiempo real
 
@@ -113,9 +113,10 @@ const Post = ({ post }) => {
   });
 
   const { mutate: DeletecommentPost, isPending: isDeleteCommenting } = useMutation({
-    mutationFn: async () => {
+    mutationFn: async (commentId) => {
       try {
-        const res = await fetch(`/api/posts/deletecomen/${post._id}/${comentarios._id}`, {
+        setLoadingComments((prev) => ({ ...prev, [commentId]: true }));
+        const res = await fetch(`/api/posts/deletecomen/${post._id}/${commentId}`, {
           method: "DELETE",
         });
         const data = await res.json();
@@ -126,6 +127,8 @@ const Post = ({ post }) => {
         return data;
       } catch (error) {
         throw new Error(error);
+      }finally {
+        setLoadingComments((prev) => ({ ...prev, [commentId]: false }));
       }
     },
     onSuccess: () => {
@@ -137,8 +140,8 @@ const Post = ({ post }) => {
     },
   });
 
-  const handleDeletePostCoom = () => {
-    DeletecommentPost();
+  const handleDeletePostCoom = (commentId) => {
+    DeletecommentPost(commentId);
   };
   const handleDeletePost = () => {
     deletePost();
@@ -153,24 +156,12 @@ const Post = ({ post }) => {
     likePost();
   };
 
-  const [denuncias, setDenuncias] = useState(0); // Estado para el número de denuncias
-  // const [notificaciones, setNotificaciones] = useState([]); // Estado para las notificaciones
-
-  // Función que se llama al hacer una denuncia
-  const handleDenuncia = () => {
-    setDenuncias(denuncias + 1);
-    // Agregar una nueva notificación
-    // setNotificaciones((prev) => [
-    //   ...prev,
-    //   `Se ha hecho una denuncia sobre tu publicación por: ${causa}`,
-    // ]);
-  };
 
   return (
     <div className="flex gap-2 items-start p-4 border-b border-blue-950">
       <div className="avatar">
         <Link
-          to={`/profile/${postOwner._id && postOwner.nombre}`}
+          to={`/profile/${postOwner.nombre}`}
           className="w-8 rounded-full overflow-hidden"
         >
           <img
@@ -182,7 +173,7 @@ const Post = ({ post }) => {
       <div className="flex flex-col flex-1">
         <div className="flex gap-2 items-center">
           <Link
-            to={`/profile/${postOwner._id || postOwner.nombre}`}
+            to={`/profile/${postOwner.nombre}`}
             className="font-bold"
           >
             {postOwner.nombreCompleto}
@@ -201,7 +192,7 @@ const Post = ({ post }) => {
                 />
               )}
 
-              {isDeleting && <LoadinSpinner size="sm" />}
+              {isDeleting && <LoadingSpinner size="sm" />}
             </span>
           )}
         </div>
@@ -245,16 +236,16 @@ const Post = ({ post }) => {
                       No hay comentarios todavía 🤔 Sé el primero 😉
                     </p>
                   )}
-                  {post.comentarios.map((comentarios) => (
+                  {post.comentarios.map((comentario) => (
                     <div
-                      key={comentarios._id}
+                      key={comentario._id}
                       className="flex gap-2 items-start"
                     >
                       <div className="avatar">
                         <div className="w-8 rounded-full">
                           <img
                             src={
-                              comentarios.user.fotoPerfil ||
+                              comentario.user.fotoPerfil ||
                               "/avatar-placeholder.png"
                             }
                             alt="Profile"
@@ -264,26 +255,30 @@ const Post = ({ post }) => {
                       <div className="flex flex-col">
                         <div className="flex items-center gap-1">
                           <span className="font-bold mr-2">
-                            {comentarios.user.nombreCompleto}
+                            {comentario.user.nombreCompleto}
                           </span>{" "}
                           {/* Añadido margin-right */}
                           <span className="text-blue-950 text-sm">
-                            @{comentarios.user.nombre}
+                            @{comentario.user.nombre}
                           </span>
                           {/* Agregar el icono de eliminar al lado del nombre del usuario */}
-                          <span className="text-blue-950 flex  flex-1 ml-14">
-                            {" "}
-                            {/* Añadido ml-auto para mover el ícono al extremo derecho */}
-                            {!isDeleting && (
+                          {isMyComm(comentario.user._id) && (
+                          <span className="text-blue-950 flex flex-1 ml-auto">
+                            {loadingComments[comentario._id] ? (
+                              <LoadingSpinner size="sm" />
+                            ) : (
                               <FaTrash
-                                className="cursor-pointer hover:text-red-500"
-                                onClick={handleDeletePost}
+                                className={`cursor-pointer hover:text-red-500 ${
+                                  isDeleteCommenting ? "opacity-50 cursor-not-allowed" : ""
+                                }`}
+                                onClick={() => handleDeletePostCoom(comentario._id)}
+                                disabled={isDeleteCommenting} // Deshabilitar si hay una eliminación en proceso
                               />
                             )}
-                            {isDeleting && <LoadinSpinner size="sm" />}
                           </span>
+                        )}
                         </div>
-                        <div className="text-sm">{comentarios.text}</div>
+                        <div className="text-sm">{comentario.text}</div>
                       </div>
                     </div>
                   ))}
@@ -299,7 +294,7 @@ const Post = ({ post }) => {
                     onChange={(e) => setComentarios(e.target.value)}
                   />
                   <button className="btn btn-primary rounded-full btn-sm text-white px-4">
-                    {isCommenting ? <LoadinSpinner size="md" /> : "Post"}
+                    {isCommenting ? <LoadingSpinner size="md" /> : "Post"}
                   </button>
                 </form>
               </div>
@@ -314,17 +309,22 @@ const Post = ({ post }) => {
                 <BiError
                   className="w-6 h-6 text-slate-500 group-hover:text-yellow-500 "
                   onClick={() =>
-                    document.getElementById("denuncia_modal").showModal()
+                    document.getElementById(`denuncia_modal_${post._id}`).showModal()
                   } // Abre el modal al hacer clic
                 />
                 <span className="text-sm text-slate-500 group-hover:text-yellow-500">
-                  {denuncias}
+                {post.denuncias}
                 </span>{" "}
                 {/* Muestra el número de denuncias */}
               </div>
 
               {/* Llama al ModalDenuncia aquí y pasa la función de denuncia */}
-              <ModalDenuncia onDenuncia={handleDenuncia} />
+              <ModalDenuncia 
+                id={`denuncia_modal_${post._id}`} // ID único para cada modal
+                postId={post._id} 
+                tipoDenuncia="publicacion" // o "comunidad", "resena", según corresponda
+                denunciadoId={postOwner._id} // Pasamos el ID del dueño
+              />
 
               {/* Mostrar las notificaciones */}
               {/* <div className='mt-4'>
@@ -357,9 +357,7 @@ const Post = ({ post }) => {
               </span>
             </div>
           </div>
-          <div className="flex w-1/3 justify-end gap-2 items-center">
-            <FaRegBookmark className="w-4 h-4 text-slate-500 cursor-pointer" />
-          </div>
+         
         </div>
       </div>
     </div>

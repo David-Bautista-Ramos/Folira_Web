@@ -15,10 +15,52 @@ export const getUserProfile = async (req, res) => {
   try {
     const user = await User.findOne({ nombre }).select("-contrasena");
 
-    if (!user)
+    if (!user) {
       return res.status(404).json({ message: "Usuario no encontrado" });
+    }
 
-    res.status(200).json(user);
+    // Obtener los géneros literarios preferidos del usuario
+    const generosLiterario = await GeneroLiterario.find({
+      _id: { $in: user.generoLiterarioPreferido }
+    }).select("nombre fotoGenero");
+
+    // Mapear los géneros literarios para incluir la información de nombre y foto
+    const generosPreferidos = generosLiterario.map(genero => ({
+      id: genero._id,
+      nombre: genero.nombre,
+      fotoGenero: genero.fotoGenero // Asegúrate de que este campo existe en tu modelo
+    }));
+
+    // Obtener información de seguidores
+    const seguidores = await User.find({ _id: { $in: user.seguidores } })
+      .select("nombre nombreCompleto fotoPerfil"); // Asegúrate de que estos campos existen en tu modelo
+
+    // Obtener información de seguidos
+    const seguidos = await User.find({ _id: { $in: user.seguidos } })
+      .select("nombre nombreCompleto fotoPerfil");
+
+    // Mapear los seguidores y seguidos para incluir la información necesaria
+    const seguidoresInfo = seguidores.map(seguidor => ({
+      id: seguidor._id,
+      nombre: seguidor.nombre,
+      nombreCompleto: seguidor.nombreCompleto,
+      fotoPerfil: seguidor.fotoPerfil
+    }));
+
+    const seguidosInfo = seguidos.map(seguidor => ({
+      id: seguidor._id,
+      nombre: seguidor.nombre,
+      nombreCompleto: seguidor.nombreCompleto,
+      fotoPerfil: seguidor.fotoPerfil
+    }));
+
+    // Responder con el usuario, sus géneros literarios preferidos, seguidores y seguidos
+    return res.status(200).json({
+      ...user.toObject(),
+      generosPreferidos,
+      seguidores: seguidoresInfo,
+      seguidos: seguidosInfo
+    });
   } catch (error) {
     console.log("Error in getUserProfile: ", error.message);
     res.status(500).json({ error: error.message });

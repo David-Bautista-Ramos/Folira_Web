@@ -297,6 +297,24 @@ export const getAllPosts = async (req, res) => {
 	}
 };
 
+export const numDenuncias = async (req, res )=>{
+    const { postId } = req.params;
+
+    try {
+      const post = await Post.findById(postId);
+      if (!post) {
+        return res.status(404).json({ error: 'Post not found' });
+      }
+  
+      post.denuncias += 1; // Incrementa el contador de denuncias
+      await post.save(); // Guarda el post actualizado
+  
+      res.json({ success: true, denuncias: post.denuncias });
+    } catch (error) {
+      res.status(500).json({ error: 'Something went wrong' });
+    }
+}
+
 // Obtener publicaciones de una comunidad específica con estado activo
 export const getPostsByCommunity = async (req, res) => {
     const { comunidadId } = req.params;

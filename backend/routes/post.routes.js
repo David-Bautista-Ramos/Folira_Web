@@ -18,6 +18,7 @@ import {
 	getPostsWithoutCommunity,
 	getUserPosts,
 	likeUnlikePost,
+	numDenuncias,
 	obtenerComentarioPorId,
 	obtenerPublicacionesAct,
 	obtenerPublicacionesDes,
@@ -41,6 +42,7 @@ router.delete("/:id", protectRoutes, deletePost);
 router.post("/createAd",protectRoutes,createPostad)
 router.post("/commentAd/:id",protectRoutes,commentOnPostAd)
 router.get("/userPost/:postId",protectRoutes,obtenerPublicacionPorId);
+router.post("/numDenun/:postId",protectRoutes,numDenuncias);
 router.get("/commenxID/:postId/:comentarioId",protectRoutes,obtenerComentarioPorId);
 router.get("/postComunidad/:comunidadId ",protectRoutes,getPostsByCommunity);
 router.get("/postsinComunidad",protectRoutes,getPostsWithoutCommunity);

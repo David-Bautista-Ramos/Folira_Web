@@ -1,11 +1,13 @@
 import express from 'express';
 import { protectRoutes } from '../middleware/protectRoutes.js';
-import { crearResena, obtenerResena ,obtenerResenasAct, obtenerResenasDes, obtenerResenaPorId,editarResena,desactivarResena,activarResena,eliminarResena } from '../controllers/resena.controller.js';
+import { crearResena, obtenerResena ,obtenerResenasAct, obtenerResenasDes, obtenerResenaPorId,editarResena,desactivarResena,activarResena,eliminarResena, obtenerResenasPorLibroId, obtenerResenasPorAutorId } from '../controllers/resena.controller.js';
 
 const router =express.Router();
 
 router.post("/resenas", protectRoutes, crearResena);
 router.get("/getresenas", protectRoutes, obtenerResena);
+router.get("/librosRes/:libroId",protectRoutes,obtenerResenasPorLibroId)
+router.get("/autorRes/:autorId",protectRoutes,obtenerResenasPorAutorId)
 router.get("/getresenasact", protectRoutes, obtenerResenasAct);
 router.get("/getresenasdes", protectRoutes, obtenerResenasDes);
 router.get("/getresenas/:id", protectRoutes, obtenerResenaPorId);

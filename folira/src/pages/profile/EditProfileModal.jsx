@@ -1,18 +1,7 @@
 import { useEffect, useState } from "react";
 import useUpdateUserProfile from "../../hooks/useUpdateUserProfile";
 import Select from 'react-select';
-import dramaImg from '../../assets/icons/drama.png';
-import terrorImg from '../../assets/icons/terror.png';
-import romanceImg from '../../assets/icons/romance.png';
-import comediaImg from '../../assets/icons/comedia.png';
-import negocioImg from '../../assets/icons/negocios.png';
-import historiaImg from '../../assets/icons/historia.png';
-import cienciaFiccionImg from '../../assets/icons/ciencia_ficcion.png';
-import economiaImg from '../../assets/icons/economia.png';
-import psicologiaImg from '../../assets/icons/psicologia.png';
-import desarrolloPersonalImg from '../../assets/icons/desarrollo_personal.png';
-
-
+import toast from "react-hot-toast";
 
 const EditProfileModal = ({ authUser }) => {
 
@@ -79,27 +68,30 @@ const EditProfileModal = ({ authUser }) => {
 		biografia: "",
 		newcontrasena: "",
 		currentcontrasena: "",
-		generos: [],
+		generoLiterarioPreferido: [],
 	});
 
 	const { updateProfile, isUpdatingProfile } = useUpdateUserProfile();
+	const [generosDisponibles, setGenerosDisponibles] = useState([]);
+	const [isActive, setIsActive] = useState(authUser.activo); // Estado local para el usuario activo
+	const [showConfirmationModal, setShowConfirmationModal] = useState(false); // Estado para el modal de confirmación
 
 	const handleInputChange = (e) => {
 		const { name, value, checked } = e.target;
 	
-		if (name === "generos") {
-			if (checked) {
-				if ((formData.generos).length < 5) {
-					setFormData((prevData) => ({
-						...prevData,
-						generos: [...prevData.generos, value],
-					}));
-				}
-			} else {
-				setFormData((prevData) => ({
-					...prevData,
-					generos: prevData.generos.filter((genero) => genero !== value),
-				}));
+		if (name === "generoLiterarioPreferido") {
+			if (checked && formData.generoLiterarioPreferido.length < 5) {
+			  setFormData((prevData) => ({
+				...prevData,
+				generoLiterarioPreferido: [...prevData.generoLiterarioPreferido, value],
+			  }));
+			} else if (!checked) {
+			  setFormData((prevData) => ({
+				...prevData,
+				generoLiterarioPreferido: prevData.generoLiterarioPreferido.filter(
+				  (g) => g !== value
+				),
+			  }));
 			}
 		} else {
 			// Validación para permitir solo letras y espacios en el campo 'nombreCompleto'
@@ -112,21 +104,73 @@ const EditProfileModal = ({ authUser }) => {
 			setFormData({ ...formData, [name]: value });
 		}
 	};
-	
-	useEffect(() => {
-		if (authUser) {
-			setFormData({
-				nombre: authUser.nombre,
-				nombreCompleto: authUser.nombreCompleto,
-				correo: authUser.correo,
-				pais: authUser.pais,
-				biografia: authUser.biografia || "",
-				newcontrasena: "",
-				currentcontrasena: "",
-				generos: authUser.generos || [],
-			});
+
+	  // Obtener lista de géneros literarios
+	  const obtenerGeneros = async () => {
+		try {
+		  const response = await fetch("/api/geneLiter/getgeneros");
+		  if (!response.ok) throw new Error("Error al obtener los géneros");
+		  const data = await response.json();
+		  setGenerosDisponibles(data);
+		} catch (error) {
+		  console.error("Error al obtener los géneros:", error);
 		}
-	}, [authUser]);
+	  };
+	
+	  // Activar/Inactivar usuario
+	  const toggleEstadoUsuario = async () => {
+		try {
+			const url = isActive
+			? `/api/users/estadoAct/${authUser._id}`  // Cambiado aquí para incluir el ID
+			: `/api/users/estadoDes/${authUser._id}`; // Cambiado aquí para incluir el ID
+	  
+		  const response = await fetch(url, {
+			method: "POST",
+			headers: {
+			  "Content-Type": "application/json",
+			},
+			body: JSON.stringify({ id: authUser.id }),
+		  });
+	
+		  if (!response.ok) throw new Error("Error al cambiar el estado");
+
+		  setIsActive(!isActive);
+		  toast.success(`Usuario ${isActive ? "inactivado" : "activado"} correctamente`);
+		} catch (error) {
+			toast.error("Error al inactivar cuenta")
+		  console.error("Error al cambiar el estado:", error);
+		}
+	  };
+	
+	  const handleToggleClick = () => {
+		setShowConfirmationModal(true); // Muestra el modal de confirmación
+	};
+
+	const handleConfirmToggle = () => {
+		toggleEstadoUsuario();
+		setShowConfirmationModal(false); // Cierra el modal de confirmación
+	};
+
+	const handleCancelToggle = () => {
+		setShowConfirmationModal(false); // Cierra el modal de confirmación sin hacer cambios
+	};
+
+	  // Cargar datos iniciales y géneros disponibles
+	  useEffect(() => {
+		if (authUser) {
+		  setFormData({
+			nombre: authUser.nombre,
+			nombreCompleto: authUser.nombreCompleto,
+			correo: authUser.correo,
+			pais: authUser.pais,
+			biografia: authUser.biografia || "",
+			newcontrasena: "",
+			currentcontrasena: "",
+			generoLiterarioPreferido: authUser.generoLiterarioPreferido || [],
+		  });
+		}
+		obtenerGeneros();
+	  }, [authUser]);
 
 	
 
@@ -140,11 +184,23 @@ const EditProfileModal = ({ authUser }) => {
 			</button>
 
 			<button
-				className='btn btn-outline rounded-full btn-sm'
-				onClick={() => document.getElementById("confir_cuenta_modal").showModal()}
+				className="btn btn-outline rounded-full btn-sm"
+				onClick={handleToggleClick} // Abre el modal de confirmación
 			>
-				Inactivar
+				{isActive ? "Activar" : "Inactivar"}
 			</button>
+
+			{/* Modal de confirmación */}
+			<dialog id='confirmation_modal' className='modal' open={showConfirmationModal}>
+				<div className='modal-box'>
+					<h3 className='font-bold'>Confirmación</h3>
+					<p>¿Estás seguro de que deseas {isActive ? "activar" : "inactivar"} la cuenta?</p>
+					<div className='modal-action'>
+						<button className='btn' onClick={handleConfirmToggle}>Sí</button>
+						<button className='btn' onClick={handleCancelToggle}>No</button>
+					</div>
+				</div>
+			</dialog>
 
 			<dialog id='edit_profile_modal' className='modal'>
 				<div className='modal-box border rounded-md border-blue-950 h-[500px]  shadow-md modal-scrollbar'>
@@ -236,6 +292,7 @@ const EditProfileModal = ({ authUser }) => {
 						<Select
 							id='pais'
 							options={paises}
+							value={paises.find(option => option.value === formData.pais) || null}
 							onChange={(selectedOption) => {
 							// Actualiza el estado cuando se selecciona un país
 							handleInputChange({ target: { name: 'pais', value: selectedOption.value } });
@@ -245,37 +302,31 @@ const EditProfileModal = ({ authUser }) => {
 						/>
 
 						{/* Sección para seleccionar géneros literarios */}
-						<div className='flex flex-col'>
-							<h4 className='font-bold'>Selecciona hasta 5 géneros literarios:</h4>
-							<div className='grid grid-cols-2 gap-2'>
-								{[
-									{ nombre: "Drama", imagen: dramaImg },
-									{ nombre: "Terror", imagen: terrorImg },
-									{ nombre: "Romance", imagen: romanceImg },
-									{ nombre: "Comedia", imagen: comediaImg },
-									{ nombre: "Negocios", imagen: negocioImg },
-									{ nombre: "Historia", imagen: historiaImg },
-									{ nombre: "Ciencia Ficción", imagen: cienciaFiccionImg },
-									{ nombre: "Economia", imagen: economiaImg },
-									{ nombre: "Psicología", imagen: psicologiaImg },
-									{ nombre: "Desarrollo Personal", imagen: desarrolloPersonalImg },
-								].map((genero) => (
-									<label key={genero.nombre} className='flex items-center cursor-pointer '>
-										<input
-											type='checkbox'
-											name='generos'
-											value={genero.nombre}
-											checked={formData.generos.includes(genero.nombre)}
-											onChange={handleInputChange}
-											className='hidden'
-										/>
-										<div className={`flex items-center border rounded-full p-2 ${formData.generos.includes(genero.nombre) ? 'bg-blue-200' : 'bg-white'}`}>
-											<img src={genero.imagen} alt={genero.nombre} className='w-8 h-8 mr-2' />
-											<span>{genero.nombre}</span>
-										</div>
-									</label>
-								))}
-							</div>
+						<div className="flex flex-wrap flex-col gap-y-2">
+						<h4 className="font-bold">Selecciona hasta 5 géneros literarios:</h4>
+						<div className="grid grid-cols-2 gap-2">
+							{generosDisponibles.map((genero) => (
+							<label key={genero.id} className="flex items-center cursor-pointer">
+								<input
+								type="checkbox"
+								name="generoLiterarioPreferido"
+								value={genero._id}
+								checked={formData.generoLiterarioPreferido.includes(genero._id)}
+								onChange={handleInputChange}
+								className="hidden"
+								/>
+								<div
+								className={`flex items-center border rounded-full p-2 ${
+									formData.generoLiterarioPreferido.includes(genero._id)
+									? "bg-blue-200"
+									: "bg-white"
+								}`}
+								>
+								{genero.nombre}
+								</div>
+							</label>
+							))}
+						</div>
 						</div>
 
 						<button className='btn btn-primary rounded-full btn-sm text-white hover:bg-blue-950'>

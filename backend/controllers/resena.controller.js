@@ -7,7 +7,7 @@ export const crearResena = async (req, res) => {
         const { contenido, calificacion, idUsuario, idLibro, idAutor } = req.body;
 
         // Verificar que al menos uno de los campos idLibro o idAutor esté presente
-        if (idLibro || idAutor) {
+        if (!idLibro && !idAutor) {
             return res.status(400).json({ error: "Se debe proporcionar al menos un libro o un autor." });
         }
 
@@ -37,6 +37,57 @@ export const obtenerResena =async(req, res) => {
         res.status(500).json({ message: error.message });
       }
 }
+
+// Función para obtener reseñas por libroId
+export const obtenerResenasPorLibroId = async (req, res) => {
+    const { libroId } = req.params; // Solo se recibe libroId
+
+    try {
+        if (!libroId) {
+            return res.status(400).json({ message: 'Se debe proporcionar un libroId.' });
+        }
+
+        // Buscar las reseñas por libroId
+        const resenas = await Resena.find({ idLibro: libroId })
+            .populate({ path: "idUsuario", select: "-contrasena" }) // Evita enviar la contraseña
+            .populate('idLibro') // Llenar la información del libro
+            .populate('idAutor'); // Llenar la información del autor
+
+        if (resenas.length === 0) {
+            return res.status(404).json({ message: 'No se encontraron reseñas para este libro.' });
+        }
+
+        res.status(200).json(resenas);
+    } catch (error) {
+        res.status(500).json({ message: error.message });
+    }
+};
+
+// Función para obtener reseñas por autorId
+export const obtenerResenasPorAutorId = async (req, res) => {
+    const { autorId } = req.params; // Solo se recibe autorId
+
+    try {
+        if (!autorId) {
+            return res.status(400).json({ message: 'Se debe proporcionar un autorId.' });
+        }
+
+        // Buscar las reseñas por autorId
+        const resenas = await Resena.find({ idAutor: autorId })
+            .populate({ path: "idUsuario", select: "-contrasena" }) // Evita enviar la contraseña
+            .populate('idLibro') // Llenar la información del libro
+            .populate('idAutor'); // Llenar la información del autor
+
+        if (resenas.length === 0) {
+            return res.status(404).json({ message: 'No se encontraron reseñas para este autor.' });
+        }
+
+        res.status(200).json(resenas);
+    } catch (error) {
+        res.status(500).json({ message: error.message });
+    }
+};
+
 
 // Obtener todas las reseñas (activos o inactivos)
 export const obtenerResenasAct = async (req, res) => {

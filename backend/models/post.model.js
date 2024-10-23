@@ -24,6 +24,10 @@ const PostSchema = new mongoose.Schema(
         type: mongoose.Schema.Types.ObjectId,
         ref: 'User'
       }],
+      denuncias: {
+        type: Number,
+        default: 0, // Inicialmente 0
+      },
       comentarios: [{
         text:{
             type: String,

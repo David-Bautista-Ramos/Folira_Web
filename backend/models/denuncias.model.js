@@ -9,7 +9,6 @@ const DenunciaSchema = new mongoose.Schema(
       },
       solucion: {
         type: String,
-        required: true,
       },
       fechaCreacion: {
         type: Date,
