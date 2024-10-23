@@ -77,7 +77,11 @@ const UserSchema = new mongoose.Schema(
         type: String,
         enum: ['usuario', 'admin'],
         required: true,
-      }
+      },
+      tiempoEnPantalla: {
+        type: Number,
+        default: 0, // Empezamos en 0
+      },
     },
     { timestamps: true }
   );
