@@ -1,6 +1,6 @@
 import { MdHomeFilled, MdMessage } from "react-icons/md";
 import { IoNotifications } from "react-icons/io5";
-import { FaUser } from "react-icons/fa";
+import { FaMedal, FaUser } from "react-icons/fa";
 import { Link } from "react-router-dom";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import toast from "react-hot-toast";
@@ -8,12 +8,29 @@ import {  BiLogOut, BiSolidFolder } from "react-icons/bi";
 import { GiFeather, GiOpenBook } from "react-icons/gi";
 import Folira_general from "../../assets/img/Folira_general.svg";
 
+
 const Sidebar = () => {
+
     const queryClient = useQueryClient();
+
+    const startTime = Date.now();
+
+    // Al hacer logout, calculamos el tiempo en pantalla
     const { mutate: logout } = useMutation({
         mutationFn: async () => {
             try {
-                const res = await fetch("/api/auth/logout", { method: "POST" });
+                const endTime = Date.now(); // Tiempo al cerrar sesión
+                const tiempoEnPantalla = Math.floor((endTime - startTime) / 1000); // Tiempo en segundos
+
+                // Suponiendo que tienes el userId almacenado en el contexto de autenticación o estado global
+                const userId = authUser._id;
+
+                const res = await fetch("/api/auth/logout", {
+                    method: "POST",
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ tiempoEnPantalla, userId })  // Enviamos el tiempo y el ID
+                });
+
                 const data = await res.json();
                 if (!res.ok) {
                     throw new Error(data.error || "Algo salió mal");
@@ -30,7 +47,7 @@ const Sidebar = () => {
             toast.error("Error al cerrar sesión");
         },
     });
-
+    
     const { data: authUser } = useQuery({ queryKey: ["authUser"] });
 
     return (
@@ -97,6 +114,16 @@ const Sidebar = () => {
                         >
                             <MdMessage className='text-blue-950 w-6 h-6' />
                             <span className='text-lg hidden md:block'>Comunidades</span>
+                        </Link>
+                    </li>
+
+                    <li className='flex justify-center md:justify-start'>
+                        <Link
+                            to='/insignia'
+                            className='flex gap-3 items-center hover:bg-gray-200 transition-all rounded-full duration-300 py-2 pl-2 pr-4 max-w-fit cursor-pointer'
+                        >
+                            <FaMedal  className='text-blue-950 w-6 h-6' />
+                            <span className='text-lg hidden md:block'>Insignias</span>
                         </Link>
                     </li>
 
