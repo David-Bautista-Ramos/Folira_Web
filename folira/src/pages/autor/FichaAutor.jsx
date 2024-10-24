@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
-import { useParams } from 'react-router-dom'; // Importa useParams
+import { Link, Navigate, useParams } from 'react-router-dom'; // Importa useParams
 import { useQuery } from '@tanstack/react-query';
-import { BsStar, BsStarFill } from 'react-icons/bs';
+import { BsArrowLeft, BsStar, BsStarFill } from 'react-icons/bs';
 import { FaTrash } from 'react-icons/fa';
 
 const FichaTecnicaAutor = () => {
@@ -138,14 +138,24 @@ const formatearFecha = (fechaISO) => {
     await fetchReseñas();
   };
 
+  const handleRedirect = () => {
+    Navigate('/autor'); // Redirección
+  };
+
   const filteredReseñas = selectedStarFilter 
     ? resenas.filter((reseña) => reseña.calificacion === selectedStarFilter) 
     : resenas;
 
   return (
     <div className='flex-[4_4_0] border-r border-primary min-h-screen '>
-
+|    
       <div className="flex flex-col p-6 bg-white rounded-lg shadow-lg relative">
+      <div className="flex items-center cursor-pointer gap-5 text-3xl -mt-4 border-b-2 border-gray-300 pb-2 mb-4" onClick={handleRedirect}>
+          <Link to="/autor  "> 
+            <BsArrowLeft className="text-primary mr-2 text-lg " /> {/* Icono de flecha */}
+          </Link>
+            <span className="text-xl text-primary font-bold flex items-center">{nombre}</span> {/* Título del libro */}
+        </div>
             <div className="flex">
               <img 
                 src={fotoAutor} 

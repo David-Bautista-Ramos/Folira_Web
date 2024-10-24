@@ -60,7 +60,7 @@ const ListaPublicaciones = ({ posts, esAdmin, esMiembro }) => {
 
   const handleDeleteComment = useMutation({
     mutationFn: async ({ postId, commentId }) => {
-      await fetch(`/api/posts/${postId}/comments/${commentId}`, { method: "DELETE" });
+      await fetch(`/api/posts/deletecomen/${postId}/${commentId}`, { method: "DELETE" });
     },
     onSuccess: () => {
       toast.success("Comentario eliminado.");

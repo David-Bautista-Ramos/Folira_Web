@@ -12,7 +12,7 @@ const ModalCrearNuevaComunidad = ({ isOpen, onClose, token, userId ,obtenerComun
     link: "",
   });
 
-  const { createComuniad, isCreatingComunidad } = useCreateComunidad();
+  const { createComuniad, isCreatingComunidad } = useCreateComunidad(obtenerComunidades);
   const [fotoComunidad, setFotoComunidad] = useState(null);
   const [fotoBanner, setFotoBanner] = useState(null);
   const fotoBannerRef = useRef(null);

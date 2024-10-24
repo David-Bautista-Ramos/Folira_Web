@@ -1,9 +1,9 @@
 import { useState } from 'react';
-import { BsEye, BsEyeSlash } from 'react-icons/bs';
+import { BsArrowLeft, BsEye, BsEyeSlash } from 'react-icons/bs';
 import { CiImageOn } from 'react-icons/ci';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import toast from 'react-hot-toast';
-import { useParams } from 'react-router-dom';
+import { Link, Navigate, useParams } from 'react-router-dom';
 import ModalActualizarComunidad from './ActualizarComunidadModal';
 import usePosts from '../../hooks/usePost';
 import ListaPublicaciones from './ListaPublicaciones';
@@ -121,7 +121,9 @@ const DetallesComunidad = () => {
     toast.error('No se pudo unir a la comunidad');
   }
   };
-
+  const handleRedirect = () => {
+    Navigate('/comunidad'); // Redirección
+  };
   if (loadingComunidad) return <div>Cargando...</div>;
 
   const { nombre, admin, descripcion, miembros, link, fotoComunidad } = comunidad || {};
@@ -131,7 +133,12 @@ const DetallesComunidad = () => {
   return (
     <div className='flex-[4_4_0] border-r border-primary min-h-screen'> 
     <div className="flex flex-col border-r border-gray-300 min-h-screen bg-white p-6 rounded-lg shadow-lg">
-      
+    <div className="flex items-center cursor-pointer gap-5 text-3xl -mt-4 border-b-2 border-gray-300 pb-2 mb-4" onClick={handleRedirect}>
+          <Link to="/comunidad  "> 
+            <BsArrowLeft className="text-primary mr-2 text-lg " /> {/* Icono de flecha */}
+          </Link>
+            <span className="text-xl text-primary font-bold flex items-center">{nombre}</span> {/* Título del libro */}
+        </div>
       {/* Columna 1: Imagen y botones */}
       <div className="flex flex-row mb-4">
         <div className="flex flex-col items-center mr-6">
@@ -163,7 +170,7 @@ const DetallesComunidad = () => {
               </button>
             </div>
           )}{!esMiembro && !esAdmin && (
-            <button onClick={handleUnirseComunidad} className="mt-4 bg-green-600 text-white py-2 px-4 rounded">
+            <button onClick={handleUnirseComunidad} className="mt-4 bg-primary hover:bg-blue-950 text-white py-2 px-4 rounded">
               Unirme a la comunidad
             </button>
           )}

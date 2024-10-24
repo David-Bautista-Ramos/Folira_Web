@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { Link, useParams, useNavigate } from 'react-router-dom'; // Importa useParams
+import { Link, useParams,  Navigate } from 'react-router-dom'; // Importa useParams
 import { BsStarFill, BsStar, BsEye, BsEyeSlash, BsArrowLeft } from 'react-icons/bs';
 import PropTypes from 'prop-types';
 import { useQuery } from '@tanstack/react-query';
@@ -52,7 +52,7 @@ const FichaTecnicaLibro = () => {
   } = libro;
 
   const handleRedirect = () => {
-    navigate('/librosSugerido'); // Redirección
+    Navigate('/librosSugerido'); // Redirección
   };
 
   const renderSinopsis = () => {
