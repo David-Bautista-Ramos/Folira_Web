@@ -2,6 +2,7 @@ import { useQuery } from '@tanstack/react-query';
 import { useEffect, useState, useCallback } from 'react';
 import { Link } from 'react-router-dom';
 import ModalCrearNuevaComunidad from './ModalCrearNuevaComunidad';
+import { FaPlus } from 'react-icons/fa';
 
 // Componente para cada tarjeta de comunidad
 const ComunidadCard = ({ comunidad, salirComunidad }) => {
@@ -29,7 +30,7 @@ const ComunidadCard = ({ comunidad, salirComunidad }) => {
       {isAdmin ? (
         <Link
           to={`/DetalleComunidad/${comunidad._id}`} // Redirigir a la comunidad
-          className="bg-blue-500 text-white rounded-full px-4 py-2 hover:bg-blue-700 mt-2 mb-2"
+          className="bg-primary text-white py-2 px-4 rounded-full hover:bg-blue-950 mt-2 mb-2"
         >
           Ver comunidad
         </Link>
@@ -100,21 +101,23 @@ const TusComunidades = () => {
 
   return (
     <div className="p-6">
-      <div className="flex mb-4">
-        <input
-          type="text"
-          placeholder="Buscar comunidad..."
-          value={filtro}
-          onChange={(e) => setFiltro(e.target.value)}
-          className="p-2 border border-gray-300 rounded mr-2 flex-grow"
-        />
-        <button
-          onClick={() => setIsActualizarModalOpen(true)} // Abre el modal
-          className="bg-green-500 text-white rounded-full px-4 py-2 hover:bg-green-700"
-        >
-          Crear Comunidad
-        </button>
-      </div>
+      <div className="flex mb-4 items-center"> {/* Añadido items-center para alinear verticalmente */}
+      <button
+        onClick={() => setIsActualizarModalOpen(true)} // Abre el modal
+        className="mr-3 p-2 bg-primary text-white rounded-full hover:bg-blue-950 w-8 h-8 flex items-center justify-center"
+      >
+        <FaPlus />
+      </button>
+
+      <input
+        type="text"
+        placeholder="Buscar comunidad..."
+        value={filtro}
+        onChange={(e) => setFiltro(e.target.value)}
+        className="border border-gray-300 rounded p-2 mb-4 w-[565px] mt-4 focus:outline-none focus:border-blue-950" // Ajustado mt-0 para eliminar margen superior
+      />
+    </div>
+
 
       {loading ? (
         <p>Cargando comunidades...</p>

@@ -7,7 +7,7 @@ const Autor = ({authUser}) => {
 
   return (
       <>
-         <div className='flex-[4_4_0] border-r border-primary min-h-screen '>
+        <div className='flex-[4_4_0] border-r border-primary min-h-screen '>
           {/* Header */}
 
       <div className='flex w-full border-b border-blue-950'>

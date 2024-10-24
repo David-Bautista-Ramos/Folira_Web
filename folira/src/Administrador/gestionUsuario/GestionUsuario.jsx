@@ -29,7 +29,7 @@ function GestionUsuario() {
   const [isFiltroModalOpen, setIsFiltroModalOpen] = useState(false);
   const [filteredUsuarios, setFilteredUsuarios] = useState([]);
   const [isLoading, setIsLoading] = useState(true); // Estado para controlar la carga
-  const [visibleCount, setVisibleCount] = useState(10); // Estado para el select de cantidad de usuarios visibles
+  const [visibleCount, setVisibleCount] = useState(6); // Estado para el select de cantidad de usuarios visibles
   const [searchTerm, setSearchTerm] = useState(""); // Estado para la búsqueda
   const [currentPage, setCurrentPage] = useState(1); // Página actual
   const [totalPages, setTotalPages] = useState(1); // Número total de páginas
@@ -209,8 +209,8 @@ function GestionUsuario() {
                 onChange={handleVisibleCountChange}
                 className="bg-white border border-gray-400 p-2 rounded"
               >
-                <option value={5}> 5 usuarios</option>
-                <option value={10}> 10 usuarios</option>
+                <option value={6}> 6 usuarios</option>
+                <option value={12}> 12 usuarios</option>
                 <option value={20}> 20 usuarios</option>
               </select>
 

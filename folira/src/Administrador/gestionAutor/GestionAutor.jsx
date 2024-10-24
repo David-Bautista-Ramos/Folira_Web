@@ -29,7 +29,7 @@ function GestionAutor() {
   const [isFiltroModalOpen, setIsFiltroModalOpen] = useState(false);
   const [filteredAutores, setFilteredAutores] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
-  const [visibleCount, setVisibleCount] = useState(10); // Estado para el select de cantidad de usuarios visibles
+  const [visibleCount, setVisibleCount] = useState(6); // Estado para el select de cantidad de usuarios visibles
   const [searchTerm, setSearchTerm] = useState(""); // Estado para la búsqueda
   const [currentPage, setCurrentPage] = useState(1); // Página actual
   const [totalPages, setTotalPages] = useState(1); // Número total de páginas
@@ -205,8 +205,8 @@ function GestionAutor() {
                 onChange={handleVisibleCountChange}
                 className="bg-white border border-gray-400 p-2 rounded"
               >
-                <option value={5}> 5 autores</option>
-                <option value={10}> 10 autores</option>
+                <option value={6}> 6 autores</option>
+                <option value={12}> 12 autores</option>
                 <option value={20}> 20 autores</option>
               </select>
 
