@@ -3,40 +3,40 @@ import cloudinary from 'cloudinary'
 
 export const crearInsignia = async (req, res) => {
   try {
-    const { nombre, descripcion, criterio, cantidadObjetivo } = req.body;
-    let iconoUrl = null;
+    const { nombre, descripcion, criterio } = req.body;
+    let { icono } = req.body; // Asegúrate de que estás utilizando el nombre correcto para el archivo
 
-    // Manejar la subida del icono, si existe
-    if (req.file) {
-      // Si ya hay un icono existente, eliminarlo de Cloudinary
-      if (req.body.iconoUrl) { // Asumiendo que envías la URL del icono existente
-        const publicId = req.body.iconoUrl.split("/").pop().split(".")[0];
-        await cloudinary.uploader.destroy(publicId);
-      }
-
-      const uploadedResponse = await cloudinary.uploader.upload(req.file.path, {
-        folder: 'insignias',
-      });
-      iconoUrl = uploadedResponse.secure_url;
-    } else {
-      return res.status(400).json({ mensaje: 'Es necesario subir un icono' });
+    // Verificar si ya existe una insignia con el mismo nombre
+    const insigniaExistente = await Insignias.findOne({ nombre });
+    if (insigniaExistente) {
+      return res.status(400).json({ error: "La insignia ya existe." });
     }
 
+    // Manejar la subida del icono de la insignia, si existe
+    let iconoUrl = null;
+    if (icono) {
+      const uploadedResponse = await cloudinary.uploader.upload(icono[0].path);
+      iconoUrl = uploadedResponse.secure_url; // Guardar la URL del icono subido
+    }
+
+    // Crear la nueva insignia
     const nuevaInsignia = new Insignias({
       nombre,
       descripcion,
+      icono: iconoUrl, // Guardar la URL del icono
       criterio,
-      cantidadObjetivo,
-      icono: iconoUrl, // Guardar la URL segura del icono
+      fechaCreacion: new Date(),
+      estado: true, // Puedes establecer el estado predeterminado aquí
     });
 
+    // Guardar la insignia en la base de datos
     await nuevaInsignia.save();
-    res.status(201).json(nuevaInsignia);
+    res.status(201).json({ message: "Insignia creada con éxito", insignia: nuevaInsignia });
   } catch (error) {
-    res.status(500).json({ mensaje: 'Error al crear insignia', error });
+    console.error("Error al crear la insignia:", error.message);
+    res.status(500).json({ error: "Error al crear la insignia." });
   }
 };
-
 
   export const obtenerInsignias = async (req, res)=>{
     try {

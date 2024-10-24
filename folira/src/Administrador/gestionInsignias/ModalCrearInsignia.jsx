@@ -1,53 +1,52 @@
-import { useState } from 'react';
+import { useState } from "react";
+import useCreateInsignia from "../../hooks/useCreateInsignias";
 
-const ModalCrearInsignia = ({ isOpen, onClose, obtenerInsignias }) => {
-  const [nombre, setNombre] = useState('');
-  const [descripcion, setDescripcion] = useState('');
-  const [fotoInsignia, setFotoInsignia] = useState(''); // Cambiado a fotoInsignia para coincidir con el uso en el preview
-  const [estado, setEstado] = useState(true); // Por defecto, la insignia está activa
-  const [isCreatingInsignia, setIsCreatingInsignia] = useState(false); // Estado para manejar la creación de la insignia
+function ModalCrearInsignia({ isOpen, onClose }) {
+  const [formData, setFormData] = useState({
+    nombre: "",
+    descripcion: "",
+    criterio: "",
+    cantidadObjetivo: 0,
+  });
+
+  const { createInisgnia, isCreatingInisgnia } = useCreateInsignia();
+  const [fotoInsignia, setFotoInsignia] = useState(null);
+
+  if (!isOpen) return null;
+
+  const handleInputChange = (e) => {
+    const { name, value } = e.target;
+    setFormData((prevData) => ({ ...prevData, [name]: value }));
+  };
 
   const handleImgChange = (e) => {
     const file = e.target.files[0];
     if (file) {
-      const reader = new FileReader();
-      reader.onloadend = () => {
-        setFotoInsignia(reader.result); // Guardar la imagen en base64 para la vista previa
-      };
-      reader.readAsDataURL(file);
+      setFotoInsignia(file);
     }
   };
 
-  const handleSubmit = (e) => {
-    e.preventDefault();
-    setIsCreatingInsignia(true); // Activar el estado de creación
-
-    // Lógica para crear una nueva insignia
-    const nuevaInsignia = {
-      _id: Math.random().toString(36).substr(2, 9), // Generar un ID aleatorio
-      nombre,
-      descripcion,
-      fotoInsignia, // Directamente la URL de la imagen
-      estado,
-    };
-
-    console.log('Nueva Insignia Creada:', nuevaInsignia);
+  const handleSubmit = async (e) => {
+    e.preventDefault(); // Prevent default form submission
+    const data = new FormData();
     
-    // Aquí llamarías a la función para obtener las insignias actualizadas
-    obtenerInsignias();
-
-    // Restablecer campos del formulario
-    setNombre('');
-    setDescripcion('');
-    setFotoInsignia('');
-    setEstado(true);
+    // Add form data to FormData object
+    data.append("nombre", formData.nombre);
+    data.append("descripcion", formData.descripcion);
+    data.append("criterio", formData.criterio);
+    data.append("cantidadObjetivo", formData.cantidadObjetivo);
     
-    // Cerrar el modal
-    onClose();
-    setIsCreatingInsignia(false); // Desactivar el estado de creación
+    if (fotoInsignia) {
+      data.append("icono", fotoInsignia);
+    }
+
+    try {
+      await createInisgnia(data); // Call the create insignia function
+      onClose(); // Close the modal after creation
+    } catch (error) {
+      console.error("Error al crear insignia:", error);
+    }
   };
-
-  if (!isOpen) return null;
 
   return (
     <div
@@ -55,75 +54,92 @@ const ModalCrearInsignia = ({ isOpen, onClose, obtenerInsignias }) => {
       onClick={onClose}
     >
       <form
-        className="bg-white p-5 rounded-lg max-w-md w-full shadow-lg relative"
-        onClick={(e) => e.stopPropagation()}
-        onSubmit={handleSubmit}
+        className="bg-white p-5 rounded-lg w-90 md:w-106 relative overflow-hidden"
+        onClick={(e) => e.stopPropagation()} // Prevent click on modal content from closing the modal
+        onSubmit={handleSubmit} // Form submission handling
       >
-        <h2 className="text-lg text-center text-gray-800 mb-4">Crear Insignia</h2>
-
-        <label className="block mb-1 text-gray-700">Foto de la Insignia</label>
-        <input
-          type="file"
-          accept="image/*"
-          onChange={handleImgChange}
-          className="w-full p-2 mb-3 border rounded focus:border-primary"
-        />
-        {fotoInsignia && (
-          <img
-            src={fotoInsignia}
-            alt="Preview"
-            className="w-24 h-24 rounded-full object-cover mx-auto mb-3" // Estilo circular
-          />
-        )}
-
-        <label className="block mb-1 text-gray-700">Nombre de la Insignia</label>
-        <input
-          type="text"
-          value={nombre}
-          onChange={(e) => setNombre(e.target.value)}
-          required
-          placeholder="Nombre de la insignia"
-          className="w-full p-2 mb-3 border rounded focus:border-primary focus:outline-none"
-        />
-
-        <label className="block mb-1 text-gray-700">Descripción</label>
-        <textarea
-          value={descripcion}
-          onChange={(e) => setDescripcion(e.target.value)}
-          required
-          placeholder="Descripción"
-          className="w-full p-2 mb-3 border rounded focus:border-primary focus:outline-none"
-        />
-
-        <div className="flex items-center mb-4">
+        <div className="border-b-2 border-primary pb-2 mb-5">
+          <h2 className="text-lg text-center text-primary">CREAR INSIGNIA</h2>
+        </div>
+        <div className="overflow-y-auto max-h-80 mb-5 text-primary text-lg modal-scrollbar">
+          <label className="block mb-1 text-primary">Foto de la Insignia</label>
           <input
-            type="checkbox"
-            checked={estado}
-            onChange={() => setEstado(!estado)}
-            className="mr-2"
+            type="file"
+            accept="image/*"
+            onChange={handleImgChange}
+            className="w-full p-2 mb-3 rounded focus:border-primary border"
           />
-          <label className="text-gray-700">Activa</label>
+          {fotoInsignia && ( // Preview of the image
+            <img
+              src={URL.createObjectURL(fotoInsignia)}
+              alt="Preview"
+              className="max-w-full h-auto mb-3"
+            />
+          )}
+
+          <label className="block mb-1 text-primary">Nombre de la Insignia</label>
+          <input
+            type="text"
+            name="nombre"
+            value={formData.nombre}
+            onChange={handleInputChange}
+            placeholder="Nombre de la insignia"
+            className="w-full p-2 mb-3 border rounded focus:border-primary focus:outline-none"
+            required
+          />
+
+          <label className="block mb-1 text-primary">Descripción</label>
+          <textarea
+            name="descripcion"
+            value={formData.descripcion}
+            onChange={handleInputChange}
+            placeholder="Descripción"
+            className="w-full p-2 mb-3 border rounded focus:border-primary focus:outline-none"
+            required
+          />
+
+          <label className="block mb-1 text-primary">Criterio</label>
+          <input
+            type="text"
+            name="criterio"
+            value={formData.criterio}
+            onChange={handleInputChange}
+            placeholder="Criterio"
+            className="w-full p-2 mb-3 border rounded focus:border-primary focus:outline-none"
+            required
+          />
+
+          <label className="block mb-1 text-primary">Cantidad Objetivo</label>
+          <input
+            type="number"
+            name="cantidadObjetivo"
+            value={formData.cantidadObjetivo}
+            onChange={handleInputChange}
+            placeholder="Cantidad objetivo"
+            className="w-full p-2 mb-3 border rounded focus:border-primary focus:outline-none"
+            required
+          />
         </div>
 
         <div className="flex justify-end gap-2">
           <button
             className="px-4 py-2 bg-gray-300 text-gray-800 rounded-md hover:bg-gray-400"
             onClick={onClose}
-            type="button"
+            type="button" // Make sure this is a button to prevent form submission
           >
             Cancelar
           </button>
           <button
-            type="submit"
-            className="px-4 py-2 bg-primary text-white rounded-md hover:bg-blue-950"
-            disabled={isCreatingInsignia}
+            className="px-4 py-2 border rounded bg-primary text-white hover:bg-blue-950"
+            type="submit" // Ensure this triggers form submission
+            disabled={isCreatingInisgnia} // Disable button while creating
           >
-            {isCreatingInsignia ? "Creando..." : "Crear Insignia"}
+            {isCreatingInisgnia ? "Creando..." : "Crear"}
           </button>
         </div>
       </form>
     </div>
   );
-};
+}
 
 export default ModalCrearInsignia;

@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import { Link, useLocation } from "react-router-dom";
-import { BiBell, BiComment, BiError, BiGroup, BiNews, BiStar, BiUser } from "react-icons/bi";
+import { BiBell, BiComment, BiError, BiGroup, BiNews, BiUser } from "react-icons/bi";
 import { GiFeather, GiOpenBook } from "react-icons/gi"; 
 import Folira_general from "../../assets/img/Folira_general.svg";
 
@@ -130,20 +130,6 @@ function Nav() {
           {tooltip.visible && tooltip.text === "Gestión de Publicaciones" && (
             <div className="absolute bg-primary text-white p-2 rounded text-sm mt-10"> {/* Modificado mt-2 */}
               Gestión de Publicaciones
-            </div>
-          )}
-        </Link>
-
-        <Link
-          to="/gestionInsignias"  // Asegúrate de que la ruta sea correcta
-          className={`flex flex-col items-center ${activeLink === "/gestionInsignias" ? "border-b-2 border-blue-950" : ""}`} // Corrige el nombre de la ruta
-          onMouseEnter={() => setTooltip({ visible: true, text: "Gestión de Insignias" })}
-          onMouseLeave={() => setTooltip({ visible: false, text: "" })}
-        >
-          <BiStar className="text-blue-950 w-6 h-6" />  {/* Icono para Insignias */}
-          {tooltip.visible && tooltip.text === "Gestión de Insignias" && (
-            <div className="absolute bg-primary text-white p-2 rounded text-sm mt-10">
-              Gestión de Insignias
             </div>
           )}
         </Link>

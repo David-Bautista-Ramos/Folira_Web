@@ -22,8 +22,6 @@ import FichaTecnicaAutor from './pages/autor/FichaAutor.jsx';
 import DetallesComunidad from  './pages/comunidad/DetalleComunidad.jsx';
 import Index from './pages/Index.jsx';
 import RecuperarContrasena from './pages/auth/contraseña/RecuperarContrasena.jsx';
-import Insignias from './pages/insignias/Insignias.jsx';
-import GestionInsignias from './Administrador/gestionInsignias/GestionInsignias.jsx';
 
 
 import { Toaster } from 'react-hot-toast';
@@ -126,7 +124,6 @@ function App() {
                   <Route path='/gestionResenas' element={<AdminRoute><GestionResenas /></AdminRoute>} />
                   <Route path='/gestionNotificacion' element={<AdminRoute><GestionNotificacion /></AdminRoute>} />
                   <Route path='/gestionDenuncia' element={<AdminRoute><GestionDenuncias /></AdminRoute>} />
-                  <Route path='/gestionInsignias' element={<AdminRoute><GestionInsignias /></AdminRoute>} />
             </Routes>
 
               <Routes>
@@ -166,7 +163,6 @@ function App() {
                   <Route path='/fichaLibro/:id' element={authUser ? <FichaTecnicaLibro /> : <Navigate to='/login' />} />
                   <Route path='/fichaAutor/:id' element={authUser ? <FichaTecnicaAutor /> : <Navigate to='/login' />} />
                   <Route path='/detalleComunidad/:id' element={authUser ? <DetallesComunidad /> : <Navigate to='/login' />} />  
-                  <Route path='/insignia' element={authUser ? <Insignias /> : <Navigate to='/login' />} />   
                   <Route path='/recuperarContrasena' element={<RecuperarContrasena />} />
                   </Routes>
               </main>

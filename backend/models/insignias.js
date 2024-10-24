@@ -11,7 +11,6 @@ const InsigniasSchema = new mongoose.Schema(
         },
         cantidadObjetivo: { type: Number, required: true },
         icono: { type: String }, // URL del icono de la insignia
-        fechaCreacion: { type: Date, default: Date.now },
     }
 );
 

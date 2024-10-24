@@ -636,16 +636,6 @@ export const actualizarUsuario = async (req, res) => {
       }
       user.contrasena = await bcrypt.hash(newcontrasena, 10);
     }
-
-    // Actualizar nombre, correo, país y biografía
-    user.nombre = nombre || user.nombre;
-    user.nombreCompleto = nombreCompleto || user.nombreCompleto;
-    user.correo = correo || user.correo;
-    user.pais = pais || user.pais;
-    user.biografia = biografia || user.biografia;
-    user.fotoPerfil = fotoPerfil || user.fotoPerfil;
-    user.fotoPerfilBan = fotoPerfilBan || user.fotoPerfilBan;
-
     // Actualizar foto de perfil si es necesario
     if (fotoPerfil) {
       if (user.fotoPerfil) {
@@ -682,6 +672,15 @@ export const actualizarUsuario = async (req, res) => {
       }
       user.generoLiterarioPreferido = generos.map((genero) => genero._id); // Actualiza los géneros literarios del usuario
     }
+
+    // Actualizar nombre, correo, país y biografía
+    user.nombre = nombre || user.nombre;
+    user.nombreCompleto = nombreCompleto || user.nombreCompleto;
+    user.correo = correo || user.correo;
+    user.pais = pais || user.pais;
+    user.biografia = biografia || user.biografia;
+    user.fotoPerfil = fotoPerfil || user.fotoPerfil;
+    user.fotoPerfilBan = fotoPerfilBan || user.fotoPerfilBan;
 
     // Guardar los cambios en el usuario
     await user.save();

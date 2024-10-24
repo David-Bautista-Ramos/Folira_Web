@@ -262,16 +262,16 @@ useEffect(() => {
                                     >
                                         <div className="flex items-center mb-4">
                                             <div className="w-24 h-24 bg-gray-300 rounded-full border border-primary overflow-hidden mr-4">
-                                                <Link to={`/profile/${resena.idUsuario._id}`}>
+                                                <Link to={`/profile/${resena.idUsuario?.nobre}`}>
                                                     <img
                                                         className="object-cover w-full h-full"
-                                                        src={resena.idUsuario.fotoPerfil || "url_de_imagen_predeterminada"}
+                                                        src={resena.idUsuario?.fotoPerfil || "url_de_imagen_predeterminada"}
                                                         alt="Perfil"
                                                     />
                                                 </Link>
                                             </div>
                                             <div>
-                                                <h2 className="font-semibold">{resena.idUsuario.nombreCompleto}</h2>
+                                                <h2 className="font-semibold">{resena.idUsuario?.nombreCompleto}</h2>
                                                 <p>Estado: {obtenerEstadoTexto(resena.estado)}</p>
                                             </div>
                                         </div>

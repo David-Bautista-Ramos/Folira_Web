@@ -1,19 +1,17 @@
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import toast from "react-hot-toast";
 
-function useCreateComunidad(obtenerComunidades) {
+function useCreateInsignia() {
   const queryClient = useQueryClient();
 
-  const { mutateAsync: createComuniad, isPending: isCreatingComunidad } = useMutation({
+  const { mutateAsync: createInisgnia, isPending: isCreatingInisgnia } = useMutation({
     mutationFn: async (formData) => {
       try {
-        const res = await fetch(`/api/comunidad/comunidad`, {
+        const res = await fetch(`/api/insignias/insignias`, {
           method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify(formData),
+          body: formData, // Send FormData directly
         });
+        
         const data = await res.json();
         if (!res.ok) {
           throw new Error(data.error || "Something went wrong");
@@ -24,11 +22,8 @@ function useCreateComunidad(obtenerComunidades) {
       }
     },
     onSuccess: async () => {
-      // Cambia a async
-      toast.success("Comunidad creado con éxito");
-      obtenerComunidades();
+      toast.success("Insignia creada con éxito"); // Update the success message
       await Promise.all([
-        // Añade await aquí
         queryClient.invalidateQueries({ queryKey: ["authUser"] }),
         queryClient.invalidateQueries({ queryKey: ["userProfile"] }),
       ]);
@@ -38,7 +33,7 @@ function useCreateComunidad(obtenerComunidades) {
     },
   });
 
-  return { createComuniad, isCreatingComunidad };
+  return { createInisgnia, isCreatingInisgnia };
 }
 
-export default useCreateComunidad;
+export default useCreateInsignia;

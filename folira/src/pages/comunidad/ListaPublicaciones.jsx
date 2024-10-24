@@ -79,7 +79,7 @@ const ListaPublicaciones = ({ posts, esAdmin, esMiembro }) => {
   return (
     <div className="mt-8">
       <h3 className="text-lg font-semibold">Publicaciones:</h3>
-      {posts.length ? (
+      {posts && posts.length ? (
         posts.map((post) => (
           <div key={post._id} className="border-b py-4">
             <div className="flex items-start gap-4">

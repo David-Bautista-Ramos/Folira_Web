@@ -221,13 +221,13 @@ function GestionDenuncia() {
               />
             </div>
 
-            {/* Botón para abrir el modal de filtro por tipo */}
+            {/* Botón para abrir el modal de filtro por tipo
             <button
               onClick={() => setIsFiltroModalOpen(true)}
               className="bg-primary text-white px-4 py-2 rounded ml-[330px] hover:bg-blue-950"
             >
               Tipo
-            </button>
+            </button> */}
 
             <button
               onClick={() => setIsFiltroModalOpen(true)}

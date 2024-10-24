@@ -49,6 +49,7 @@ const DetallesComunidad = () => {
       queryClient.invalidateQueries(['posts', id]);
     },
   });
+  
 
   const handleImgChange = (e) => {
     const file = e.target.files[0];
@@ -89,7 +90,7 @@ const DetallesComunidad = () => {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json',
-          Authorization: `Bearer ${authUser.token}`,
+          Authorization:` Bearer ${authUser.token}`,
         },
       });
       if (!res.ok) throw new Error('Error al inactivar la comunidad');
@@ -99,27 +100,26 @@ const DetallesComunidad = () => {
       toast.error('Hubo un problema al inactivar la comunidad');
     }
   };
-
   const handleUnirseComunidad = async () => {
     const userId = authUser._id;
 
-    try {
-      const response = await fetch('/api/comunidad/unircomunidad', {
-        method: 'PUT',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ userId, comunidadId: id }),
-      });
+  try {
+    const response = await fetch('/api/comunidad/unircomunidad', {
+      method: 'PUT',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ userId, comunidadId: id }),
+    });
 
-      if (!response.ok) throw new Error('Error al unirse a la comunidad');
-      const data = await response.json();
-      toast.success(data.message);
+    if (!response.ok) throw new Error('Error al unirse a la comunidad');
+    const data = await response.json();
+    toast.success(data.message);
 
-      // Invalida la consulta de la comunidad para actualizar los datos
-      queryClient.invalidateQueries(['comunidad', id]);
-    } catch (error) {
-      console.error('Error:', error);
-      toast.error('No se pudo unir a la comunidad');
-    }
+    // Invalida la consulta de la comunidad para actualizar los datos
+    queryClient.invalidateQueries(['comunidad', id]);
+  } catch (error) {
+    console.error('Error:', error);
+    toast.error('No se pudo unir a la comunidad');
+  }
   };
 
   if (loadingComunidad) return <div>Cargando...</div>;
@@ -130,128 +130,134 @@ const DetallesComunidad = () => {
 
   return (
     <div className='flex-[4_4_0] border-r border-primary min-h-screen'> 
-      <div className="flex flex-col border-r border-gray-300 min-h-screen bg-white p-6 rounded-lg shadow-lg">
-        
-        {/* Columna 1: Imagen y botones */}
-        <div className="flex flex-row mb-4">
-          <div className="flex flex-col items-center mr-6">
-            <img
-              src={fotoComunidad}
-              alt={nombre}
-              className="w-48 h-48 rounded-full object-cover mb-4"
-            />
-
-            {esMiembro && (
-              <button onClick={handleSalirComunidad} className="mb-2 bg-primary text-white py-2 px-4 rounded hover:bg-blue-950">
-                Salir de la comunidad
-              </button>
-            )}
-
-            {esAdmin && (
-              <div className="flex space-x-2"> {/* Usar space-x-2 para espaciar los botones */}
-                <button
-                  onClick={handleInactivarComunidad}
-                  className="bg-primary text-white py-2 px-3 rounded hover:bg-blue-950"
-                >
-                  Inactivar
-                </button>
-                <button
-                  onClick={() => setIsActualizarModalOpen(true)}
-                  className="bg-primary text-white py-2 px-3 rounded hover:bg-blue-950"
-                >
-                  Actualizar
-                </button>
-              </div>
-            )}
-          </div>
-
-          {/* Columna 2: Información de la comunidad */}
-          <div className="flex flex-col flex-grow">
-            <h2 className="text-2xl font-semibold">{nombre}</h2>
-            <p className="text-lg">
-              <strong>Administrador:</strong> {admin?.nombre}
-            </p>
-            <p className="text-lg">
-              <strong>Descripción:</strong>{' '}
-              <span className="break-all">
-                {expandirDescripcion ? descripcion : `${descripcion.substring(0, 100)}...`}
-              </span>
-              {descripcion.length > 100 && (
-                <button onClick={toggleDescripcion} className="ml-2 text-blue-600">
-                  {expandirDescripcion ? <BsEyeSlash /> : <BsEye />}
-                </button>
-              )}
-            </p>
-            <p className="text-lg">
-              <strong>Número de miembros:</strong> {miembros?.length || 0}
-            </p>
-            <p className="text-lg">
-              <strong>Enlace de conexión:</strong>{' '}
-              <a href={link} target="_blank" rel="noopener noreferrer" className="text-blue-600 underline">
-                {link}
-              </a>
-            </p>
-
-            {!esMiembro && !esAdmin && (
-              <button onClick={handleUnirseComunidad} className="mt-4 bg-green-600 text-white py-2 px-4 rounded">
-                Unirme a la comunidad
-              </button>
-            )}
-          </div>
-        </div>
-
-        {/* Sección de Publicación */}
-        {esMiembro || esAdmin ? (
-          <form className="mt-4" onSubmit={handleSubmit}>
-            <h2 className="font-bold text-xl">¡Haz una nueva publicación!🎊</h2>
-            
-            <div className="flex items-center mt-4">
-              {/* Icono de imagen a la izquierda */}
-              <label className="mr-4 cursor-pointer">
-                <CiImageOn className="text-4xl" />
-                <input type="file" accept="image/*" onChange={handleImgChange} className="hidden" />
-              </label>
-          
-              {/* Textarea */}
-              <textarea
-                value={contenido}
-                onChange={(e) => {
-                  setContenido(e.target.value);
-                }}
-                className="flex-grow border-2 border-gray-300 p-2 rounded"
-                placeholder="¿Qué quieres compartir?"
-                rows="4"
-              />
-            </div>
-
-            {/* Botón de publicación */}
-            <button type="submit" className="mt-2 bg-primary text-white py-2 px-4 rounded hover:bg-blue-950" disabled={isPending}>
-              {isPending ? 'Publicando...' : 'Publicar'}
+    <div className="flex flex-col border-r border-gray-300 min-h-screen bg-white p-6 rounded-lg shadow-lg">
+      
+      {/* Columna 1: Imagen y botones */}
+      <div className="flex flex-row mb-4">
+        <div className="flex flex-col items-center mr-6">
+          <img
+            src={fotoComunidad}
+            alt={nombre}
+            className="w-48 h-48 rounded-full object-cover mb-4"
+          />
+  
+          {esMiembro && (
+            <button onClick={handleSalirComunidad} className="mb-2 bg-primary text-white py-2 px-4 rounded hover:bg-blue-950">
+              Salir de la comunidad
             </button>
-
-            {fotoPublicacion && <img src={fotoPublicacion} alt="Vista previa" className="mt-2 w-32 h-32 object-cover rounded" />}
-          </form>
-        ) : (
-          <p className="mt-4 text-gray-500">Debes unirte a la comunidad para publicar.</p>
-        )}
-
-        {/* Sección de Publicaciones */}
-        <h2 className="font-bold text-xl mt-6">Publicaciones:</h2>
-        {posts.length > 0 ? (
-          <ListaPublicaciones publicaciones={posts} />
-        ) : (
-          <p className="mt-2 text-gray-500">No hay publicaciones en esta comunidad.</p>
-        )}
+          )}
+  
+          {esAdmin && (
+            <div className="flex space-x-2"> {/* Usar space-x-2 para espaciar los botones */}
+              <button
+                onClick={handleInactivarComunidad}
+                className="bg-primary text-white py-2 px-3 rounded hover:bg-blue-950"
+              >
+                Inactivar
+              </button>
+              <button
+                onClick={() => setIsActualizarModalOpen(true)}
+                className="bg-primary text-white py-2 px-3 rounded hover:bg-blue-950"
+              >
+                Actualizar
+              </button>
+            </div>
+          )}{!esMiembro && !esAdmin && (
+            <button onClick={handleUnirseComunidad} className="mt-4 bg-green-600 text-white py-2 px-4 rounded">
+              Unirme a la comunidad
+            </button>
+          )}
+        </div>
+  
+        {/* Columna 2: Información de la comunidad */}
+        <div className="flex flex-col flex-grow">
+          <h2 className="text-2xl font-semibold">{nombre}</h2>
+          <p className="text-lg">
+            <strong>Administrador:</strong> {admin?.nombre}
+          </p>
+          <p className="text-lg">
+            <strong>Descripción:</strong>{' '}
+            <span className="break-all"> {/* Mantenido break-all para manejar los cortes */}
+              {expandirDescripcion ? descripcion : `${descripcion.substring(0, 100)}...`}
+            </span>
+            {descripcion.length > 100 && (
+              <button onClick={toggleDescripcion} className="ml-2 text-blue-600">
+                {expandirDescripcion ? <BsEyeSlash /> : <BsEye />}
+              </button>
+            )}
+          </p>
+          <p className="text-lg">
+            <strong>Número de miembros:</strong> {miembros?.length || 0}
+          </p>
+          <p className="text-lg">
+            <strong>Enlace de conexión:</strong>{' '}
+            <a href={link} target="_blank" rel="noopener noreferrer" className="text-blue-600 underline">
+              {link}
+            </a>
+          </p>
+        </div>
       </div>
-
-      {/* Modal para actualizar la comunidad */}
-      {isActualizarModalOpen && (
-        <ModalActualizarComunidad 
-          comunidad={comunidad}
-          closeModal={() => setIsActualizarModalOpen(false)} 
-        />
+  
+      {/* Sección de Publicación */}
+      {esMiembro || esAdmin ? (
+        <form className="mt-4" onSubmit={handleSubmit}>
+          <h2 className="font-bold text-xl">¡Haz una nueva publicación!🎊</h2>
+          
+          <div className="flex items-center mt-4">
+            {/* Icono de imagen a la izquierda */}
+            <label className="mr-4 cursor-pointer">
+              <CiImageOn className="text-4xl" /> {/* Icono ajustado */}
+              <input type="file" accept="image/*" onChange={handleImgChange} className="hidden" />
+            </label>
+        
+            {/* Textarea */}
+            <textarea
+              value={contenido}
+              onChange={(e) => {
+                if (e.target.value.length <= 300) {
+                  setContenido(e.target.value);
+                }
+              }}
+              className="border border-gray-300 rounded p-2 mb-2 h-[48px] w-[455px] focus:outline-none focus:border-blue-950 resize-none" // Espacio ajustado
+              placeholder="Escribe algo..."
+            />
+        
+            {/* Botón de Publicar a la derecha */}
+            <button 
+              type="submit" 
+              disabled={isPending} 
+              className="ml-4 bg-primary text-white py-2 px-4 rounded hover:bg-blue-950 h-[48px]" // Mismo alto que el textarea
+            >
+              {isPending ? 'Cargando...' : 'Publicar'}
+            </button>
+          </div>
+        
+          <p className="text-sm text-gray-500 ml-[53px]">
+            {300 - contenido.length} caracteres restantes
+          </p>
+        </form>
+      ) : (
+        <p className='mt-10 font-bold'>Debes ser miembro para publicar.*</p>
       )}
+  
+      <ListaPublicaciones posts={posts} esAdmin={esAdmin} esMiembro={esMiembro} /> {/* Usar el nuevo componente */}
+      
     </div>
+  
+    {isActualizarModalOpen && (
+      <ModalActualizarComunidad 
+        isOpen={isActualizarModalOpen} 
+        onClose={() => setIsActualizarModalOpen(false)} 
+        token={authUser.token} 
+        comunidadId={id} 
+      />
+    )}
+  </div>
+  
+
+  
+
+    
   );
 };
 

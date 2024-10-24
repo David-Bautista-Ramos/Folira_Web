@@ -6,7 +6,7 @@ import ModalActualizarNotificacion from "./ModalActualizarNotificacion";
 import ModalInactivarNotificacion from "./ModalInactivarNotificacion";
 import banner_notificacion from "../../assets/img/banner_gestion_notificaciones.png"; 
 import ModalFiltrarEstado from "../../components/common/FiltrarNotificacionEstado";
-import { FaUser, FaHeart, FaAward, FaTriangleExclamation, FaRegMessage } from "react-icons/fa6";
+import { FaUser, FaHeart, FaTriangleExclamation, FaRegMessage } from "react-icons/fa6";
 import ModalEliminarNotificacion from "./ModalEliminarNotificacion";
 import ModalFiltroEstado from "../../components/common/ModalListarDenuncia";
 import ModalCrearNotificacion from '../gestionNotificaciones/ModalCrearNotificacion';
@@ -152,8 +152,8 @@ function GestionNotificacion() {
         return <FaUser className="text-blue-600 text-2xl" />;
       case "like":
         return <FaHeart className="text-red-500 text-2xl" />;
-      case "insignia":
-        return <FaAward className="text-yellow-500 text-2xl" />;
+      // case "insignia":
+      //   return <FaAward className="text-yellow-500 text-2xl" />;
       case "denuncia":
         return <FaTriangleExclamation className="text-gray-600 text-2xl" />;
       case "comentario":
