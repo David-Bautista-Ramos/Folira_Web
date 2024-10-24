@@ -3,6 +3,7 @@ import { useEffect, useState, useCallback } from 'react';
 import { Link } from 'react-router-dom';
 import ModalCrearNuevaComunidad from './ModalCrearNuevaComunidad.jsx'; // Importa el modal
 import toast from 'react-hot-toast';
+import { FaPlus } from 'react-icons/fa';
 
 // Componente para cada tarjeta de comunidad
 const ComunidadCard = ({ comunidad, unirseComunidad }) => (
@@ -90,21 +91,22 @@ const ComunidadesSugeridas = () => {
 
   return (
     <div className="p-6">
+
+      <button
+        onClick={() => setIsCrearModalOpen(true)} // Abre el modal para crear comunidad
+        className="mr-3 p-2 bg-primary text-white rounded-full hover:bg-blue-950 "
+      >
+        <FaPlus />
+      </button>
+
       <input
         type="text"
         placeholder="Buscar comunidad..."
         value={filtro}
         onChange={(e) => setFiltro(e.target.value)}
-        className="mb-4 p-2 border border-gray-300 rounded"
+        className="border border-gray-300 rounded p-2 mb-4 w-[565px] mt-4 focus:outline-none focus:border-blue-950" // Agregamos margen superior y borde rojo en focus
       />
       
-      <button
-        onClick={() => setIsCrearModalOpen(true)} // Abre el modal para crear comunidad
-        className="bg-green-500 text-white rounded-full px-4 py-2 hover:bg-green-700 mb-4"
-      >
-        Crear Comunidad
-      </button>
-
       {loading ? (
         <p>Cargando comunidades...</p>
       ) : (

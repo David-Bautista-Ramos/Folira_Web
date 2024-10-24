@@ -125,49 +125,68 @@ const LibroSugerido = () => {
     }
     
     return (
-        <div className="p-6">
-            {/* Buscador */}
-            <input
-                type="text"
-                placeholder="Buscar libro por título..."
-                value={filtro}
-                onChange={(e) => setFiltro(e.target.value)}
-                className="w-full p-2 mb-4 border rounded"
-            />
+<div className="p-6">
+  {/* Buscador */}
+  <input
+    type="text"
+    placeholder="Buscar libro por título..."
+    value={filtro}
+    onChange={(e) => setFiltro(e.target.value)}
+    className="w-full p-2 mb-4 border rounded focus:outline-none focus:border-primary"
+  />
 
-            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6">
-                {librosFiltrados.map((libro) => (
-                    <div
-                        key={libro._id}
-                        className="bg-white rounded-lg shadow-lg p-4 flex flex-col h-full"
-                    >
-                        <Link
-                            to={`/fichaLibro/${libro._id}`}
-                            className="flex flex-col items-center"
-                        >
-                            <img
-                                src={libro.portada}
-                                alt={libro.titulo}
-                                className="w-35 h-60 object-cover rounded"
-                            />
-                            <h2 className="text-lg font-semibold mt-4 text-center">{libro.titulo}</h2>
-                        </Link>
-                        <button
-                            onClick={() => {
-                                if (librosGuardados.has(libro._id)) {
-                                    handleRemove(libro._id); // Eliminar si ya está guardado
-                                } else {
-                                    handleSave(libro._id); // Guardar si no está guardado
-                                }
-                            }}
-                            className={`mt-4 rounded px-4 py-2 ${librosGuardados.has(libro._id) ? 'bg-slate-600' : 'bg-gray-800'} text-white hover:${librosGuardados.has(libro._id) ? 'bg-slate-700' : 'bg-gray-800'}`}
-                        >
-                            {librosGuardados.has(libro._id) ? 'Eliminar' : 'Guardar'} {/* Cambia el texto del botón */}
-                        </button>
-                    </div>
-                ))}
-            </div>
-        </div>
+  <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6">
+    {librosFiltrados.map((libro) => (
+      <div
+        key={libro._id}
+        className="bg-white rounded-lg shadow-lg p-4 flex flex-col h-full justify-between"
+      >
+        <Link
+          to={`/fichaLibro/${libro._id}`}
+          className="flex flex-col items-center"
+        >
+          <img
+            src={libro.portada}
+            alt={libro.titulo}
+            className="w-35 h-60 object-cover rounded"
+          />
+          <h2
+            className="text-lg font-semibold mt-4 text-center mb-3"
+            style={{
+              display: '-webkit-box',
+              WebkitLineClamp: 2, // Limitar a 2 líneas
+              WebkitBoxOrient: 'vertical',
+              overflow: 'hidden',
+              textOverflow: 'ellipsis',
+            }}
+          >
+            {libro.titulo}
+          </h2>
+        </Link>
+
+        {/* Botón siempre abajo */}
+        <button
+          onClick={() => {
+            if (librosGuardados.has(libro._id)) {
+              handleRemove(libro._id); // Eliminar si ya está guardado
+            } else {
+              handleSave(libro._id); // Guardar si no está guardado
+            }
+          }}
+          className={`mt-auto w-full rounded px-4 py-2 ${
+            librosGuardados.has(libro._id) ? 'bg-slate-600' : 'bg-gray-800'
+          } text-white hover:${
+            librosGuardados.has(libro._id) ? 'bg-slate-700' : 'bg-gray-900'
+          } transition`}
+        >
+          {librosGuardados.has(libro._id) ? 'Eliminar' : 'Guardar'}
+        </button>
+      </div>
+    ))}
+  </div>
+</div>
+
+      
     );
 };
 

@@ -42,7 +42,7 @@ const ModalSeguidores = ({ seguidores }) => {
                   <div className='flex flex-col'>
                     <Link
                       to={`/profile/${seguidore.nombre}`}
-                      className="font-bold text-lg text-blue-600 hover:underline"
+                      className=" text-lg text-primary hover:text-blue-950"
                     >
                       {seguidore.nombreCompleto}
                     </Link>

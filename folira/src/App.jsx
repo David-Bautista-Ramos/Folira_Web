@@ -23,6 +23,7 @@ import DetallesComunidad from  './pages/comunidad/DetalleComunidad.jsx';
 import Index from './pages/Index.jsx';
 import RecuperarContrasena from './pages/auth/contraseña/RecuperarContrasena.jsx';
 import Insignias from './pages/insignias/Insignias.jsx';
+import GestionInsignias from './Administrador/gestionInsignias/GestionInsignias.jsx';
 
 
 import { Toaster } from 'react-hot-toast';
@@ -125,6 +126,7 @@ function App() {
                   <Route path='/gestionResenas' element={<AdminRoute><GestionResenas /></AdminRoute>} />
                   <Route path='/gestionNotificacion' element={<AdminRoute><GestionNotificacion /></AdminRoute>} />
                   <Route path='/gestionDenuncia' element={<AdminRoute><GestionDenuncias /></AdminRoute>} />
+                  <Route path='/gestionInsignias' element={<AdminRoute><GestionInsignias /></AdminRoute>} />
             </Routes>
 
               <Routes>

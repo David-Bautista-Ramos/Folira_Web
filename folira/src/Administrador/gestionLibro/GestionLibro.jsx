@@ -231,6 +231,9 @@ function GestionLibro() {
 
             {/* Contenedor para el icono de "más" y el botón "Estado" alineados a la derecha */}
             <div className="flex items-center gap-4">
+              <button onClick={() => setIsGenerosModalOpen(true)} className="bg-primary text-white px-4 py-2 rounded hover:bg-blue-950">
+                Ver Géneros
+              </button>
               <button onClick={() => setIsCrearModalOpen(true)} title="Crear">
                 <BiPlus className="text-xl" />
               </button>

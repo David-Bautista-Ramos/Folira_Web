@@ -115,13 +115,13 @@ const NotificationPage = () => {
           <div className='border-b border-gray-700' key={notification._id}>
             <div className='flex justify-between p-4'>
               <div className='flex gap-2 items-center'>
-                {notification.tipo === 'seguidor' && <FaUser className='w-7 h-7 text-primary' />}
-                {notification.tipo === 'like' && <FaHeart className='w-7 h-7 text-red-500' />}
+                {notification.tipo === 'seguidor' && <FaUser className='w-5 h-5 text-primary' />}
+                {notification.tipo === 'like' && <FaHeart className='w-5 h-5 text-red-500' />}
                 {notification.tipo === 'denuncia' && (
-                  <FaTriangleExclamation className='text-gray-600 text-2xl' />
+                  <FaTriangleExclamation className='text-primary w-5 h-5' />
                 )}
                 {notification.tipo === 'comentario' && (
-                  <FaRegMessage className='text-green-500 text-2xl' />
+                  <FaRegMessage className='text-green-500 w-5 h-5' />
                 )}
                 <Link to={`/profile/${notification.de.nombre}`} className='flex items-center gap-2'>
                   <div className='avatar'>
