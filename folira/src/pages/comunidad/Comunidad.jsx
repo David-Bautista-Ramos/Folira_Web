@@ -1,12 +1,11 @@
 import { useState } from "react";
 import TusComunidades from "./TusComunidades";
 import ComunidadesSugeridas from "./ComunidadesSugeridas";
-import BuscadorComunidad from "./ComunidadBusqueda";
 
 
-const Comunidad = () => {
+const Comunidad = ({authUser}) => {
 
-    const [feedType, setFeedType] = useState("forYouComuni");
+    const [feedType, setFeedType] = useState("sugerComunidad");
 
     return (
         <>
@@ -18,32 +17,28 @@ const Comunidad = () => {
 						className={
 							"flex justify-center flex-1 p-3 hover:bg-secondary transition duration-300 cursor-pointer relative"
 						}
-						onClick={() => setFeedType("forYouComuni")}
+						onClick={() => setFeedType("sugerComunidad")}
 					>
 						Comunidades  Sugeridas
-						{feedType === "forYouComuni" && (
+						{feedType === "sugerComunidad" && (
 							<div className='absolute bottom-0 w-10  h-1 rounded-full bg-primary'></div>
 						)}
 					</div>
 					<div
 						className='flex justify-center flex-1 p-3 hover:bg-secondary transition duration-300 cursor-pointer relative'
-						onClick={() => setFeedType("following")}
+						onClick={() => setFeedType("myComuni")}
 					>
 						Tus comunidades
-						{feedType === "following" && (
+						{feedType === "myComuni" && (
 							<div className='absolute bottom-0 w-10  h-1 rounded-full bg-primary'></div>
 						)}
 					</div>
                     
 				</div>
-                <BuscadorComunidad/>
 
-
-                {/*  CREATE POST INPUT */}
-				<TusComunidades />
-
-                {/* POSTS */}
-                <ComunidadesSugeridas />
+				{/* Insignias según el tipo seleccionado */}
+				{feedType === "sugerComunidad" && <ComunidadesSugeridas authUser={authUser}/>}
+                {feedType === "myComuni" && <TusComunidades authUser={authUser} />}
 				
                 
             </div>

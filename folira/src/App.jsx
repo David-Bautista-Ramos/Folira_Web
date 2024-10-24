@@ -161,9 +161,9 @@ function App() {
                   <Route path='/comunidad' element={authUser ? <Comunidad /> : <Navigate to='/login' />} />
                   <Route path='/libro' element={authUser ? <Libro /> : <Navigate to='/login' />} />
                   <Route path='/autor' element={authUser ? <Autor /> : <Navigate to='/login' />} />
-                  <Route path='/fichaLibro' element={authUser ? <FichaTecnicaLibro /> : <Navigate to='/login' />} />
-                  <Route path='/fichaAutor' element={authUser ? <FichaTecnicaAutor /> : <Navigate to='/login' />} />
-                  <Route path='/detalleComunidad' element={authUser ? <DetallesComunidad /> : <Navigate to='/login' />} />  
+                  <Route path='/fichaLibro/:id' element={authUser ? <FichaTecnicaLibro /> : <Navigate to='/login' />} />
+                  <Route path='/fichaAutor/:id' element={authUser ? <FichaTecnicaAutor /> : <Navigate to='/login' />} />
+                  <Route path='/detalleComunidad/:id' element={authUser ? <DetallesComunidad /> : <Navigate to='/login' />} />  
                   <Route path='/insignia' element={authUser ? <Insignias /> : <Navigate to='/login' />} />   
                   <Route path='/recuperarContrasena' element={<RecuperarContrasena />} />
 
