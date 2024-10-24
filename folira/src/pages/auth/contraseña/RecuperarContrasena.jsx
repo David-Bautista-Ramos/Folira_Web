@@ -3,7 +3,7 @@ import { Link, useNavigate } from 'react-router-dom';
 import logo from '../../../assets/img/Folira_logo.png'
 
 const RecuperarContrasena = () => {
-    const [correo_usuario, setCorreo_Usuario] = useState('');
+    const [correo, setCorreo] = useState('');
     const navigate = useNavigate();
 
     const validarCorreo = (correo) => {
@@ -14,18 +14,18 @@ const RecuperarContrasena = () => {
     const handleSubmit = async (e) => {
         e.preventDefault();
 
-        if (!validarCorreo(correo_usuario)) {
+        if (!validarCorreo(correo)) {
             alert('Correo inválido. Por favor ingresa un correo válido.');
             return;
         }
 
         try {
-            const response = await fetch('http://localhost:3001/api/olvido/recuperar-password', {
+            const response = await fetch('/api/users/RecupearPass', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json'
                 },
-                body: JSON.stringify({ correo_usuario })
+                body: JSON.stringify({ correo })
             });
 
             if (response.ok) {
@@ -67,8 +67,8 @@ const RecuperarContrasena = () => {
                             id="email"
                             className="mt-1 block w-full px-4 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-primary focus:border-primary sm:text-sm"
                             placeholder="Ingrese su correo"
-                            value={correo_usuario}
-                            onChange={(e) => setCorreo_Usuario(e.target.value)}
+                            value={correo}
+                            onChange={(e) => setCorreo(e.target.value)}
                             required
                         />
                     </div>

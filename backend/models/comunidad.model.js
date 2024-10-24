@@ -10,6 +10,9 @@ const ComunidadSchema = new mongoose.Schema(
         type: String,
         required: true,
       },
+      link: {
+        type: String,
+      },
       fotoComunidad: String,
       fotoComunidadURL: String,
       fotoBanner: String,

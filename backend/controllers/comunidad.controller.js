@@ -1,6 +1,7 @@
 import Comunidad from "../models/comunidad.model.js";
 import cloudinary from "cloudinary";
 import GeneroLiterario from "../models/generoLiterario.model.js";
+import mongoose from 'mongoose';
 
 // Crear una nueva comunidad
 export const crearComunidad = async (req, res) => {
@@ -13,6 +14,7 @@ export const crearComunidad = async (req, res) => {
       generoLiterarios, // Asegúrate de que este nombre sea correcto
       admin,
       miembros,
+      link,
     } = req.body;
 
     // Verificar si ya existe una comunidad con el mismo nombre
@@ -73,6 +75,7 @@ export const crearComunidad = async (req, res) => {
       generoLiterarios: generosGuardados, // Asegúrate de guardar el array aquí
       admin,
       miembros,
+      link,
     });
 
     // Guardar la comunidad en la base de datos
@@ -144,11 +147,58 @@ export const obtenerComunidadPorId = async (req, res) => {
   }
 };
 
+export const listarComunidadesMiembro = async (req, res) => {
+  try {
+    const { userId } = req.params;
+
+    // Buscar comunidades activas donde el usuario es miembro o creador
+    const comunidadesMiembro = await Comunidad.find({
+      estado: true,
+      $or: [
+        { miembros: userId },  // Usuario es miembro (comparación con String)
+        { admin: userId }       // Usuario es creador (comparación con String)
+      ]
+    });
+
+    if (comunidadesMiembro.length === 0) {
+      return res.status(404).json({ message: "No eres miembro ni creador de ninguna comunidad activa." });
+    }
+
+    return res.status(200).json(comunidadesMiembro);
+  } catch (error) {
+    console.error("Error al listar comunidades de las que eres miembro o creador:", error.message);
+    return res.status(500).json({ error: "Error en el servidor" });
+  }
+};
+
+export const listarComunidadesNoMiembro = async (req, res) => {
+  try {
+    const { userId } = req.params;
+
+    // Buscar comunidades activas donde el usuario no es miembro ni administrador
+    const comunidadesNoMiembro = await Comunidad.find({
+      estado: true,
+      miembros: { $nin: [userId] }, // Comunidades donde el usuario no es miembro
+      admin: { $nin: [userId] } // Comunidades donde el usuario no es administrador
+    });
+
+    if (comunidadesNoMiembro.length === 0) {
+      return res.status(404).json({ message: "No hay comunidades activas donde no seas miembro ni administrador." });
+    }
+
+    return res.status(200).json(comunidadesNoMiembro);
+  } catch (error) {
+    console.error("Error al listar comunidades de las que no eres miembro ni administrador:", error.message);
+    return res.status(500).json({ error: "Error en el servidor" });
+  }
+};
+
+
+
 // Controlador para que un usuario se una a una comunidad
 export const unirseComunidad = async (req, res) => {
   try {
-    const { comunidadId } = req.params; // ID de la comunidad a la que quiere unirse
-    const userId = req.user._id; // ID del usuario que está solicitando unirse
+    const { comunidadId,userId } = req.body; // ID de la comunidad a la que quiere unirse
 
     // Buscar la comunidad
     const comunidad = await Comunidad.findById(comunidadId);
@@ -177,6 +227,40 @@ export const unirseComunidad = async (req, res) => {
   }
 };
 
+export const salirComunidad = async (req, res) => {
+  try {
+    const { comunidadId, userId } = req.body; // ID de la comunidad y del usuario
+
+    // Buscar la comunidad
+    const comunidad = await Comunidad.findById(comunidadId);
+    if (!comunidad) {
+      return res.status(404).json({ error: "Comunidad no encontrada" });
+    }
+
+    // Verificar si el usuario es miembro de la comunidad
+    const esMiembro = comunidad.miembros.some(
+      (miembro) => miembro.toString() === userId
+    );
+    if (!esMiembro) {
+      return res.status(400).json({ error: "No eres miembro de esta comunidad" });
+    }
+
+    // Eliminar el usuario de la lista de miembros
+    comunidad.miembros = comunidad.miembros.filter(
+      (miembro) => miembro.toString() !== userId
+    );
+    await comunidad.save();
+
+    return res
+      .status(200)
+      .json({ message: "Has salido de la comunidad con éxito", comunidad });
+  } catch (error) {
+    console.error("Error al salir de la comunidad:", error.message);
+    return res.status(500).json({ error: "Error en el servidor" });
+  }
+};
+
+
 // Editar una comunidad
 export const editarComunidad = async (req, res) => {
   try {
@@ -184,6 +268,7 @@ export const editarComunidad = async (req, res) => {
     const {
       nombre,
       descripcion,
+      link,
       fotoComunidad,
       fotoBanner,
       generoLiterarios,
@@ -225,6 +310,7 @@ export const editarComunidad = async (req, res) => {
     // Actualizar los campos de la comunidad
     comunidadActual.nombre = nombre || comunidadActual.nombre; // Mantener el valor existente si no se proporciona uno nuevo
     comunidadActual.descripcion = descripcion || comunidadActual.descripcion;
+    comunidadActual.link = link || comunidadActual.link
     comunidadActual.fotoComunidad =
       fotoComunidadUrl || comunidadActual.fotoComunidad; // Actualiza solo si hay una nueva URL
     comunidadActual.fotoBanner = fotoBannerUrl || comunidadActual.fotoBanner; // Actualiza solo si hay una nueva URL

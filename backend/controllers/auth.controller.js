@@ -170,13 +170,19 @@ export const login = async (req, res) => {
 // Logout - Cerrar sesión
 export const logout = async (req, res) => {
   try {
-    res.cookie("jwt", "", { maxAge: 0 });
-    return res.status(200).json({ message: "Sesión cerrada con éxito." });
+      const { userId, tiempoEnPantalla } = req.body; // Obtenemos el ID y tiempo desde el cuerpo de la petición
+
+      // Actualizamos el tiempo en pantalla del usuario en la base de datos
+      await User.findByIdAndUpdate(userId, { $inc: { tiempoEnPantalla } });
+
+      res.cookie("jwt", "", { maxAge: 0 });
+      return res.status(200).json({ message: "Sesión cerrada con éxito." });
   } catch (error) {
-    console.error("Error en logout controller:", error.message);
-    return res.status(500).json({ error: "Error en el servidor." });
+      console.error("Error en logout controller:", error.message);
+      return res.status(500).json({ error: "Error en el servidor." });
   }
 };
+
 
 // Obtener usuario autenticado (getMe)
 export const getMe = async (req, res) => {

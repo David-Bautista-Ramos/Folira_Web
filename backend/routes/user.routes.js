@@ -1,5 +1,5 @@
 import express from 'express';
-import {activar, actualizarUsuario, cambiarEstadoUsuario, crearUser, desactivar, eliminarUsuario, followUnfollowUser, getSuggestedUsers, getUserProfile, obtenerUserAct, obtenerUsersDes, obtenerUsuarioPorId, obtenerUsuarios, updateUser} from '../controllers/user.controller.js'
+import {activar, actualizarUsuario, cambiarEstadoUsuario, crearUser, desactivar, eliminarUsuario, followUnfollowUser, getSuggestedUsers, getUserProfile, obtenerUserAct, obtenerUsersDes, obtenerUsuarioPorId, obtenerUsuarios, recuperarContraseña, updateUser} from '../controllers/user.controller.js'
 import { protectRoutes } from '../middleware/protectRoutes.js';
 // import  from '../controllers/obtenerUserPorNombre.controller.js'
 
@@ -23,5 +23,7 @@ router.get("/user/:userId",protectRoutes,obtenerUsuarioPorId);
 router.post("/upadateUsers/:userId",protectRoutes,actualizarUsuario);
 router.post("/estados/:id",protectRoutes,cambiarEstadoUsuario);
 router.delete("/delete/:id",protectRoutes,eliminarUsuario);
+
+router.post("/RecupearPass",recuperarContraseña);
 
 export default router;

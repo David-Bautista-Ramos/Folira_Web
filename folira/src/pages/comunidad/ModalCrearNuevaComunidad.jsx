@@ -1,25 +1,32 @@
-import { useState, useRef } from 'react';
-import Select from 'react-select';
+import { useState, useRef, useEffect } from 'react';
+import useCreateComunidad from '../../hooks/useCreateComunidad';
 
-const ModalCrearComunidad = ({ isOpen, onClose }) => {
-  const [nombre, setNombre] = useState('');
-  const [descripcion, setDescripcion] = useState('');
+const ModalCrearNuevaComunidad = ({ isOpen, onClose, token, userId ,obtenerComunidades}) => {
+  const [formData, setFormData] = useState({
+    nombre: "", 
+    descripcion: "", 
+    fotoComunidad: "", 
+    fotoBanner: "", 
+    generoLiterarios: [],
+    admin: userId ,
+    link: "",
+  });
+
+  const { createComuniad, isCreatingComunidad } = useCreateComunidad();
   const [fotoComunidad, setFotoComunidad] = useState(null);
   const [fotoBanner, setFotoBanner] = useState(null);
-  const [generoLiterarios, setGeneroLiterarios] = useState([]);
-  const [enlaceConexion, setEnlaceConexion] = useState(''); // Nuevo estado para el enlace de conexión
-  
   const fotoBannerRef = useRef(null);
   const fotoComunidadRef = useRef(null);
+  const [generoLiterarioOpciones, setGeneroLiterarioOpciones] = useState([]);
 
   const handleImgChange = (e, type) => {
     const file = e.target.files[0];
     if (file) {
       const reader = new FileReader();
       reader.onload = () => {
-        if (type === 'coverImg') {
+        if (type === "coverImg") {
           setFotoBanner(reader.result);
-        } else if (type === 'profileImg') {
+        } else if (type === "profileImg") {
           setFotoComunidad(reader.result);
         }
       };
@@ -27,61 +34,70 @@ const ModalCrearComunidad = ({ isOpen, onClose }) => {
     }
   };
 
-  const handleCrearComunidad = (e) => {
+  useEffect(() => {
+    const fetchGeneros = async () => {
+      try {
+        const response = await fetch('/api/geneLiter/getgeneros', {
+          method: 'GET',
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        });
+        const generos = await response.json();
+        if (generos) {
+          setGeneroLiterarioOpciones(generos);
+        }
+      } catch (error) {
+        console.error("Error al obtener los géneros literarios:", error);
+      }
+    };
+    fetchGeneros();
+  }, [token]);
+
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    console.log({
-      nombre,
-      descripcion,
+    await createComuniad({
+      ...formData,
       fotoComunidad,
       fotoBanner,
-      generoLiterarios,
-      enlaceConexion, // Agrega el enlace de conexión al log
     });
-    onClose(); // Cierra el modal después de crear la comunidad
+    obtenerComunidades();
+    onClose();
   };
 
-  if (!isOpen) return null; // No renderiza el modal si no está abierto
+  const handleInputChange = (e) => {
+    const { name, value, checked } = e.target;
+    if (name === "generoLiterarios") {
+      if (checked && formData.generoLiterarios.length < 5) {
+        setFormData((prevData) => ({
+          ...prevData,
+          generoLiterarios: [...prevData.generoLiterarios, value],
+        }));
+      } else if (!checked) {
+        setFormData((prevData) => ({
+          ...prevData,
+          generoLiterarios: prevData.generoLiterarios.filter((genero) => genero !== value),
+        }));
+      }
+    } else {
+      setFormData({ ...formData, [name]: value });
+    }
+  };
 
-  // Lista de géneros literarios
-  const generos = [
-    { _id: '1', nombre: 'Ficción' },
-    { _id: '2', nombre: 'No ficción' },
-    { _id: '3', nombre: 'Fantasía' },
-    { _id: '4', nombre: 'Ciencia ficción' },
-    { _id: '5', nombre: 'Misterio' },
-    { _id: '6', nombre: 'Romance' },
-    { _id: '7', nombre: 'Terror' },
-    { _id: '8', nombre: 'Biografía' },
-    { _id: '9', nombre: 'Autobiografía' },
-    { _id: '10', nombre: 'Ensayo' },
-    { _id: '11', nombre: 'Drama' },
-    { _id: '12', nombre: 'Poesía' },
-    { _id: '13', nombre: 'Literatura infantil' },
-    { _id: '14', nombre: 'Literatura juvenil' },
-    { _id: '15', nombre: 'Clásicos' },
-    { _id: '16', nombre: 'Thriller' },
-    { _id: '17', nombre: 'Novela histórica' },
-    { _id: '18', nombre: 'Cuento' },
-    { _id: '19', nombre: 'Literatura contemporánea' },
-    { _id: '20', nombre: 'Ciencia y tecnología' },
-  ];
-
-  // Convertir los géneros a formato para react-select
-  const options = generos.map(genero => ({
-    value: genero._id,
-    label: genero.nombre,
-  }));
+  if (!isOpen) return null;
 
   return (
     <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-50" onClick={onClose}>
-      <div className="relative bg-white p-6 rounded-lg w-full max-w-4xl max-h-[90vh] overflow-y-auto scrollbar-custom" onClick={(e) => e.stopPropagation()}>
-        <h2 className="text-2xl font-semibold text-primary text-center mb-4">Crear Nueva Comunidad</h2>
+      <div className="relative bg-white p-6 rounded-lg w-full max-w-md" onClick={(e) => e.stopPropagation()}>
+        <div className="border-b-2 border-primary pb-2 mb-4">
+          <h2 className="text-xl text-primary text-center">Crear Comunidad</h2>
+        </div>
 
-        {/* Foto del Banner con la Foto de la Comunidad */}
-        <div className="relative mb-6">
+        <div className="relative mb-8">
+          {/* COVER IMG */}
           <img
             src={fotoBanner || "/cover.png"}
-            className="h-32 w-full object-cover rounded-lg"
+            className="h-40 w-full object-cover rounded-lg"
             alt="cover image"
           />
           <button
@@ -97,7 +113,9 @@ const ModalCrearComunidad = ({ isOpen, onClose }) => {
             ref={fotoBannerRef}
             onChange={(e) => handleImgChange(e, "coverImg")}
           />
-          <div className="absolute bottom-[-25px] left-4 w-20 h-20">
+
+          {/* USER AVATAR */}
+          <div className="absolute bottom-[-30px] left-4 w-24 h-24">
             <img
               src={fotoComunidad || "/avatar-placeholder.png"}
               className="w-full h-full rounded-full border-2 border-white object-cover"
@@ -114,82 +132,66 @@ const ModalCrearComunidad = ({ isOpen, onClose }) => {
           </div>
         </div>
 
-        {/* Contenedor de dos columnas */}
-        <div className="grid grid-cols-2 gap-x-4">
-          {/* Primera columna */}
-          <div>
-            <div className="mb-4">
-              <label className="block text-gray-700">Nombre de la Comunidad</label>
-              <input
-                type="text"
-                value={nombre}
-                onChange={(e) => setNombre(e.target.value)}
-                required
-                className="w-full border border-gray-300 p-2 rounded-md"
-              />
-            </div>
+        {/* Input fields */}
+        <label className="block mb-1">Nombre</label>
+        <input
+          type="text"
+          value={formData.nombre}
+          onChange={handleInputChange}
+          name="nombre"
+          placeholder="Nombre de la comunidad"
+          className="w-full p-2 mb-3 border rounded focus:border-primary focus:outline-none text-sm"
+        />
 
-            <div className="mb-4">
-              <label className="block text-gray-700">Descripción</label>
-              <textarea
-                value={descripcion}
-                onChange={(e) => {
-                  if (e.target.value.length <= 150) {
-                    setDescripcion(e.target.value);
-                  }
-                }}
-                required
-                className="w-full border border-gray-300 p-2 rounded-md"
-                rows="4"
-              />
-              <p className="text-sm text-gray-500">{descripcion.length}/150</p> {/* Muestra la cantidad de caracteres */}
-            </div>
-          </div>
+        <label className="block mb-1">Descripción</label>
+        <textarea
+          value={formData.descripcion}
+          onChange={handleInputChange}
+          name="descripcion"
+          placeholder="Descripción de la comunidad"
+          className="w-full p-2 mb-3 border rounded focus:border-primary focus:outline-none text-sm"
+        />
+         <label className="block mb-1">Link</label>
+        <input
+          type="text"
+          value={formData.link}
+          onChange={handleInputChange}
+          name="link"
+          placeholder="Link de reuniones para la comunidad"
+          className="w-full p-2 mb-3 border rounded focus:border-primary focus:outline-none text-sm"
+        />
 
-          {/* Segunda columna */}
-          <div>
-            <h4 className="font-bold mb-2">Selecciona Géneros Literarios</h4>
-            <Select
-              isMulti
-              options={options}
-              value={options.filter(option => generoLiterarios.includes(option.value))}
-              onChange={(selected) => setGeneroLiterarios(selected.map(item => item.value))}
-              className="mb-4"
-            />
-            
-            <div className="mb-4">
-              <label className="block text-gray-700">Enlace de Conexión</label>
+        <h4 className="text-sm font-bold mb-2">Selecciona hasta 5 géneros literarios:</h4>
+        <div className="grid grid-cols-2 gap-2 mb-4 h-32 overflow-y-auto border rounded p-2">
+          {generoLiterarioOpciones.map((genero) => (
+            <label key={genero._id} className="flex items-center cursor-pointer">
               <input
-                type="url" // Tipo url para el campo de enlace
-                value={enlaceConexion}
-                onChange={(e) => setEnlaceConexion(e.target.value)}
-                className="w-full border border-gray-300 p-2 rounded-md"
-                placeholder="https://ejemplo.com" // Placeholder para el campo
+                type="checkbox"
+                name="generoLiterarios"
+                value={genero._id}
+                checked={formData.generoLiterarios.includes(genero._id)}
+                onChange={handleInputChange}
+                className="hidden"
               />
-            </div>
-          </div>
+              <div
+                className={`flex items-center border rounded-full p-1 px-2 text-xs ${formData.generoLiterarios.includes(genero._id) ? "bg-primary text-white" : "border-primary text-primary"}`}
+              >
+                {genero.nombre}
+              </div>
+            </label>
+          ))}
         </div>
 
-        {/* Botones de Crear y Cancelar */}
-        <div className="flex justify-end mt-4">
-          <button
-            type="button"
-            className="px-4 py-2 bg-gray-300 text-gray-800 rounded-md mr-5 hover:bg-gray-400"
-            onClick={onClose}
-          >
-            Cancelar
-          </button>
-          <button 
-            type="submit" 
-            className="bg-primary hover:bg-blue-950 text-white p-2 rounded" 
-            onClick={handleCrearComunidad} // Añadir la función de crear comunidad al botón
-          >
-            Crear 
-          </button>
-        </div>
+        <button
+          onClick={handleSubmit}
+          disabled={isCreatingComunidad}
+          className={`w-full py-2 rounded bg-primary text-white hover:bg-blue-600 transition-opacity ${isCreatingComunidad ? "opacity-50 cursor-not-allowed" : ""}`}
+        >
+          {isCreatingComunidad ? "Creando..." : "Crear Comunidad"}
+        </button>
       </div>
     </div>
   );
 };
 
-export default ModalCrearComunidad;
+export default ModalCrearNuevaComunidad;

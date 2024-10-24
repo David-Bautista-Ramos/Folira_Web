@@ -121,8 +121,8 @@ const EditProfileModal = ({ authUser }) => {
 	  const toggleEstadoUsuario = async () => {
 		try {
 			const url = isActive
-			? `/api/users/estadoAct/${authUser._id}`  // Cambiado aquí para incluir el ID
-			: `/api/users/estadoDes/${authUser._id}`; // Cambiado aquí para incluir el ID
+			? `/api/users/estadoDes/${authUser._id}` // Cambiado aquí para incluir el ID
+			:  `/api/users/estadoAct/${authUser._id}`; // Cambiado aquí para incluir el ID
 	  
 		  const response = await fetch(url, {
 			method: "POST",
@@ -185,22 +185,24 @@ const EditProfileModal = ({ authUser }) => {
 
 			<button
 				className="btn btn-outline rounded-full btn-sm"
-				onClick={handleToggleClick} // Abre el modal de confirmación
+				onClick={handleToggleClick}
 			>
 				{isActive ? "Activar" : "Inactivar"}
 			</button>
 
 			{/* Modal de confirmación */}
-			<dialog id='confirmation_modal' className='modal' open={showConfirmationModal}>
-				<div className='modal-box'>
-					<h3 className='font-bold'>Confirmación</h3>
-					<p>¿Estás seguro de que deseas {isActive ? "activar" : "inactivar"} la cuenta?</p>
-					<div className='modal-action'>
-						<button className='btn' onClick={handleConfirmToggle}>Sí</button>
-						<button className='btn' onClick={handleCancelToggle}>No</button>
+			{showConfirmationModal && (
+				<dialog id='confirmation_modal' className='modal' open>
+					<div className='modal-box'>
+						<h3 className='font-bold'>Confirmación</h3>
+						<p>¿Estás seguro de que deseas {isActive ? "activar" : "inactivar"} la cuenta?</p>
+						<div className='modal-action'>
+							<button className='btn' onClick={handleConfirmToggle}>Sí</button>
+							<button className='btn' onClick={handleCancelToggle}>No</button>
+						</div>
 					</div>
-				</div>
-			</dialog>
+				</dialog>
+			)}
 
 			<dialog id='edit_profile_modal' className='modal'>
 				<div className='modal-box border rounded-md border-blue-950 h-[500px]  shadow-md modal-scrollbar'>

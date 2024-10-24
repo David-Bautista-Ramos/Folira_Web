@@ -118,7 +118,7 @@ export const deletePost = async (req, res) => {
             }
 
             // Verificar si el usuario es admin o moderador de la comunidad
-            const isAdminOrModerator = comunidad.admins.includes(req.user._id) || comunidad.moderadores.includes(req.user._id);
+            const isAdminOrModerator = comunidad.admin.includes(req.user._id) || comunidad.moderadores.includes(req.user._id);
             if (!isAdminOrModerator) {
                 return res.status(401).json({ error: "No tienes permisos para eliminar esta publicación de la comunidad" });
             }
