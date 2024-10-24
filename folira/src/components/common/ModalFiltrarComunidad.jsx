@@ -9,13 +9,13 @@ const ModalFiltroComunidades = ({ isOpen, onClose, onFilter, onRestore }) => {
                     onClick={() => onFilter("Activo")}
                     className="block w-full text-left px-4 py-2 hover:bg-gray-200"
                 >
-                    Activas
+                    Activos
                 </button>
                 <button
                     onClick={() => onFilter("Inactivo")}
                     className="block w-full text-left px-4 py-2 hover:bg-gray-200"
                 >
-                    Inactivas
+                    Inactivos
                 </button>
                 
                 {/* Botón de restaurar */}

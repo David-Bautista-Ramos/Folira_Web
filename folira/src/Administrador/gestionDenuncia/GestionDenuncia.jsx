@@ -24,7 +24,7 @@ function GestionDenuncia() {
   const [isActualizarModalOpen, setIsActualizarModalOpen] = useState(false);
   const [isEliminarModalOpen, setIsEliminarModalOpen] = useState(false);
   const [selectedTipo, setSelectedTipo] = useState("");
-  const [visibleCount, setVisibleCount] = useState(3); // Estado para el select de cantidad de usuarios visibles
+  const [visibleCount, setVisibleCount] = useState(6); // Estado para el select de cantidad de usuarios visibles
   const [searchTerm, setSearchTerm] = useState(""); // Estado para la búsqueda
   const [currentPage, setCurrentPage] = useState(1); // Página actual
   const [totalPages, setTotalPages] = useState(1); // Número total de páginas
@@ -206,8 +206,8 @@ function GestionDenuncia() {
                 onChange={handleVisibleCountChange}
                 className="bg-white border border-gray-400 p-2 rounded"
               >
-                <option value={3}> 3 usuarios</option>
-                <option value={4}> 4 usuarios</option>
+                <option value={6}> 6 usuarios</option>
+                <option value={12}> 12 usuarios</option>
                 <option value={20}> 20 usuarios</option>
               </select>
 

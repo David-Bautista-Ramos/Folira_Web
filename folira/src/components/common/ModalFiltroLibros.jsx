@@ -11,13 +11,13 @@ const ModalFiltroLibros = ({ isOpen, onClose, onFilter }) => {
           onClick={() => onFilter("Activo")}
           className="block w-full text-left px-4 py-2 hover:bg-gray-200"
         >
-          Disponible
+          Activos
         </button>
         <button
           onClick={() => onFilter("Inactivo")}
           className="block w-full text-left px-4 py-2 hover:bg-gray-200"
         >
-          No disponible
+          Inactivos
         </button>
         <button
           onClick={() => onFilter("Restaurar")}

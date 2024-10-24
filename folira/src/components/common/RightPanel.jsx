@@ -82,7 +82,7 @@ const RightPanel = () => {
                     {pendingUserId === user._id ? (
                       <LoadingSpinner size="sm" />
                     ) : (
-                      "Follow"
+                      "Seguir"
                     )}
                   </button>
                 </div>

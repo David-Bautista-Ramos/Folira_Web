@@ -95,7 +95,7 @@ const ListaPublicaciones = ({ posts, esAdmin, esMiembro }) => {
                   <span className="text-sm text-gray-400">· {formatPostDate(post.createdAt)}</span>
                   {authUser && authUser._id === post.user._id && ( // Mostrar el botón de eliminar solo si es el autor
                     <FaTrash
-                      className="text-red-500 cursor-pointer"
+                      className="text-primary hover:blue-950 cursor-pointer"
                       onClick={() => handleDeletePost.mutate(post._id)}
                     />
                   )}
@@ -107,21 +107,24 @@ const ListaPublicaciones = ({ posts, esAdmin, esMiembro }) => {
               </div>
             </div>
 
-            <div className="flex justify-between items-center mt-3">
-              <div className="flex items-center gap-4">
+            <div className="flex justify-center items-center mt-3">
+              <div className="flex items-center gap-[120px]">
                 {canInteract() ? (
                   <>
+                    {/* Botón de Like */}
                     <button onClick={() => handleLikePost.mutate(post._id)} className="flex items-center gap-1">
                       <FaRegHeart className="text-red-500" />
                       <span>{post.likes.length}</span>
                     </button>
 
-                    <button onClick={() => setOpenCommentModal(post._id)}>
+                    {/* Botón de Comentario */}
+                    <button onClick={() => setOpenCommentModal(post._id)} className="flex items-center gap-1">
                       <FaRegComment />
                       <span>{post.comentarios.length}</span>
                     </button>
 
-                    <button onClick={() => handleReportPost(post._id)}>
+                    {/* Botón de Reportar */}
+                    <button onClick={() => handleReportPost(post._id)} className="flex items-center gap-1">
                       <BiError className="text-yellow-500" />
                     </button>
                   </>
@@ -131,69 +134,77 @@ const ListaPublicaciones = ({ posts, esAdmin, esMiembro }) => {
               </div>
             </div>
 
+
             {/* Modal de Comentarios */}
-            <dialog id={`comments_modal_${post._id}`} className="modal" open={openCommentModal === post._id}>
-              <div className="modal-box">
+            <dialog 
+              id={`comments_modal_${post._id}`} 
+              className="modal fixed inset-0 bg-black bg-opacity-30 flex items-center justify-center"
+              open={openCommentModal === post._id}
+            >
+              <div className="modal-box bg-white rounded-lg p-6 relative">
                 <h3 className="font-bold">Comentarios</h3>
                 <div className="max-h-60 overflow-auto mt-2">
-                  {post.comentarios.map((comment) => (
-                    <div key={comment._id} className="flex items-start gap-2 mb-2">
-                      <img
-                        src={comment.user.fotoPerfil || "/avatar-placeholder.png"}
-                        alt="Perfil"
-                        className="w-8 h-8 rounded-full"
-                      />
-                      <div className="flex-1">
-                        <div className="flex items-center gap-2">
-                          <span className="font-bold">{comment.user.nombreCompleto}</span>
-                          <span className="text-sm text-gray-500">@{comment.user.nombre}</span>
-                          {isMyComment(comment.user._id) && (
-                            <FaTrash
-                              className="text-red-500 cursor-pointer"
-                              onClick={() =>
-                                handleDeleteComment.mutate({ postId: post._id, commentId: comment._id })
-                              }
-                            />
-                          )}
-                        </div>
-                        <p>{comment.text}</p>
+                {post.comentarios.map((comment) => (
+                  <div key={comment._id} className="flex items-start gap-2 mb-2">
+                    <img
+                      src={comment.user.fotoPerfil || "/avatar-placeholder.png"}
+                      alt="Perfil"
+                      className="w-8 h-8 rounded-full"
+                    />
+                    <div className="flex-1">
+                      <div className="flex items-center gap-2">
+                        <span className="font-bold">{comment.user.nombreCompleto}</span>
+                        <span className="text-sm text-gray-500">@{comment.user.nombre}</span>
+                        {isMyComment(comment.user._id) && (
+                          <FaTrash
+                            className="text-primary hover:blue-950 ml-[65px] cursor-pointer"
+                            onClick={() =>
+                              handleDeleteComment.mutate({ postId: post._id, commentId: comment._id })
+                            }
+                          />
+                        )}
                       </div>
+                      <p className="break-all">{comment.text}</p> {/* Aquí se aplica la clase */}
                     </div>
-                  ))}
+                  </div>
+                ))}
+
                 </div>
                 {canInteract() ? (
                   <form
-                    onSubmit={(e) => {
-                      e.preventDefault();
-                      handleCommentPost.mutate(post._id);
+                  onSubmit={(e) => {
+                    e.preventDefault();
+                    handleCommentPost.mutate(post._id);
+                  }}
+                  className="mt-4 flex gap-2"
+                >
+                  <textarea
+                    className="textarea  w-full h-12 resize-none border border-gray-300 focus:outline-none focus:border-blue-950"  // Fijar altura y evitar que se expanda
+                    placeholder="Escribe un comentario..."
+                    value={comentario}
+                    onChange={(e) => setComentario(e.target.value)}
+                  />
+                  <button type="submit" className="btn btn-primary hover:bg-blue-950">
+                    Publicar
+                  </button>
+                  <button
+                    type="button"
+                    className="btn btn-secondary"
+                    onClick={() => {
+                      setOpenCommentModal(null);
+                      setPreviewImage(null);
                     }}
-                    className="mt-4 flex gap-2"
                   >
-                    <textarea
-                      className="textarea w-full"
-                      placeholder="Escribe un comentario..."
-                      value={comentario}
-                      onChange={(e) => setComentario(e.target.value)}
-                    />
-                    <button type="submit" className="btn btn-primary">
-                      Publicar
-                    </button>
-                    <button
-                      type="button"
-                      className="btn btn-secondary"
-                      onClick={() => {
-                        setOpenCommentModal(null);
-                        setPreviewImage(null);
-                      }}
-                    >
-                      Cerrar
-                    </button>
-                  </form>
+                    Cerrar
+                  </button>
+                </form>
+                
                 ) : (
                   <p className="text-gray-500">Inicia sesión para comentar.</p>
                 )}
               </div>
             </dialog>
+
 
             <ModalDenuncia
               id={`denuncia_modal_${post._id}`}

@@ -30,7 +30,7 @@ const ModalFiltroEstado = ({ isOpen, onClose, onFilter }) => {
                 </div>
 
                 <button 
-                    className="mt-4 ml-[320px] bg-gray-300 px-4 py-2 rounded"
+                    className="mt-4 ml-[340px] bg-gray-300 px-4 py-2 rounded"
                     onClick={onClose} // Cierra el modal
                 >
                     Cerrar

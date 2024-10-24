@@ -8,7 +8,8 @@ const ModalCrearComunidad = ({ isOpen, onClose, token, obtenerComunidades }) => 
     fotoComunidad: "",
     fotoBanner: "",
     generoLiterarios: [],
-    admin: ""
+    admin: "",
+    miembros: [], // Agregar campo para miembros
   });
 
   const { createComuniad, isCreatingComunidad } = useCreateComunidad(obtenerComunidades);
@@ -18,6 +19,7 @@ const ModalCrearComunidad = ({ isOpen, onClose, token, obtenerComunidades }) => 
   const fotoComunidadRef = useRef(null);
   const [generoLiterarios, setGeneroLiterarios] = useState([]);
   const [usuarioAdminOpciones, setUsuarioAdminOpciones] = useState([]);
+  const [todosUsuarios, setTodosUsuarios] = useState([]); // Agregar estado para todos los usuarios
 
   const handleImgChange = (e, type) => {
     const file = e.target.files[0];
@@ -65,6 +67,7 @@ const ModalCrearComunidad = ({ isOpen, onClose, token, obtenerComunidades }) => 
         });
         const usuarios = await response.json();
         setUsuarioAdminOpciones(usuarios || []);
+        setTodosUsuarios(usuarios || []); // Almacenar todos los usuarios para el selector
       } catch (error) {
         console.error("Error al obtener los usuarios:", error);
       }
@@ -84,7 +87,8 @@ const ModalCrearComunidad = ({ isOpen, onClose, token, obtenerComunidades }) => 
 
   const handleInputChange = (e) => {
     const { name, value, checked } = e.target;
-    if (name === "generos") {
+
+    if (name === "generoLiterarios") {
       if (checked && formData.generoLiterarios.length < 5) {
         setFormData((prevData) => ({
           ...prevData,
@@ -94,6 +98,18 @@ const ModalCrearComunidad = ({ isOpen, onClose, token, obtenerComunidades }) => 
         setFormData((prevData) => ({
           ...prevData,
           generoLiterarios: prevData.generoLiterarios.filter((genero) => genero !== value),
+        }));
+      }
+    } else if (name === "miembros") {
+      if (checked) {
+        setFormData((prevData) => ({
+          ...prevData,
+          miembros: [...prevData.miembros, value],
+        }));
+      } else {
+        setFormData((prevData) => ({
+          ...prevData,
+          miembros: prevData.miembros.filter((miembro) => miembro !== value),
         }));
       }
     } else {
@@ -109,52 +125,59 @@ const ModalCrearComunidad = ({ isOpen, onClose, token, obtenerComunidades }) => 
 
   return (
     <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-50" onClick={onClose}>
-      <div className="relative bg-white p-6 rounded-lg w-full max-w-4xl max-h-[90vh] overflow-y-auto scrollbar-custom" onClick={(e) => e.stopPropagation()}>
+      <div className="relative bg-white p-4 rounded-lg w-full max-w-3xl" onClick={(e) => e.stopPropagation()}>
         <div className="border-b-2 border-primary pb-2 mb-4">
           <h2 className="text-xl text-primary text-center">Crear Comunidad</h2>
         </div>
 
-        <div className="relative mb-6">
-          <img
-            src={fotoBanner || "/cover.png"}
-            className="h-32 w-full object-cover rounded-lg"
-            alt="cover image"
-          />
-          <button
-            className="absolute top-2 right-2 bg-gray-700 text-white p-1 rounded-full opacity-75 hover:opacity-100"
-            onClick={() => fotoBannerRef.current.click()}
-          >
-            Editar
-          </button>
-          <input
-            type="file"
-            hidden
-            accept="image/*"
-            ref={fotoBannerRef}
-            onChange={(e) => handleImgChange(e, "coverImg")}
-          />
-
-          <div className="absolute bottom-[-25px] left-4 w-20 h-20">
+        {/* Sección de imágenes */}
+        <div className="flex flex-col mb-4">
+          <div className="relative mb-4 w-full">
+            {/* COVER IMG */}
             <img
-              src={fotoComunidad || "/avatar-placeholder.png"}
-              className="w-full h-full rounded-full border-2 border-white object-cover"
-              alt="profile avatar"
-              onClick={() => fotoComunidadRef.current.click()}
+              src={fotoBanner || "/cover.png"}
+              className="h-32 w-full object-cover rounded-lg"
+              alt="cover image"
             />
+            <button
+              className="absolute top-2 right-2 bg-gray-700 text-white p-1 rounded-full opacity-75 hover:opacity-100"
+              onClick={() => fotoBannerRef.current.click()}
+            >
+              Editar
+            </button>
             <input
               type="file"
               hidden
               accept="image/*"
-              ref={fotoComunidadRef}
-              onChange={(e) => handleImgChange(e, "profileImg")}
+              ref={fotoBannerRef}
+              onChange={(e) => handleImgChange(e, "coverImg")}
             />
+          </div>
+
+          {/* USER AVATAR */}
+          <div className="relative mb-4 w-full">
+            <div className="absolute bottom-[-20px] left-4 w-20 h-20">
+              <img
+                src={fotoComunidad || "/avatar-placeholder.png"}
+                className="w-full h-full rounded-full border-2 border-white object-cover"
+                alt="profile avatar"
+                onClick={() => fotoComunidadRef.current.click()}
+              />
+              <input
+                type="file"
+                hidden
+                accept="image/*"
+                ref={fotoComunidadRef}
+                onChange={(e) => handleImgChange(e, "profileImg")}
+              />
+            </div>
           </div>
         </div>
 
-        {/* Contenedor de dos columnas */}
-        <div className="grid grid-cols-2 gap-x-4">
-          {/* Primera columna */}
-          <div>
+        {/* Resto de los campos */}
+        <div className="grid grid-cols-2 gap-4 mb-6">
+          <div className="flex flex-col">
+            {/* Nombre */}
             <label className="block mb-1">Nombre</label>
             <input
               type="text"
@@ -162,20 +185,22 @@ const ModalCrearComunidad = ({ isOpen, onClose, token, obtenerComunidades }) => 
               onChange={handleInputChange}
               name="nombre"
               placeholder="Nombre de la comunidad"
-              className="w-full p-2 mb-2 border rounded focus:border-primary focus:outline-none text-sm"
+              className="w-full p-2 mb-3 border rounded focus:border-primary focus:outline-none text-sm"
             />
 
+            {/* Descripción */}
             <label className="block mb-1">Descripción</label>
             <textarea
               value={formData.descripcion}
               onChange={handleInputChange}
               name="descripcion"
               placeholder="Descripción de la comunidad"
-              className="w-full p-2 mb-2 border rounded focus:border-primary focus:outline-none text-sm"
+              className="w-full p-2 mb-3 border rounded focus:border-primary focus:outline-none text-sm"
             />
 
+            {/* Admin Selector */}
             <h4 className="text-sm font-bold mb-2">Selecciona 1 Usuario como Administrador:</h4>
-            <div className="grid grid-cols-2 gap-2 mb-4 h-24 overflow-y-auto border rounded p-2">
+            <div className="grid grid-cols-2 gap-2 mb-4 h-28 overflow-y-auto border rounded p-2">
               {usuarioAdminOpciones.map((usuario) => (
                 <label key={usuario._id} className="flex items-center cursor-pointer">
                   <input
@@ -187,38 +212,56 @@ const ModalCrearComunidad = ({ isOpen, onClose, token, obtenerComunidades }) => 
                     className="hidden"
                   />
                   <div
-                    className={`flex items-center border rounded-full p-1 px-2 text-xs ${formData.admin === usuario._id ? "bg-primary text-white" : "bg-gray-200"}`}
+                    className={`flex items-center border rounded-full p-1 px-2 text-xs ${formData.admin === usuario._id ? "bg-primary text-white" : "border-primary text-primary"}`}
                   >
-                    <img
-                      src={usuario.fotoPerfil || "/default-avatar.png"}
-                      className="w-8 h-8 rounded-full mr-2"
-                      alt={usuario.nombre}
-                    />
-                    <span>{usuario.nombre}</span>
+                    {usuario.nombre}
                   </div>
                 </label>
               ))}
             </div>
           </div>
 
-          {/* Segunda columna */}
-          <div>
-            <h4 className='font-bold mb-2'>Selecciona hasta 5 géneros literarios:</h4>
-            <div className='grid grid-cols-2 gap-2 mb-4'>
+          {/* Columna Derecha */}
+          <div className="flex flex-col">
+            {/* Géneros Literarios Selector */}
+            <h4 className="text-sm font-bold mb-2">Selecciona hasta 5 géneros literarios:</h4>
+            <div className="grid grid-cols-2 gap-2 mb-4 h-28 overflow-y-auto border rounded p-2">
               {generoLiterarios.map((genero) => (
-                <label key={genero._id} className='flex items-center cursor-pointer'>
+                <label key={genero._id} className="flex items-center cursor-pointer">
                   <input
-                    type='checkbox'
-                    name='generos'
+                    type="checkbox"
+                    name="generoLiterarios"
                     value={genero._id}
                     checked={formData.generoLiterarios.includes(genero._id)}
                     onChange={handleInputChange}
-                    className='hidden'
+                    className="hidden"
                   />
                   <div
-                    className={`flex items-center border rounded-full p-2 ${formData.generoLiterarios.includes(genero._id) ? "bg-primary text-white" : "bg-gray-200"}`}
+                    className={`flex items-center border rounded-full p-1 px-2 text-xs ${formData.generoLiterarios.includes(genero._id) ? "bg-primary text-white" : "border-primary text-primary"}`}
                   >
-                    <span>{genero.nombre}</span>
+                    {genero.nombre}
+                  </div>
+                </label>
+              ))}
+            </div>
+
+            {/* Miembros Selector */}
+            <h4 className="text-sm font-bold mb-2">Selecciona Miembros:</h4>
+            <div className="grid grid-cols-2 gap-2 h-28 overflow-y-auto border rounded p-2">
+              {todosUsuarios.map((usuario) => (
+                <label key={usuario._id} className="flex items-center cursor-pointer">
+                  <input
+                    type="checkbox"
+                    name="miembros"
+                    value={usuario._id}
+                    checked={formData.miembros.includes(usuario._id)}
+                    onChange={handleInputChange}
+                    className="hidden"
+                  />
+                  <div
+                    className={`flex items-center border rounded-full p-1 px-2 text-xs ${formData.miembros.includes(usuario._id) ? "bg-primary text-white" : "border-primary text-primary"}`}
+                  >
+                    {usuario.nombre}
                   </div>
                 </label>
               ))}
@@ -226,12 +269,19 @@ const ModalCrearComunidad = ({ isOpen, onClose, token, obtenerComunidades }) => 
           </div>
         </div>
 
-        {/* Botón de crear a la derecha */}
-        <div className="flex justify-end mt-4">
+        <div className="flex justify-center">
           <button
+            type="button"
+            onClick={onClose}
+            className="bg-gray-300 p-2 rounded mr-2 hover:bg-gray-400 transition"
+          >
+            Cancelar
+          </button>
+          <button
+            type="submit"
             onClick={handleSubmit}
             disabled={isCreatingComunidad}
-            className={`bg-primary text-white p-2 rounded ${isCreatingComunidad ? "opacity-50 cursor-not-allowed" : ""}`}
+            className={`p-2 rounded ${isCreatingComunidad ? "bg-gray-400" : "bg-blue-500 hover:bg-blue-600"} transition text-white`}
           >
             {isCreatingComunidad ? "Creando..." : "Crear Comunidad"}
           </button>
