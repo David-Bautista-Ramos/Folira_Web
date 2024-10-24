@@ -2,6 +2,7 @@ import { useQuery } from '@tanstack/react-query';
 import { useEffect, useState, useCallback } from 'react';
 import { Link } from 'react-router-dom';
 import ModalCrearNuevaComunidad from './ModalCrearNuevaComunidad.jsx'; // Importa el modal
+import toast from 'react-hot-toast';
 
 // Componente para cada tarjeta de comunidad
 const ComunidadCard = ({ comunidad, unirseComunidad }) => (
@@ -74,11 +75,11 @@ const ComunidadesSugeridas = () => {
 
       if (!response.ok) throw new Error('Error al unirse a la comunidad');
       const data = await response.json();
-      alert(data.message);
+      toast.success(data.message);
       fetchComunidades();
     } catch (error) {
       console.error('Error:', error);
-      alert('No se pudo unir a la comunidad');
+      toast.error('No se pudo unir a la comunidad');
     }
   };
 

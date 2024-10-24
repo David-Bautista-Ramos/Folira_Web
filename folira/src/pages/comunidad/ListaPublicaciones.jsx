@@ -72,16 +72,7 @@ const ListaPublicaciones = ({ posts, esAdmin, esMiembro }) => {
     document.getElementById(`denuncia_modal_${postId}`).showModal();
   };
 
-  const handleImageUpload = (event) => {
-    const file = event.target.files[0];
-    if (file) {
-      const reader = new FileReader();
-      reader.onloadend = () => {
-        setPreviewImage(reader.result);
-      };
-      reader.readAsDataURL(file);
-    }
-  };
+ 
 
   const canInteract = () => {
     return authUser && (esAdmin || esMiembro);
@@ -186,10 +177,6 @@ const ListaPublicaciones = ({ posts, esAdmin, esMiembro }) => {
                       value={comentario}
                       onChange={(e) => setComentario(e.target.value)}
                     />
-                    <input type="file" accept="image/*" onChange={handleImageUpload} />
-                    {previewImage && (
-                      <img src={previewImage} alt="Vista previa" className="w-24 h-24 object-cover mt-2" />
-                    )}
                     <button type="submit" className="btn btn-primary">
                       Publicar
                     </button>

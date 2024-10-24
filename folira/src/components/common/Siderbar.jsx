@@ -7,22 +7,21 @@ import toast from "react-hot-toast";
 import {  BiLogOut, BiSolidFolder } from "react-icons/bi";
 import { GiFeather, GiOpenBook } from "react-icons/gi";
 import Folira_general from "../../assets/img/Folira_general.svg";
+import { useRef } from "react";
 
 
 const Sidebar = () => {
 
     const queryClient = useQueryClient();
-
-    const startTime = Date.now();
+    const startTime = useRef(Date.now()); // Usamos useRef para mantener el tiempo inicial
 
     // Al hacer logout, calculamos el tiempo en pantalla
     const { mutate: logout } = useMutation({
         mutationFn: async () => {
             try {
                 const endTime = Date.now(); // Tiempo al cerrar sesión
-                const tiempoEnPantalla = Math.floor((endTime - startTime) / 1000); // Tiempo en segundos
+                const tiempoEnPantalla = Math.floor((endTime - startTime.current) / 1000); // Tiempo en segundos
 
-                // Suponiendo que tienes el userId almacenado en el contexto de autenticación o estado global
                 const userId = authUser._id;
 
                 const res = await fetch("/api/auth/logout", {
