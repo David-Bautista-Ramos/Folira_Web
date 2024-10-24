@@ -81,16 +81,25 @@ const FichaTecnicaLibro = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+  
+    // Verifica si el comentario no está vacío
     if (comentario.trim() === '') return;
-
+    // Verifica que authUser y su ID estén disponibles
+    if (!authUser || !authUser._id) {
+      console.error('El usuario no está autenticado');
+      return;
+    }
+  
+    // Crea un nuevo objeto reseña
     const nuevaReseña = {
       contenido: comentario,
       calificacion,
       idUsuario: authUser._id,
       idLibro: libro._id,
     };
-
+  
     try {
+      // Realiza la solicitud POST para crear una nueva reseña
       const response = await fetch('/api/resenas/resenas', {
         method: 'POST',
         headers: {
@@ -98,16 +107,21 @@ const FichaTecnicaLibro = () => {
         },
         body: JSON.stringify(nuevaReseña),
       });
-
+  
+      // Verifica si la respuesta es exitosa
       if (!response.ok) throw new Error('Error al crear la reseña');
-
+      // Convierte la respuesta a JSON
       const data = await response.json();
-      setResenas((prevReseñas) => [...prevReseñas, data.resena]);
+      // Agrega la nueva reseña al principio de la lista
+      setResenas((prevReseñas) => [data.resena, ...prevReseñas]);
+      // Limpia el campo de comentario
       setComentario('');
     } catch (error) {
+      // Maneja errores de forma amigable
       console.error('Error al crear la reseña:', error);
     }
   };
+  
 
   const fetchReseñas = async () => {
     setLoadingReseñas(true);
@@ -217,61 +231,68 @@ const FichaTecnicaLibro = () => {
       </form>
 
       <div className="mt-6">
-        {resenas.map((reseña) => (
-          <div key={reseña._id} className="flex items-start mb-4 p-4 border border-gray-200 rounded-lg bg-gray-100">
+        {resenas.slice(0, 5).map((reseña) => (
+          <div key={reseña._id} className="flex items-start mb-4 p-4 border border-gray-200 rounded-lg bg-gray-100 break-all">
             <img 
-              src={reseña.idUsuario.fotoPerfil} 
+              src={reseña.idUsuario.fotoPerfil || 'https://via.placeholder.com/48'} 
               alt={`${reseña.idUsuario.nombre} perfil`} 
               className="w-12 h-12 rounded-full mr-4"
+              style={{ width: '48px', height: '48px' }} // Ajustar tamaño a 48x48
             />
             <div>
               <h3 className="font-semibold">{reseña.idUsuario.nombre}</h3>
               <p className="text-md">{reseña.contenido}</p>
             </div>
           </div>
-        ))} 
+        ))}
       </div>
 
+
       {isModalOpen && (
-        <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-50">
-          <div className="bg-white p-6 rounded-lg w-11/12 md:w-1/3">
-            <h2 className="text-xl font-semibold mb-4">Reseñas</h2>
-            <div className="mb-4">
-              <h4 className="text-md font-medium">Filtrar por calificación:</h4>
-              <div className="flex">
-                {[1, 2, 3, 4, 5].map((star) => (
-                  <div 
-                    key={star} 
-                    onClick={() => setSelectedStarFilter(star)} 
-                    className={`cursor-pointer ${selectedStarFilter === star ? 'text-yellow-500' : 'text-gray-300'}`}
-                  >
-                    {star <= selectedStarFilter ? <BsStarFill /> : <BsStar />}
-                  </div>
-                ))}
-                <div 
-                  onClick={() => setSelectedStarFilter(0)} 
-                  className={`ml-2 cursor-pointer ${selectedStarFilter === 0 ? 'text-yellow-500' : 'text-gray-300'}`}
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50 break-all  ">
+        <div className="bg-white rounded-lg p-6 ">
+          <h3 className="text-xl font-semibold mb-4">Reseñas</h3>
+
+          <div className="mb-4">
+            <h4 className="text-md font-medium">Filtrar por calificación:</h4>
+            <div className="flex">
+              {[1, 2, 3, 4, 5].map((star) => (
+                <div
+                  key={star}
+                  onClick={() => setSelectedStarFilter(star)}
+                  className={`cursor-pointer ${selectedStarFilter === star ? 'text-yellow-500' : 'text-gray-300'}`}
                 >
-                  <span>Todo</span>
+                  {star <= selectedStarFilter ? <BsStarFill /> : <BsStar />}
                 </div>
+              ))}
+              <div
+                onClick={() => setSelectedStarFilter(0)}
+                className={`ml-2 cursor-pointer ${selectedStarFilter === 0 ? 'text-yellow-500' : 'text-gray-300'}`}
+              >
+                <span>Todo</span>
               </div>
             </div>
-            <div>
-              {loadingReseñas ? (
-                <p>Cargando reseñas...</p>
-              ) : (
+          </div>
+
+
+          <div className="modal-container" style={{ width: '600px', maxHeight: '400px', overflowY: 'auto', scrollbarWidth: 'thin', scrollbarColor: '#111827 transparent' }}>
+          {loadingReseñas ? (
+              <p>Cargando reseñas...</p>
+            ) : (
+              filteredReseñas.length > 0 ? (
                 filteredReseñas.map((reseña) => (
                   <div key={reseña._id} className="flex items-start mb-4 p-4 border border-gray-200 rounded-lg bg-gray-100">
                     <img 
-                      src={reseña.idUsuario.fotoPerfil} 
+                      src={reseña.idUsuario.fotoPerfil || 'https://via.placeholder.com/48'} 
                       alt={`${reseña.idUsuario.nombre} perfil`} 
                       className="w-12 h-12 rounded-full mr-4"
+                      style={{ width: '48px', height: '48px' }} // Ajustar tamaño a 48x48
                     />
                     <div className="flex-grow">
                       <h3 className="font-semibold">{reseña.idUsuario.nombre}</h3>
-                      <p className="text-md break-all">{reseña.contenido}</p>
+                      <p className="text-md break-all mr-10">{reseña.contenido}</p> {/* Agregué break-all y margen para ajustar texto largo */}
                       <div className="flex mt-1">
-                        {renderEstrellasCom(reseña.calificacion)} {/* Aquí renderizas las estrellas con la calificación de la reseña */}
+                        {renderEstrellasCom(reseña.calificacion)} {/* Renderización de estrellas */}
                       </div>
                     </div>
                     {reseña.idUsuario._id === authUser._id && (
@@ -279,14 +300,21 @@ const FichaTecnicaLibro = () => {
                         onClick={() => handleDeleteReseña(reseña._id)}
                         className="ml-2 text-red-500 hover:text-red-700"
                       >
-                        <FaTrash />
+                        <FaTrash className="text-primary cursor-pointer hover:text-blue-900" /> {/* Botón de eliminar */}
                       </button>
                     )}
                   </div>
                 ))
-              )}
-                <button className="mb-4 bg-red-500 hover:bg-red-600 text-white py-1 px-3 rounded" onClick={closeModal}>Cerrar</button>
-            </div>
+              ) : (
+                <p>No hay reseñas para mostrar.</p>
+              )
+            )}
+          </div>
+            <button 
+              onClick={closeModal}       
+              className="mb-4 mt-10 ml-[500px] bg-primary hover:bg-blue-950 text-white px-4 py-2 rounded">
+                Cerrar
+            </button>
           </div>
         </div>
       )}

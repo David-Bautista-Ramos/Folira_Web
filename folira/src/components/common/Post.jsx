@@ -187,7 +187,7 @@ const Post = ({ post }) => {
             <span className="text-blue-950 flex justify-end flex-1">
               {!isDeleting && (
                 <FaTrash
-                  className="cursor-pointer hover:text-red-500"
+                  className="cursor-pointer hover:text-blue-900"
                   onClick={handleDeletePost}
                 />
               )}
@@ -268,7 +268,7 @@ const Post = ({ post }) => {
                               <LoadingSpinner size="sm" />
                             ) : (
                               <FaTrash
-                                className={`cursor-pointer hover:text-red-500 ${
+                                className={`cursor-pointer hover:text-blue-950 ${
                                   isDeleteCommenting ? "opacity-50 cursor-not-allowed" : ""
                                 }`}
                                 onClick={() => handleDeletePostCoom(comentario._id)}

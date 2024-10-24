@@ -236,13 +236,13 @@ const ProfilePage = () => {
                 <div>
                   <div className="mt-4 flex items-center">
                     <span className="font-bold text-xl mr-2">
-                      Preferred Literary Genres:
+                      Generos Literarios Preferidos
                     </span>
                     <div className="flex-1" />{" "}
                     {/* Este div tomará el espacio disponible para empujar el botón */}
                     {/* Ajusta el estilo del botón */}
                     <button
-                      className="bg-primary text-white px-4 py-2 rounded-full hover:bg-blue-950 text-sm h-9 w-28"
+                      className="bg-primary text-white px-4 py-2 rounded-full mt-[20px] hover:bg-blue-950 text-sm h-9 w-28"
                       style={{
                         marginLeft: "20px",
                         maxWidth: "calc(60% - 100px)",

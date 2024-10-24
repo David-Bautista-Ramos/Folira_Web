@@ -1,196 +1,47 @@
-import { useEffect, useState } from "react";
-import ModalInactivarLibro from "./ModalInactivarLibro";
-import ModalActivarLibro from "./ModalActivarLibro";
-import ModalCrearLibro from "./ModalCrearLibro";
-import ModalActualizarLibro from "./ModalActualizarLibro";
-import ModalGeneros from "./ModalGenerosLibros";
-import ModalFiltroLibros from "../../components/common/ModalFiltroLibros"; // Import the new modal
-import Nav from "../../components/common/Nav";
-import {
-  BiEdit,
-  BiLeftArrow,
-  BiPlus,
-  BiPowerOff,
-  BiReset,
-  BiRightArrow,
-  BiTrash,
-} from "react-icons/bi";
-import banner_libro from "../../assets/img/banner_gestion_libros.png"; 
-import GestionSkeleton from "../../components/skeletons/GestionSkeleton";
-import ModalEliminarLibro from "./ModalEliminarLibro";
+import { useState } from "react";
+import ModalActivarInsignia from "./ModalActivarInsignia";
+import ModalActualizarInsignia from "./ModalActualizarInsignia";
+import ModalEliminarInsignia from "./ModalEliminarInsignia";
+import ModalInactivarInsignia from "./ModalInactivarInsignia";
 
-function GestionLibro() {
-  const [libro, setLibros] = useState([]); // Lista completa de libros
-  const [selectedLibrosId, setSelectedLibrosId] = useState(null); // ID del libro seleccionado
 
-  const [isInactivarModalOpen, setIsInactivarModalOpen] = useState(false);
-  const [isActivarModalOpen, setIsActivarModalOpen] = useState(false);
-  const [isCrearModalOpen, setIsCrearModalOpen] = useState(false);
-  const [isActualizarModalOpen, setIsActualizarModalOpen] = useState(false);
-  const [isEliminarModalOpen, setIsEliminarModalOpen] = useState(false);
-  const [isGenerosModalOpen, setIsGenerosModalOpen] = useState(false);
-  const [isFiltroModalOpen, setIsFiltroModalOpen] = useState(false); // Estado del modal de filtro
-  const [filteredLibros, setFilteredLibros] = useState([]); // Libros filtrados
-  const [isLoading, setIsLoading] = useState(true);
-  const [visibleCount, setVisibleCount] = useState(10); // Estado para el select de cantidad de usuarios visibles
-  const [searchTerm, setSearchTerm] = useState(""); // Estado para la búsqueda
-  const [currentPage, setCurrentPage] = useState(1); // Página actual
-  const [totalPages, setTotalPages] = useState(1); // Número total de páginas
 
-  // Método para obtener todos los libros
-  const obtenerLibros = async () => {
-    setIsLoading(true);
-    try {
-      const response = await fetch("/api/libro/getlibros", {
-        method: "GET",
-        headers: {
-          "Content-type": "application/json",
-        },
-      });
+function GestionInsignias () {
 
-      if (!response.ok) {
-        throw new Error("Error al obtener los libros");
-      }
+    // Constantes
+    const [insignia, setInsignia] = useState([]); // Lista completa de libros
+    const [selectedInsigniaId, setSelectedInsigniaId] = useState(null); // ID del libro seleccionado
 
-      const data = await response.json();
+    // Contantes para los modelos 
+    const [isInactivarModalOpen, setIsInactivarModalOpen] = useState(false);
+    const [isActivarModalOpen, setIsActivarModalOpen] = useState(false);
+    const [isCrearModalOpen, setIsCrearModalOpen] = useState(false);
+    const [isActualizarModalOpen, setIsActualizarModalOpen] = useState(false);
+    const [isEliminarModalOpen, setIsEliminarModalOpen] = useState(false);
 
-      if (Array.isArray(data)) {
-        setLibros(data); // Almacena todos los libros
-        setFilteredLibros(data); // Inicialmente muestra todos los libros
-      } else {
-        console.error("La respuesta no es un array:", data);
-      }
-    } catch (error) {
-      console.error("Error", error);
-    } finally {
-      setIsLoading(false);
-    }
-  };
+    // Filtrado
+    const [isFiltroModalOpen, setIsFiltroModalOpen] = useState(false);
+    const [filteredInsignia, setFilteredInsignia] = useState([]);
+    const [isLoading, setIsLoading] = useState(true);
 
-  useEffect(() => {
-    obtenerLibros();
-  }, []);
 
-  // Filtrado por búsqueda
-  // Filtrado por búsqueda
-  useEffect(() => {
-    if (searchTerm) {
-      // Filtrar los libros que coincidan con el término de búsqueda
-      const librosFiltrados = libro.filter(
-        (libro) =>
-          libro.titulo.toLowerCase().includes(searchTerm.toLowerCase()) || // Suponiendo que quieres filtrar por título
-          libro.autores.some((autor) =>
-            autor.nombre.toLowerCase().includes(searchTerm.toLowerCase())
-          ) // Filtra por autor
-      );
-      setFilteredLibros(librosFiltrados);
-    } else {
-      // Si no hay búsqueda, mostramos todos los libros
-      setFilteredLibros(libro);
-    }
-  }, [searchTerm, libro]);
+    // Paginado
+    const [visibleCount, setVisibleCount] = useState(10); // Estado para el select de cantidad de usuarios visibles
+    const [searchTerm, setSearchTerm] = useState(""); // Estado para la búsqueda
+    const [currentPage, setCurrentPage] = useState(1); // Página actual
+    const [totalPages, setTotalPages] = useState(1); // Número total de páginas
 
-  const handleSearchChange = (e) => {
-    setSearchTerm(e.target.value); // Actualiza el término de búsqueda
-  };
+    // Listar las insignias
 
-  // actualizar el total de páginas cada vez que el número de usuarios filtrados o la cantidad visible cambien.
-  useEffect(() => {
-    const totalUsers = filteredLibros.length;
-    setTotalPages(Math.ceil(totalUsers / visibleCount));
-  }, [filteredLibros, visibleCount]);
 
-  // Función para cambiar la página
-  const handlePageChange = (newPage) => {
-    if (newPage >= 1 && newPage <= totalPages) {
-      setCurrentPage(newPage);
-    }
-  };
 
-  const startIndex = (currentPage - 1) * visibleCount;
-  const endIndex = startIndex + visibleCount;
-  const librosPaginados = filteredLibros.slice(startIndex, endIndex);
 
-  // Método para manejar el filtrado
-  const handleFilter = async (filter) => {
-    console.log(`Filter selected: ${filter}`);
-    setIsLoading(true); // Inicia la carga al filtrar
 
-    try {
-      let response;
 
-      if (filter === "Activo") {
-        response = await fetch("/api/libro/getlibrosact", {
-          method: "GET",
-          headers: {
-            "Content-Type": "application/json",
-          },
-        });
-      } else if (filter === "Inactivo") {
-        response = await fetch("/api/libro/getlibrosdes", {
-          method: "GET",
-          headers: {
-            "Content-Type": "application/json",
-          },
-        });
-      } else if (filter === "Restaurar") {
-        setFilteredLibros(libro); // Restaurar la lista completa de usuarios
-        setIsFiltroModalOpen(false); // Cerrar el modal
-        setIsLoading(false);
-        return;
-      }
 
-      if (!response.ok) {
-        throw new Error("Error al filtrar los libros");
-      }
 
-      const data = await response.json();
 
-      if (data && Array.isArray(data.libros)) {
-        setFilteredLibros(data.libros); // Asignar el array de usuarios filtrados
-      } else {
-        console.error("La respuesta no contiene un array de Libros:", data);
-      }
-    } catch (error) {
-      console.error("Error al filtrar libros:", error);
-    } finally {
-      setIsLoading(false); // Finaliza la carga
-    }
 
-    setIsFiltroModalOpen(false); // Cerrar el modal después de aplicar el filtro
-  };
-
-  // Restaurar la lista completa de libros
-  const handleRestore = () => {
-    setFilteredLibros(libro);
-    setIsFiltroModalOpen(false); // Cerrar el modal
-  };
-
-  // Función para abrir diferentes modales
-  const handleOpenActivarModal = (libroId) => {
-    setSelectedLibrosId(libroId);
-    setIsActivarModalOpen(true);
-  };
-  const handleOpenDesactiveModal = (libroId) => {
-    setSelectedLibrosId(libroId);
-    setIsInactivarModalOpen(true);
-  };
-  const handleOpenActualizarModal = (libroId) => {
-    setSelectedLibrosId(libroId);
-    setIsActualizarModalOpen(true);
-  };
-
-  const handleOpenDeleteModal = (libroId) => {
-    setSelectedLibrosId(libroId); // Guardar el ID del usuario seleccionado
-    setIsEliminarModalOpen(true); // Abrir el modal
-  };
-
-  // Función para convertir estado booleano a texto
-  const obtenerEstadoTexto = (estado) => (estado ? "Activo" : "Inactivo");
-
-  const handleVisibleCountChange = (event) => {
-    setVisibleCount(Number(event.target.value)); // Actualiza la cantidad visible
-  };
 
   return (
     <div>
@@ -231,9 +82,6 @@ function GestionLibro() {
 
             {/* Contenedor para el icono de "más" y el botón "Estado" alineados a la derecha */}
             <div className="flex items-center gap-4">
-              <button onClick={() => setIsGenerosModalOpen(true)} className="bg-primary text-white px-4 py-2 rounded hover:bg-blue-950">
-                Ver Géneros
-              </button>
               <button onClick={() => setIsCrearModalOpen(true)} title="Crear">
                 <BiPlus className="text-xl" />
               </button>
@@ -382,7 +230,7 @@ function GestionLibro() {
         </main>
       </div>
     </div>
-  );
+  )
 }
 
-export default GestionLibro;
+export default GestionInsignias

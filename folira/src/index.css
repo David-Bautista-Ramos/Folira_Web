@@ -234,6 +234,13 @@ html, body {
 
 /* Asegúrate de que este CSS no esté presente o no esté sobrescribiendo el estilo por defecto */
 
+.reseña-contenedor {
+  max-width: 100%; /* El contenedor no se extiende más allá de este valor */
+  word-wrap: break-word; /* Rompe palabras largas si es necesario */
+}
+
+
+
 
 
 

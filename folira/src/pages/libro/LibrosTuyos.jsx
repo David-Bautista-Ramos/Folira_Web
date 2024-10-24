@@ -78,75 +78,91 @@ const LibrosTuyos = () => {
   );
 
   return (
-    <div className="p-4">
-      <h2 className="font-bold mb-4">Tus Libros Guardados</h2>
+<div className="p-4">
 
-      {/* Buscador */}
-      <input
-        type="text"
-        placeholder="Buscar libro por título..."
-        value={filtro}
-        onChange={(e) => setFiltro(e.target.value)}
-        className="w-full p-2 mb-4 border rounded"
-      />
+  {/* Buscador */}
+<input
+  type="text"
+  placeholder="Buscar libro por título..."
+  value={filtro}
+  onChange={(e) => setFiltro(e.target.value)}
+  className="w-full p-2 mb-4 border rounded focus:outline-none focus:border-primary"
+/>
 
-      {isLoading ? (
-        <p>Cargando...</p>
-      ) : librosFiltrados.length === 0 ? (
-        <p>No tienes libros guardados.</p>
-      ) : (
-        <div className="p-6">
-          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6">
-            {librosFiltrados.map((libro) => (
-              <div
-                key={libro._id}
-                className="bg-white rounded-lg shadow-lg p-4 flex flex-col h-full"
+
+  {isLoading ? (
+    <p>Cargando...</p>
+  ) : librosFiltrados.length === 0 ? (
+    <p>No tienes libros guardados.</p>
+  ) : (
+    <div className="p-6">
+      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6">
+        {librosFiltrados.map((libro) => (
+          <div
+            key={libro._id}
+            className="bg-white rounded-lg shadow-lg p-4 flex flex-col justify-between h-full"
+          >
+            <Link to={`/fichaLibro/${libro._id}`} className="flex flex-col items-center">
+              <img
+                src={libro.portada}
+                alt={libro.titulo}
+                className="w-35 h-60 object-cover rounded"
+              />
+              <h2
+                className="text-lg font-semibold mt-4 text-center"
+                style={{
+                  display: '-webkit-box',
+                  WebkitLineClamp: 2, // Limitar a 2 líneas
+                  WebkitBoxOrient: 'vertical',
+                  overflow: 'hidden',
+                  textOverflow: 'ellipsis',
+                }}
               >
-                <Link to={`/fichaLibro/${libro._id}`} className="flex flex-col items-center">
-                  <img
-                    src={libro.portada}
-                    alt={libro.titulo}
-                    className="w-35 h-60 object-cover rounded"
-                  />
-                  <h2 className="text-lg font-semibold mt-4 text-center">
-                    {libro.titulo}
-                  </h2>
-                </Link>
-                <button
-                  onClick={() => handleSaveToggle(libro._id)}
-                  className={`mt-4 rounded px-4 py-2 ${
-                    librosGuardados.some((l) => l._id === libro._id)
-                      ? "bg-slate-600"
-                      : "bg-gray-800"
-                  } text-white hover:${
-                    librosGuardados.some((l) => l._id === libro._id)
-                      ? "bg-slate-700"
-                      : "bg-gray-900"
-                  } transition`}
-                >
-                  {librosGuardados.some((l) => l._id === libro._id)
-                    ? "Eliminar"
-                    : "Guardar"}
-                </button>
+                {libro.titulo}
+              </h2>
+            </Link>
 
-                {libro.userId === authUser?._id && (
-                  <div className="flex gap-1 items-center">
-                    {!isDeleting ? (
-                      <FaTrash
-                        className="cursor-pointer hover:text-red-500"
-                        onClick={() => deleteLibro(libro._id)}
-                      />
-                    ) : (
-                      <FaSpinner className="animate-spin text-blue-500" />
-                    )}
-                  </div>
-                )}
-              </div>
-            ))}
+            <div className="mt-auto">
+              <button
+                onClick={() => handleSaveToggle(libro._id)}
+                className={`mt-4 w-full rounded px-4 py-2 ${
+                  librosGuardados.some((l) => l._id === libro._id)
+                    ? "bg-slate-600"
+                    : "bg-gray-800"
+                } text-white hover:${
+                  librosGuardados.some((l) => l._id === libro._id)
+                    ? "bg-slate-700"
+                    : "bg-gray-900"
+                } transition`}
+              >
+                {librosGuardados.some((l) => l._id === libro._id)
+                  ? "Eliminar"
+                  : "Guardar"}
+              </button>
+
+              {libro.userId === authUser?._id && (
+                <div className="flex gap-1 items-center mt-2">
+                  {!isDeleting ? (
+                    <FaTrash
+                      className="cursor-pointer hover:text-red-500"
+                      onClick={() => deleteLibro(libro._id)}
+                    />
+                  ) : (
+                    <FaSpinner className="animate-spin text-blue-500" />
+                  )}
+                </div>
+              )}
+            </div>
           </div>
-        </div>
-      )}
+        ))}
+      </div>
     </div>
+  )}
+</div>
+
+
+
+
   );
 };
 
