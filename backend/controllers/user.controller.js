@@ -762,3 +762,97 @@ export const obtenerUsersDes = async (req, res) => {
     res.status(500).json({ error: "Error al obtener los user." });
   }
 };
+
+
+//Recuperar contraseña
+export const recuperarContraseña = async (req, res) => {
+  const { correo } = req.body;
+
+  try {
+    // Verificar si el usuario existe
+    const user = await User.findOne({ correo });
+    if (!user) {
+      return res.status(404).json({ message: 'Usuario no encontrado.' });
+    }
+
+    // Generar una nueva contraseña aleatoria
+    const randomPassword = generateRandomPassword();
+
+    // Encriptar la nueva contraseña
+    const hashedPassword = await bcrypt.hash(randomPassword, 10);
+
+    // Actualizar la contraseña en la base de datos
+    user.contrasena = hashedPassword;
+    await user.save();
+
+    // Configuración del correo electrónico
+    const transporter = nodemailer.createTransport({
+      service: 'gmail',
+      auth: {
+        user: process.env.EMAIL_USER || 'foliraweb@gmail.com',
+        pass: process.env.EMAIL_PASS || 'ytle kapv jhyo gopu',
+      },
+      tls: {
+        rejectUnauthorized: false,
+      },
+    });
+
+    const mailOptions = {
+      from: process.env.EMAIL_USER || 'foliraweb@gmail.com',
+      to: user.correo,
+      subject: 'Recuperación de Contraseña',
+      html: `
+        <div style="font-family: Arial, sans-serif; text-align: center; background-color: #f0f4f8; padding: 30px;">
+          <div style="background-color: white; max-width: 600px; margin: 0 auto; padding: 20px; border-radius: 10px; box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);">
+            <img src="cid:logoFolira" alt="Logo Folira" style="width: 120px; margin-bottom: 20px; border-radius: 50%;">
+            <h1 style="color: #111827; font-size: 24px; margin-bottom: 10px;">Recuperación de Contraseña Folira</h1>
+            <p style="font-size: 16px; color: #34495e; margin: 0 0 10px;">
+              Hola, <strong>${user.nombreCompleto || 'Usuario'}</strong>.
+            </p>
+            <p style="font-size: 16px; color: #34495e;">
+              Hemos recibido una solicitud para restablecer tu contraseña.
+            </p>
+            <div style="text-align: left; background-color: #f5f5f5; padding: 20px; border-radius: 8px; margin: 20px 0;">
+              <p style="margin: 5px 0;"><strong>Correo:</strong> ${user.correo}</p>
+              <p style="margin: 5px 0;"><strong>Clave temporal:</strong> ${randomPassword}</p>
+              <p style="font-size: 14px; color: #142157;">
+                Por seguridad, te recomendamos cambiar esta contraseña después de iniciar sesión.
+              </p>
+            </div>
+            <p style="font-size: 16px; color: #34495e; margin-top: 10px;">
+              ¡Gracias por ser parte de <strong>Folira</strong>!
+            </p>
+          </div>
+          <p style="font-size: 12px; color: #9ca3af; margin-top: 10px;">
+            Si no solicitaste este cambio, por favor ignora este correo o contacta con soporte.
+          </p>
+        </div>
+      `,
+      attachments: [
+        {
+          filename: "logo-Folira.png",
+          path: path.join(__dirname, "../assets/img/Folira_logo.png"), // Usar path.join
+          cid: "logoFolira", // cid para referenciar en el HTML
+        },
+      ],
+    };
+
+    // Enviar el correo
+    await transporter.sendMail(mailOptions);
+
+    return res.status(200).json({ message: 'Contraseña actualizada y enviada al correo.' });
+  } catch (error) {
+    console.error('Error al recuperar la contraseña:', error);
+    return res.status(500).json({ message: 'Error en el servidor.' });
+  }
+};
+
+// Generar una contraseña aleatoria
+function generateRandomPassword() {
+  const chars = 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
+  let password = '';
+  for (let i = 0; i < 8; i++) {
+    password += chars[Math.floor(Math.random() * chars.length)];
+  }
+  return password;
+}

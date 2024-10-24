@@ -72,8 +72,6 @@ const ListaPublicaciones = ({ posts, esAdmin, esMiembro }) => {
     document.getElementById(`denuncia_modal_${postId}`).showModal();
   };
 
- 
-
   const canInteract = () => {
     return authUser && (esAdmin || esMiembro);
   };

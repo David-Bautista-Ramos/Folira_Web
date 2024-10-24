@@ -166,8 +166,6 @@ function App() {
                   <Route path='/detalleComunidad/:id' element={authUser ? <DetallesComunidad /> : <Navigate to='/login' />} />  
                   <Route path='/insignia' element={authUser ? <Insignias /> : <Navigate to='/login' />} />   
                   <Route path='/recuperarContrasena' element={<RecuperarContrasena />} />
-
-
                   </Routes>
               </main>
               {authUser && <RightPanel />}
