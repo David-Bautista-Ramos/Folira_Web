@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
-import { useParams } from 'react-router-dom'; // Importa useParams
-import { BsStarFill, BsStar, BsEye, BsEyeSlash } from 'react-icons/bs';
+import { Link, useParams, useNavigate } from 'react-router-dom'; // Importa useParams
+import { BsStarFill, BsStar, BsEye, BsEyeSlash, BsArrowLeft } from 'react-icons/bs';
 import PropTypes from 'prop-types';
 import { useQuery } from '@tanstack/react-query';
 import { FaTrash } from 'react-icons/fa';
@@ -16,6 +16,7 @@ const FichaTecnicaLibro = () => {
   const [loadingReseñas, setLoadingReseñas] = useState(false);
   const { data: authUser } = useQuery({ queryKey: ['authUser'] });
   const [selectedStarFilter, setSelectedStarFilter] = useState(0); // Estado para el filtro de estrellas
+
 
   useEffect(() => {
     // Función para obtener los detalles del libro por id
@@ -49,6 +50,10 @@ const FichaTecnicaLibro = () => {
     isbn,
     portada,
   } = libro;
+
+  const handleRedirect = () => {
+    navigate('/librosSugerido'); // Redirección
+  };
 
   const renderSinopsis = () => {
     const sinopsisCorta = sinopsis.slice(0, 100);
@@ -181,6 +186,14 @@ const FichaTecnicaLibro = () => {
   return (
     <div className='flex-[4_4_0] border-r border-primary min-h-screen '> 
       <div className="flex flex-col p-6 bg-white rounded-lg shadow-lg relative">
+        {/* Render del libro */}
+        <div className="flex items-center cursor-pointer gap-5 text-3xl -mt-4 border-b-2 border-gray-300 pb-2 mb-4" onClick={handleRedirect}>
+          <Link to="/libro"> 
+            <BsArrowLeft className="text-primary mr-2 text-lg " /> {/* Icono de flecha */}
+          </Link>
+            <span className="text-xl text-primary font-bold flex items-center">{titulo}</span> {/* Título del libro */}
+        </div>
+
         <div className="flex">
           <img 
             src={portada} 
@@ -196,7 +209,9 @@ const FichaTecnicaLibro = () => {
               )) : 'No disponible'}</p>
             <p className="text-md">Serie: {serie || 'N/A'}</p>
             <p className="text-md">ISBN: {isbn}</p>
-            {renderSinopsis()}
+            <div className="text-md break-all">
+              {renderSinopsis()}
+            </div>
             <div className="flex items-center mt-2">
               <span className="text-lg font-medium">Calificación:</span>
               <div className="flex ml-2">{renderEstrellas(calificacion)}</div>

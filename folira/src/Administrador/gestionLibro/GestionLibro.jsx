@@ -32,7 +32,7 @@ function GestionLibro() {
   const [isFiltroModalOpen, setIsFiltroModalOpen] = useState(false); // Estado del modal de filtro
   const [filteredLibros, setFilteredLibros] = useState([]); // Libros filtrados
   const [isLoading, setIsLoading] = useState(true);
-  const [visibleCount, setVisibleCount] = useState(10); // Estado para el select de cantidad de usuarios visibles
+  const [visibleCount, setVisibleCount] = useState(6); // Estado para el select de cantidad de usuarios visibles
   const [searchTerm, setSearchTerm] = useState(""); // Estado para la búsqueda
   const [currentPage, setCurrentPage] = useState(1); // Página actual
   const [totalPages, setTotalPages] = useState(1); // Número total de páginas
@@ -214,8 +214,8 @@ function GestionLibro() {
                 onChange={handleVisibleCountChange}
                 className="bg-white border border-gray-400 p-2 rounded"
               >
-                <option value={5}> 5 libros</option>
-                <option value={10}> 10 libros</option>
+                <option value={6}> 6 libros</option>
+                <option value={12}> 12 libros</option>
                 <option value={20}> 20 libros</option>
               </select>
 
@@ -231,11 +231,13 @@ function GestionLibro() {
 
             {/* Contenedor para el icono de "más" y el botón "Estado" alineados a la derecha */}
             <div className="flex items-center gap-4">
-              <button onClick={() => setIsGenerosModalOpen(true)} className="bg-primary text-white px-4 py-2 rounded hover:bg-blue-950">
-                Ver Géneros
-              </button>
+             
               <button onClick={() => setIsCrearModalOpen(true)} title="Crear">
                 <BiPlus className="text-xl" />
+              </button>
+
+              <button onClick={() => setIsGenerosModalOpen(true)} className="bg-primary text-white px-4 py-2 rounded hover:bg-blue-950">
+                Ver Géneros
               </button>
               <button
                 onClick={() => setIsFiltroModalOpen(true)}

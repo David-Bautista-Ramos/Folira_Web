@@ -37,7 +37,7 @@ function ModalActivarPublicacion  ({ isOpen, onClose, publicacionId, obtenerPubl
               <h2 className="text-lg font-semibold">Activar Publicación</h2>
               <p>¿Estás seguro de que deseas activar esta publicación?</p>
               <div className="flex justify-end mt-4">
-                  <button className="px-4 py-2 bg-gray-300 text-gray-800 rounded-md  hover:bg-gray-400" onClick={onClose}>
+                  <button className="px-4 py-2 bg-gray-300 text-gray-800 rounded-md mr-3  hover:bg-gray-400" onClick={onClose}>
                       Cancelar
                   </button>
                   <button className={`px-4 py-2 border rounded bg-primary text-white hover:bg-blue-950" ${loading ? 'opacity-50' : ''}`}

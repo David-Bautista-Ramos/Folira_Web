@@ -215,50 +215,49 @@ const handleVisibleCountChange = (event) => {
             alt="banner" />
           </div>
 
-          <div className="flex justify-between items-center mt-4 mx-[70px]">
-
-            {/* Contenedor para el select y la barra de búsqueda alineados a la izquierda */}
-            <div className="flex gap-4">
-              {/* Select para elegir cuántos usuarios ver */}
-              <select
-                value={visibleCount}
-                onChange={handleVisibleCountChange}
-                className="bg-white border border-gray-400 p-2 rounded"
-              >
-                <option value={5}> 5 usuarios</option>
-                <option value={15}> 15 usuarios</option>
-                <option value={20}> 20 usuarios</option>
-              </select>
-
-              {/* Barra de búsqueda */}
-              <input
-                type="text"
-                placeholder="Buscar notificaciones..."
-                value={searchTerm}
-                onChange={handleSearchChange}
-                className="p-2 border border-gray-400 rounded w-[340px]"
-              />
-            </div>
-
-          <button
-            onClick={() => setIsFilterModalOpenTipo(true)}
-            className="bg-primary text-white px-4 py-2 rounded mr-3 hover:bg-blue-950"
-          >
-            Filtrar por Tipo
-          </button>
-
-          <button
-              onClick={() => setIsFilterModalOpen(true)}
-              className="bg-primary text-white px-4 py-2 rounded mr-3 hover:bg-blue-950"
+          <div className="flex items-center gap-4 mt-5 mb-4">
+            {/* Select para elegir cuántos usuarios ver */}
+            <select
+              value={visibleCount}
+              onChange={handleVisibleCountChange}
+              className="bg-white border border-gray-400 p-2 rounded ml-[50px]"
             >
-              Estado
-            </button>
+              <option value={6}> 6 usuarios</option>
+              <option value={12}> 12 usuarios</option>
+              <option value={20}> 20 usuarios</option>
+            </select>
 
-            <button onClick={() => setIsCrearModalOpen(true)} title="Crear">
-              <BiPlus className="text-xl" />
-            </button>
-            
+            {/* Barra de búsqueda */}
+            <input
+              type="text"
+              placeholder="Buscar notificaciones..."
+              value={searchTerm}
+              onChange={handleSearchChange}
+              className="p-2 border border-gray-400 rounded w-[340px]"
+            />
+
+            {/* Botones de "Estado", "Filtrar", y "Más" */}
+            <div className="flex items-center gap-2 ml-auto mr-[50px]">
+              <button
+                onClick={() => setIsFilterModalOpen(true)}
+                className="bg-primary text-white px-4 py-2 rounded hover:bg-blue-950"
+              >
+                Estado
+              </button>
+
+              <button
+                onClick={() => setIsFilterModalOpenTipo(true)}
+                className="bg-primary text-white px-4 py-2 rounded hover:bg-blue-950"
+              >
+                Filtrar
+              </button>
+
+              <button onClick={() => setIsCrearModalOpen(true)} title="Crear">
+                <BiPlus className="text-xl" />
+              </button>
+            </div>
           </div>
+
 
           {isLoading ? (
             <div className="flex justify-center items-center my-10">
@@ -278,7 +277,7 @@ const handleVisibleCountChange = (event) => {
                       </p>
                     </div>
                   </div>
-                  <p className="text-gray-600">Estado: {notificacion.leido ? "Leído" : "No leído"}</p>
+                  <p className="text-gray-600">Estado: {notificacion.leido ? "Activo" : "Inactivo"}</p>
                   <div className="mt-auto flex justify-between items-center">
                     <div className="flex items-center gap-3">
                       <button onClick={() => handleOpenActivarModal(notificacion._id)} title="Activar">

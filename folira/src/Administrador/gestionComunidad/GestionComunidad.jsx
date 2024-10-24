@@ -33,7 +33,7 @@ function GestionComunidad() {
   const [filteredComunidad, setFilteredComunidad] = useState([]); // Nuevo estado para usuarios filtrados
 
   const [isLoading, setIsLoading] = useState(true); // Corregido: useState en vez de useSatate
-  const [visibleCount, setVisibleCount] = useState(10); // Estado para el select de cantidad de usuarios visibles
+  const [visibleCount, setVisibleCount] = useState(6); // Estado para el select de cantidad de usuarios visibles
   const [searchTerm, setSearchTerm] = useState(""); // Estado para la búsqueda
   const [currentPage, setCurrentPage] = useState(1); // Página actual
   const [totalPages, setTotalPages] = useState(1); // Número total de páginas
@@ -217,8 +217,8 @@ function GestionComunidad() {
                 onChange={handleVisibleCountChange}
                 className="bg-white border border-gray-400 p-2 rounded"
               >
-                <option value={5}> 5 comunidades</option>
-                <option value={10}> 10 comunidades</option>
+                <option value={6}> 6 comunidades</option>
+                <option value={12}> 12 comunidades</option>
                 <option value={20}> 20 comunidades</option>
               </select>
 
