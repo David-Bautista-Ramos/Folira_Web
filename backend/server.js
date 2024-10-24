@@ -16,6 +16,8 @@ import comunidadRoutes from "./routes/comunidad.routes.js";
 import denunciaRoutes from "./routes/denuncia.routes.js";
 import recomendacionesRoutes from "./routes/recomendaciones.routes.js";
 import guardarLibrosRoutes from "./routes/guardarLibros.routes.js";
+import insigniasRoutes from "./routes/insigniasRoutes.js";
+import eventosRoutes from "./routes/eventosRoutes.js";
 
 import connectMongoDB from "./db/connectMongoDB.js";
 
@@ -60,6 +62,8 @@ app.use("/api/comunidad", comunidadRoutes);
 app.use("/api/denuncias", denunciaRoutes);
 app.use("/api/recomendaciones", recomendacionesRoutes);
 app.use("/api/guardarLibros", guardarLibrosRoutes);
+app.use("/api/insignias", insigniasRoutes);
+app.use("/api/eventos", eventosRoutes);
 
 app.listen(8000, () => {
   console.log(`Server is running on port ${PORT}`);

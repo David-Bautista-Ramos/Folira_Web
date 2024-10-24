@@ -100,6 +100,27 @@ const DetallesComunidad = () => {
       toast.error('Hubo un problema al inactivar la comunidad');
     }
   };
+  const handleUnirseComunidad = async () => {
+    const userId = authUser._id;
+
+  try {
+    const response = await fetch('/api/comunidad/unircomunidad', {
+      method: 'PUT',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ userId, comunidadId: id }),
+    });
+
+    if (!response.ok) throw new Error('Error al unirse a la comunidad');
+    const data = await response.json();
+    toast.success(data.message);
+
+    // Invalida la consulta de la comunidad para actualizar los datos
+    queryClient.invalidateQueries(['comunidad', id]);
+  } catch (error) {
+    console.error('Error:', error);
+    toast.error('No se pudo unir a la comunidad');
+  }
+  };
 
   if (loadingComunidad) return <div>Cargando...</div>;
 
@@ -157,6 +178,10 @@ const DetallesComunidad = () => {
                   Actualizar comunidad
                 </button>
               </>
+            )} {!esMiembro && !esAdmin && (
+              <button onClick={handleUnirseComunidad} className="mt-4 bg-green-600 text-white py-2 px-4 rounded">
+                Unirme a la comunidad
+              </button>
             )}
           </div>
         </div>
