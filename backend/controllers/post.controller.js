@@ -187,12 +187,12 @@ export const commentOnPostAd = async (req, res) => {
     const postId = req.params.id;
 
     if (!text) {
-      return res.status(400).json({ error: "Text field is required" });
+      return res.status(400).json({ error: "Se requiere campo de texto" });
     }
     const post = await Post.findById(postId);
 
     if (!post) {
-      return res.status(404).json({ error: "Post not found" });
+      return res.status(404).json({ error: "No se ha encontrado la publicación" });
     }
 
     const comment = { user: userId, text };
@@ -209,8 +209,8 @@ export const commentOnPostAd = async (req, res) => {
 
     res.status(200).json(post);
   } catch (error) {
-    console.log("Error in commentOnPost controller: ", error);
-    res.status(500).json({ error: "Internal server error" });
+    console.log("Error en el comentarioController de Post: ", error);
+    res.status(500).json({ error: "Error interno del servidor" });
   }
 };
 
@@ -221,12 +221,12 @@ export const commentOnPost = async (req, res) => {
     const userId = req.user._id;
 
     if (!text) {
-      return res.status(400).json({ error: "Text field is required" });
+      return res.status(400).json({ error: "Se requiere campo de texto" });
     }
     const post = await Post.findById(postId);
 
     if (!post) {
-      return res.status(404).json({ error: "Post not found" });
+      return res.status(404).json({ error: "No se ha encontrado la publicación" });
     }
 
     const comment = { user: userId, text };
@@ -243,8 +243,8 @@ export const commentOnPost = async (req, res) => {
 
     res.status(200).json(post);
   } catch (error) {
-    console.log("Error in commentOnPost controller: ", error);
-    res.status(500).json({ error: "Internal server error" });
+    console.log("Error en los comentarios del controlador de PosteOnline: ", error);
+    res.status(500).json({ error: "error interno del servidor" });
   }
 };
 
@@ -256,7 +256,7 @@ export const likeUnlikePost = async (req, res) => {
     const post = await Post.findById(postId);
 
     if (!post) {
-      return res.status(404).json({ error: "Post not found" });
+      return res.status(404).json({ error: "No se ha encontrado la publicación" });
     }
 
     const userLikedPost = post.likes.includes(userId);
@@ -287,8 +287,8 @@ export const likeUnlikePost = async (req, res) => {
       res.status(200).json(updatedLikes);
     }
   } catch (error) {
-    console.log("Error in likeUnlikePost controller: ", error);
-    res.status(500).json({ error: "Internal server error" });
+    console.log("Error en el controlador de likeUnlikePost: ", error);
+    res.status(500).json({ error: "error interno del servidor" });
   }
 };
 export const getAllPosts = async (req, res) => {
@@ -313,8 +313,8 @@ export const getAllPosts = async (req, res) => {
 
     res.status(200).json(posts);
   } catch (error) {
-    console.log("Error in getAllPosts controller: ", error);
-    res.status(500).json({ error: "Internal server error" });
+    console.log("Error en el controlador de getAllPosts: ", error);
+    res.status(500).json({ error: "error interno del servidor" });
   }
 };
 
@@ -324,7 +324,7 @@ export const numDenuncias = async (req, res) => {
   try {
     const post = await Post.findById(postId);
     if (!post) {
-      return res.status(404).json({ error: "Post not found" });
+      return res.status(404).json({ error: "No se ha encontrado la publicación" });
     }
 
     post.denuncias += 1; // Incrementa el contador de denuncias
@@ -332,7 +332,7 @@ export const numDenuncias = async (req, res) => {
 
     res.json({ success: true, denuncias: post.denuncias });
   } catch (error) {
-    res.status(500).json({ error: "Something went wrong" });
+    res.status(500).json({ error: "algo salió mal" });
   }
 };
 
@@ -357,8 +357,8 @@ export const getPostsByCommunity = async (req, res) => {
 
     res.status(200).json(posts);
   } catch (error) {
-    console.error("Error in getPostsByCommunity controller:", error);
-    res.status(500).json({ error: "Internal server error  " });
+    console.error("Error en el controlador getPostsByCommunity:", error);
+    res.status(500).json({ error: "error interno del servidor " });
   }
 };
 
@@ -384,8 +384,8 @@ export const getPostsWithoutCommunity = async (req, res) => {
 
     res.status(200).json(posts);
   } catch (error) {
-    console.error("Error in getPostsWithoutCommunity controller:", error);
-    res.status(500).json({ error: "Internal server error" });
+    console.error("Error en el controlador getPostsWithoutCommunity:", error);
+    res.status(500).json({ error: "error interno del servidor" });
   }
 };
 
@@ -408,8 +408,8 @@ export const getLikedPosts = async (req, res) => {
 
     res.status(200).json(likedPosts);
   } catch (error) {
-    console.log("Error in getLikedPosts controller: ", error);
-    res.status(500).json({ error: "Internal server error" });
+    console.log("Error en el controlador de getLikedPosts: ", error);
+    res.status(500).json({ error: "error interno del servidor" });
   }
 };
 
@@ -434,8 +434,8 @@ export const getFollowingPosts = async (req, res) => {
 
     res.status(200).json(feedPosts);
   } catch (error) {
-    console.log("Error in getFollowingPosts controller: ", error);
-    res.status(500).json({ error: "Internal server error" });
+    console.log("Error en el controlador de getFollowingPosts: ", error);
+    res.status(500).json({ error: "error interno del servidor" });
   }
 };
 
@@ -444,7 +444,7 @@ export const getUserPosts = async (req, res) => {
     const { nombre } = req.params;
 
     const user = await User.findOne({ nombre });
-    if (!user) return res.status(404).json({ error: "User not found" });
+    if (!user) return res.status(404).json({ error: "Usuario no encontrado" });
 
     const posts = await Post.find({ user: user._id })
       .sort({ createdAt: -1 })
@@ -459,8 +459,8 @@ export const getUserPosts = async (req, res) => {
 
     res.status(200).json(posts);
   } catch (error) {
-    console.log("Error in getUserPosts controller: ", error);
-    res.status(500).json({ error: "Internal server error" });
+    console.log("Error en el controlador de getUserPosts: ", error);
+    res.status(500).json({ error: "error interno del servidor" });
   }
 };
 

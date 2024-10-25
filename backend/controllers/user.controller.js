@@ -62,7 +62,7 @@ export const getUserProfile = async (req, res) => {
       seguidos: seguidosInfo
     });
   } catch (error) {
-    console.log("Error in getUserProfile: ", error.message);
+    console.log("Error en getUserProfile: ", error.message);
     res.status(500).json({ error: error.message });
   }
 };
@@ -108,7 +108,7 @@ export const followUnfollowUser = async (req, res) => {
       res.status(200).json({ message: "Usuario Seguido con exito" });
     }
   } catch (error) {
-    console.log("Error in followUnfollowUser: ", error.message);
+    console.log("Error en followUnfollowUser: ", error.message);
     res.status(500).json({ error: error.message });
   }
 };
@@ -154,7 +154,7 @@ export const getSuggestedUsers = async (req, res) => {
 
     res.status(200).json(users.slice(0, 5)); // Enviar solo los primeros 4 usuarios sugeridos
   } catch (error) {
-    console.log("Error in getSuggestedUsers: ", error.message);
+    console.log("Error en getSuggestedUsers: ", error.message);
     res.status(500).json({ error: error.message });
   }
 };
@@ -186,7 +186,7 @@ export const updateUser = async (req, res) => {
       return res
         .status(400)
         .json({
-          error: "Please provide both current password and new password",
+          error: "Por favor, proporcione tanto la contraseña actual como la nueva",
         });
     }
 
@@ -199,7 +199,7 @@ export const updateUser = async (req, res) => {
       if (newcontrasena.length < 6) {
         return res
           .status(400)
-          .json({ error: "Password must be at least 6 characters long" });
+          .json({ error: "La contraseña debe tener al menos 6 caracteres" });
       }
 
       const salt = await bcrypt.genSalt(10);
@@ -235,7 +235,7 @@ export const updateUser = async (req, res) => {
       if (generos.length !== generoLiterarioPreferido.length) {
         return res
           .status(400)
-          .json({ error: "Some selected literary genres are invalid" });
+          .json({ error: "Algunos géneros literarios seleccionados son inválidos" });
       }
       user.generoLiterarioPreferido = generos.map((genero) => genero._id); // Actualiza los géneros literarios del usuario
     }
@@ -256,7 +256,7 @@ export const updateUser = async (req, res) => {
 
     return res.status(200).json(user);
   } catch (error) {
-    console.log("Error in updateUser: ", error.message);
+    console.log("Error en updateUser: ", error.message);
     res.status(500).json({ error: error.message });
   }
 };

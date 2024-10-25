@@ -58,7 +58,7 @@ export const crearAutor = async (req, res) => {
     });
 
     // Guardar el autor en la base de datos
-    await nuevoAutor.save();
+    await nuevoAutor.save();  
     res
       .status(201)
       .json({ message: "Autor creado con éxito", autor: nuevoAutor });

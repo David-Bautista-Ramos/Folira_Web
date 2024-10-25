@@ -113,11 +113,11 @@ export const signup = async (req, res) => {
       roles: newUser.roles,
     });
   } catch (error) {
-    if (error.name === "ValidationError") {
+    if (error.name === "Error de validación") {
       // Error de validación de Yup
       return res.status(400).json({ error: error.errors.join(", ") });
     }
-    console.error("Error in signup controller:", error.message);
+    console.error("Error en el controlador de registro:", error.message);
     return res.status(500).json({ error: "Error en el servidor." });
   }
 };
@@ -162,7 +162,7 @@ export const login = async (req, res) => {
       roles: user.roles,
     });
   } catch (error) {
-    console.error("Error in login controller:", error.message);
+    console.error("Error en el controlador de inicio de sesión:", error.message);
     return res.status(500).json({ error: "Error en el servidor." });
   }
 };
@@ -178,7 +178,7 @@ export const logout = async (req, res) => {
       res.cookie("jwt", "", { maxAge: 0 });
       return res.status(200).json({ message: "Sesión cerrada con éxito." });
   } catch (error) {
-      console.error("Error en logout controller:", error.message);
+      console.error("Error en el controlador de cierre de sesión:", error.message);
       return res.status(500).json({ error: "Error en el servidor." });
   }
 };
@@ -210,7 +210,7 @@ export const getMe = async (req, res) => {
     // Responder con el usuario y sus géneros literarios preferidos
     return res.status(200).json({ ...user.toObject(), generosPreferidos });
   } catch (error) {
-    console.error("Error in getMe controller:", error.message);
+    console.error("Error en el controlador getMe:", error.message);
     return res.status(500).json({ error: "Error en el servidor." });
   }
 };
