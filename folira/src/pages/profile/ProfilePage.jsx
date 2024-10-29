@@ -165,8 +165,8 @@ const ProfilePage = () => {
                     onClick={() => follow(user?._id)}
                   >
                     {isPending && "Loading..."}
-                    {!isPending && amIFollowing && "Unfollow"}
-                    {!isPending && !amIFollowing && "Follow"}
+                    {!isPending && amIFollowing && "Dejar de seguir"}
+                    {!isPending && !amIFollowing && "Seguir"}
                   </button>
                 )}
                 {(fotoPerfilBan || fotoPerfil) && (
