@@ -64,7 +64,7 @@ function App() {
       // Si el usuario está autenticado, inicia o reanuda el contador
       intervalRef.current = setInterval(() => {
         timeSpentRef.current += 1;
-        console.log(`Tiempo en pantalla: ${timeSpentRef.current} segundos`); // Para verificar en consola
+        // console.log(`Tiempo en pantalla: ${timeSpentRef.current} segundos`);  Para verificar en consola
       }, 1000);
     } else {
       // Si el usuario no está autenticado, detener el contador

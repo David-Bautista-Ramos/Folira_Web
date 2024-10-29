@@ -21,7 +21,7 @@ const Post = ({ post }) => {
 
   const postOwner = post.user; // Ahora hace referencia a "usuario"
   const isLiked = post.likes.includes(authUser._id); // Cambiar según la lógica de likes
-  const isMyPost = authUser._id === post.user._id; // Cambiar según la lógica de identificación del usuario
+  const isMyPost = authUser._id === post.user?._id; // Cambiar según la lógica de identificación del usuario
   const isMyComm = (commentUserId) => authUser._id === commentUserId;
 
   const formattedDate = formatPostDate(post.createdAt); // Cambiar según el tiempo real
@@ -161,11 +161,11 @@ const Post = ({ post }) => {
     <div className="flex gap-2 items-start p-4 border-b border-blue-950">
       <div className="avatar">
         <Link
-          to={`/profile/${postOwner.nombre}`}
+          to={`/profile/${postOwner?.nombre}`}
           className="w-8 rounded-full overflow-hidden"
         >
           <img
-            src={postOwner.fotoPerfil || "/avatar-placeholder.png"}
+            src={postOwner?.fotoPerfil || "/avatar-placeholder.png"}
             alt="Profile"
           />
         </Link>
@@ -173,13 +173,13 @@ const Post = ({ post }) => {
       <div className="flex flex-col flex-1">
         <div className="flex gap-2 items-center">
           <Link
-            to={`/profile/${postOwner.nombre}`}
+            to={`/profile/${postOwner?.nombre}`}
             className="font-bold"
           >
-            {postOwner.nombreCompleto}
+            {postOwner?.nombreCompleto}
           </Link>
           <span className="text-blue-950 flex gap-1 text-sm">
-            <Link to={`/profile/${postOwner._id}`}>@{postOwner.nombre}</Link>
+            <Link to={`/profile/${postOwner?._id}`}>@{postOwner?.nombre}</Link>
             <span>·</span>
             <span>{formattedDate}</span>
           </span>
@@ -323,7 +323,7 @@ const Post = ({ post }) => {
                 id={`denuncia_modal_${post._id}`} // ID único para cada modal
                 postId={post._id} 
                 tipoDenuncia="publicacion" // o "comunidad", "resena", según corresponda
-                denunciadoId={postOwner._id} // Pasamos el ID del dueño
+                denunciadoId={postOwner?._id} // Pasamos el ID del dueño
               />
 
               {/* Mostrar las notificaciones */}

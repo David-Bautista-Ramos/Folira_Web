@@ -93,7 +93,7 @@ const NotificationPage = () => {
           <ul tabIndex={0} className='dropdown-content z-[1] menu p-2 shadow bg-base-100 rounded-box w-52'>
             <li>
               <button className='text-red-500' onClick={handleDeleteAllNotifications}>
-                Delete all notifications
+                Eliminar  notificaciones
               </button>
             </li>
           </ul>
@@ -123,13 +123,13 @@ const NotificationPage = () => {
                 {notification.tipo === 'comentario' && (
                   <FaRegMessage className='text-green-500 w-5 h-5' />
                 )}
-                <Link to={`/profile/${notification.de.nombre}`} className='flex items-center gap-2'>
+                <Link to={`/profile/${notification.de?.nombre}`} className='flex items-center gap-2'>
                   <div className='avatar'>
                     <div className='w-8 rounded-full'>
-                      <img src={notification.de.fotoPerfil || '/avatar-placeholder.png'} alt='profile' />
+                      <img src={notification.de?.fotoPerfil || '/avatar-placeholder.png'} alt='profile' />
                     </div>
                   </div>
-                  <span className='font-bold'>@{notification.de.nombre}</span>
+                  <span className='font-bold'>@{notification.de?.nombre}</span>
                 </Link>
               </div>
 
