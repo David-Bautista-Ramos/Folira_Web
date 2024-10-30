@@ -1,7 +1,30 @@
 import { useState } from "react";
 import useCreateAutor from "../../hooks/useCreateAutor";
+import Select from "react-select"; // Importa react-select
 
 function ModalCrearAutor({ isOpen, onClose }) {
+
+  const paises = [
+    { value: "Argentina", label: "Argentina" },
+    { value: "Australia", label: "Australia" },
+    { value: "Brazil", label: "Brazil" },
+    { value: "Canada", label: "Canada" },
+    { value: "Chile", label: "Chile" },
+    { value: "China", label: "China" },
+    { value: "Colombia", label: "Colombia" },
+    { value: "France", label: "France" },
+    { value: "Germany", label: "Germany" },
+    { value: "India", label: "India" },
+    { value: "Japan", label: "Japan" },
+    { value: "Mexico", label: "Mexico" },
+    { value: "Spain", label: "Spain" },
+    { value: "United States", label: "United States" },
+    // Agrega más países según sea necesario
+  ];
+
+  const [isCountrySelected, setIsCountrySelected] = useState(false); // Estado para controlar la selección del país
+
+
   const [formData, setFormData] = useState({
     nombre: "",
     seudonimo: "",
@@ -99,14 +122,38 @@ function ModalCrearAutor({ isOpen, onClose }) {
             className="w-full p-2 mb-3 border rounded focus:border-primary focus:outline-none"
           />
 
-          <label className="block mb-1 text-primary">País</label>
-          <input
-            type="text"
-            name="pais"
-            value={formData.pais}
-            onChange={handleInputChange}
-            placeholder="País"
-            className="w-full p-2 mb-3 border rounded focus:border-primary focus:outline-none"
+          {/* Label y Select para el país */}
+          <label className="block mb-1 text-blue-950 font-semibold">País</label>
+          <Select
+            id='pais'
+            options={paises}
+            value={paises.find(option => option.value === formData.pais) || null}
+            onChange={(selectedOption) => {
+              handleInputChange({ target: { name: 'pais', value: selectedOption.value } });
+              setIsCountrySelected(true); // Cambia el estado a seleccionado
+            }}
+            className='flex-1 mb-3'
+            placeholder='Selecciona un país'
+            styles={{
+              control: (provided) => ({
+                ...provided,
+                border: isCountrySelected ? '1px solid #A0AEC0' : '1px solid #111829', // Borde gris si se selecciona
+                borderRadius: '0.375rem',
+                padding: '0.5rem',
+                boxShadow: 'none',
+                '&:hover': {
+                  border: '1px solid #A0AEC0', // Borde gris al hacer hover
+                },
+              }),
+              placeholder: (provided) => ({
+                ...provided,
+                color: '#6B7280',
+              }),
+              singleValue: (provided) => ({
+                ...provided,
+                color: '#111829',
+              }),
+            }}
           />
 
           <label className="block mb-1 text-primary">Biografía</label>
