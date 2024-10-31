@@ -270,8 +270,8 @@ const handleVisibleCountChange = (event) => {
                   <div className="flex items-center gap-4 mb-2">
                     <div>{getNotificationIcon(notificacion.tipo)}</div>
                     <div className="flex flex-col">
-                      <span className="font-bold">{notificacion.de.nombre} ha enviado una notificación</span>
-                      <span className="font-bold">{notificacion.para.nombre} ha resibido la notificación</span>
+                      <span className="font-bold">{notificacion.de?.nombre} ha enviado una notificación</span>
+                      <span className="font-bold">{notificacion.para?.nombre} ha resibido la notificación</span>
                       <p className="text-gray-700 mb-2">
                         Tipo: {notificacion.tipo.charAt(0).toUpperCase() + notificacion.tipo.slice(1)}
                       </p>

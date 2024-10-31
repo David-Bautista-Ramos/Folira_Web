@@ -1,7 +1,7 @@
 import { useState } from "react";
 import useCreateAutor from "../../hooks/useCreateAutor";
 
-function ModalCrearAutor({ isOpen, onClose }) {
+function ModalCrearAutor({ isOpen, onClose,obtenerAutores }) {
   const [formData, setFormData] = useState({
     nombre: "",
     seudonimo: "",
@@ -39,6 +39,7 @@ function ModalCrearAutor({ isOpen, onClose }) {
       fotoAutor,
     });
     onClose(); // Close the modal after creation
+    obtenerAutores();
   };
 
   return (

@@ -219,31 +219,37 @@ const ModalActualizarComunidad = ({ isOpen, onClose, token, comunidadId,obtenerC
           className="w-full p-2 mb-2 border rounded focus:border-primary focus:outline-none text-sm"
         />
 
-        <h4 className="text-sm font-bold mb-2">Selecciona 1 Usuario como Administrador:</h4>
-        <div className="grid grid-cols-2 gap-2 mb-4 h-24 overflow-y-auto border rounded p-2">
-          {usuarioAdminOpciones.map((usuario) => (
-            <label key={usuario._id || ""} className="flex items-center cursor-pointer">
-              <input
-                type="radio"
-                name="admin"
-                value={formData.admin || usuario._id }
-                checked={formData.admin === usuario._id }
-                onChange={handleAdminChange}
-                className="hidden"
-              />
-              <div
-                className={`flex items-center border rounded-full p-1 px-2 text-xs ${formData.admin === usuario._id ? "bg-primary text-white" : "bg-gray-200"}`}
-              >
-                <img
-                  src={usuario.fotoPerfil || "/default-avatar.png"}
-                  className="w-8 h-8 rounded-full mr-2"
-                  alt={usuario.nombre}
-                />
-                <span>{usuario.nombre}</span>
-              </div>
-            </label>
-          ))}
-        </div>
+<h4 className="text-sm font-bold mb-2">
+              Selecciona 1 Usuario como Administrador:
+            </h4>
+            <div className="grid grid-cols-2 gap-2 mb-4 h-32 overflow-y-auto border rounded p-2">
+              {usuarioAdminOpciones.map((usuario) => (
+                <label key={usuario._id} className="flex items-center cursor-pointer">
+                  <input
+                    type="radio"
+                    name="admin"
+                    value={usuario._id}
+                    checked={formData.admin === usuario._id}
+                    onChange={handleAdminChange}
+                    className="hidden"
+                  />
+                  <div
+                    className={`flex items-center border rounded-full p-2 text-sm ${
+                      formData.admin === usuario._id
+                        ? "bg-primary text-white"
+                        : "bg-gray-200"
+                    }`}
+                  >
+                    <img
+                      src={usuario.fotoPerfil || "/avatar-placeholder.png"}
+                      className="w-10 h-10 rounded-full mr-2"
+                      alt={usuario.nombre}
+                    />
+                    <span>{usuario.nombre}</span>
+                  </div>
+                </label>
+              ))}
+            </div>
       </div>
 
       {/* Segunda columna */}
@@ -274,7 +280,7 @@ const ModalActualizarComunidad = ({ isOpen, onClose, token, comunidadId,obtenerC
           {miembros.map((miembro) => (
             <label key={miembro._id} className="flex items-center cursor-pointer">
               <input
-                type="checkbox"
+                type="button"
                 checked={miembrosSeleccionados.includes(miembro._id)}
                 onChange={() => handleMiembroSelect(miembro._id)}
                 className="mr-2"

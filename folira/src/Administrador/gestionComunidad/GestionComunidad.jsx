@@ -271,6 +271,7 @@ function GestionComunidad() {
                         <h2 className="font-semibold">
                           Nombre: {comunidad.nombre}
                         </h2>
+                        <strong>Número de miembros:</strong> {comunidad.miembros?.length || 0}
                       </div>
                       <p>Estado: {obtenerEstadoTexto(comunidad.estado)}</p>{" "}
                     </div>

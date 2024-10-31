@@ -253,8 +253,6 @@ useEffect(() => {
                                 const contenidoMostrado = isExpanded
                                     ? resena.contenido
                                     : `${resena.contenido.substring(0, 100)}...`;
-                                const conteoPalabras = resena.contenido.split(" ").length;
-
                                 return (
                                     <div
                                         key={resena._id}
@@ -276,9 +274,8 @@ useEffect(() => {
                                             </div>
                                         </div>
 
-                                        <div className="mb-2 text-gray-700">
+                                        <div className="mb-2 text-gray-700 break-all">
                                             {contenidoMostrado}{" "}
-                                            <span className="text-sm text-gray-500">({conteoPalabras} palabras)</span>
                                         </div>
 
                                         <button

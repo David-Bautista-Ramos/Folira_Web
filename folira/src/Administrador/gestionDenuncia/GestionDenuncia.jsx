@@ -248,11 +248,11 @@ function GestionDenuncia() {
                   <div key={index} className="bg-white shadow-lg rounded-lg w-[320px] p-2 mb-4 border">
                     <div className="flex gap-4 mb-2">
                       <img
-                        src={denuncia.idUsuario.fotoPerfil}
+                        src={denuncia.idUsuario?.fotoPerfil}
                         alt="Perfil Denunciante"
                         className="w-8 h-8 rounded-full"
                       />
-                      <span className="font-bold">{denuncia.idUsuario.nombreCompleto}</span>
+                      <span className="font-bold">{denuncia.idUsuario?.nombreCompleto}</span>
                     </div>
                     <h2 className="font-semibold">Motivo: {obtenerTipoDenuncia(denuncia)}</h2>
                     <p>Fecha: {formatMemberSinceDate(denuncia.updatedAt)}</p>

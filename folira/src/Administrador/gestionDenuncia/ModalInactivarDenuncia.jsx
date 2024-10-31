@@ -12,7 +12,7 @@ const ModalInactivarDenuncia = ({
 
   useEffect(() => {
     if (isOpen && denunciasId) {
-      // Cargar la denuncia específica al abrir el modal
+      setLoading(true); // Inicia el loading al abrir el modal
       fetch(`/api/denuncias/denuncia/${denunciasId}`)
         .then((response) => {
           if (!response.ok) {
@@ -20,9 +20,9 @@ const ModalInactivarDenuncia = ({
           }
           return response.json();
         })
-        .then((data) => setDenuncia(data.denuncia)) // Accede a denuncia
         .then((data) => setDenuncia(data.denuncia)) // Accede a `denuncia`
-        .catch((err) => setError(err.message));
+        .catch((err) => setError(err.message))
+        .finally(() => setLoading(false)); // Detiene el loading al finalizar la carga
     }
   }, [isOpen, denunciasId]);
 
@@ -69,20 +69,23 @@ const ModalInactivarDenuncia = ({
           Desactivar Denuncia
         </h2>
 
-        {error && <p className="text-red-500">Error: {error}</p>}
+        {/* Mostrar el mensaje de error solo si hay un error y no estamos cargando */}
+        {error && !loading && <p className="text-red-500">Error: {error}</p>}
 
-        {denuncia ? (
-          <>
-            <p className="mb-2">
-              <strong>Denunciado:</strong>{" "}
-              {denuncia.idUsuario?.nombre || "No disponible"}
-            </p>
-            <p className="mb-2">
-              <strong>Motivo:</strong> {denuncia.motivo}
-            </p>
-          </>
-        ) : (
+        {loading ? (
           <p>Cargando datos de la denuncia...</p>
+        ) : (
+          denuncia && (
+            <>
+              <p className="mb-2">
+                <strong>Denunciado:</strong>{" "}
+                {denuncia.idUsuario?.nombre || "No disponible"}
+              </p>
+              <p className="mb-2">
+                <strong>Motivo:</strong> {denuncia.motivo}
+              </p>
+            </>
+          )
         )}
 
         <div className="flex justify-end gap-4 mt-4">

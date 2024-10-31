@@ -13,7 +13,7 @@ import {
   BiRightArrow,
   BiTrash,
 } from "react-icons/bi";
-import banner_usuario from "../../assets/img/banners_gestion_usuario.png"; 
+import banner_usuario from "../../assets/img/banners_gestion_usuario.png";
 import FiltrarUsuarioEstado from "../../components/common/FiltrarUsuarioEstado";
 import GestionSkeleton from "../../components/skeletons/GestionSkeleton"; // Importar el skeleton
 import ModalEliminarUsuario from "./ModalEliminarUsuario";

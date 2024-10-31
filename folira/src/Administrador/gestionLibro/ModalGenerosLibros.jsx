@@ -83,6 +83,7 @@ function ModalGeneros({ isOpen, onClose }) {
 
   const handleCloseCreateModal = () => {
     setIsCreateModalOpen(false);
+    obtenerGenerosLiterarios();
   };
 
   const handleCloseUpdateModal = () => {
@@ -180,8 +181,7 @@ function ModalGeneros({ isOpen, onClose }) {
           <div className="flex justify-end mt-4 border-t border-primary">
             <button
               className="bg-primary text-white rounded px-4 py-2 hover:bg-blue-950 mt-4"
-              onClick={handleCreate}
-            >
+              onClick={handleCreate}            >
               Crear
             </button>
           </div>
@@ -192,7 +192,7 @@ function ModalGeneros({ isOpen, onClose }) {
       {/* Modales para Crear, Actualizar, Inactivar, Activar y Eliminar Género */}
       <ModalCrearGenero
         isOpen={isCreateModalOpen}
-        onClose={()=>{handleCloseCreateModal(false); obtenerGenerosLiterarios()}}
+        onClose={handleCloseCreateModal} // Solo referencia la función
         obtenerGenerosLiterarios={obtenerGenerosLiterarios}
         onCreate={(nuevoGenero) => {
           console.log('Género creado:', nuevoGenero);
@@ -202,7 +202,7 @@ function ModalGeneros({ isOpen, onClose }) {
       {selectedGenerosId && (
         <ModalActualizarGenero
           isOpen={isUpdateModalOpen}
-          onClose={()=>{handleCloseActivateModal; obtenerGenerosLiterarios()}}
+          onClose={handleCloseUpdateModal}
           obtenerGenerosLiterarios={obtenerGenerosLiterarios}
           onUpdate={(updatedGenero) => {
             console.log('Género actualizado:', updatedGenero);

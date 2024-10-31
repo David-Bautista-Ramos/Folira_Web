@@ -126,7 +126,8 @@ const ListaPublicaciones = ({ posts, esAdmin, esMiembro }) => {
                     {/* Botón de Reportar */}
                     <button onClick={() => handleReportPost(post._id)} className="flex items-center gap-1">
                       <BiError className="text-yellow-500" />
-                    </button>
+                      <span>{post.denuncias ? post.denuncias.length : 0}</span>
+                      </button>
                   </>
                 ) : (
                   <p className="text-gray-500">Debes ser miembro de la comunidad.</p>
