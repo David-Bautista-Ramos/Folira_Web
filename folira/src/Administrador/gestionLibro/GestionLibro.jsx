@@ -55,8 +55,9 @@ function GestionLibro() {
       const data = await response.json();
 
       if (Array.isArray(data)) {
-        setLibros(data); // Almacena todos los libros
-        setFilteredLibros(data); // Inicialmente muestra todos los libros
+        const librosInvertidos = data.reverse(); // Invierte el array
+        setLibros(librosInvertidos); // Almacena todos los libros
+        setFilteredLibros(librosInvertidos); // Inicialmente muestra todos los libros
       } else {
         console.error("La respuesta no es un array:", data);
       }

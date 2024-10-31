@@ -2,6 +2,8 @@ import { useEffect, useState } from "react";
 import useUpdateUserProfile from "../../hooks/useUpdateUserProfile";
 import Select from 'react-select';
 import toast from "react-hot-toast";
+import { BiShow, BiHide } from 'react-icons/bi';
+
 
 const EditProfileModal = ({ authUser }) => {
 
@@ -75,6 +77,8 @@ const EditProfileModal = ({ authUser }) => {
 	const [generosDisponibles, setGenerosDisponibles] = useState([]);
 	const [isActive, setIsActive] = useState(authUser.activo); // Estado local para el usuario activo
 	const [showConfirmationModal, setShowConfirmationModal] = useState(false); // Estado para el modal de confirmación
+	const [showCurrent, setShowCurrent] = useState(false);
+  	const [showNew, setShowNew] = useState(false);
 
 	const handleInputChange = (e) => {
 		const { name, value, checked } = e.target;
@@ -270,24 +274,41 @@ const EditProfileModal = ({ authUser }) => {
 
 						<div className='flex flex-wrap flex-col gap-y-2'>
 							<label htmlFor='currentcontrasena' className='text-blue-950 font-semibold'>Contraseña actual</label>
-							<input
-								type='password'
+							<div className='relative'>
+								<input
+								type={showCurrent ? 'text' : 'password'}
 								placeholder='Contraseña Actual'
-								className='flex-1 input border border-blue-950 rounded p-2 input-md'
+								className='flex-1 input border border-blue-950 rounded p-2 pr-10 w-[100%]' // Añadir pr-10 para espacio al icono
 								value={formData.currentcontrasena}
 								name='currentcontrasena'
 								onChange={handleInputChange}
-							/>
+								/>
+								<span 
+								className='absolute right-2 top-1/2 transform -translate-y-1/2 cursor-pointer'
+								onClick={() => setShowCurrent(!showCurrent)}
+								>
+								{showCurrent ? <BiHide /> : <BiShow />}
+								</span>
+							</div>
 
-							<label htmlFor='currentcontrasena' className='text-blue-950 font-semibold'>Contraseña nueva</label>
-							<input
-								type='password'
+							<label htmlFor='newcontrasena' className='text-blue-950 font-semibold'>Contraseña nueva</label>
+							<div className='relative'>
+								<input
+								type={showNew ? 'text' : 'password'}
 								placeholder='Contraseña Nueva'
-								className='flex-1 input border border-blue-950 rounded p-2 input-md'
+								className='flex-1 input border border-blue-950 rounded p-2 pr-10  w-[100%] ' // Añadir pr-10 para espacio al icono
 								value={formData.newcontrasena}
 								name='newcontrasena'
 								onChange={handleInputChange}
-							/>
+								/>
+								<span 
+								className='absolute right-2 top-1/2 transform -translate-y-1/2 cursor-pointer'
+								onClick={() => setShowNew(!showNew)}
+								>
+								{showNew ? <BiHide /> : <BiShow />}
+								</span>
+								
+							</div>
 						</div>
 
 						<label htmlFor='pais' className='text-blue-950 font-semibold'>País</label>

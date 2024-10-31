@@ -43,8 +43,9 @@ function GestionDenuncia() {
 
       const data = await response.json();
       if (Array.isArray(data)) {
-        setDenuncias(data);
-        setFilteredDenuncias(data); // Mostrar todas inicialmente
+        const denunciasInvertidas = data.reverse(); // Invierte el array
+        setDenuncias(denunciasInvertidas);
+        setFilteredDenuncias(dadenunciasInvertidasta); // Mostrar todas inicialmente
       } else {
         console.error("La respuesta no es un array:", data);
       }

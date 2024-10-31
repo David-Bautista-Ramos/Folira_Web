@@ -1,6 +1,6 @@
 import { CiImageOn } from "react-icons/ci";
-import { BsEmojiSmileFill } from "react-icons/bs";
 import { useRef, useState } from "react";
+import { BsEmojiSmileFill } from "react-icons/bs";
 import { IoCloseSharp } from "react-icons/io5";
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import EmojiPicker from 'emoji-picker-react'; // Importar EmojiPicker
@@ -88,7 +88,7 @@ const CreatePost = () => {
 				)}
 
 				<div className='flex justify-between border-t py-2 border-t-gray-700'>
-					<div className='flex gap-1 items-center'>
+				<div className='flex gap-1 items-center'>
 						<CiImageOn
 							className='fill-primary w-6 h-6 cursor-pointer'
 							onClick={() => fotoPublicacionRef.current.click()}

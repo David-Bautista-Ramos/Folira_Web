@@ -44,15 +44,17 @@ function GestionUsuario() {
           "Content-Type": "application/json",
         },
       });
-
+  
       if (!response.ok) {
         throw new Error("Error al obtener los usuarios");
       }
-
+  
       const data = await response.json();
+      
       if (Array.isArray(data)) {
-        setUsuarios(data); // Asigna los usuarios obtenidos al estado
-        setFilteredUsuarios(data); // También asigna a usuarios filtrados
+        const usuariosInvertidos = data.reverse(); // Invierte solo una vez
+        setUsuarios(usuariosInvertidos); 
+        setFilteredUsuarios(usuariosInvertidos);
       } else {
         console.error("La respuesta de usuarios no es un array:", data);
       }
@@ -62,6 +64,7 @@ function GestionUsuario() {
       setIsLoading(false); // Finaliza la carga
     }
   };
+  
 
   useEffect(() => {
     obtenerUsuarios(); // Llama a la función cuando el componente se monta

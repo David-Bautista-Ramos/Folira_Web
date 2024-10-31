@@ -49,8 +49,9 @@ function GestionResenas() {
     
             // Verificar si la respuesta es un array
             if (data && Array.isArray(data)) {
-                setResenas(data);
-                setFilteredResenas(data);
+                const resenasInvertidas = data.reverse(); // Invierte el array
+                setResenas(resenasInvertidas);
+                setFilteredResenas(resenasInvertidas);
             } else {
                 console.error("La respuesta no contiene un array de reseñas:", data);
             }
