@@ -37,25 +37,34 @@ function GestionPublicaciones() {
   
 
   // Obtener publicaciones de la API
-  const obtenerPublicaciones = async () => {
-    setIsLoading(true);
-    try {
-      const response = await fetch("/api/posts/all");
-      if (!response.ok) throw new Error("Error al obtener las publicaciones");
+const obtenerPublicaciones = async () => {
+  setIsLoading(true); // Inicia la carga
+  try {
+    const response = await fetch("/api/posts/all");
+    if (!response.ok) throw new Error("Error al obtener las publicaciones");
 
-      const data = await response.json();
-      setPublicaciones(Array.isArray(data) ? data : []);
-      setFilteredPublicacion(Array.isArray(data) ? data : []);
-    } catch (error) {
-      console.error("Error", error);
-    } finally {
-      setIsLoading(false);
+    const data = await response.json();
+
+    if (Array.isArray(data)) {
+      const publicacionesInvertidas = data.reverse(); // Invierte el array
+      setPublicaciones(publicacionesInvertidas);
+      setFilteredPublicacion(publicacionesInvertidas);
+    } else {
+      console.error("La respuesta de publicaciones no es un array:", data);
+      setPublicaciones([]);
+      setFilteredPublicacion([]);
     }
-  };
+  } catch (error) {
+    console.error("Error:", error);
+  } finally {
+    setIsLoading(false); // Finaliza la carga
+  }
+};
 
-  useEffect(() => {
-    obtenerPublicaciones();
-  }, []);
+useEffect(() => {
+  obtenerPublicaciones();
+}, []);
+
 
  // Filtrado por búsqueda
 useEffect(() => {

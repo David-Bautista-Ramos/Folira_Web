@@ -55,8 +55,9 @@ function GestionComunidad() {
       const data = await response.json();
 
       if (Array.isArray(data)) {
-        setComunidad(data); // Asigna los autores obtenidos al estado
-        setFilteredComunidad(data); // Inicializa los comunidades filtrados con el mismo valor
+        const comunidadesInvertidas = data.reverse(); // Invierte el array
+        setComunidad(comunidadesInvertidas); // Asigna los autores obtenidos al estado
+        setFilteredComunidad(comunidadesInvertidas); // Inicializa los comunidades filtrados con el mismo valor
       } else {
         console.error("La respuesta de las comunidades no es un array:", data);
       }

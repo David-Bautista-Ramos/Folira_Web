@@ -51,8 +51,9 @@ function GestionAutor() {
       const data = await response.json();
 
       if (Array.isArray(data)) {
-        setAutores(data);
-        setFilteredAutores(data);
+        const autoresInvertidos = data.reverse(); // Invierte el array
+        setAutores(autoresInvertidos);
+        setFilteredAutores(autoresInvertidos);
       } else {
         console.error("La respuesta de autores no es un array:", data);
       }

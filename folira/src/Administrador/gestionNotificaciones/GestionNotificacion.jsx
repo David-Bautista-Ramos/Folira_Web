@@ -92,8 +92,9 @@ function GestionNotificacion() {
       });
       if (!response.ok) throw new Error("Error al obtener las notificaciones");
       const data = await response.json();
-      setNotificaciones(data.notificaciones);
-      setFilteredNotificaciones(data.notificaciones);
+      const notificacionesInvertidas = data.notificaciones.reverse(); // Invierte el array
+      setNotificaciones(notificacionesInvertidas);
+      setFilteredNotificaciones(notificacionesInvertidas);
     } catch (error) {
       console.error("Error:", error);
     } finally {
