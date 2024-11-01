@@ -1,7 +1,7 @@
 import { useEffect, useState, useRef } from "react";
 import useUpdateAutor from '../../hooks/useUpdateAutor.jsx';
 
-const ModalActualizarAutor = ({ isOpen, onClose, autorId, token }) => {
+const ModalActualizarAutor = ({ isOpen, onClose, autorId, token, obtenerAutores }) => {
     const [formData, setFormData] = useState({
         nombre: "",
         seudonimo: "",
@@ -46,7 +46,7 @@ const ModalActualizarAutor = ({ isOpen, onClose, autorId, token }) => {
                             seudonimo: data.seudonimo || "",
                             biografia: data.biografia || "",
                             pais: data.pais || "",
-                            fechaNacimiento: data.fechaNacimiento || "",
+                            fechaNacimiento: data.fechaNacimiento ? new Date(data.fechaNacimiento).toISOString().split('T')[0] : "",
                             distinciones: data.distinciones || [],
                         });
                         setFotoAutor(data.fotoAutor || "");
@@ -105,6 +105,17 @@ const ModalActualizarAutor = ({ isOpen, onClose, autorId, token }) => {
         }
     };
 
+    const handleSubmit = async (e) => {
+        e.preventDefault();
+        try {
+            await updateAutor({ ...formData, fotoAutor });
+            obtenerAutores(); // Actualiza la lista de autores
+            onClose(); // Cierra el modal
+        } catch (error) {
+            console.error("Error al actualizar el autor:", error);
+        }
+    };
+
     return (
         <>
             {isOpen && (
@@ -113,10 +124,7 @@ const ModalActualizarAutor = ({ isOpen, onClose, autorId, token }) => {
                         <h3 className='text-primary font-bold text-lg my-3'>Actualizar Autor</h3>
                         <form
                             className='text-primary flex flex-col gap-4'
-                            onSubmit={(e) => {
-                                e.preventDefault();
-                                updateAutor({ ...formData, fotoAutor });
-                            }}
+                            onSubmit={handleSubmit}
                         >
                             {/* AUTHOR PHOTO */}
                             <div className='relative group/photo'>

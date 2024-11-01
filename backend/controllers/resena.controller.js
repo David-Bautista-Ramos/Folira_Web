@@ -1,22 +1,25 @@
 import Resena from "../models/resena.model.js";
 import Usuario from '../models/user.model.js'
 
-// Crear una nueva reseña
 export const crearResena = async (req, res) => {
     try {
-        const { contenido, calificacion, idUsuario, idLibro, idAutor } = req.body;
+        let { contenido, calificacion, idUsuario, idLibro, idAutor } = req.body;
 
-        // Verificar que al menos uno de los campos idLibro o idAutor esté presente
+        // Si idLibro o idAutor vienen como arrays, tomar el primer elemento.
+        if (Array.isArray(idLibro)) idLibro = idLibro[0] || null;
+        if (Array.isArray(idAutor)) idAutor = idAutor[0] || null;
+
+        // Validar que al menos uno de los dos campos sea proporcionado.
         if (!idLibro && !idAutor) {
-            return res.status(400).json({ error: "Se debe proporcionar al menos un libro o un autor." });
+            return res.status(400).json({ error: "Se debe proporcionar al menos un libro o un autor válido." });
         }
 
         const nuevaResena = new Resena({
             contenido,
             calificacion,
             idUsuario,
-            idLibro: idLibro || null, // Asignar null si no se proporciona idLibro
-            idAutor: idAutor || null, // Asignar null si no se proporciona idAutor
+            idLibro: idLibro || null, // Asignar null si no se proporciona un libro válido
+            idAutor: idAutor || null, // Asignar null si no se proporciona un autor válido
         });
 
         // Guardar la reseña en la base de datos
@@ -27,7 +30,6 @@ export const crearResena = async (req, res) => {
         res.status(500).json({ error: "Error al crear la reseña." });
     }
 };
-
 
 export const obtenerResena =async(req, res) => {
     try {

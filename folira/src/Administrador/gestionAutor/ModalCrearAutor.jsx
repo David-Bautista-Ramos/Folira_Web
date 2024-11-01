@@ -2,8 +2,8 @@ import { useState } from "react";
 import useCreateAutor from "../../hooks/useCreateAutor";
 import Select from "react-select"; // Importa react-select
 
-function ModalCrearAutor({ isOpen, onClose }) {
 
+function ModalCrearAutor({ isOpen, onClose,obtenerAutores }) {
   const paises = [
     { value: "Argentina", label: "Argentina" },
     { value: "Australia", label: "Australia" },
@@ -62,6 +62,7 @@ function ModalCrearAutor({ isOpen, onClose }) {
       fotoAutor,
     });
     onClose(); // Close the modal after creation
+    obtenerAutores();
   };
 
   return (

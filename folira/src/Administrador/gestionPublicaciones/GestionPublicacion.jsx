@@ -273,19 +273,19 @@ useEffect(() => {
                     className="flex flex-col w-80 bg-white border p-4 rounded-md shadow-lg"
                   >
                     <div className="flex items-center mb-4">
-                      <Link to={`/profile/${publicacion.user._id}`}>
+                      <Link to={`/profile/${publicacion.user?._id}`}>
                         <img
                           className="w-16 h-16 rounded-full"
-                          src={publicacion.user.fotoPerfil}
+                          src={publicacion.user?.fotoPerfil}
                           alt="Profile"
                         />
                       </Link>
                       <div className="ml-4">
                         <Link
-                          to={`/profile/${publicacion.user._id}`}
+                          to={`/profile/${publicacion.user?._id}`}
                           className="font-semibold text-lg"
                         >
-                          {publicacion.user.nombreCompleto}
+                          {publicacion.user?.nombreCompleto}
                         </Link>
                         <p>Estado: {obtenerEstadoTexto(publicacion.estado)}</p>
                         <p>Tipo de publicación: {tipoPublicacion}</p> {/* Mostrar tipo de publicación */}

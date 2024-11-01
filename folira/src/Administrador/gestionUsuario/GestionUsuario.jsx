@@ -13,7 +13,7 @@ import {
   BiRightArrow,
   BiTrash,
 } from "react-icons/bi";
-import banner_usuario from "../../assets/img/banners_gestion_usuario.png"; 
+import banner_usuario from "../../assets/img/banners_gestion_usuario.png";
 import FiltrarUsuarioEstado from "../../components/common/FiltrarUsuarioEstado";
 import GestionSkeleton from "../../components/skeletons/GestionSkeleton"; // Importar el skeleton
 import ModalEliminarUsuario from "./ModalEliminarUsuario";
@@ -267,6 +267,7 @@ function GestionUsuario() {
                       </div>
                       <div className="mb-1">
                         <p>Nombre : {usuario.nombreCompleto}</p>
+                        <p>Rol : {usuario.roles}</p>
                       </div>
                       <p>Estado: {obtenerEstadoTexto(usuario.estado)}</p>
                     </div>

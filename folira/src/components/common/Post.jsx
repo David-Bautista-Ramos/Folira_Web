@@ -245,7 +245,7 @@ const Post = ({ post }) => {
                         <div className="w-8 rounded-full">
                           <img
                             src={
-                              comentario.user.fotoPerfil ||
+                              comentario.user?.fotoPerfil ||
                               "/avatar-placeholder.png"
                             }
                             alt="Profile"
@@ -255,14 +255,14 @@ const Post = ({ post }) => {
                       <div className="flex flex-col">
                         <div className="flex items-center gap-1">
                           <span className="font-bold mr-2">
-                            {comentario.user.nombreCompleto}
+                            {comentario.user?.nombreCompleto}
                           </span>{" "}
                           {/* Añadido margin-right */}
                           <span className="text-blue-950 text-sm">
-                            @{comentario.user.nombre}
+                            @{comentario.user?.nombre}
                           </span>
                           {/* Agregar el icono de eliminar al lado del nombre del usuario */}
-                          {isMyComm(comentario.user._id) && (
+                          {isMyComm(comentario.user?._id) && (
                           <span className="text-blue-950 flex flex-1 ml-auto">
                             {loadingComments[comentario._id] ? (
                               <LoadingSpinner size="sm" />

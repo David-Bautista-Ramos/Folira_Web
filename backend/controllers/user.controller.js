@@ -21,37 +21,39 @@ export const getUserProfile = async (req, res) => {
 
     // Obtener los géneros literarios preferidos del usuario
     const generosLiterario = await GeneroLiterario.find({
-      _id: { $in: user.generoLiterarioPreferido }
+      _id: { $in: user.generoLiterarioPreferido },
     }).select("nombre fotoGenero");
 
     // Mapear los géneros literarios para incluir la información de nombre y foto
-    const generosPreferidos = generosLiterario.map(genero => ({
+    const generosPreferidos = generosLiterario.map((genero) => ({
       id: genero._id,
       nombre: genero.nombre,
-      fotoGenero: genero.fotoGenero // Asegúrate de que este campo existe en tu modelo
+      fotoGenero: genero.fotoGenero, // Asegúrate de que este campo existe en tu modelo
     }));
 
     // Obtener información de seguidores
-    const seguidores = await User.find({ _id: { $in: user.seguidores } })
-      .select("nombre nombreCompleto fotoPerfil"); // Asegúrate de que estos campos existen en tu modelo
+    const seguidores = await User.find({
+      _id: { $in: user.seguidores },
+    }).select("nombre nombreCompleto fotoPerfil"); // Asegúrate de que estos campos existen en tu modelo
 
     // Obtener información de seguidos
-    const seguidos = await User.find({ _id: { $in: user.seguidos } })
-      .select("nombre nombreCompleto fotoPerfil");
+    const seguidos = await User.find({ _id: { $in: user.seguidos } }).select(
+      "nombre nombreCompleto fotoPerfil"
+    );
 
     // Mapear los seguidores y seguidos para incluir la información necesaria
-    const seguidoresInfo = seguidores.map(seguidor => ({
+    const seguidoresInfo = seguidores.map((seguidor) => ({
       id: seguidor._id,
       nombre: seguidor.nombre,
       nombreCompleto: seguidor.nombreCompleto,
-      fotoPerfil: seguidor.fotoPerfil
+      fotoPerfil: seguidor.fotoPerfil,
     }));
 
-    const seguidosInfo = seguidos.map(seguidor => ({
+    const seguidosInfo = seguidos.map((seguidor) => ({
       id: seguidor._id,
       nombre: seguidor.nombre,
       nombreCompleto: seguidor.nombreCompleto,
-      fotoPerfil: seguidor.fotoPerfil
+      fotoPerfil: seguidor.fotoPerfil,
     }));
 
     // Responder con el usuario, sus géneros literarios preferidos, seguidores y seguidos
@@ -59,7 +61,7 @@ export const getUserProfile = async (req, res) => {
       ...user.toObject(),
       generosPreferidos,
       seguidores: seguidoresInfo,
-      seguidos: seguidosInfo
+      seguidos: seguidosInfo,
     });
   } catch (error) {
     console.log("Error en getUserProfile: ", error.message);
@@ -152,7 +154,7 @@ export const getSuggestedUsers = async (req, res) => {
       },
     ]);
 
-    res.status(200).json(users.slice(0, 5)); // Enviar solo los primeros 4 usuarios sugeridos
+    res.status(200).json(users.slice(0, 7)); // Enviar solo los primeros 4 usuarios sugeridos
   } catch (error) {
     console.log("Error en getSuggestedUsers: ", error.message);
     res.status(500).json({ error: error.message });
@@ -183,11 +185,10 @@ export const updateUser = async (req, res) => {
       (!newcontrasena && currentcontrasena) ||
       (!currentcontrasena && newcontrasena)
     ) {
-      return res
-        .status(400)
-        .json({
-          error: "Por favor, proporcione tanto la contraseña actual como la nueva",
-        });
+      return res.status(400).json({
+        error:
+          "Por favor, proporcione tanto la contraseña actual como la nueva",
+      });
     }
 
     if (currentcontrasena && newcontrasena) {
@@ -235,7 +236,9 @@ export const updateUser = async (req, res) => {
       if (generos.length !== generoLiterarioPreferido.length) {
         return res
           .status(400)
-          .json({ error: "Algunos géneros literarios seleccionados son inválidos" });
+          .json({
+            error: "Algunos géneros literarios seleccionados son inválidos",
+          });
       }
       user.generoLiterarioPreferido = generos.map((genero) => genero._id); // Actualiza los géneros literarios del usuario
     }
@@ -334,10 +337,7 @@ const userValidationSchema = Yup.object().shape({
     .required("El nombre completo es obligatorio.")
     .min(5, "El nombre completo debe tener al menos 5 caracteres.")
     .max(100, "El nombre completo no puede exceder los 100 caracteres.")
-    .matches(
-      /^[a-zA-Z\s]+$/,
-      "El nombre completo solo puede contener letras."
-    ),
+    .matches(/^[a-zA-Z\s]+$/, "El nombre completo solo puede contener letras."),
 
   correo: Yup.string()
     .required("El correo es obligatorio.")
@@ -380,11 +380,8 @@ const userValidationSchemaADMIN = Yup.object().shape({
     .required("El nombre completo es obligatorio.")
     .min(5, "El nombre completo debe tener al menos 5 caracteres.")
     .max(100, "El nombre completo no puede exceder los 100 caracteres.")
-    .matches(
-      /^[a-zA-Z\s]+$/,
-      "El nombre completo solo puede contener letras."
-    ),
-    
+    .matches(/^[a-zA-Z\s]+$/, "El nombre completo solo puede contener letras."),
+
   correo: Yup.string()
     .required("El correo es obligatorio.")
     .email("Formato de correo inválido.")
@@ -403,7 +400,7 @@ const userValidationSchemaADMIN = Yup.object().shape({
 // Configuración de Nodemailer
 // Configuración del transportador de Nodemailer
 const transporter = nodemailer.createTransport({
-  service:"gmail",
+  service: "gmail",
   auth: {
     user: (process.env.EMAIL_USER = "foliraweb@gmail.com"), // Asegúrate de que esto sea tu correo electrónico
     pass: (process.env.EMAIL_PASS = "ytle kapv jhyo gopu"), // Asegúrate de que esto sea tu contraseña o contraseña de aplicación
@@ -534,13 +531,11 @@ export const crearUser = async (req, res) => {
     console.error("Error en el controlador de creación de usuario:", error); // Muestra el error completo en consola
     if (error.name === "ValidationError") {
       // Error de validación de Yup
-      return res
-        .status(400)
-        .json({
-          error: Array.isArray(error.errors)
-            ? error.errors.join(", ")
-            : error.errors,
-        });
+      return res.status(400).json({
+        error: Array.isArray(error.errors)
+          ? error.errors.join(", ")
+          : error.errors,
+      });
     }
     console.error(
       "Error en el controlador de creación de usuario:",
@@ -576,7 +571,6 @@ export const obtenerUsuarioPorId = async (req, res) => {
   }
 };
 
-
 // Actualizar un usuario por ID
 export const actualizarUsuario = async (req, res) => {
   const {
@@ -587,6 +581,7 @@ export const actualizarUsuario = async (req, res) => {
     currentcontrasena,
     newcontrasena,
     pais,
+    roles,
     biografia,
   } = req.body;
   let { fotoPerfil, fotoPerfilBan } = req.body;
@@ -612,12 +607,10 @@ export const actualizarUsuario = async (req, res) => {
       (!newcontrasena && currentcontrasena) ||
       (!currentcontrasena && newcontrasena)
     ) {
-      return res
-        .status(400)
-        .json({
-          error:
-            "Por favor, proporciona tanto la contraseña actual como la nueva",
-        });
+      return res.status(400).json({
+        error:
+          "Por favor, proporciona tanto la contraseña actual como la nueva",
+      });
     }
 
     if (currentcontrasena && newcontrasena) {
@@ -628,11 +621,9 @@ export const actualizarUsuario = async (req, res) => {
           .json({ error: "La contraseña actual es incorrecta" });
 
       if (newcontrasena.length < 6) {
-        return res
-          .status(400)
-          .json({
-            error: "La nueva contraseña debe tener al menos 6 caracteres",
-          });
+        return res.status(400).json({
+          error: "La nueva contraseña debe tener al menos 6 caracteres",
+        });
       }
       user.contrasena = await bcrypt.hash(newcontrasena, 10);
     }
@@ -664,11 +655,9 @@ export const actualizarUsuario = async (req, res) => {
         _id: { $in: generoLiterarioPreferido },
       });
       if (generos.length !== generoLiterarioPreferido.length) {
-        return res
-          .status(400)
-          .json({
-            error: "Algunos géneros literarios seleccionados son inválidos",
-          });
+        return res.status(400).json({
+          error: "Algunos géneros literarios seleccionados son inválidos",
+        });
       }
       user.generoLiterarioPreferido = generos.map((genero) => genero._id); // Actualiza los géneros literarios del usuario
     }
@@ -679,6 +668,7 @@ export const actualizarUsuario = async (req, res) => {
     user.correo = correo || user.correo;
     user.pais = pais || user.pais;
     user.biografia = biografia || user.biografia;
+    user.roles = roles || user.roles,
     user.fotoPerfil = fotoPerfil || user.fotoPerfil;
     user.fotoPerfilBan = fotoPerfilBan || user.fotoPerfilBan;
 
@@ -762,7 +752,6 @@ export const obtenerUsersDes = async (req, res) => {
   }
 };
 
-
 //Recuperar contraseña
 export const recuperarContraseña = async (req, res) => {
   const { correo } = req.body;
@@ -771,7 +760,7 @@ export const recuperarContraseña = async (req, res) => {
     // Verificar si el usuario existe
     const user = await User.findOne({ correo });
     if (!user) {
-      return res.status(404).json({ message: 'Usuario no encontrado.' });
+      return res.status(404).json({ message: "Usuario no encontrado." });
     }
 
     // Generar una nueva contraseña aleatoria
@@ -786,10 +775,10 @@ export const recuperarContraseña = async (req, res) => {
 
     // Configuración del correo electrónico
     const transporter = nodemailer.createTransport({
-      service: 'gmail',
+      service: "gmail",
       auth: {
-        user: process.env.EMAIL_USER || 'foliraweb@gmail.com',
-        pass: process.env.EMAIL_PASS || 'ytle kapv jhyo gopu',
+        user: process.env.EMAIL_USER || "foliraweb@gmail.com",
+        pass: process.env.EMAIL_PASS || "ytle kapv jhyo gopu",
       },
       tls: {
         rejectUnauthorized: false,
@@ -797,22 +786,24 @@ export const recuperarContraseña = async (req, res) => {
     });
 
     const mailOptions = {
-      from: process.env.EMAIL_USER || 'foliraweb@gmail.com',
+      from: process.env.EMAIL_USER || "foliraweb@gmail.com",
       to: user.correo,
-      subject: 'Recuperación de Contraseña',
+      subject: "Recuperación de Contraseña",
       html: `
         <div style="font-family: Arial, sans-serif; text-align: center; background-color: #f0f4f8; padding: 30px;">
           <div style="background-color: white; max-width: 600px; margin: 0 auto; padding: 20px; border-radius: 10px; box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);">
             <img src="cid:logoFolira" alt="Logo Folira" style="width: 120px; margin-bottom: 20px; border-radius: 50%;">
             <h1 style="color: #111827; font-size: 24px; margin-bottom: 10px;">Recuperación de Contraseña Folira</h1>
             <p style="font-size: 16px; color: #34495e; margin: 0 0 10px;">
-              Hola, <strong>${user.nombreCompleto || 'Usuario'}</strong>.
+              Hola, <strong>${user.nombreCompleto || "Usuario"}</strong>.
             </p>
             <p style="font-size: 16px; color: #34495e;">
               Hemos recibido una solicitud para restablecer tu contraseña.
             </p>
             <div style="text-align: left; background-color: #f5f5f5; padding: 20px; border-radius: 8px; margin: 20px 0;">
-              <p style="margin: 5px 0;"><strong>Correo:</strong> ${user.correo}</p>
+              <p style="margin: 5px 0;"><strong>Correo:</strong> ${
+                user.correo
+              }</p>
               <p style="margin: 5px 0;"><strong>Clave temporal:</strong> ${randomPassword}</p>
               <p style="font-size: 14px; color: #142157;">
                 Por seguridad, te recomendamos cambiar esta contraseña después de iniciar sesión.
@@ -839,17 +830,20 @@ export const recuperarContraseña = async (req, res) => {
     // Enviar el correo
     await transporter.sendMail(mailOptions);
 
-    return res.status(200).json({ message: 'Contraseña actualizada y enviada al correo.' });
+    return res
+      .status(200)
+      .json({ message: "Contraseña actualizada y enviada al correo." });
   } catch (error) {
-    console.error('Error al recuperar la contraseña:', error);
-    return res.status(500).json({ message: 'Error en el servidor.' });
+    console.error("Error al recuperar la contraseña:", error);
+    return res.status(500).json({ message: "Error en el servidor." });
   }
 };
 
 // Generar una contraseña aleatoria
 function generateRandomPassword() {
-  const chars = 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
-  let password = '';
+  const chars =
+    "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
+  let password = "";
   for (let i = 0; i < 8; i++) {
     password += chars[Math.floor(Math.random() * chars.length)];
   }

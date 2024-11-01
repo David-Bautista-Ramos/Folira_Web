@@ -4,6 +4,7 @@ import { BiBell, BiComment, BiError, BiGroup, BiNews, BiUser } from "react-icons
 import { GiFeather, GiOpenBook } from "react-icons/gi"; 
 import Folira_general from "../../assets/img/Folira_general.svg";
 
+
 function Nav() {
   const location = useLocation();
   const [activeLink, setActiveLink] = useState("/gestionUsuario");
@@ -133,7 +134,6 @@ function Nav() {
             </div>
           )}
         </Link>
-
 
       </div>
     </nav>

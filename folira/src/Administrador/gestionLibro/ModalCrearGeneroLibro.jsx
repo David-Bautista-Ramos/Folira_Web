@@ -7,7 +7,7 @@ function ModalCrearGenero({ isOpen, onClose , obtenerGenerosLiterarios}) {
     descripcion: "",
   });
   const [fotoGenero, setFotoGenero] = useState(null);
-  const { createComuniad, isCreatingComunidad } = useCreateGenero();
+  const { createGenero, isCreatingGenero } = useCreateGenero();
 
   if (!isOpen) return null;
 
@@ -25,19 +25,24 @@ function ModalCrearGenero({ isOpen, onClose , obtenerGenerosLiterarios}) {
     }
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    createComuniad({ ...formData, fotoGenero });
-    setFormData({ nombre: "", descripcion: "" });
-    setFotoGenero(null);
-    onClose();
-    obtenerGenerosLiterarios();
+    try {
+      await createGenero({ ...formData, fotoGenero }); // Espera a que se cree el género
+      obtenerGenerosLiterarios(); // Actualiza la lista de géneros
+      onClose(); // Cierra el modal
+    } catch (error) {
+      console.error("Error al crear el género:", error);
+    } finally {
+      setFormData({ nombre: "", descripcion: "" });
+      setFotoGenero(null);
+    }
   };
 
   return (
     <div
       className="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center z-50"
-      onClick={onClose}
+      onClick={() => onClose()}
     >
       <form
         className="bg-white p-5 rounded-lg max-w-md w-full shadow-lg relative"
@@ -83,7 +88,7 @@ function ModalCrearGenero({ isOpen, onClose , obtenerGenerosLiterarios}) {
         <div className="flex justify-end gap-2">
           <button
             className="px-4 py-2 bg-gray-300 text-gray-800 rounded-md hover:bg-gray-400"
-            onClick={onClose}
+            onClick={() => onClose() }
             type="button"
           >
             Cancelar
@@ -91,9 +96,9 @@ function ModalCrearGenero({ isOpen, onClose , obtenerGenerosLiterarios}) {
           <button
             type="submit"
             className="px-4 py-2 bg-primary text-white rounded-md hover:bg-blue-950"
-            disabled={isCreatingComunidad}
+            disabled={isCreatingGenero}
           >
-            {isCreatingComunidad ? "Creando..." : "Crear Género"}
+            {isCreatingGenero ? "Creando..." : "Crear Género"}
           </button>
         </div>
       </form>

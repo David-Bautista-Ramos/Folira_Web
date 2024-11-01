@@ -1,5 +1,6 @@
 import { useState, useRef, useEffect } from 'react';
 import useUpdateComunidad from '../../hooks/useUpdateUserComini';
+import {  useQueryClient } from '@tanstack/react-query';
 
 const ModalActualizarComunidad = ({ isOpen, onClose, token, comunidadId }) => {
   const [formData, setFormData] = useState({
@@ -14,6 +15,7 @@ const ModalActualizarComunidad = ({ isOpen, onClose, token, comunidadId }) => {
 
   const { updatecomunidad, isUpdatingcomunidad } = useUpdateComunidad(comunidadId);
   const [fotoComunidad, setFotoComunidad] = useState(null);
+  const queryClient = useQueryClient();
   const [fotoBanner, setFotoBanner] = useState(null);
   const fotoBannerRef = useRef(null);
   const fotoComunidadRef = useRef(null);
@@ -116,6 +118,8 @@ const ModalActualizarComunidad = ({ isOpen, onClose, token, comunidadId }) => {
       fotoBanner,
       miembrosSeleccionados // Enviar los miembros seleccionados al actualizar la comunidad
     });
+    queryClient.invalidateQueries(['comunidad', comunidadId]);
+
     onClose();
   };
 

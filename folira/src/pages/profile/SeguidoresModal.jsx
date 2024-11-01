@@ -21,8 +21,8 @@ const ModalSeguidores = ({ seguidores }) => {
           {/* Lista de Seguidores */}
           <div className='flex flex-col gap-4'>
             {seguidores && seguidores.length > 0 ? (
-              seguidores.map((seguidore) => ( // Asegúrate de usar 'seguidor' en singular
-                <div key={seguidore._id} className='flex items-center gap-2'>
+              seguidores.map((seguidore,index) => ( // Asegúrate de usar 'seguidor' en singular
+                <div key={index} className='flex items-center gap-2'>
                   {/* Avatar del seguidor */}
                   <div className='avatar'>
                     <div className='w-10 rounded-full'>

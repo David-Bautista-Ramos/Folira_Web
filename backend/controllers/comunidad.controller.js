@@ -1,7 +1,6 @@
 import Comunidad from "../models/comunidad.model.js";
 import cloudinary from "cloudinary";
 import GeneroLiterario from "../models/generoLiterario.model.js";
-import mongoose from 'mongoose';
 
 // Crear una nueva comunidad
 export const crearComunidad = async (req, res) => {
@@ -272,6 +271,7 @@ export const editarComunidad = async (req, res) => {
       fotoComunidad,
       fotoBanner,
       generoLiterarios,
+      admin,
       estado,
     } = req.body;
 
@@ -316,6 +316,7 @@ export const editarComunidad = async (req, res) => {
     comunidadActual.fotoBanner = fotoBannerUrl || comunidadActual.fotoBanner; // Actualiza solo si hay una nueva URL
     comunidadActual.generoLiterarios =
       generoLiterarios || comunidadActual.generoLiterarios;
+      comunidadActual.admin = admin || comunidadActual.admin;
     comunidadActual.estado = estado || comunidadActual.estado;
 
     // Guardar los cambios en la base de datos

@@ -143,7 +143,9 @@ export const editarAutor = async (req, res) => {
       distinciones,
       generoLiterarioPreferido,
     } = req.body;
-    let { fotoAutor } = req.body;
+
+    // Foto enviada como parte de la solicitud (opcional)
+    const nuevaFoto = req.body.fotoAutor;
 
     // Buscar el autor por ID
     const autorExistente = await Autor.findById(id);
@@ -151,20 +153,19 @@ export const editarAutor = async (req, res) => {
       return res.status(404).json({ error: "Autor no encontrado." });
     }
 
-    // Manejo de la foto
-    if (fotoAutor) {
+    let fotoAutor = autorExistente.fotoAutor; // Mantener la foto actual por defecto
+
+    // Subir nueva foto si fue proporcionada
+    if (nuevaFoto && nuevaFoto !== fotoAutor) {
+      // Eliminar la imagen anterior solo si existe y es diferente de la nueva
       if (autorExistente.fotoAutor) {
-        // Eliminar la imagen anterior de Cloudinary
-        await cloudinary.uploader.destroy(
-          autorExistente.fotoAutor.split("/").pop().split(".")[0]
-        );
+        const publicId = autorExistente.fotoAutor.split("/").pop().split(".")[0];
+        await cloudinary.uploader.destroy(publicId);
       }
+
       // Subir la nueva imagen
-      const uploadedResponse = await cloudinary.uploader.upload(fotoAutor);
+      const uploadedResponse = await cloudinary.uploader.upload(nuevaFoto);
       fotoAutor = uploadedResponse.secure_url;
-    } else {
-      // Si no se actualiza la imagen, conservar la anterior
-      fotoAutor = autorExistente.fotoAutor;
     }
 
     // Verificar los géneros literarios seleccionados
@@ -173,16 +174,15 @@ export const editarAutor = async (req, res) => {
       const generos = await GeneroLiterario.find({
         _id: { $in: generoLiterarioPreferido },
       });
+
       if (generos.length !== generoLiterarioPreferido.length) {
-        return res
-          .status(400)
-          .json({
-            error: "Algunos géneros literarios seleccionados son inválidos.",
-          });
+        return res.status(400).json({
+          error: "Algunos géneros literarios seleccionados son inválidos.",
+        });
       }
-      generosSeleccionados = generos.map((genero) => genero._id); // Obtener los IDs de los géneros literarios
+      generosSeleccionados = generos.map((genero) => genero._id);
     } else {
-      generosSeleccionados = autorExistente.generoLiterarioPreferido; // Mantener los géneros actuales si no se cambian
+      generosSeleccionados = autorExistente.generoLiterarioPreferido; // Conservar los géneros actuales
     }
 
     // Actualizar el autor con los nuevos datos
@@ -194,19 +194,17 @@ export const editarAutor = async (req, res) => {
         fechaNacimiento,
         pais,
         biografia,
-        fotoAutor,
+        fotoAutor, // Usar la foto anterior o la nueva según corresponda
         distinciones,
         generoLiterarioPreferido: generosSeleccionados,
       },
       { new: true, runValidators: true }
     );
 
-    res
-      .status(200)
-      .json({
-        message: "Autor actualizado con éxito",
-        autor: autorActualizado,
-      });
+    res.status(200).json({
+      message: "Autor actualizado con éxito",
+      autor: autorActualizado,
+    });
   } catch (error) {
     console.error("Error al actualizar el autor:", error.message);
     res.status(500).json({ error: "Error al actualizar el autor." });

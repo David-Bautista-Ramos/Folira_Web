@@ -66,7 +66,7 @@
       <div className="fixed inset-0 flex items-center justify-center z-50 bg-black bg-opacity-50">
         <form
           className="bg-white p-5 rounded-lg max-w-sm w-full shadow-lg"
-          onClick={(e) => e.stopPropagation()}
+          onClick={(e) => e.stopPropagation()} // Evita que el clic se propague
           onSubmit={handleSubmit}
         >
           <h2 className="text-xl text-primary text-center mb-4">Actualizar Género</h2>

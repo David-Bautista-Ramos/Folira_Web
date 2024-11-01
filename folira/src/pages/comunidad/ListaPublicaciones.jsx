@@ -83,17 +83,17 @@ const ListaPublicaciones = ({ posts, esAdmin, esMiembro }) => {
         posts.map((post) => (
           <div key={post._id} className="border-b py-4">
             <div className="flex items-start gap-4">
-              <Link to={`/profile/${post.user._id}`} className="w-10 h-10 rounded-full overflow-hidden">
-                <img src={post.user.fotoPerfil || "/avatar-placeholder.png"} alt="Perfil" />
+              <Link to={`/profile/${post.user?._id}`} className="w-10 h-10 rounded-full overflow-hidden">
+                <img src={post.user?.fotoPerfil || "/avatar-placeholder.png"} alt="Perfil" />
               </Link>
               <div className="flex-1">
                 <div className="flex items-center gap-2">
-                  <Link to={`/profile/${post.user._id}`} className="font-bold">
-                    {post.user.nombreCompleto}
+                  <Link to={`/profile/${post.user?._id}`} className="font-bold">
+                    {post.user?.nombreCompleto}
                   </Link>
-                  <span className="text-sm text-gray-500">@{post.user.nombre}</span>
+                  <span className="text-sm text-gray-500">@{post.user?.nombre}</span>
                   <span className="text-sm text-gray-400">· {formatPostDate(post.createdAt)}</span>
-                  {authUser && authUser._id === post.user._id && ( // Mostrar el botón de eliminar solo si es el autor
+                  {authUser && authUser._id === post.user?._id && ( // Mostrar el botón de eliminar solo si es el autor
                     <FaTrash
                       className="text-primary hover:blue-950 cursor-pointer"
                       onClick={() => handleDeletePost.mutate(post._id)}
@@ -102,7 +102,7 @@ const ListaPublicaciones = ({ posts, esAdmin, esMiembro }) => {
                 </div>
                 <p className="mt-2">{post.contenido}</p>
                 {post.fotoPublicacion && (
-                  <img src={post.fotoPublicacion} alt="Publicación" className="w-full h-48 object-cover mt-2" />
+                  <img src={post.fotoPublicacion} alt="Publicación" className="w-full h-88 object-cover mt-2" />
                 )}
               </div>
             </div>
@@ -126,6 +126,7 @@ const ListaPublicaciones = ({ posts, esAdmin, esMiembro }) => {
                     {/* Botón de Reportar */}
                     <button onClick={() => handleReportPost(post._id)} className="flex items-center gap-1">
                       <BiError className="text-yellow-500" />
+                      <span>{post.denuncias !== undefined ? post.denuncias : 0}</span>
                     </button>
                   </>
                 ) : (
@@ -144,30 +145,34 @@ const ListaPublicaciones = ({ posts, esAdmin, esMiembro }) => {
               <div className="modal-box bg-white rounded-lg p-6 relative">
                 <h3 className="font-bold">Comentarios</h3>
                 <div className="max-h-60 overflow-auto mt-2">
-                {post.comentarios.map((comment) => (
-                  <div key={comment._id} className="flex items-start gap-2 mb-2">
-                    <img
-                      src={comment.user.fotoPerfil || "/avatar-placeholder.png"}
-                      alt="Perfil"
-                      className="w-8 h-8 rounded-full"
-                    />
-                    <div className="flex-1">
-                      <div className="flex items-center gap-2">
-                        <span className="font-bold">{comment.user.nombreCompleto}</span>
-                        <span className="text-sm text-gray-500">@{comment.user.nombre}</span>
-                        {isMyComment(comment.user._id) && (
-                          <FaTrash
-                            className="text-primary hover:blue-950 ml-[65px] cursor-pointer"
-                            onClick={() =>
-                              handleDeleteComment.mutate({ postId: post._id, commentId: comment._id })
-                            }
-                          />
-                        )}
+                {post.comentarios ? (
+                    post.comentarios.map((comment) => (
+                      <div key={comment._id} className="flex items-start gap-2 mb-2">
+                      <img
+                        src={comment.user.fotoPerfil || "/avatar-placeholder.png"}
+                        alt="Perfil"
+                        className="w-8 h-8 rounded-full"
+                      />
+                      <div className="flex-1">
+                        <div className="flex items-center gap-2">
+                          <span className="font-bold">{comment.user.nombreCompleto}</span>
+                          <span className="text-sm text-gray-500">@{comment.user.nombre}</span>
+                          {isMyComment(comment.user._id) && (
+                            <FaTrash
+                              className="text-primary hover:blue-950 ml-[65px] cursor-pointer"
+                              onClick={() =>
+                                handleDeleteComment.mutate({ postId: post._id, commentId: comment._id })
+                              }
+                            />
+                          )}
+                        </div>
+                        <p className="break-all">{comment.text}</p>
                       </div>
-                      <p className="break-all">{comment.text}</p> {/* Aquí se aplica la clase */}
                     </div>
-                  </div>
-                ))}
+                    ))
+                  ) : (
+                    <p>No hay comentarios.</p>
+                  )}
 
                 </div>
                 {canInteract() ? (

@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { Link, useNavigate } from 'react-router-dom';
 import logo from '../../../assets/img/Folira_logo.png'
+import toast from 'react-hot-toast';
 
 const RecuperarContrasena = () => {
     const [correo, setCorreo] = useState('');
@@ -29,14 +30,14 @@ const RecuperarContrasena = () => {
             });
 
             if (response.ok) {
-                alert('¡Correo enviado! Se ha enviado una nueva contraseña a tu correo.');
+                toast.success('¡Correo enviado! Se ha enviado una nueva contraseña a tu correo.');
                 navigate('/Login');
             } else {
-                alert('Error al enviar la nueva contraseña. Inténtalo de nuevo.');
+                toast.error('Error al enviar la nueva contraseña. Inténtalo de nuevo.');
             }
         } catch (error) {
             console.error('Error:', error);
-            alert('Ha ocurrido un error inesperado. Por favor, inténtalo más tarde.');
+            toast.error('Ha ocurrido un error inesperado. Por favor, inténtalo más tarde.');
         }
     };
 
