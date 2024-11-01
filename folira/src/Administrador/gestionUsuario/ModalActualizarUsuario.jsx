@@ -108,178 +108,204 @@ const ModalActualizarUsuario = ({ isOpen, onClose, userId, token }) => {
     };
 
     return (
-        <>
-        {isOpen && (
-            <dialog id='edit_profile_modal' className='modal' open>
-                <div className='modal-box border rounded-md border-blue-950 h-[500px]  shadow-md modal-scrollbar'>
-                    <h3 className='text-primary font-bold text-lg my-3'>Actualizar Usuario</h3>
-                    <form
-                        className='text-primary flex flex-col gap-4'
-                        onSubmit={(e) => {
-                            e.preventDefault();
-                            updateUsers(formData);
-                        }}
-                    >
-                        {/* COVER IMG */}
-                        <div className='relative group/cover'>
-                            <img
-                                src={fotoPerfilBan || "/cover.png"}
-                                className='h-52 w-full object-cover'
-                                alt='cover image'
-                            />
-                            <div
-                                className='absolute top-2 right-2 rounded-full p-2 bg-gray-800 bg-opacity-75 cursor-pointer opacity-0 group-hover/cover:opacity-100 transition duration-200'
-                                onClick={() => fotoPerfilBanRef.current.click()}
-                            >
-                                <span className='w-5 h-5 text-white'>Editar</span>
-                            </div>
+<>
+  {isOpen && (
+    <>
+      {/* Fondo negro transparente */}
+      <div className="fixed inset-0 bg-black bg-opacity-50 z-50" />
 
-                            <input
-                                type='file'
-                                hidden
-                                accept='image/*'
-                                ref={fotoPerfilBanRef}
-                                onChange={(e) => handleImgChange(e, "coverImg")}
-                            />
-                            <input
-                                type='file'
-                                hidden
-                                accept='image/*'
-                                ref={fotoPerfilRef}
-                                onChange={(e) => handleImgChange(e, "profileImg")}
-                            />
-                        </div>
+      <dialog id="edit_profile_modal" className="modal" open>
+      <div className="modal-box border rounded-md border-blue-950 shadow-md p-6 relative max-h-[85vh] max-w-[120vh] overflow-y-auto">
+      <h3 className="text-primary font-bold text-lg my-3">Actualizar Usuario</h3>
 
-                        {/* USER AVATAR */}
-                        <div className='avatar absolute -bottom-16 left-4'>
-                            <div className='w-32 rounded-full relative group/avatar bottom-44 left-8'>
-                                <img src={fotoPerfil || "/avatar-placeholder.png"} alt="profile avatar" />
-                                <div className='absolute top-5 right-3 p-1 bg-primary rounded-full group-hover/avatar:opacity-100 opacity-0 cursor-pointer'>
-                                    <span
-                                        className='w-4 h-4 text-white'
-                                        onClick={() => fotoPerfilRef.current.click()}
-                                    >
-                                        Editar
-                                    </span>
-                                </div>
-                            </div>
-                        </div>
-
-                        {/* FORMULARIO */}
-                        <input
-                            type='text'
-                            placeholder='Nombre Usuario'
-                            className='input border border-blue-950 rounded p-2 input-md'
-                            value={formData.nombre}
-                            name='nombre'
-                            onChange={handleInputChange}
-                        />
-
-                        <input
-                            type='text'
-                            placeholder='Nombre Completo'
-                            className='input border border-blue-950 rounded p-2 input-md'
-                            value={formData.nombreCompleto}
-                            name='nombreCompleto'
-                            onChange={handleInputChange}
-                        />
-
-                        <textarea
-                            placeholder='Biografía'
-                            className='w-full border border-blue-950 rounded p-2 input-md'
-                            value={formData.biografia}
-                            name='biografia'
-                            onChange={handleInputChange}
-                            maxLength={200}
-                            rows={4}
-                            style={{ resize: 'none', overflowWrap: 'break-word' }}
-                        />
-
-                        <input
-                            type='email'
-                            placeholder='Correo'
-                            className='input border border-blue-950 rounded p-2 input-md'
-                            value={formData.correo}
-                            name='correo'
-                            onChange={handleInputChange}
-                        />
-
-                        <input
-                            type='password'
-                            placeholder='Contraseña Actual'
-                            className='input border border-blue-950 rounded p-2 input-md'
-                            value={formData.currentcontrasena}
-                            name='currentcontrasena'
-                            onChange={handleInputChange}
-                        />
-
-                        <input
-                            type='password'
-                            placeholder='Contraseña Nueva'
-                            className='input border border-blue-950 rounded p-2 input-md'
-                            value={formData.newcontrasena}
-                            name='newcontrasena'
-                            onChange={handleInputChange}
-                        />
-
-                        <input
-                            type='text'
-                            placeholder='País'
-                            className='input border border-blue-950 rounded p-2 input-md'
-                            value={formData.pais}
-                            name='pais'
-                            onChange={handleInputChange}
-                        />
-                         <input
-                            type='text'
-                            placeholder='Rol'
-                            className='input border border-blue-950 rounded p-2 input-md'
-                            value={formData.roles}
-                            name='roles'
-                            onChange={handleInputChange}
-                        />
-                        {/* Selección de géneros literarios */}
-                        <h4 className='font-bold'>Selecciona hasta 5 géneros literarios:</h4>
-                        <div className='grid grid-cols-2 gap-2'>
-                            {generoLiterarioPreferido.map((genero) => (
-                                <label key={genero.nombre} className='flex items-center cursor-pointer'>
-                                    <input
-                                        type='checkbox'
-                                        name='generos'
-                                        value={genero._id}
-                                        checked={formData.generoLiterarioPreferido.includes(genero._id)}
-                                        onChange={handleInputChange}
-                                        className='hidden'
-                                    />
-                                    <div
-                                        className={`flex items-center border rounded-full p-2 ${formData.generoLiterarioPreferido.includes(genero._id)
-                                            ? "bg-primary text-white"
-                                            : "border-primary text-primary"
-                                            }`}
-                                    >
-                                        <span>{genero.nombre}</span>
-                                    </div>
-                                </label>
-                            ))}
-                        </div>
-
-                        <div className='modal-action'>
-                            <button className='btn btn-primary' type='submit' disabled={isUpdatingUsers}
-                                onClick={async () => {
-                                    await updateUsers({fotoPerfil,fotoPerfilBan});}}
-                            >    
-                                {isUpdatingUsers ? "Actualizando..." : "Guardar"}
-                            </button>
-                            {isError && <p className='text-red-500'>{error.message}</p>}
-                            <button className='btn btn-outline' type='button' onClick={onClose}>
-                                Cancelar
-                            </button>
-                        </div>
-                    </form>
+          <form
+            className="text-primary grid grid-cols-2 gap-4"
+            onSubmit={(e) => {
+              e.preventDefault();
+              updateUsers(formData);
+            }}
+          >
+            {/* COVER IMG */}
+            <div className="col-span-2 relative">
+                <img
+                    src={fotoPerfilBan || "/cover.png"}
+                    className="h-40 w-full object-cover rounded-md"
+                    alt="cover image"
+                />
+                <div
+                    className="absolute top-2 right-2 rounded-full p-2 bg-gray-800 bg-opacity-75 cursor-pointer"
+                    onClick={() => fotoPerfilBanRef.current.click()}
+                >
+                    <span className="w-5 h-5 text-white">Editar</span>
                 </div>
-            </dialog>
-        )}
+                <input
+                    type="file"
+                    hidden
+                    accept="image/*"
+                    ref={fotoPerfilBanRef}
+                    onChange={(e) => handleImgChange(e, "coverImg")}
+                />
+            </div>
+
+
+            {/* USER AVATAR */}
+            <div className="absolute top-[20%] left-[19%] transform -translate-x-1/2 w-32">
+                <div className="avatar relative">
+                    <div className="w-32 h-32 rounded-full border-4 border-white overflow-hidden">
+                    <img src={fotoPerfil || "/avatar-placeholder.png"} alt="profile avatar" />
+                    <div
+                        className="absolute top-[15%] right-3 p-1 bg-primary rounded-full cursor-pointer"
+                        onClick={() => fotoPerfilRef.current.click()}
+                    >
+                        <span className="w-4 h-4 text-white">Editar</span>
+                    </div>
+                    </div>
+                </div>
+                <input
+                    type="file"
+                    hidden
+                    accept="image/*"
+                    ref={fotoPerfilRef}
+                    onChange={(e) => handleImgChange(e, "profileImg")}
+                />
+            </div>
+
+
+
+            {/* Primera columna - Información básica */}
+            <div className="grid grid-cols-1 gap-6 pt-16">
+              <input
+                type="text"
+                placeholder="Nombre Usuario"
+                className="input border border-blue-950 rounded p-2  h-10"
+                value={formData.nombre}
+                name="nombre"
+                onChange={handleInputChange}
+              />
+              <input
+                type="text"
+                placeholder="Nombre Completo"
+                className="input border border-blue-950 rounded p-2  h-10"
+                value={formData.nombreCompleto}
+                name="nombreCompleto"
+                onChange={handleInputChange}
+              />
+              <textarea
+                placeholder="Biografía"
+                className="border border-blue-950 rounded p-2"
+                value={formData.biografia}
+                name="biografia"
+                onChange={handleInputChange}
+                maxLength={200}
+                rows={4}
+                style={{ resize: 'none', overflowWrap: 'break-word' }}
+              />
+              <input
+                type="email"
+                placeholder="Correo"
+                className="input border border-blue-950 rounded p-2  h-10"
+                value={formData.correo}
+                name="correo"
+                onChange={handleInputChange}
+              />
+            </div>
+
+            {/* Segunda columna - Contraseñas, País y Rol */}
+            <div className="grid grid-cols-1 -mt-[10px] gap-2 pt-16">
+              <input
+                type="password"
+                placeholder="Contraseña Actual"
+                className="input border border-blue-950 rounded p-2  h-10"
+                value={formData.currentcontrasena}
+                name="currentcontrasena"
+                onChange={handleInputChange}
+              />
+              <input
+                type="password"
+                placeholder="Contraseña Nueva"
+                className="input border border-blue-950 rounded p-2  h-10"
+                value={formData.newcontrasena}
+                name="newcontrasena"
+                onChange={handleInputChange}
+              />
+              <input
+                type="text"
+                placeholder="País"
+                className="input border border-blue-950 rounded p-2 h-10"
+                value={formData.pais}
+                name="pais"
+                onChange={handleInputChange}
+              />
+              <input
+                type="text"
+                placeholder="Rol"
+                className="input border border-blue-950 rounded p-2  h-10"
+                value={formData.roles}
+                name="roles"
+                onChange={handleInputChange}
+              />
+            </div>
+
+            {/* Selección de géneros literarios */}
+            <div className="col-span-2">
+              <h4 className="font-bold">Selecciona hasta 5 géneros literarios:</h4>
+              <div className="grid grid-cols-2 gap-2">
+                {generoLiterarioPreferido.map((genero) => (
+                  <label key={genero.nombre} className="flex items-center cursor-pointer">
+                    <input
+                      type="checkbox"
+                      name="generos"
+                      value={genero._id}
+                      checked={formData.generoLiterarioPreferido.includes(genero._id)}
+                      onChange={handleInputChange}
+                      className="hidden"
+                    />
+                    <div
+                      className={`flex items-center border rounded-full p-2 ${
+                        formData.generoLiterarioPreferido.includes(genero._id)
+                          ? "bg-primary text-white"
+                          : "border-primary text-primary"
+                      }`}
+                    >
+                      <span>{genero.nombre}</span>
+                    </div>
+                  </label>
+                ))}
+              </div>
+            </div>
+          </form>
+
+          {/* Botones en la parte inferior (fijos) */}
+          <div className="modal-action sticky -bottom-[24px] left-0 right-0 p-4 bg-white border-t border-gray-300 flex justify-between">
+            <button
+              className="bg-primary text-white px-4 py-2 rounded-md hover:bg-blue-950"
+              type="submit"
+              disabled={isUpdatingUsers}
+              onClick={async () => {
+                await updateUsers({ fotoPerfil, fotoPerfilBan });
+              }}
+            >
+              {isUpdatingUsers ? "Actualizando..." : "Guardar"}
+            </button>
+            {isError && <p className="text-red-500">{error.message}</p>}
+            <button
+              className="border border-gray-300 rounded-md px-4 py-2 hover:bg-gray-400"
+              type="button"
+              onClick={onClose}
+            >
+              Cancelar
+            </button>
+          </div>
+          
+        </div>
+      </dialog>
     </>
+  )}
+</>
+
+
+
+      
     );
 };
 
