@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { BsArrowLeft, BsEye, BsEyeSlash } from 'react-icons/bs';
+import { BsArrowLeft} from 'react-icons/bs';
 import { CiImageOn } from 'react-icons/ci';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import toast from 'react-hot-toast';
@@ -8,6 +8,7 @@ import ModalActualizarComunidad from './ActualizarComunidadModal';
 import usePosts from '../../hooks/usePost';
 import ListaPublicaciones from './ListaPublicaciones';
 import EmojiPicker from 'emoji-picker-react';
+import ModalMiembrosComunidad from './ModalMiembros';
 
 const DetallesComunidad = () => {
   const { id } = useParams();
@@ -17,7 +18,13 @@ const DetallesComunidad = () => {
   const [fotoPublicacion, setFotoPublicacion] = useState(null);
   const [isActualizarModalOpen, setIsActualizarModalOpen] = useState(false);
   const [mostrarEmojis, setMostrarEmojis] = useState(false); // Estado para mostrar emojis
+  const [isConfirmModalOpen, setIsConfirmModalOpen] = useState(false);
+  const [isRedirecting, setIsRedirecting] = useState(false); // Estado para redirigir después de inactivar
 
+const handleConfirmInactivar = () => {
+  handleInactivarComunidad();
+  setIsConfirmModalOpen(false);
+};
   // Query para obtener la comunidad
   const { data: comunidad, isLoading: loadingComunidad } = useQuery({
     queryKey: ['comunidad', id],
@@ -80,6 +87,9 @@ const DetallesComunidad = () => {
       });
       if (!res.ok) throw new Error('Error al salir de la comunidad');
       toast.success('Has salido de la comunidad');
+
+      queryClient.invalidateQueries(['comunidad', id]);
+
     } catch {
       toast.error('No se pudo salir de la comunidad');
     }
@@ -97,6 +107,7 @@ const DetallesComunidad = () => {
       if (!res.ok) throw new Error('Error al inactivar la comunidad');
       toast.success('Comunidad inactivada con éxito');
       setIsActualizarModalOpen(false);
+      setIsRedirecting(true); // Cambia el estado a true para redirigir
     } catch {
       toast.error('Hubo un problema al inactivar la comunidad');
     }
@@ -126,9 +137,9 @@ const DetallesComunidad = () => {
       toast.error('No se pudo unir a la comunidad');
     }
   };
-  const handleRedirect = () => {
-    Navigate('/comunidad'); // Redirección
-  };
+  if (isRedirecting) {
+    return <Navigate to="/comunidad" />; // Redirige a la página de comunidades
+  }
   if (loadingComunidad) return <div>Cargando...</div>;
 
   const { nombre, admin, descripcion, miembros, link, fotoComunidad } = comunidad || {};
@@ -138,7 +149,7 @@ const DetallesComunidad = () => {
   return (
     <div className='flex-[4_4_0] border-r border-primary min-h-screen'>
       <div className="flex flex-col border-r border-gray-300 min-h-screen bg-white p-6 rounded-lg shadow-lg">
-        <div className="flex items-center cursor-pointer gap-5 text-3xl -mt-4 border-b-2 border-gray-300 pb-2 mb-4" onClick={handleRedirect}>
+        <div className="flex items-center cursor-pointer gap-5 text-3xl -mt-4 border-b-2 border-gray-300 pb-2 mb-4">
           <Link to="/comunidad">
             <BsArrowLeft className="text-primary mr-2 text-lg" /> {/* Icono de flecha */}
           </Link>
@@ -162,7 +173,7 @@ const DetallesComunidad = () => {
             {esAdmin && (
               <div className="flex space-x-2"> {/* Usar space-x-2 para espaciar los botones */}
                 <button
-                  onClick={handleInactivarComunidad}
+                  onClick={() => setIsConfirmModalOpen(true)}
                   className="bg-primary text-white py-2 px-3 rounded hover:bg-blue-950"
                 >
                   Inactivar
@@ -187,20 +198,20 @@ const DetallesComunidad = () => {
             <p className="text-lg">
               <strong>Administrador:</strong> {admin?.nombre}
             </p>
-            <p className="text-lg">
+              <p className="text-lg">
               <strong>Descripción:</strong>{' '}
               <span className="break-all"> {/* Mantenido break-all para manejar los cortes */}
                 {expandirDescripcion ? descripcion : `${descripcion.substring(0, 100)}...`}
               </span>
               {descripcion.length > 100 && (
                 <button onClick={toggleDescripcion} className="ml-2 text-blue-600">
-                  {expandirDescripcion ? <BsEyeSlash /> : <BsEye />}
+                   {expandirDescripcion ? 'Mostrar menos' : 'Mostrar más'}
                 </button>
               )}
             </p>
-            <p className="text-lg">
-              <strong>Número de miembros:</strong> {miembros?.length || 0}
-            </p>
+            <div className="text-lg">
+              <ModalMiembrosComunidad miembros={miembros} />
+            </div>
             <p className="text-lg">
               <strong>Enlace de conexión:</strong>{' '}
               <a href={link} target="_blank" rel="noopener noreferrer" className="text-blue-600 underline">
@@ -263,8 +274,30 @@ const DetallesComunidad = () => {
         )}
           <ListaPublicaciones posts={posts} esAdmin={esAdmin} esMiembro={esMiembro}/>
         </div>
-        <ModalActualizarComunidad isOpen={isActualizarModalOpen} onClose={() => setIsActualizarModalOpen(false)} />
+        <ModalActualizarComunidad isOpen={isActualizarModalOpen} comunidadId={id} onClose={() => setIsActualizarModalOpen(false)} />
       </div>
+      {isConfirmModalOpen && (
+        <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50">
+          <div className="bg-white p-6 rounded shadow-lg">
+            <h2 className="text-xl font-bold mb-4">Confirmar Inactivación</h2>
+            <p>¿Estás seguro de que deseas inactivar esta comunidad?</p>
+            <div className="mt-4 flex justify-end space-x-4">
+              <button
+                onClick={() => setIsConfirmModalOpen(false)}
+                className="bg-gray-300 px-4 py-2 rounded hover:bg-gray-400"
+              >
+                Cancelar
+              </button>
+              <button
+                onClick={handleConfirmInactivar}
+                className="bg-red-600 text-white px-4 py-2 rounded hover:bg-red-700"
+              >
+                Confirmar
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 };

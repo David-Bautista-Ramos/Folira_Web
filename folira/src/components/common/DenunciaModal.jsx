@@ -20,6 +20,8 @@ const ModalDenuncia = ({ postId, tipoDenuncia }) => {
     },
     onSuccess: (data) => {
       toast.success("Publicación reportada con éxito");
+      queryClient.invalidateQueries(['posts', postId]);
+
       queryClient.setQueryData(["posts"], (oldData) => {
         if (!oldData) return []; // Verificación si oldData es undefined
         return oldData.map((p) => (p._id === postId ? { ...p, denuncias: data.denuncias } : p));
@@ -58,6 +60,8 @@ const ModalDenuncia = ({ postId, tipoDenuncia }) => {
       document.getElementById(`denuncia_modal_${postId}`).close(); // Cierra el modal
       setMotivo(''); // Resetea el estado de motivo
       setError(''); // Resetea el error
+      queryClient.invalidateQueries(['posts', postId]);
+
     } catch (error) {
       setError(error.message); // Manejo de errores
     }
