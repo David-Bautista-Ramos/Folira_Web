@@ -8,6 +8,7 @@ const ModalActualizarUsuario = ({ isOpen, onClose, userId, token }) => {
         correo: "",
         pais: "",
         biografia: "",
+        roles: "",
         newcontrasena: "",
         currentcontrasena: "",
         generoLiterarioPreferido: [],
@@ -51,6 +52,7 @@ const ModalActualizarUsuario = ({ isOpen, onClose, userId, token }) => {
                             correo: data.correo || "",
                             pais: data.pais || "",
                             biografia: data.biografia || "",
+                            roles: data.roles || "",
                             newcontrasena: "",
                             currentcontrasena: "",
                             generoLiterarioPreferido: data.generoLiterarioPreferido || [],
@@ -228,7 +230,14 @@ const ModalActualizarUsuario = ({ isOpen, onClose, userId, token }) => {
                             name='pais'
                             onChange={handleInputChange}
                         />
-
+                         <input
+                            type='text'
+                            placeholder='Rol'
+                            className='input border border-blue-950 rounded p-2 input-md'
+                            value={formData.roles}
+                            name='roles'
+                            onChange={handleInputChange}
+                        />
                         {/* Selección de géneros literarios */}
                         <h4 className='font-bold'>Selecciona hasta 5 géneros literarios:</h4>
                         <div className='grid grid-cols-2 gap-2'>

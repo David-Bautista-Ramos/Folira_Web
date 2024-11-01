@@ -14,7 +14,7 @@ router.get("/allUsers", protectRoutes, obtenerUsuarios);
 router.get("/notifi", protectRoutes, obtenerTodasNotificaciones);
 router.get("/notifi/:para", protectRoutes, obtenerNotificaciones);
 router.put("/notifi/:id", protectRoutes, marcarNotificacionLeida);
-router.get("/notifi/:id", protectRoutes, obtenerNotificacionesId);
+router.get("/notifiid/:id", protectRoutes, obtenerNotificacionesId);
 router.put("/notifino/:id", protectRoutes, marcarNotificacionNoLeida);
 router.put("/actuNotifi/:id", protectRoutes,updateNotification)
 router.get("/notifinole/:para", protectRoutes, obtenerNotificacionesNoLeidas);

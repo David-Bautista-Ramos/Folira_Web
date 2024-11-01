@@ -267,6 +267,7 @@ function GestionUsuario() {
                       </div>
                       <div className="mb-1">
                         <p>Nombre : {usuario.nombreCompleto}</p>
+                        <p>Rol : {usuario.roles}</p>
                       </div>
                       <p>Estado: {obtenerEstadoTexto(usuario.estado)}</p>
                     </div>

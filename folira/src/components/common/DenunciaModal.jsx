@@ -1,12 +1,14 @@
 import { useState } from 'react';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { toast } from 'react-hot-toast';
+import usePosts from '../../hooks/usePost';
 
 const ModalDenuncia = ({ postId, tipoDenuncia }) => {
   const [motivo, setMotivo] = useState('');
   const [error, setError] = useState('');
   const queryClient = useQueryClient();
   const { data: authUser } = useQuery({ queryKey: ["authUser"] });
+  const {  isLoading: isPostsLoading } = usePosts(postId);
 
   const { mutate: reportPost, isPending: isReporting } = useMutation({
     mutationFn: async () => {
@@ -18,9 +20,10 @@ const ModalDenuncia = ({ postId, tipoDenuncia }) => {
     },
     onSuccess: (data) => {
       toast.success("Publicación reportada con éxito");
-      queryClient.setQueryData(["posts"], (oldData) =>
-        oldData.map((p) => (p._id === postId ? { ...p, denuncias: data.denuncias } : p))
-      );
+      queryClient.setQueryData(["posts"], (oldData) => {
+        if (!oldData) return []; // Verificación si oldData es undefined
+        return oldData.map((p) => (p._id === postId ? { ...p, denuncias: data.denuncias } : p));
+      });
     },
     onError: (error) => {
       toast.error(error.message);
@@ -59,6 +62,8 @@ const ModalDenuncia = ({ postId, tipoDenuncia }) => {
       setError(error.message); // Manejo de errores
     }
   };
+
+  if (isPostsLoading) return <p>Cargando publicaciones...</p>;
 
   return (
     <dialog id={`denuncia_modal_${postId}`} className='modal'>

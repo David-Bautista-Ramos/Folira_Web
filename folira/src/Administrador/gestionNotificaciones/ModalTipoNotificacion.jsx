@@ -18,12 +18,6 @@ const ModalTipoNotificacion = ({ isOpen, onClose, onFilter }) => {
           >
             Like
           </button>
-          {/* <button
-            className="bg-yellow-500 text-white px-4 py-2 rounded"
-            onClick={() => onFilter("insignia")}
-          >
-            Insignia
-          </button> */}
           <button
             className="bg-gray-500 text-white px-4 py-2 rounded"
             onClick={() => onFilter("denuncia")}

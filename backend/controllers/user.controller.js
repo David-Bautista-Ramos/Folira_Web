@@ -154,7 +154,7 @@ export const getSuggestedUsers = async (req, res) => {
       },
     ]);
 
-    res.status(200).json(users.slice(0, 5)); // Enviar solo los primeros 4 usuarios sugeridos
+    res.status(200).json(users.slice(0, 7)); // Enviar solo los primeros 4 usuarios sugeridos
   } catch (error) {
     console.log("Error en getSuggestedUsers: ", error.message);
     res.status(500).json({ error: error.message });
@@ -581,6 +581,7 @@ export const actualizarUsuario = async (req, res) => {
     currentcontrasena,
     newcontrasena,
     pais,
+    roles,
     biografia,
   } = req.body;
   let { fotoPerfil, fotoPerfilBan } = req.body;
@@ -667,6 +668,7 @@ export const actualizarUsuario = async (req, res) => {
     user.correo = correo || user.correo;
     user.pais = pais || user.pais;
     user.biografia = biografia || user.biografia;
+    user.roles = roles || user.roles,
     user.fotoPerfil = fotoPerfil || user.fotoPerfil;
     user.fotoPerfilBan = fotoPerfilBan || user.fotoPerfilBan;
 

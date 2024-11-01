@@ -36,7 +36,7 @@ function ModalActualizarLibro({ isOpen, onClose, libroId, obtenerLibros, token }
           titulo: libro.titulo || "",
           isbn: libro.isbn || "",
           calificacion: libro.calificacion || "",
-          fechaPublicacion: libro.fechaPublicacion || "",
+          fechaPublicacion: libro.fechaPublicacion? new Date(libro.fechaPublicacion).toISOString().split('T')[0] : "",
           editorial: libro.editorial || "",
           sinopsis: libro.sinopsis || "",
         });
@@ -208,7 +208,7 @@ function ModalActualizarLibro({ isOpen, onClose, libroId, obtenerLibros, token }
 
           <label className="block mb-1 text-primary">Fecha de publicación</label>
           <input
-            type="text"
+            type="date"
             name="fechaPublicacion"
             value={formData.fechaPublicacion}
             onChange={handleInputChange}

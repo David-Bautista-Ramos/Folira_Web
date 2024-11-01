@@ -105,7 +105,7 @@ const EditProfileModal = ({ authUser }) => {
 					return; // Salir si el valor contiene caracteres no permitidos
 				}
 			}
-			setFormData({ ...formData, [name]: value });
+			setFormData({ ...formData, [name]: value.trim() });
 		}
 	};
 
@@ -328,8 +328,8 @@ const EditProfileModal = ({ authUser }) => {
 						<div className="flex flex-wrap flex-col gap-y-2">
 						<h4 className="font-bold">Selecciona hasta 5 géneros literarios:</h4>
 						<div className="grid grid-cols-2 gap-2">
-							{generosDisponibles.map((genero) => (
-							<label key={genero.id} className="flex items-center cursor-pointer">
+							{generosDisponibles.map((genero,index) => (
+							<label key={index} className="flex items-center cursor-pointer">
 								<input
 								type="checkbox"
 								name="generoLiterarioPreferido"
