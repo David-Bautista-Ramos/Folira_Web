@@ -240,7 +240,37 @@ html, body {
 }
 
 /* ------------------------------------------------ */
+/* Estilos scroll de modal de generos de perfil */
+/* Estilos para el scrollbar en navegadores basados en WebKit */
+.modal-scrollbar-usuario {
+  max-height: 800px; /* Altura máxima del contenedor del modal */
+  overflow-y: auto; /* Habilita el scroll vertical */
+}
 
+/* Scrollbar para Chrome, Safari y Edge */
+.modal-scrollbar-usuario::-webkit-scrollbar {
+  width: 8px; /* Ancho del scrollbar */
+}
+
+.modal-scrollbar-usuario::-webkit-scrollbar-track {
+  background: rgb(235, 237, 239); /* Color de fondo del track */
+  border-radius: 10px; /* Bordes redondeados del track */
+}
+
+.modal-scrollbar-usuario::-webkit-scrollbar-thumb {
+  background: #888; /* Color del thumb (barra) */
+  border-radius: 10px; /* Bordes redondeados del thumb */
+}
+
+.modal-scrollbar-usuario::-webkit-scrollbar-thumb:hover {
+  background: #555; /* Color del thumb al pasar el mouse */
+}
+
+/* Estilos para Firefox */
+.modal-scrollbar-usuario {
+  scrollbar-width: thin; /* Espesor del scrollbar */
+  scrollbar-color:  rgb(17, 24, 39) rgb(235, 237, 239); /* Color del thumb y del track */
+}
 
 
 

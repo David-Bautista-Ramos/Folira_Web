@@ -140,26 +140,28 @@ const ModalCrearUsuario = ({ isOpen, onClose }) => {
                 ref={fotoPerfilRef}
                 onChange={(e) => handleImgChange(e, "profileImg")}
               />
-            </div>
 
-            {/* USER AVATAR */}
-            <div className="absolute top-36 left-10 mt-2 z-10"> {/* Ajusta el top si es necesario */}
-              <div className="w-32 rounded-full relative">
-                <img
-                  src={fotoPerfil || "/avatar-placeholder.png"}
-                  alt="profile avatar"
-                  className="border-4 border-white rounded-full"
-                />
-                <div className="absolute top-5 right-3 p-1 bg-primary rounded-full group-hover/avatar:opacity-100 opacity-0 cursor-pointer">
-                  <span
-                    className="w-4 h-4 text-white"
-                    onClick={() => fotoPerfilRef.current.click()}
-                  >
-                    Editar
-                  </span>
+              {/* USER AVATAR */}
+              <div className="absolute top-[10px] left-[10px] mt-[65px] z-10"> {/* Ajusta el top si es necesario */}
+                <div className="w-32 rounded-full relative">
+                  <img
+                    src={fotoPerfil || "/avatar-placeholder.png"}
+                    alt="profile avatar"
+                    className="border-4 border-white rounded-full"
+                  />
+                  <div className="absolute top-5 right-3 p-1 bg-primary rounded-full group-hover/avatar:opacity-100 opacity-0 cursor-pointer">
+                    <span
+                      className="w-4 h-4 text-white"
+                      onClick={() => fotoPerfilRef.current.click()}
+                    >
+                      Editar
+                    </span>
+                  </div>
                 </div>
               </div>
             </div>
+
+            
 
             {/* FORMULARIO */}
             <input
