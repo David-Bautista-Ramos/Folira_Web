@@ -25,7 +25,7 @@ export const formatPostDate = (createdAt) => {
 	}
 };
 
-export const formatMemberSinceDate = (createdAt) => {
+export const formatMemberSinceDate2 = (createdAt) => {
 	const date = new Date(createdAt);
 	const months = [
 		"Enero",
@@ -43,5 +43,5 @@ export const formatMemberSinceDate = (createdAt) => {
 	];
 	const month = months[date.getMonth()];
 	const year = date.getFullYear();
-	return `Miembro desde ${month} de ${year}`;
+	return `Creado en ${month} de ${year}`;
 };

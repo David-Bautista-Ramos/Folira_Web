@@ -59,7 +59,7 @@ const FichaTecnicaLibro = () => {
 
   const {
     titulo,
-    autor,
+    autores,
     generos,
     sinopsis,
     serie,
@@ -73,7 +73,7 @@ const FichaTecnicaLibro = () => {
 
     return (
       <div>
-        <p className="text-md">
+        <strong className="text-md">
           Sinopsis: {isExpanded ? sinopsis : `${sinopsisCorta}...`}
           {esLarga && (
             <span
@@ -83,7 +83,7 @@ const FichaTecnicaLibro = () => {
               {isExpanded ? <><BsEyeSlash className="inline" /> Leer menos</> : <><BsEye className="inline" /> Leer más</>}
             </span>
           )}
-        </p>
+        </strong>
       </div>
     );
   };
@@ -225,17 +225,14 @@ if (isRedirecting) {
           <img 
             src={portada} 
             alt={titulo} 
-            className="w-1/3 h-[250px] rounded-lg object-cover"
+            className="w-1/3 h-[auto] rounded-lg object-cover"
             style={{ flexShrink: 0 }}
           />
           <div className="ml-6 flex flex-col flex-grow">
             <h2 className="text-2xl font-semibold">{titulo}</h2>
-            <p className="text-lg font-medium">Autor: {autor}</p>
-            <p className="text-md">Géneros: {generos && generos.length > 0 ? generos.map((genero, index) => (
-                <span key={index} className="mr-2">{genero.nombre}</span>
-              )) : 'No disponible'}</p>
-            <p className="text-md">Serie: {serie || 'N/A'}</p>
-            <p className="text-md">ISBN: {isbn}</p>
+            <strong className="text-lg font-medium">Autor: {autores.length > 0 ? autores.map((autor) => autor.nombre).join(', '): 'Autor no disponible'}</strong>
+            <strong className="text-md">Serie: {serie || 'N/A'}</strong>
+            <strong className="text-md">ISBN: {isbn}</strong>
             <div className="text-md break-all">
               {renderSinopsis()}
             </div>
@@ -243,6 +240,22 @@ if (isRedirecting) {
               <strong>Calificación General:</strong> 
               {renderEstrellas(calificacionPromedio)} {/* Mostrar calificación promedio en estrellas */}
             </div> 
+            <strong>Generos literarios:</strong>
+            <div className='flex flex-wrap gap-4'>
+            {generos.length > 0 ? (
+              generos.map((genero) => (
+                <div 
+                  key={genero.nombre} 
+                  className='flex items-center border rounded-full p-2 bg-white min-w-[120px] max-w-[150px] truncate'
+                >
+                  <img src={genero.fotoGenero} alt={genero.nombre} className='w-8 h-8 mr-2' />
+                  <span className="truncate">{genero.nombre}</span>
+                </div>
+              ))
+            ) : (
+              <span>No tiene géneros asignados</span> // Mensaje cuando no hay géneros
+            )}
+          </div>
           </div>
         </div>
 

@@ -10,6 +10,7 @@ const FichaTecnicaAutor = () => {
   const [calificacion, setCalificacion] = useState(0);
   const [comentario, setComentario] = useState("");
   const [resenas, setResenas] = useState([]);
+  const [generos, setGeneros] = useState([]); // Cambiar a useState para almacenar los géneros
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [loadingReseñas, setLoadingReseñas] = useState(false);
   const [selectedStarFilter, setSelectedStarFilter] = useState(0); // Estado para el filtro de estrellas
@@ -36,6 +37,7 @@ const formatearFecha = (fechaISO) => {
         const data = await response.json();
         setAutor(data);
         setCalificacion(data.calificacion || 0);
+        setGeneros(data.generos)
       } catch (error) {
         console.error('Error al obtener el autor:', error);
       }
@@ -186,10 +188,10 @@ const formatearFecha = (fechaISO) => {
             <span className="text-xl text-primary font-bold flex items-center">{nombre}</span> {/* Título del libro */}
         </div>
             <div className="flex">
-              <img 
+            <img 
                 src={fotoAutor} 
                 alt={nombre} 
-                className="w-48 h-48 rounded-full object-cover"
+                className="w-1/3 h-[auto] rounded-lg object-cover" // Cambiado a `h-full` para que la imagen ocupe toda la altura
                 style={{ flexShrink: 0 }} // Para evitar que la imagen se ajuste
               />
               <div className="ml-6 flex flex-col flex-grow">
@@ -200,11 +202,30 @@ const formatearFecha = (fechaISO) => {
                   <strong>Fecha de Nacimiento:</strong> {fechaNacimiento ? formatearFecha(fechaNacimiento) : 'N/A'}
                 </p>
                 <p className="text-lg"><strong>Biografia:</strong> {biografia}</p>
-                <p className="text-lg"><strong>Distinciones:</strong> {distinciones.join(', ') || 'N/A'}</p>
+                <p className="text-lg"><strong>Distinciones:</strong> {distinciones || 'N/A'}</p>
+                <div className='flex flex-col mt-4 -mb-3'>
+                </div>
                 <div className="flex items-center mt-2">
               <strong>Calificación General:</strong> 
               {renderEstrellas(calificacionPromedio)} {/* Mostrar calificación promedio en estrellas */}
             </div>              
+            {/* Usamos flex y flex-wrap para que los géneros se acomoden según el espacio disponible */}
+            <strong>Generos Literarios</strong>
+            <div className='flex flex-wrap gap-4'>
+            {generos.length > 0 ? (
+              generos.map((genero) => (
+                <div 
+                  key={genero.nombre} 
+                  className='flex items-center border rounded-full p-2 bg-white min-w-[120px] max-w-[150px] truncate'
+                >
+                  <img src={genero.fotoGenero} alt={genero.nombre} className='w-8 h-8 mr-2' />
+                  <span className="truncate">{genero.nombre}</span>
+                </div>
+              ))
+            ) : (
+              <span>No tiene géneros asignados</span> // Mensaje cuando no hay géneros
+            )}
+          </div>
             </div>
             </div>
 

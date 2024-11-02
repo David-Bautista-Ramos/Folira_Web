@@ -6,22 +6,24 @@ import Select from "react-select"; // Importa react-select
 const ModalCrearUsuario = ({ isOpen, onClose }) => {
 
   const paises = [
-    { value: "Argentina", label: "Argentina" },
-    { value: "Australia", label: "Australia" },
-    { value: "Brazil", label: "Brazil" },
-    { value: "Canada", label: "Canada" },
-    { value: "Chile", label: "Chile" },
-    { value: "China", label: "China" },
-    { value: "Colombia", label: "Colombia" },
-    { value: "France", label: "France" },
-    { value: "Germany", label: "Germany" },
-    { value: "India", label: "India" },
-    { value: "Japan", label: "Japan" },
-    { value: "Mexico", label: "Mexico" },
-    { value: "Spain", label: "Spain" },
-    { value: "United States", label: "United States" },
-    // Agrega más países según sea necesario
-  ];
+		{ value: 'Argentina', label: 'Argentina' },
+		{ value: 'Australia', label: 'Australia' },
+		{ value: 'Austria', label: 'Austria' },
+		{ value: 'Bélgica', label: 'Bélgica' },
+		{ value: 'Brasil', label: 'Brasil' },
+		{ value: 'Canadá', label: 'Canadá' },
+		{ value: 'Chile', label: 'Chile' },
+		{ value: 'Colombia', label: 'Colombia' },
+		{ value: 'España', label: 'España' },
+		{ value: 'Estados Unidos', label: 'Estados Unidos' },
+		{ value: 'Francia', label: 'Francia' },
+		{ value: 'Italia', label: 'Italia' },
+		{ value: 'México', label: 'México' },
+		{ value: 'Perú', label: 'Perú' },
+		{ value: 'Reino Unido', label: 'Reino Unido' },
+		{ value: 'Venezuela', label: 'Venezuela' },
+	];
+
 
   const [formData, setFormData] = useState({
     nombre: "",

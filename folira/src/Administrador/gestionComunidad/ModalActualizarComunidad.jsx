@@ -90,8 +90,8 @@ const ModalActualizarComunidad = ({ isOpen, onClose, token, comunidadId,obtenerC
             descripcion: comunidad.descripcion || "",
             fotoComunidad: comunidad.fotoComunidad || "",
             fotoBanner: comunidad.fotoBanner || "",
-            generoLiterarios: comunidad.generoLiterarios || [], // Asegúrate de usar este campo
             admin: comunidad.admin?._id || "",
+            generoLiterarios:comunidad.generoLiterarios.map(generoLiterarios => generoLiterarios._id) || [],
           });
           setFotoComunidad(comunidad.fotoComunidad);
           setFotoBanner(comunidad.fotoBanner);

@@ -4,12 +4,12 @@ import GestionSkeleton from "../../components/skeletons/GestionSkeleton";
 import { BiEdit, BiPowerOff, BiReset, BiShow, BiHide,BiTrash, BiLeftArrow, BiRightArrow } from "react-icons/bi";
 import banner_denuncia from "../../assets/img/banner_gestion_denuncia.png"; 
 import ModalFiltroDenuncias from "../../components/common/ModalListarDenuncia";
-import { formatMemberSinceDate } from "../../utils/date";
 import ModalInactivarDenuncia from "./ModalInactivarDenuncia";
 import ModalActivarDenuncia from "./ModalActivarDenuncia";
 import ModalActualizarDenuncia from "./ModalActualizarDenuncia";
 import ModalEliminarDenuncia from "./ModalEliminarDenuncia";
 import FiltroTipoModal from "./ModalTipoDenuncia";
+import { formatMemberSinceDate2 } from "../../utils/date/index2";
 
 
 function GestionDenuncia() {
@@ -256,7 +256,7 @@ function GestionDenuncia() {
                       <span className="font-bold">{denuncia.idUsuario?.nombreCompleto}</span>
                     </div>
                     <h2 className="font-semibold">Motivo: {obtenerTipoDenuncia(denuncia)}</h2>
-                    <p>Fecha: {formatMemberSinceDate(denuncia.updatedAt)}</p>
+                    <p>Fecha: {formatMemberSinceDate2(denuncia.updatedAt)}</p>
                     <p>Estado: {denuncia.estado ? "Activo" : "Inactivo"}</p>
                     <p>Motivo: {denuncia.motivo}</p>
                     {denuncia.tipo === "publicacion" && (

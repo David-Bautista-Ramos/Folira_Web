@@ -7,8 +7,9 @@ const ModalActualizarAutor = ({ isOpen, onClose, autorId, token, obtenerAutores 
         seudonimo: "",
         biografia: "",
         pais: "",
+        distinciones: "" ,
         fechaNacimiento: "",
-        distinciones: [],
+        generos: [],
     });
     const [fotoAutor, setFotoAutor] = useState(null);
     const [generosLiterarios, setGenerosLiterarios] = useState([]);
@@ -46,8 +47,9 @@ const ModalActualizarAutor = ({ isOpen, onClose, autorId, token, obtenerAutores 
                             seudonimo: data.seudonimo || "",
                             biografia: data.biografia || "",
                             pais: data.pais || "",
+                            distinciones: data.distinciones || "",
                             fechaNacimiento: data.fechaNacimiento ? new Date(data.fechaNacimiento).toISOString().split('T')[0] : "",
-                            distinciones: data.distinciones || [],
+                            generos: data.generos.map(genero => genero._id) || [], // Asegúrate de que solo los IDs se almacenen
                         });
                         setFotoAutor(data.fotoAutor || "");
                     } else {
@@ -88,16 +90,16 @@ const ModalActualizarAutor = ({ isOpen, onClose, autorId, token, obtenerAutores 
 
     const handleInputChange = (e) => {
         const { name, value, checked } = e.target;
-        if (name === "distinciones") {
-            if (checked && formData.distinciones.length < 5) {
+        if (name === "generos") {
+            if (checked && formData.generos.length < 5) {
                 setFormData((prevData) => ({
                     ...prevData,
-                    distinciones: [...prevData.distinciones, value],
+                    generos: [...prevData.generos, value],
                 }));
             } else if (!checked) {
                 setFormData((prevData) => ({
                     ...prevData,
-                    distinciones: prevData.distinciones.filter((distincion) => distincion !== value),
+                    generos: prevData.generos.filter((genero) => genero !== value),
                 }));
             }
         } else {
@@ -190,19 +192,39 @@ const ModalActualizarAutor = ({ isOpen, onClose, autorId, token, obtenerAutores 
                                     onChange={handleInputChange}
                                 />
 
+                                {/* Campo para distinciones */}
+                                <textarea
+                                    placeholder="Distinciones (separa por comas)"
+                                    className="w-full border border-blue-950 rounded p-2 resize-y"
+                                    value={formData.distinciones}
+                                    name="distinciones"
+                                    onChange={handleInputChange}
+                                    rows={4}
+                                    style={{
+                                        minHeight: '60px',
+                                        maxHeight: '100px',
+                                        overflowY: 'auto',
+                                        overflowX: 'hidden',
+                                        boxSizing: 'border-box'
+                                    }}
+                                />
+
                                 <textarea
                                     placeholder="Biografía"
-                                    className="w-full border border-blue-950 rounded p-2"
+                                    className="w-full border border-blue-950 rounded p-2 resize-y" // Mantiene resize-y
                                     value={formData.biografia}
                                     name="biografia"
                                     onChange={handleInputChange}
-                                    rows={8} // Número de filas inicial, puedes ajustarlo si quieres
+                                    rows={8} // Número de filas inicial
                                     style={{
-                                        resize: 'vertical', // Permite al usuario ajustar la altura manualmente
-                                        overflowY: 'auto',  // Permite desplazamiento vertical
+                                        minHeight: '100px', // Altura mínima
+                                        maxHeight: '300px', // Altura máxima
+                                        overflowY: 'auto', // Permite desplazamiento vertical
                                         overflowX: 'hidden', // Evita el desplazamiento horizontal
+                                        boxSizing: 'border-box' // Asegura que el padding no afecte el tamaño total
                                     }}
                                 />
+
 
                                 <input
                                     type='text'
@@ -221,26 +243,24 @@ const ModalActualizarAutor = ({ isOpen, onClose, autorId, token, obtenerAutores 
                                     onChange={handleInputChange}
                                 />
 
-                                {/* Distinciones */}
-                                <h4 className='font-bold'>Selecciona hasta 5 distinciones:</h4>
+                                {/* generos */}
                                 <div className='grid grid-cols-2 gap-2'>
                                     {generosLiterarios.map((genero) => (
-                                        <label key={genero.nombre} className='flex items-center cursor-pointer'>
+                                        <label key={genero._id} className='flex items-center cursor-pointer'>
                                             <input
                                                 type='checkbox'
-                                                name='distinciones'
+                                                name='generos'
                                                 value={genero._id}
-                                                checked={formData.distinciones.includes(genero._id)}
+                                                checked={formData.generos.includes(genero._id)} // Asegúrate de que esto es correcto
                                                 onChange={handleInputChange}
                                                 className='hidden'
                                             />
                                             <div
-                                                className={`flex items-center border rounded-full p-2 ${formData.distinciones.includes(genero._id)
-                                                    ? "bg-primary text-white"
-                                                    : "border-primary text-primary"
-                                                    }`}
+                                                className={`flex items-center border rounded-full p-2 ${
+                                                    formData.generos.includes(genero._id) ? 'bg-blue-950 text-white' : 'border-blue-950 text-blue-950'
+                                                }`}
                                             >
-                                                <span>{genero.nombre}</span>
+                                                {genero.nombre}
                                             </div>
                                         </label>
                                     ))}

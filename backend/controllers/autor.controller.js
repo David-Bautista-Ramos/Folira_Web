@@ -1,4 +1,5 @@
 import Autor from "../models/autor.model.js";
+import GeneroLiterario from "../models/generoLiterario.model.js"
 import cloudinary from "cloudinary";
 
 // Crear un nuevo autor
@@ -12,8 +13,9 @@ export const crearAutor = async (req, res) => {
       pais,
       biografia,
       distinciones,
-      generoLiterarioPreferido,
+      generos, // Esta es la variable que viene del body
     } = req.body;
+
     let { fotoAutor } = req.body;
 
     // Verificar si ya existe un autor con el mismo nombre
@@ -31,18 +33,16 @@ export const crearAutor = async (req, res) => {
 
     // Verificar los géneros literarios seleccionados
     let generosSeleccionados = [];
-    if (generoLiterarioPreferido && generoLiterarioPreferido.length > 0) {
-      const generos = await GeneroLiterario.find({
-        _id: { $in: generoLiterarioPreferido },
+    if (generos && generos.length > 0) {
+      const generosEncontrados = await GeneroLiterario.find({
+        _id: { $in: generos },
       });
-      if (generos.length !== generoLiterarioPreferido.length) {
-        return res
-          .status(400)
-          .json({
-            error: "Algunos géneros literarios seleccionados son inválidos.",
-          });
+      if (generosEncontrados.length !== generos.length) {
+        return res.status(400).json({
+          error: "Algunos géneros literarios seleccionados son inválidos.",
+        });
       }
-      generosSeleccionados = generos.map((genero) => genero._id); // Obtener los IDs de los géneros literarios
+      generosSeleccionados = generosEncontrados.map((genero) => genero._id); // Obtener los IDs de los géneros literarios
     }
 
     // Crear el nuevo autor
@@ -54,19 +54,18 @@ export const crearAutor = async (req, res) => {
       biografia,
       fotoAutor: fotoAutorUrl, // Guardar la URL de la foto subida
       distinciones,
-      generoLiterarioPreferido: generosSeleccionados, // Asociar géneros literarios
+      generos: generosSeleccionados, // Asociar géneros literarios
     });
 
     // Guardar el autor en la base de datos
     await nuevoAutor.save();  
-    res
-      .status(201)
-      .json({ message: "Autor creado con éxito", autor: nuevoAutor });
+    res.status(201).json({ message: "Autor creado con éxito", autor: nuevoAutor });
   } catch (error) {
     console.error("Error al crear el autor:", error.message);
     res.status(500).json({ error: "Error al crear el autor." });
   }
 };
+
 
 export const obtenerAutores = async (req, res) => {
   try {
@@ -117,17 +116,20 @@ export const obtenerAutorPorId = async (req, res) => {
   try {
     const { id } = req.params;
 
-    const autor = await Autor.findById(id);
+    // Busca al autor y popula los géneros literarios con nombre y foto
+    const autor = await Autor.findById(id).populate('generos', 'nombre fotoGenero'); 
     if (!autor) {
       return res.status(404).json({ error: "Autor no encontrado." });
     }
 
+    // Retorna el autor encontrado
     res.status(200).json(autor);
   } catch (error) {
     console.error("Error al obtener el autor:", error.message);
     res.status(500).json({ error: "Error al obtener el autor." });
   }
 };
+
 
 // Editar un autor
 // Editar un autor
@@ -141,7 +143,7 @@ export const editarAutor = async (req, res) => {
       pais,
       biografia,
       distinciones,
-      generoLiterarioPreferido,
+      generos, // Esta es la variable que viene del body
     } = req.body;
 
     // Foto enviada como parte de la solicitud (opcional)
@@ -169,20 +171,18 @@ export const editarAutor = async (req, res) => {
     }
 
     // Verificar los géneros literarios seleccionados
-    let generosSeleccionados = [];
-    if (generoLiterarioPreferido && generoLiterarioPreferido.length > 0) {
-      const generos = await GeneroLiterario.find({
-        _id: { $in: generoLiterarioPreferido },
+    let generosSeleccionados = []; // Inicializamos el arreglo vacío
+    if (generos && generos.length > 0) {
+      const generosEncontrados = await GeneroLiterario.find({
+        _id: { $in: generos },
       });
 
-      if (generos.length !== generoLiterarioPreferido.length) {
+      if (generosEncontrados.length !== generos.length) {
         return res.status(400).json({
           error: "Algunos géneros literarios seleccionados son inválidos.",
         });
       }
-      generosSeleccionados = generos.map((genero) => genero._id);
-    } else {
-      generosSeleccionados = autorExistente.generoLiterarioPreferido; // Conservar los géneros actuales
+      generosSeleccionados = generosEncontrados.map((genero) => genero._id);
     }
 
     // Actualizar el autor con los nuevos datos
@@ -196,7 +196,7 @@ export const editarAutor = async (req, res) => {
         biografia,
         fotoAutor, // Usar la foto anterior o la nueva según corresponda
         distinciones,
-        generoLiterarioPreferido: generosSeleccionados,
+        generos: generosSeleccionados, // Esto será vacío si no se seleccionaron géneros
       },
       { new: true, runValidators: true }
     );
@@ -210,6 +210,8 @@ export const editarAutor = async (req, res) => {
     res.status(500).json({ error: "Error al actualizar el autor." });
   }
 };
+
+
 
 // Desactivar un autor
 export const desactivarAutor = async (req, res) => {

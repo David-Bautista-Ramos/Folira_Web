@@ -25,9 +25,12 @@ const AutorSchema = new mongoose.Schema(
         required: true,
       },
       fotoAutor: String,
-      fotoAutorURL: String,
-      distinciones: [{
+      distinciones: {
         type: String,
+      },
+      generos: [{
+       type: mongoose.Schema.Types.ObjectId,
+        ref: 'GeneroLiterario'
       }],
       estado: {
         type: Boolean,

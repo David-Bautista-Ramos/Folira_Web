@@ -134,7 +134,8 @@ export const obtenerComunidadPorId = async (req, res) => {
 
     const comunidad = await Comunidad.findById(id)
       .populate("admin")
-      .populate("miembros");
+      .populate("miembros")
+      .populate('generoLiterarios', 'nombre fotoGenero');
     if (!comunidad) {
       return res.status(404).json({ error: "Comunidad no encontrada." });
     }

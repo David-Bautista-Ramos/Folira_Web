@@ -142,84 +142,131 @@ const handleConfirmInactivar = () => {
   }
   if (loadingComunidad) return <div>Cargando...</div>;
 
-  const { nombre, admin, descripcion, miembros, link, fotoComunidad } = comunidad || {};
+  const { nombre, admin, descripcion, miembros, link, fotoComunidad,generoLiterarios,fotoBanner } = comunidad || {};
   const esMiembro = miembros?.some((m) => m._id === authUser._id);
   const esAdmin = admin?._id === authUser._id;
 
   return (
     <div className='flex-[4_4_0] border-r border-primary min-h-screen'>
       <div className="flex flex-col border-r border-gray-300 min-h-screen bg-white p-6 rounded-lg shadow-lg">
-        <div className="flex items-center cursor-pointer gap-5 text-3xl -mt-4 border-b-2 border-gray-300 pb-2 mb-4">
-          <Link to="/comunidad">
-            <BsArrowLeft className="text-primary mr-2 text-lg" /> {/* Icono de flecha */}
-          </Link>
-          <span className="text-xl text-primary font-bold flex items-center">{nombre}</span> {/* Título del libro */}
-        </div>
-        {/* Columna 1: Imagen y botones */}
-        <div className="flex flex-row mb-4">
-          <div className="flex flex-col items-center mr-6">
-            <img
-              src={fotoComunidad}
-              alt={nombre}
-              className="w-48 h-48 rounded-full object-cover mb-4"
-            />
+        {/* Banner de la comunidad */}
+    
+    {/* Título de la comunidad */}
+    <div className="flex items-center cursor-pointer gap-5 text-3xl -mt-4 border-b-2 border-gray-300 pb-2 mb-4">
+      <Link to="/comunidad">
+        <BsArrowLeft className="text-primary mr-2 text-lg" />
+      </Link>
+      <span className="text-xl text-primary font-bold flex items-center">{nombre}</span>
+    </div>
+    
+    <div className="relative">
+  {/* Columna 1: Imagen de banner */}
+  <div className="relative">
+    <img
+      src={fotoBanner} // Asegúrate de que este sea el nombre de la variable para el banner
+      alt="Banner de la comunidad"
+      className="h-80 w-full object-cover"
+    />
+  </div>
 
-            {esMiembro && (
-              <button onClick={handleSalirComunidad} className="mb-2 bg-primary text-white py-2 px-4 rounded hover:bg-blue-950">
-                Salir de la comunidad
-              </button>
-            )}
+  {/* Imagen de la comunidad sobre el banner y alineada a la derecha */}
+  <div className="absolute top-46 left-4 transform translate-y-[-50%]">
+    <img
+      src={fotoComunidad}
+      alt={nombre}
+      className="w-32 h-32 md:w-48 md:h-48 rounded-full border-4 border-white shadow-lg"
+    />
+  </div>
 
-            {esAdmin && (
-              <div className="flex space-x-2"> {/* Usar space-x-2 para espaciar los botones */}
-                <button
-                  onClick={() => setIsConfirmModalOpen(true)}
-                  className="bg-primary text-white py-2 px-3 rounded hover:bg-blue-950"
-                >
-                  Inactivar
-                </button>
-                <button
-                  onClick={() => setIsActualizarModalOpen(true)}
-                  className="bg-primary text-white py-2 px-3 rounded hover:bg-blue-950"
-                >
-                  Actualizar
-                </button>
-              </div>
-            )}{!esMiembro && !esAdmin && (
-              <button onClick={handleUnirseComunidad} className="mt-4 bg-primary hover:bg-blue-950 text-white py-2 px-4 rounded">
-                Unirme a la comunidad
-              </button>
-            )}
-          </div>
+  {/* Contenedor principal */}
+  <div className="relative flex flex-col items-center lg:items-start mb-4 space-y-4 p-4 mt-20">
+    {/* Botones: Alineados en la parte superior derecha */}
+    <div className="absolute top-[-50px] right-0 mt-0 mr-4 flex space-x-2">
+      {esMiembro && (
+        <button
+          onClick={handleSalirComunidad}
+          className="btn btn-outline rounded-full btn-sm"
+        >
+          Salir de la comunidad
+        </button>
+      )}
+      {esAdmin && (
+        <>
+          <button
+            onClick={() => setIsConfirmModalOpen(true)}
+            className="btn btn-outline rounded-full btn-sm"
+          >
+            Inactivar
+          </button>
+          <button
+            onClick={() => setIsActualizarModalOpen(true)}
+            className="btn btn-outline rounded-full btn-sm"
+          >
+            Actualizar
+          </button>
+        </>
+      )}
+      {!esMiembro && !esAdmin && (
+        <button
+          onClick={handleUnirseComunidad}
+          className="bg-primary hover:bg-blue-950 text-white py-2 px-4 rounded"
+        >
+          Unirme a la comunidad
+        </button>
+      )}
+    </div>
 
-          {/* Columna 2: Información de la comunidad */}
-          <div className="flex flex-col flex-grow">
-            <h2 className="text-2xl font-semibold">{nombre}</h2>
-            <p className="text-lg">
-              <strong>Administrador:</strong> {admin?.nombre}
-            </p>
-              <p className="text-lg">
-              <strong>Descripción:</strong>{' '}
-              <span className="break-all"> {/* Mantenido break-all para manejar los cortes */}
-                {expandirDescripcion ? descripcion : `${descripcion.substring(0, 100)}...`}
-              </span>
-              {descripcion.length > 100 && (
-                <button onClick={toggleDescripcion} className="ml-2 text-blue-600">
-                   {expandirDescripcion ? 'Mostrar menos' : 'Mostrar más'}
-                </button>
-              )}
-            </p>
-            <div className="text-lg">
-              <ModalMiembrosComunidad miembros={miembros} />
+    {/* Información de la comunidad */}
+    <div className="flex flex-col flex-grow">
+      <h2 className="text-2xl font-semibold mb-2">{nombre}</h2>
+      <p className="text-lg mb-2">
+        <strong>Administrador:</strong> {admin?.nombre}
+      </p>
+      <p className="text-lg mb-4">
+        <strong>Descripción:</strong>{' '}
+        <span className="break-words">
+          {expandirDescripcion ? descripcion : `${descripcion.substring(0, 100)}...`}
+        </span>
+        {descripcion.length > 100 && (
+          <button onClick={toggleDescripcion} className="ml-2 text-blue-600">
+            {expandirDescripcion ? 'Mostrar menos' : 'Mostrar más'}
+          </button>
+        )}
+      </p>
+      <div className="text-lg mb-4">
+        <ModalMiembrosComunidad miembros={miembros} />
+      </div>
+      <p className="text-lg mb-4">
+        <strong>Enlace de conexión:</strong>{' '}
+        <a
+          href={link}
+          target="_blank"
+          rel="noopener noreferrer"
+          className="text-blue-600 underline"
+        >
+          {link}
+        </a>
+      </p>
+      <strong className="text-lg mb-2">Géneros Literarios:</strong>
+      <div className="flex flex-wrap gap-6">
+        {generoLiterarios.length > 0 ? (
+          generoLiterarios.map((genero) => (
+            <div
+              key={genero.nombre}
+              className="flex items-center border rounded-full p-2 bg-white min-w-[120px] max-w-[150px] truncate"
+            >
+              <img src={genero.fotoGenero} alt={genero.nombre} className="w-8 h-8 mr-2" />
+              <span className="truncate">{genero.nombre}</span>
             </div>
-            <p className="text-lg">
-              <strong>Enlace de conexión:</strong>{' '}
-              <a href={link} target="_blank" rel="noopener noreferrer" className="text-blue-600 underline">
-                {link}
-              </a>
-            </p>
-          </div>
-        </div>
+          ))
+        ) : (
+          <span>No tiene géneros asignados</span>
+        )}
+      </div>
+    </div>
+  </div>
+</div>
+
         <div className="flex flex-col mt-8">
           <h2 className="text-2xl font-semibold mb-4">Publicaciones</h2>
           {esMiembro || esAdmin ? (

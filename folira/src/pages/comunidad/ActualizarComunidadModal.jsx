@@ -92,7 +92,7 @@ const ModalActualizarComunidad = ({ isOpen, onClose, token, comunidadId }) => {
             descripcion: comunidad.descripcion || "",
             fotoComunidad: comunidad.fotoComunidad || "",
             fotoBanner: comunidad.fotoBanner || "",
-            generoLiterarios: comunidad.generoLiterarios || [], // Asegúrate de usar este campo
+            generoLiterarios:comunidad.generoLiterarios.map(generoLiterarios => generoLiterarios._id) || [],
             admin: comunidad.admin?._id || "",
             link: comunidad.link || "",
           });
