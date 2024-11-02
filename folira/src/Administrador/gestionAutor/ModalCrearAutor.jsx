@@ -67,18 +67,24 @@ function ModalCrearAutor({ isOpen, onClose,obtenerAutores }) {
 
   return (
     <div
-      className="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center z-50"
-      onClick={onClose}
-    >
-      <form
-        className="bg-white p-5 rounded-lg w-90 md:w-106 relative overflow-hidden"
-        onClick={(e) => e.stopPropagation()} // Prevent click on modal content from closing the modal
-        onSubmit={handleSubmit} // Form submission handling
-      >
-        <div className="border-b-2 border-primary pb-2 mb-5">
-          <h2 className="text-lg text-center text-primary">CREAR AUTOR</h2>
-        </div>
-        <div className="overflow-y-auto max-h-80 mb-5 text-primary text-lg modal-scrollbar">
+  className="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center z-50"
+  onClick={onClose}
+>
+  <form
+    className="bg-white p-5 rounded-lg w-90 md:w-106 relative overflow-hidden"
+    onClick={(e) => e.stopPropagation()} // Prevent click on modal content from closing the modal
+    onSubmit={handleSubmit} // Form submission handling
+  >
+    <div className="border-b-2 border-primary pb-2 mb-5">
+      <h2 className="text-lg text-center text-primary">CREAR AUTOR</h2>
+    </div>
+
+    <div className="overflow-y-auto max-h-80 mb-5 text-primary text-lg modal-scrollbar">
+      {/* Flex container for two columns */}
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-4"> {/* Adjusted for mobile and larger screens */}
+        
+        {/* Left Column */}
+        <div>
           <label className="block mb-1 text-primary">Foto del autor</label>
           <input
             type="file"
@@ -113,7 +119,10 @@ function ModalCrearAutor({ isOpen, onClose,obtenerAutores }) {
             placeholder="Seudónimo"
             className="w-full p-2 mb-3 border rounded focus:border-primary focus:outline-none"
           />
+        </div>
 
+        {/* Right Column */}
+        <div>
           <label className="block mb-1 text-primary">Fecha de nacimiento</label>
           <input
             type="date"
@@ -123,7 +132,6 @@ function ModalCrearAutor({ isOpen, onClose,obtenerAutores }) {
             className="w-full p-2 mb-3 border rounded focus:border-primary focus:outline-none"
           />
 
-          {/* Label y Select para el país */}
           <label className="block mb-1 text-blue-950 font-semibold">País</label>
           <Select
             id='pais'
@@ -166,25 +174,29 @@ function ModalCrearAutor({ isOpen, onClose,obtenerAutores }) {
             className="w-full p-2 mb-3 border rounded focus:border-primary focus:outline-none"
           />
         </div>
-
-        <div className="flex justify-end gap-2">
-          <button
-            className="px-4 py-2 bg-gray-300 text-gray-800 rounded-md hover:bg-gray-400"
-            onClick={onClose}
-            type="button" // Make sure this is a button to prevent form submission
-          >
-            Cancelar
-          </button>
-          <button
-            className="px-4 py-2 border rounded bg-primary text-white hover:bg-blue-950"
-            type="submit" // Ensure this triggers form submission
-            disabled={isCreatingAutor}
-          >
-            {isCreatingAutor ? "Creando..." : "Crear"}
-          </button>
-        </div>
-      </form>
+      </div>
     </div>
+
+    <div className="flex justify-end gap-2">
+      <button
+        className="px-4 py-2 border rounded bg-primary text-white hover:bg-blue-950"
+        type="submit" // Ensure this triggers form submission
+        disabled={isCreatingAutor}
+      >
+        {isCreatingAutor ? "Creando..." : "Crear"}
+      </button>
+
+      <button
+        className="px-4 py-2 bg-gray-300 text-gray-800 rounded-md hover:bg-gray-400"
+        onClick={onClose}
+        type="button" // Make sure this is a button to prevent form submission
+      >
+        Cancelar
+      </button>
+    </div>
+  </form>
+</div>
+
   );
 }
 
