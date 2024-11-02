@@ -159,146 +159,157 @@ function ModalActualizarLibro({ isOpen, onClose, libroId, obtenerLibros, token }
   if (!isOpen) return null;
 
   return (
-    <div className="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center z-50">
-      <div className="bg-white p-5 rounded-lg w-80 md:w-96 relative overflow-hidden" onClick={(e) => e.stopPropagation()}>
-        <div className="border-b-2 border-primary pb-2 mb-5">
-          <h2 className="text-lg text-center text-primary">ACTUALIZAR LIBRO</h2>
-        </div>
-        <div className="overflow-y-auto max-h-80 mb-5 text-[#503B31] text-lg modal-scrollbar">
-          <label className="block mb-1 text-primary">Portada</label>
-          <div className="relative group/cover">
-            <img
-              src={fotoLibro || "/cover.png"}
-              className="h-52 w-full object-cover"
-              alt="cover image"
-            />
-            <div
-              className="absolute top-2 right-2 rounded-full p-2 bg-gray-800 bg-opacity-75 cursor-pointer opacity-0 group-hover/cover:opacity-100 transition duration-200"
-              onClick={() => fotoLibroRef.current.click()}
-            >
-              <span className="w-5 h-5 text-white">Editar</span>
-            </div>
-            <input
-              type="file"
-              hidden
-              accept="image/*"
-              ref={fotoLibroRef}
-              onChange={handleImgChange}
-            />
-          </div>
-          <label className="block mb-1 text-primary">Título</label>
-          <input
-            type="text"
-            name="titulo"
-            value={formData.titulo}
-            onChange={handleInputChange}
-            placeholder="Nombre del libro"
-            className="w-full p-2 mb-3 border rounded focus:border-primary focus:outline-none"
+<div className="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center z-50">
+  <div className="bg-white p-5 rounded-lg w-80 md:w-[50%] max-h-[85vh] flex flex-col relative">
+    <div className="border-b-2 border-primary pb-2 mb-5">
+      <h2 className="text-lg text-center text-primary">ACTUALIZAR LIBRO</h2>
+    </div>
+    <div className="flex flex-grow overflow-y-auto">
+      {/* Columna izquierda: Portada */}
+      <div className="flex-shrink-0 w-[50%] pr-3">
+        <label className="block mb-1 text-primary">Portada</label>
+        <div className="relative group/cover">
+          <img
+            src={fotoLibro || "/cover.png"}
+            className="h-[90%] w-full object-cover" // Reduce la altura aquí
+            alt="cover image"
           />
-
-          <label className="block mb-1 text-primary">ISBN</label>
-          <input
-            type="text"
-            name="isbn"
-            value={formData.isbn}
-            onChange={handleInputChange}
-            placeholder="ISBN del libro"
-            className="w-full p-2 mb-3 border rounded focus:border-primary focus:outline-none"
-          />
-
-          <label className="block mb-1 text-primary">Fecha de publicación</label>
-          <input
-            type="date"
-            name="fechaPublicacion"
-            value={formData.fechaPublicacion}
-            onChange={handleInputChange}
-            placeholder="Fecha de publicación"
-            className="w-full p-2 mb-3 border rounded focus:border-primary focus:outline-none"
-          />
-
-          <label className="block mb-1 text-primary">Editorial</label>
-          <input
-            type="text"
-            name="editorial"
-            value={formData.editorial}
-            onChange={handleInputChange}
-            placeholder="Editorial"
-            className="w-full p-2 mb-3 border rounded focus:border-primary focus:outline-none"
-          />
-
-          <label className="block mb-1 text-primary">Sinopsis</label>
-          <textarea
-            name="sinopsis"
-            value={formData.sinopsis}
-            onChange={handleInputChange}
-            placeholder="Sinopsis del libro"
-            className="w-full p-2 mb-3 border rounded focus:border-primary focus:outline-none"
-          />
-          <label className="block mb-1 text-primary">Calificacion</label>
-          <textarea
-            name="calificacion"
-            value={formData.calificacion}
-            onChange={handleInputChange}
-            placeholder="Sinopsis del libro"
-            className="w-full p-2 mb-3 border rounded focus:border-primary focus:outline-none"
-          />
-
-          <div >
-            <h3 className="block mb-1 text-primary">Géneros:</h3>
-            <button type="button" onClick={toggleGeneros} className="bg-primary text-white p-2 rounded w-full mb-3">Seleccionar</button>
-          </div>
-          {showGeneros && (
-            <div className="max-h-24 overflow-y-auto border p-2 mb-3">
-              {availableGeneros.map((genero) => (
-                <label key={genero._id} className="block">
-                  <input
-                    type="checkbox"
-                    checked={selectedGeneros.includes(genero._id)}
-                    onChange={() => handleGeneroChange(genero._id)}
-                  />
-                  {genero.nombre}
-                </label>
-              ))}
-            </div>
-          )}
-
-          <div>
-            <h3 className="block mb-1 text-primary">Autores:</h3>
-            <button type="button" onClick={toggleAutores} className="bg-primary text-white p-2 rounded w-full mb-3">Seleccionar</button>
-          </div>
-          {showAutores && (
-            <div className="max-h-24 overflow-y-auto border p-2 mb-3">
-              {availableAutores.map((autor) => (
-                <label key={autor._id} className="block">
-                  <input
-                    type="checkbox"
-                    checked={selectedAutores.includes(autor._id)}
-                    onChange={() => handleAutoresChange(autor._id)}
-                  />
-                  {autor.nombre}
-                </label>
-              ))}
-            </div>
-          )}
-        </div>
-
-        <div className="flex justify-end">
-          <button
-            className=" btn-outline bg-primary text-white p-2 rounded w-full mt-4 mr-2"
-            onClick={onClose}
+          <div
+            className="absolute top-2 right-2 rounded-full p-2 bg-gray-800 bg-opacity-75 cursor-pointer opacity-0 group-hover/cover:opacity-100 transition duration-200"
+            onClick={() => fotoLibroRef.current.click()}
           >
-            Cancelar
-          </button>
-          <button
-            className={`bg-primary text-white p-2 rounded w-full mt-4${isUpdatingLibro ? "opacity-50 cursor-not-allowed" : ""}`}
-            onClick={handleSubmit}
-            disabled={isUpdatingLibro}
-          >
-            {isUpdatingLibro ? "Actualizando..." : "Actualizar"}
-          </button>
+            <span className="w-5 h-5 text-white">Editar</span>
+          </div>
+          <input
+            type="file"
+            hidden
+            accept="image/*"
+            ref={fotoLibroRef}
+            onChange={handleImgChange}
+          />
         </div>
+
+        <label className="block mb-1 mt-3 text-primary">Título</label>
+        <input
+          type="text"
+          name="titulo"
+          value={formData.titulo}
+          onChange={handleInputChange}
+          placeholder="Nombre del libro"
+          className="w-full p-2 mb-3 border rounded focus:border-primary focus:outline-none"
+        />
+
+        <label className="block mb-1 text-primary">ISBN</label>
+        <input
+          type="text"
+          name="isbn"
+          value={formData.isbn}
+          onChange={handleInputChange}
+          placeholder="ISBN del libro"
+          className="w-full p-2 mb-3 border rounded focus:border-primary focus:outline-none"
+        />
+
+        <label className="block mb-1 text-primary">Fecha de publicación</label>
+        <input
+          type="date"
+          name="fechaPublicacion"
+          value={formData.fechaPublicacion}
+          onChange={handleInputChange}
+          className="w-full p-2 mb-3 border rounded focus:border-primary focus:outline-none"
+        />
+
+        <label className="block mb-1 text-primary">Editorial</label>
+        <input
+          type="text"
+          name="editorial"
+          value={formData.editorial}
+          onChange={handleInputChange}
+          placeholder="Editorial"
+          className="w-full p-2 mb-3 border rounded focus:border-primary focus:outline-none"
+        />
+      </div>
+      
+      {/* Columna derecha: Campos de entrada */}
+      <div className="w-2/3">
+        <label className="block mb-1 text-primary">Sinopsis</label>
+        <textarea
+          name="sinopsis"
+          value={formData.sinopsis}
+          onChange={handleInputChange}
+          placeholder="Sinopsis del libro"
+          className="w-full p-2 mb-3 border rounded focus:border-primary focus:outline-none h-20" // Ajusta la altura aquí
+        />
+        <label className="block mb-1 text-primary">Calificación</label>
+        <textarea
+          name="calificacion"
+          value={formData.calificacion}
+          onChange={handleInputChange}
+          placeholder="Calificación del libro"
+          className="w-full p-2 mb-3 border rounded focus:border-primary focus:outline-none h-20" // Ajusta la altura aquí
+        />
+
+        <div>
+          <h3 className="block mb-1 text-primary">Géneros:</h3>
+          <button type="button" onClick={toggleGeneros} className="bg-primary text-white p-2 rounded w-full mb-3">Seleccionar</button>
+        </div>
+        {showGeneros && (
+          <div className="max-h-24 overflow-y-auto border p-2 mb-3">
+            {availableGeneros.map((genero) => (
+              <label key={genero._id} className="block">
+                <input
+                  type="checkbox"
+                  checked={selectedGeneros.includes(genero._id)}
+                  onChange={() => handleGeneroChange(genero._id)}
+                />
+                {genero.nombre}
+              </label>
+            ))}
+          </div>
+        )}
+
+        <div>
+          <h3 className="block mb-1 text-primary">Autores:</h3>
+          <button type="button" onClick={toggleAutores} className="bg-primary text-white p-2 rounded w-full mb-3">Seleccionar</button>
+        </div>
+        {showAutores && (
+          <div className="max-h-24 overflow-y-auto border p-2 mb-3">
+            {availableAutores.map((autor) => (
+              <label key={autor._id} className="block">
+                <input
+                  type="checkbox"
+                  checked={selectedAutores.includes(autor._id)}
+                  onChange={() => handleAutoresChange(autor._id)}
+                />
+                {autor.nombre}
+              </label>
+            ))}
+          </div>
+        )}
       </div>
     </div>
+
+    <div className="flex justify-end mt-auto">
+
+    <button
+        className={`bg-primary mt-3 text-white px-4 py-2 rounded-md hover:bg-blue-950 ${isUpdatingLibro ? "opacity-50 cursor-not-allowed" : ""}`}
+        onClick={handleSubmit}
+        disabled={isUpdatingLibro}
+      >
+        {isUpdatingLibro ? "Actualizando..." : "Actualizar"}
+      </button>
+      
+      <button
+        className="border border-gray-300 mt-3 ml-2 rounded-md px-4 py-2 hover:bg-gray-400"
+        onClick={onClose}
+      >
+        Cancelar
+      </button>
+      
+    </div>
+
+  </div>
+</div>
+
   );
 } 
 

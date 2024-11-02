@@ -119,120 +119,146 @@ const ModalActualizarAutor = ({ isOpen, onClose, autorId, token, obtenerAutores 
     return (
         <>
             {isOpen && (
-                <dialog id='edit_author_modal' className='modal' open>
-                    <div className='modal-box border rounded-md border-blue-950 h-[500px] shadow-md modal-scrollbar'>
-                        <h3 className='text-primary font-bold text-lg my-3'>Actualizar Autor</h3>
-                        <form
-                            className='text-primary flex flex-col gap-4'
-                            onSubmit={handleSubmit}
-                        >
-                            {/* AUTHOR PHOTO */}
-                            <div className='relative group/photo'>
-                                <img
-                                    src={fotoAutor || "/avatar-placeholder.png"}
-                                    className='h-32 w-32 rounded-full object-cover'
-                                    alt='author avatar'
-                                />
-                                <div
-                                    className='absolute top-2 right-2 rounded-full p-2 bg-gray-800 bg-opacity-75 cursor-pointer'
-                                    onClick={() => fotoAutorRef.current.click()}
-                                >
-                                    <span className='w-5 h-5 text-white'>Editar</span>
+                <>
+                    {/* Fondo negro transparente */}
+                    <div className="fixed inset-0 bg-black bg-opacity-50 z-50" />
+
+                    <dialog
+                        id="edit_author_modal"
+                        className="modal"
+                        open
+                        style={{
+                            maxHeight: '90vh',
+                            overflow: 'auto', // Cambia a 'auto' para permitir el desplazamiento
+                            display: 'flex',
+                            alignItems: 'center',
+                            justifyContent: 'center',
+                            top: '5%',
+                            width: '100%', // Asegúrate de que tenga un ancho adecuado
+                            padding: '20px', // Asegúrate de que haya espacio
+                        }}
+                    >
+                        <div className="modal-box border rounded-md border-blue-950 w-full max-w-lg h-full shadow-md flex flex-col">
+                            <h3 className='text-primary font-bold text-lg my-3'>Actualizar Autor</h3>
+                            <form
+                                className="text-primary flex flex-col gap-4 overflow-y-auto"
+                                style={{ maxHeight: 'calc(90vh - 150px)', overflowY: 'auto' }}
+                                onSubmit={handleSubmit}
+                            >
+                                {/* AUTHOR PHOTO */}
+                                <div className='relative group/photo'>
+                                    <div className='w-32 h-32 rounded-full overflow-hidden border-4 border-white'>
+                                        <img
+                                            src={fotoAutor || "/avatar-placeholder.png"}
+                                            className='w-full h-full object-cover'
+                                            alt='author avatar'
+                                        />
+                                    </div>
+                                    
+                                    <div className='absolute top-5 right-[75%] p-1 rounded-full bg-gray-800 bg-opacity-75 cursor-pointer flex items-center justify-center hover:bg-blue-950'
+                                        style={{ width: '40px', height: '24px', zIndex: 10 }}
+                                        onClick={() => fotoAutorRef.current.click()}
+                                    >
+                                        <span className='w-full text-white text-xs text-center'>Editar</span>
+                                    </div>
+
+                                    <input
+                                        type='file'
+                                        hidden
+                                        accept='image/*'
+                                        ref={fotoAutorRef}
+                                        onChange={handleImgChange}
+                                    />
                                 </div>
 
+                                {/* FORMULARIO */}
                                 <input
-                                    type='file'
-                                    hidden
-                                    accept='image/*'
-                                    ref={fotoAutorRef}
-                                    onChange={handleImgChange}
+                                    type='text'
+                                    placeholder='Nombre'
+                                    className='input border border-blue-950 rounded p-2 input-md'
+                                    value={formData.nombre}
+                                    name='nombre'
+                                    onChange={handleInputChange}
                                 />
-                            </div>
 
-                            {/* FORMULARIO */}
-                            <input
-                                type='text'
-                                placeholder='Nombre'
-                                className='input border border-blue-950 rounded p-2 input-md'
-                                value={formData.nombre}
-                                name='nombre'
-                                onChange={handleInputChange}
-                            />
+                                <input
+                                    type='text'
+                                    placeholder='Seudónimo'
+                                    className='input border border-blue-950 rounded p-2 input-md'
+                                    value={formData.seudonimo}
+                                    name='seudonimo'
+                                    onChange={handleInputChange}
+                                />
 
-                            <input
-                                type='text'
-                                placeholder='Seudónimo'
-                                className='input border border-blue-950 rounded p-2 input-md'
-                                value={formData.seudonimo}
-                                name='seudonimo'
-                                onChange={handleInputChange}
-                            />
+                                <textarea
+                                    placeholder="Biografía"
+                                    className="w-full border border-blue-950 rounded p-2"
+                                    value={formData.biografia}
+                                    name="biografia"
+                                    onChange={handleInputChange}
+                                    rows={8} // Número de filas inicial, puedes ajustarlo si quieres
+                                    style={{
+                                        resize: 'vertical', // Permite al usuario ajustar la altura manualmente
+                                        overflowY: 'auto',  // Permite desplazamiento vertical
+                                        overflowX: 'hidden', // Evita el desplazamiento horizontal
+                                    }}
+                                />
 
-                            <textarea
-                                placeholder='Biografía'
-                                className='w-full border border-blue-950 rounded p-2 input-md'
-                                value={formData.biografia}
-                                name='biografia'
-                                onChange={handleInputChange}
-                                maxLength={200}
-                                rows={4}
-                                style={{ resize: 'none', overflowWrap: 'break-word' }}
-                            />
+                                <input
+                                    type='text'
+                                    placeholder='País'
+                                    className='input border border-blue-950 rounded p-2 input-md'
+                                    value={formData.pais}
+                                    name='pais'
+                                    onChange={handleInputChange}
+                                />
 
-                            <input
-                                type='text'
-                                placeholder='País'
-                                className='input border border-blue-950 rounded p-2 input-md'
-                                value={formData.pais}
-                                name='pais'
-                                onChange={handleInputChange}
-                            />
+                                <input
+                                    type='date'
+                                    className='input border border-blue-950 rounded p-2 input-md'
+                                    value={formData.fechaNacimiento}
+                                    name='fechaNacimiento'
+                                    onChange={handleInputChange}
+                                />
 
-                            <input
-                                type='date'
-                                className='input border border-blue-950 rounded p-2 input-md'
-                                value={formData.fechaNacimiento}
-                                name='fechaNacimiento'
-                                onChange={handleInputChange}
-                            />
-
-                            {/* Distinciones */}
-                            <h4 className='font-bold'>Selecciona hasta 5 distinciones:</h4>
-                            <div className='grid grid-cols-2 gap-2'>
-                                {generosLiterarios.map((genero) => (
-                                    <label key={genero.nombre} className='flex items-center cursor-pointer'>
-                                        <input
-                                            type='checkbox'
-                                            name='distinciones'
-                                            value={genero._id}
-                                            checked={formData.distinciones.includes(genero._id)}
-                                            onChange={handleInputChange}
-                                            className='hidden'
-                                        />
-                                        <div
-                                            className={`flex items-center border rounded-full p-2 ${formData.distinciones.includes(genero._id)
-                                                ? "bg-primary text-white"
-                                                : "border-primary text-primary"
-                                                }`}
-                                        >
-                                            <span>{genero.nombre}</span>
-                                        </div>
-                                    </label>
-                                ))}
-                            </div>
-
-                            <div className='modal-action'>
-                                <button className='btn btn-primary' type='submit' disabled={isUpdatingAuthors}>
-                                    {isUpdatingAuthors ? "Actualizando..." : "Guardar"}
-                                </button>
-                                {isError && <p className='text-red-500'>{error.message}</p>}
-                                <button className='btn btn-outline' type='button' onClick={onClose}>
-                                    Cancelar
-                                </button>
-                            </div>
-                        </form>
-                    </div>
-                </dialog>
+                                {/* Distinciones */}
+                                <h4 className='font-bold'>Selecciona hasta 5 distinciones:</h4>
+                                <div className='grid grid-cols-2 gap-2'>
+                                    {generosLiterarios.map((genero) => (
+                                        <label key={genero.nombre} className='flex items-center cursor-pointer'>
+                                            <input
+                                                type='checkbox'
+                                                name='distinciones'
+                                                value={genero._id}
+                                                checked={formData.distinciones.includes(genero._id)}
+                                                onChange={handleInputChange}
+                                                className='hidden'
+                                            />
+                                            <div
+                                                className={`flex items-center border rounded-full p-2 ${formData.distinciones.includes(genero._id)
+                                                    ? "bg-primary text-white"
+                                                    : "border-primary text-primary"
+                                                    }`}
+                                            >
+                                                <span>{genero.nombre}</span>
+                                            </div>
+                                        </label>
+                                    ))}
+                                </div>
+                                {/* Submit button moved here */}
+                                <div className="modal-action sticky bottom-0 left-0 right-0 p-4 bg-white border-t border-gray-300 flex justify-between">
+                                    <button className="bg-primary text-white px-4 py-2 rounded-md hover:bg-blue-950 ml-[52%]" type='submit' disabled={isUpdatingAuthors}>
+                                        {isUpdatingAuthors ? "Actualizando..." : "Guardar"}
+                                    </button>
+                                    {isError && <p className='text-red-500'>{error.message}</p>}
+                                    <button className='border border-gray-300 rounded-md px-4 py-2 hover:bg-gray-400' type='button' onClick={onClose}>
+                                        Cancelar
+                                    </button>
+                                </div>
+                            </form>
+                        </div>
+                    </dialog>
+                </>
             )}
         </>
     );

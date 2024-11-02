@@ -125,41 +125,45 @@ function ModalCrearLibro({ isOpen, onClose, token }) {
   if (!isOpen) return null;
 
   return (
-    <div
-      className="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center z-50"
-      onClick={onClose}
-    >
-      <div
-        className="bg-white p-5 rounded-lg w-80 md:w-96 relative overflow-hidden"
-        onClick={(e) => e.stopPropagation()}
-      >
-        <div className="border-b-2 border-primary pb-2 mb-5">
-          <h2 className="text-lg text-center text-primary">CREAR LIBRO</h2>
+<div
+  className="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center z-50"
+  onClick={onClose}
+>
+  <div
+    className="bg-white p-5 rounded-lg w-full md:w-[800px] relative overflow-hidden"
+    onClick={(e) => e.stopPropagation()}
+  >
+    <div className="border-b-2 border-primary pb-2 mb-5">
+      <h2 className="text-lg text-center text-primary">CREAR LIBRO</h2>
+    </div>
+    <form onSubmit={handleSubmit} className="overflow-y-auto max-h-80 text-[#503B31] text-lg modal-scrollbar">
+      <label className="block mb-1 text-primary">Portada</label>
+      <div className="relative group/cover mb-4">
+        <img
+          src={fotoLibro || "/cover.png"}
+          className="h-52 w-[45%] object-cover"
+          alt="cover image"
+        />
+        <div
+          className="absolute top-2 left-[35%] rounded-full p-2 bg-gray-800 bg-opacity-75 cursor-pointer opacity-0 group-hover/cover:opacity-100 transition duration-200"
+          onClick={() => fotoLibroRef.current.click()}
+        >
+          <span className="w-5 h-5 text-white">Editar</span>
         </div>
-        <form onSubmit={handleSubmit} className="overflow-y-auto max-h-80 text-[#503B31] text-lg modal-scrollbar">
-          <label className="block mb-1 text-primary">Portada</label>
-          <div className="relative group/cover">
-            <img
-              src={fotoLibro || "/cover.png"}
-              className="h-52 w-full object-cover"
-              alt="cover image"
-            />
-            <div
-              className="absolute top-2 right-2 rounded-full p-2 bg-gray-800 bg-opacity-75 cursor-pointer opacity-0 group-hover/cover:opacity-100 transition duration-200"
-              onClick={() => fotoLibroRef.current.click()}
-            >
-              <span className="w-5 h-5 text-white">Editar</span>
-            </div>
-            <input
-              type="file"
-              hidden
-              accept="image/*"
-              ref={fotoLibroRef}
-              onChange={handleImgChange}
-            />
-          </div>
+        <input
+          type="file"
+          hidden
+          accept="image/*"
+          ref={fotoLibroRef}
+          onChange={handleImgChange}
+        />
+      </div>
 
-          {/* Campos de texto */}
+      {/* Contenedor de columnas */}
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+        {/* Columna 1 */}
+        <div>
+          {/* Aquí puedes mover la sección de la imagen */}
           <label className="block mb-1 text-primary">Titulo Del Libro</label>
           <input
             type="text"
@@ -178,7 +182,6 @@ function ModalCrearLibro({ isOpen, onClose, token }) {
             placeholder="ISBN del libro"
             className="w-full p-2 mb-3 border rounded focus:border-primary focus:outline-none"
           />
-
           <label className="block mb-1 text-primary">Fecha de Publicación</label>
           <input
             type="date"
@@ -188,7 +191,18 @@ function ModalCrearLibro({ isOpen, onClose, token }) {
             placeholder="Fecha de publicación"
             className="w-full p-2 mb-3 border rounded focus:border-primary focus:outline-none"
           />
+          <label className="block mb-1 text-primary">Sinopsis</label>
+          <textarea
+            name="sinopsis"
+            value={formData.sinopsis}
+            onChange={handleInputChange}
+            placeholder="Sinopsis"
+            className="w-full p-2 mb-3 border rounded focus:border-primary focus:outline-none"
+          />
+        </div>
 
+        {/* Columna 2 */}
+        <div className="-mt-[63%]">
           <label className="block mb-1 text-primary">Editorial</label>
           <input
             type="text"
@@ -198,16 +212,6 @@ function ModalCrearLibro({ isOpen, onClose, token }) {
             placeholder="Editorial"
             className="w-full p-2 mb-3 border rounded focus:border-primary focus:outline-none"
           />
-
-          <label className="block mb-1 text-primary">Sinopsis</label>
-          <textarea
-            name="sinopsis"
-            value={formData.sinopsis}
-            onChange={handleInputChange}
-            placeholder="Sinopsis"
-            className="w-full p-2 mb-3 border rounded focus:border-primary focus:outline-none"
-          />
-
           <label className="block mb-1 text-primary">Saga</label>
           <input
             type="text"
@@ -217,7 +221,6 @@ function ModalCrearLibro({ isOpen, onClose, token }) {
             placeholder="Saga"
             className="w-full p-2 mb-3 border rounded focus:border-primary focus:outline-none"
           />
-
           <label className="block mb-1 text-primary">Calificacion</label>
           <input
             type="text"
@@ -228,6 +231,7 @@ function ModalCrearLibro({ isOpen, onClose, token }) {
             className="w-full p-2 mb-3 border rounded focus:border-primary focus:outline-none"
           />
 
+          {/* Autores */}
           <div>
             <label className="block mb-1 text-primary">Autores</label>
             <button
@@ -254,6 +258,7 @@ function ModalCrearLibro({ isOpen, onClose, token }) {
             )}
           </div>
 
+          {/* Géneros */}
           <div>
             <label className="block mb-1 text-primary">Géneros</label>
             <button
@@ -279,17 +284,34 @@ function ModalCrearLibro({ isOpen, onClose, token }) {
               </div>
             )}
           </div>
-
-          <button
-            type="submit"
-            className="w-full bg-primary text-white p-2 rounded mt-3"
-            disabled={isCreatingLibro}
-          >
-            {isCreatingLibro ? "Creando..." : "Crear Libro"}
-          </button>
-        </form>
+        </div>
       </div>
-    </div>
+
+      
+    </form>
+   
+    <div className="border-t border-gray-300 flex justify-end">
+    <button
+        type="submit"
+        className="bg-primary mt-3 text-white px-4 py-2 rounded-md hover:bg-blue-950"
+        disabled={isCreatingLibro}
+    >
+        {isCreatingLibro ? "Creando..." : "Crear Libro"}
+    </button>
+    <button
+        type="button"
+        onClick={onClose}
+        className="border border-gray-300 mt-3 ml-2 rounded-md px-4 py-2 hover:bg-gray-400"
+    >
+        Cerrar
+    </button>
+</div>
+
+      
+  </div>
+</div>
+
+
   );
 }
 
