@@ -6,7 +6,6 @@ const Comunidad = ({ authUser }) => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [filter, setFilter] = useState(''); // Estado para el filtrado
-  const [feedType, setFeedType] = useState("autores");
 
   const fetchAutores = async () => {
     try {

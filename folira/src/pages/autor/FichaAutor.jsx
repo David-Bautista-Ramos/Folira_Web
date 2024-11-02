@@ -14,6 +14,7 @@ const FichaTecnicaAutor = () => {
   const [loadingReseñas, setLoadingReseñas] = useState(false);
   const [selectedStarFilter, setSelectedStarFilter] = useState(0); // Estado para el filtro de estrellas
   const { data: authUser } = useQuery({ queryKey: ['authUser'] });
+  const [isRedirecting, setIsRedirecting] = useState(false); // Estado para redirigir después de inactivar
 
   // Formateador de fecha
 const formatearFecha = (fechaISO) => {
@@ -40,7 +41,22 @@ const formatearFecha = (fechaISO) => {
       }
     };
 
+     // Función para obtener las reseñas del libro
+  const fetchReseñas = async () => {
+    try {
+      const response = await fetch(`/api/resenas/autorRes/${autorId}`); // Cambia la ruta según tu API
+      if (!response.ok) {
+        throw new Error('Error al obtener las reseñas');
+      }
+      const data = await response.json();
+      setResenas(data); // Ajusta esto según tu estado para reseñas
+    } catch (error) {
+      console.error('Error al obtener las reseñas:', error);
+    }
+  };
+
     fetchAutor();
+    fetchReseñas();
   }, [autorId]);
 
   if (!autor) {
@@ -83,6 +99,8 @@ const formatearFecha = (fechaISO) => {
       // Aquí se agrega la nueva reseña al principio de la lista
       setResenas((prevReseñas) => [data.resena, ...prevReseñas]);
       setComentario('');
+      fetchReseñas();
+
     } catch (error) {
       console.error('Error al crear la reseña:', error);
     }
@@ -138,9 +156,20 @@ const formatearFecha = (fechaISO) => {
     await fetchReseñas();
   };
 
-  const handleRedirect = () => {
-    Navigate('/autor'); // Redirección
+  const calcularCalificacionPromedio = () => {
+    if (resenas.length === 0) return 0; // No hay reseñas
+    const totalCalificacion = resenas.reduce((acc, reseña) => acc + reseña.calificacion, 0);
+    return (totalCalificacion / resenas.length).toFixed(1); // Redondear a un decimal
   };
+  const calificacionPromedio = calcularCalificacionPromedio();
+
+  // Función para redirigir
+  const handleRedirect = () => {
+    setIsRedirecting(true); // Cambia el estado a true para redirigir
+  };
+  if (isRedirecting) {
+    return <Navigate to="/autor" replace={true} />; // Redirige a la página de libros sugeridos
+  }
 
   const filteredReseñas = selectedStarFilter 
     ? resenas.filter((reseña) => reseña.calificacion === selectedStarFilter) 
@@ -172,7 +201,11 @@ const formatearFecha = (fechaISO) => {
                 </p>
                 <p className="text-lg"><strong>Biografia:</strong> {biografia}</p>
                 <p className="text-lg"><strong>Distinciones:</strong> {distinciones.join(', ') || 'N/A'}</p>
-              </div>
+                <div className="flex items-center mt-2">
+              <strong>Calificación General:</strong> 
+              {renderEstrellas(calificacionPromedio)} {/* Mostrar calificación promedio en estrellas */}
+            </div>              
+            </div>
             </div>
 
             {/* Botón para ver reseñas */}
@@ -201,23 +234,31 @@ const formatearFecha = (fechaISO) => {
               </button>
             </form>
 
-            {/* Renderizar solo las primeras 5 reseñas */}
+           {/* Renderizar solo las primeras 5 reseñas */}
             <div className="mt-6">
-              {resenas.slice(0, 5).map((reseña, index) => (
-                <div key={index} className="flex items-start mb-4 p-4 border border-gray-200 rounded-lg bg-gray-100 break-all">
-                  <img 
-                    src={reseña.idUsuario.fotoPerfil || 'https://via.placeholder.com/48'} 
-                    alt={`${reseña.idUsuario.nombre} perfil`} 
-                    className="w-12 h-12 rounded-full mr-4"
-                    style={{ width: '48px', height: '48px' }} // Ajustar tamaño a 48x48
-                  />
-                  <div>
-                    <h3 className="font-semibold">{reseña.idUsuario.nombre}</h3>
-                    <p className="text-md">{reseña.contenido}</p>
+              {resenas.length === 0 ? ( // Comprobar si no hay reseñas
+                <p>No tiene reseñas.</p>
+              ) : (
+                resenas.slice(0, 5).map((reseña, index) => (
+                  <div key={index} className="flex items-start mb-4 p-4 border border-gray-200 rounded-lg bg-gray-100 break-all">
+                    <img 
+                      src={reseña.idUsuario.fotoPerfil || 'https://via.placeholder.com/48'} 
+                      alt={`${reseña.idUsuario.nombre} perfil`} 
+                      className="w-12 h-12 rounded-full mr-4"
+                      style={{ width: '48px', height: '48px' }} // Ajustar tamaño a 48x48
+                    />
+                    <div>
+                      <h3 className="font-semibold">{reseña.idUsuario.nombre}</h3>
+                      <p className="text-md">{reseña.contenido}</p>
+                    </div>
+                    <div className="flex mt-1 ">
+                                {renderEstrellas(reseña.calificacion)}
                   </div>
-                </div>
-              ))}
+                  </div>
+                ))
+              )}
             </div>
+
 
           {/* Modal para mostrar las reseñas */}
             {isModalOpen && (

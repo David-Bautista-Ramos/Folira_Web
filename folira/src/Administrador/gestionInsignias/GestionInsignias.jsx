@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import { BiPlus, BiPowerOff, BiEdit, BiTrash, BiReset } from 'react-icons/bi';
 import ModalActivarInsignia from './ModalActivarInsignia';
 import ModalCrearInsignia from './ModalCrearInsignia';

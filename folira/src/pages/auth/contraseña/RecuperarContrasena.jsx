@@ -16,7 +16,7 @@ const RecuperarContrasena = () => {
         e.preventDefault();
 
         if (!validarCorreo(correo)) {
-            alert('Correo inválido. Por favor ingresa un correo válido.');
+            toast.error('Correo inválido. Por favor ingresa un correo válido.');
             return;
         }
 

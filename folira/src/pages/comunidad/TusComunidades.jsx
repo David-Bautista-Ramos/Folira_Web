@@ -3,6 +3,7 @@ import { useEffect, useState, useCallback } from 'react';
 import { Link } from 'react-router-dom';
 import ModalCrearNuevaComunidad from './ModalCrearNuevaComunidad';
 import { FaPlus } from 'react-icons/fa';
+import toast from 'react-hot-toast';
 
 // Componente para cada tarjeta de comunidad
 const ComunidadCard = ({ comunidad, salirComunidad }) => {
@@ -87,11 +88,11 @@ const TusComunidades = () => {
 
       if (!response.ok) throw new Error('Error al salir de la comunidad');
       const data = await response.json();
-      alert(data.message);
+      toast.success(data.message);
       fetchComunidadesMias();
     } catch (error) {
       console.error('Error:', error);
-      alert('No se pudo salir de la comunidad');
+      toast.error('No se pudo salir de la comunidad');
     }
   };
 

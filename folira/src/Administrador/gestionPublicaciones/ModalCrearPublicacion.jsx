@@ -1,5 +1,6 @@
 import { useState, useRef, useEffect } from "react";
 import useCreatePublicacion from "../../hooks/useCreatePost";
+import toast from "react-hot-toast";
 
 function ModalCrearPublicacion({ isOpen, onClose }) {
   const [formData, setFormData] = useState({
@@ -75,7 +76,7 @@ function ModalCrearPublicacion({ isOpen, onClose }) {
   const handleSubmit = async (e) => {
     e.preventDefault();
     if (!formData.contenido || !formData.userId) {
-      alert("Por favor completa todos los campos obligatorios.");
+      toast.error("Por favor completa todos los campos obligatorios.");
       return;
     }
 

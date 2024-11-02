@@ -1,5 +1,6 @@
   import { useState, useEffect, useCallback } from "react";
   import useUpdateNotificacion from "../../hooks/useUpdateNotificacion";
+  import toast from "react-hot-toast";
 
   function ModalActualizarNotificacion({ isOpen, onClose, NotificacionId, obtenerNotificaciones, token }) {
     const [formData, setFormData] = useState({
@@ -107,7 +108,7 @@
         obtenerNotificaciones();
       } catch (error) {
         console.error("Error al actualizar la notificación:", error);
-        alert("Ocurrió un error al actualizar la notificación. Intente nuevamente.");
+        toast.error("Ocurrió un error al actualizar la notificación. Intente nuevamente.");
       }
     };
 

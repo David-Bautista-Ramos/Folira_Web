@@ -16,6 +16,7 @@ const FichaTecnicaLibro = () => {
   const [loadingReseñas, setLoadingReseñas] = useState(false);
   const { data: authUser } = useQuery({ queryKey: ['authUser'] });
   const [selectedStarFilter, setSelectedStarFilter] = useState(0); // Estado para el filtro de estrellas
+  const [isRedirecting, setIsRedirecting] = useState(false); // Estado para redirigir después de inactivar
 
 
   useEffect(() => {
@@ -34,7 +35,22 @@ const FichaTecnicaLibro = () => {
       }
     };
 
+    // Función para obtener las reseñas del libro
+  const fetchReseñas = async () => {
+    try {
+      const response = await fetch(`/api/resenas/librosRes/${libroId}`); // Cambia la ruta según tu API
+      if (!response.ok) {
+        throw new Error('Error al obtener las reseñas');
+      }
+      const data = await response.json();
+      setResenas(data); // Ajusta esto según tu estado para reseñas
+    } catch (error) {
+      console.error('Error al obtener las reseñas:', error);
+    }
+  };
+
     fetchLibro();
+    fetchReseñas();
   }, [libroId]);
 
   if (!libro) {
@@ -50,10 +66,6 @@ const FichaTecnicaLibro = () => {
     isbn,
     portada,
   } = libro;
-
-  const handleRedirect = () => {
-    Navigate('/librosSugerido'); // Redirección
-  };
 
   const renderSinopsis = () => {
     const sinopsisCorta = sinopsis.slice(0, 100);
@@ -121,6 +133,7 @@ const FichaTecnicaLibro = () => {
       setResenas((prevReseñas) => [data.resena, ...prevReseñas]);
       // Limpia el campo de comentario
       setComentario('');
+      fetchReseñas();
     } catch (error) {
       // Maneja errores de forma amigable
       console.error('Error al crear la reseña:', error);
@@ -177,7 +190,21 @@ const FichaTecnicaLibro = () => {
     setIsModalOpen(true);
     await fetchReseñas();
   };
+  const calcularCalificacionPromedio = () => {
+    if (resenas.length === 0) return 0; // No hay reseñas
+    const totalCalificacion = resenas.reduce((acc, reseña) => acc + reseña.calificacion, 0);
+    return (totalCalificacion / resenas.length).toFixed(1); // Redondear a un decimal
+  };
+  const calificacionPromedio = calcularCalificacionPromedio();
 
+  // Función para redirigir
+const handleRedirect = () => {
+  setIsRedirecting(true); // Cambia el estado a true para redirigir
+};
+// Renderizado condicional
+if (isRedirecting) {
+  return <Navigate to="/libro" replace={true} />; // Redirige a la página de libros sugeridos
+}
 
   const filteredReseñas = selectedStarFilter 
     ? resenas.filter((reseña) => reseña.calificacion === selectedStarFilter) 
@@ -204,8 +231,8 @@ const FichaTecnicaLibro = () => {
           <div className="ml-6 flex flex-col flex-grow">
             <h2 className="text-2xl font-semibold">{titulo}</h2>
             <p className="text-lg font-medium">Autor: {autor}</p>
-            <p className="text-md">Géneros: {generos && generos.length > 0 ? generos.map(genero => (
-                <span key={genero.id} className="mr-2">{genero.nombre}</span>
+            <p className="text-md">Géneros: {generos && generos.length > 0 ? generos.map((genero, index) => (
+                <span key={index} className="mr-2">{genero.nombre}</span>
               )) : 'No disponible'}</p>
             <p className="text-md">Serie: {serie || 'N/A'}</p>
             <p className="text-md">ISBN: {isbn}</p>
@@ -213,9 +240,9 @@ const FichaTecnicaLibro = () => {
               {renderSinopsis()}
             </div>
             <div className="flex items-center mt-2">
-              <span className="text-lg font-medium">Calificación:</span>
-              <div className="flex ml-2">{renderEstrellas(calificacion)}</div>
-            </div>
+              <strong>Calificación General:</strong> 
+              {renderEstrellas(calificacionPromedio)} {/* Mostrar calificación promedio en estrellas */}
+            </div> 
           </div>
         </div>
 
@@ -227,6 +254,7 @@ const FichaTecnicaLibro = () => {
         </button>
 
         <form onSubmit={handleSubmit} className="mt-4 w-full">
+        <div className="flex ml-2">{renderEstrellas(calificacion)}</div>
           <label className="block text-md font-medium mb-2">Escribe una reseña:</label>
           <div className="flex w-full">
             <input
@@ -246,22 +274,31 @@ const FichaTecnicaLibro = () => {
           </div>
         </form>
 
+        {/* Renderizar solo las primeras 5 reseñas */}
         <div className="mt-6">
-          {resenas.slice(0, 5).map((reseña) => (
-            <div key={reseña._id} className="flex items-start mb-4 p-4 border border-gray-200 rounded-lg bg-gray-100 break-all">
-              <img 
-                src={reseña.idUsuario.fotoPerfil || 'https://via.placeholder.com/48'} 
-                alt={`${reseña.idUsuario.nombre} perfil`} 
-                className="w-12 h-12 rounded-full mr-4"
-                style={{ width: '48px', height: '48px' }} // Ajustar tamaño a 48x48
-              />
-              <div>
-                <h3 className="font-semibold">{reseña.idUsuario.nombre}</h3>
-                <p className="text-md">{reseña.contenido}</p>
+          {resenas.length === 0 ? ( // Comprobar si no hay reseñas
+            <p>No tiene reseñas.</p>
+          ) : (
+            resenas.slice(0, 5).map((reseña, index) => (
+              <div key={index} className="flex items-start mb-4 p-4 border border-gray-200 rounded-lg bg-gray-100 break-all">
+                <img 
+                  src={reseña.idUsuario.fotoPerfil || 'https://via.placeholder.com/48'} 
+                  alt={`${reseña.idUsuario.nombre} perfil`} 
+                  className="w-12 h-12 rounded-full mr-4"
+                  style={{ width: '48px', height: '48px' }} // Ajustar tamaño a 48x48
+                />
+                <div>
+                  <h3 className="font-semibold">{reseña.idUsuario.nombre}</h3>
+                  <p className="text-md">{reseña.contenido}</p>
+                </div>
+                <div className="flex mt-1">
+                          {renderEstrellasCom(reseña.calificacion)} {/* Renderización de estrellas */}
+                </div>
               </div>
-            </div>
-          ))}
+            ))
+          )}
         </div>
+
 
 
         {isModalOpen && (
