@@ -289,7 +289,7 @@ const Post = ({ post }) => {
                 >
                   <textarea
                     className="textarea w-full p-1 rounded text-md resize-none border focus:outline-none border-blue-950"
-                    placeholder="Add a comment..."
+                    placeholder="Escribe un comentario..."
                     value={comentarios}
                     onChange={(e) => setComentarios(e.target.value)}
                   />

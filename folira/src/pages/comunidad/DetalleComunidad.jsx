@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { BsArrowLeft} from 'react-icons/bs';
+import { BsArrowLeft, BsEmojiSmileFill} from 'react-icons/bs';
 import { CiImageOn } from 'react-icons/ci';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import toast from 'react-hot-toast';
@@ -9,6 +9,7 @@ import usePosts from '../../hooks/usePost';
 import ListaPublicaciones from './ListaPublicaciones';
 import EmojiPicker from 'emoji-picker-react';
 import ModalMiembrosComunidad from './ModalMiembros';
+import { FaEye, FaEyeSlash } from 'react-icons/fa';
 
 const DetallesComunidad = () => {
   const { id } = useParams();
@@ -165,7 +166,7 @@ const handleConfirmInactivar = () => {
     <img
       src={fotoBanner} // Asegúrate de que este sea el nombre de la variable para el banner
       alt="Banner de la comunidad"
-      className="h-80 w-full object-cover"
+      className="h-60 w-full object-cover"
     />
   </div>
 
@@ -174,7 +175,7 @@ const handleConfirmInactivar = () => {
     <img
       src={fotoComunidad}
       alt={nombre}
-      className="w-32 h-32 md:w-48 md:h-48 rounded-full border-4 border-white shadow-lg"
+      className="w-30 h-30 md:w-48 md:h-48 rounded-full border-4 border-white shadow-lg"
     />
   </div>
 
@@ -222,14 +223,14 @@ const handleConfirmInactivar = () => {
       <p className="text-lg mb-2">
         <strong>Administrador:</strong> {admin?.nombre}
       </p>
-      <p className="text-lg mb-4">
+      <p className="text-lg mb-4 break-all">
         <strong>Descripción:</strong>{' '}
         <span className="break-words">
-          {expandirDescripcion ? descripcion : `${descripcion.substring(0, 100)}...`}
+          {expandirDescripcion ? descripcion : `${descripcion.substring(0, 75)}...`}
         </span>
-        {descripcion.length > 100 && (
-          <button onClick={toggleDescripcion} className="ml-2 text-blue-600">
-            {expandirDescripcion ? 'Mostrar menos' : 'Mostrar más'}
+        {descripcion.length > 75 && (
+          <button onClick={toggleDescripcion} className="ml-2 text-blue-950">
+            {expandirDescripcion ? <FaEyeSlash /> : <FaEye />}
           </button>
         )}
       </p>
@@ -271,48 +272,52 @@ const handleConfirmInactivar = () => {
           <h2 className="text-2xl font-semibold mb-4">Publicaciones</h2>
           {esMiembro || esAdmin ? (
           // Formulario de creación de publicaciones (solo visible para miembros y admin)
-          <form className="flex flex-col space-y-4 items-center" onSubmit={handleSubmit}>
+          
+        <form className="space-y-4" onSubmit={handleSubmit}>
+          <div className="flex items-start space-x-4 w-full">
             <textarea
-              className="border border-primary rounded-lg w-full h-20 p-4 mb-4 resize-none focus:outline-none"
+              className="border border-primary rounded-lg w-full h-12 p-4 resize-none focus:outline-none overflow-hidden text-left placeholder:text-left"
               value={contenido}
               onChange={(e) => setContenido(e.target.value)}
               placeholder="¿Qué quieres compartir?"
             />
-            <div className="flex items-center justify-between w-full">
-              <label className="flex items-center cursor-pointer">
-                <input type="file" accept="image/*" className="hidden" onChange={handleImgChange} />
-                <CiImageOn className="text-primary text-3xl mr-2 cursor-pointer" />
-                <span>Subir imagen</span>
-              </label>
-              <button
-                type="button"
-                onClick={() => setMostrarEmojis(!mostrarEmojis)}
-                className="text-primary text-2xl"
-              >
-                😃
-              </button>
-              {mostrarEmojis && (
-                <div className="absolute top-20">
-                  <EmojiPicker onEmojiClick={onEmojiClick} />
-                </div>
-              )}
-              <button
-                type="submit"
-                className="bg-primary text-white py-2 px-4 rounded-lg hover:bg-blue-950 transition duration-300"
-              >
-                Publicar
-              </button>
-            </div>
-            {fotoPublicacion && (
-              <div className="mt-4">
-                <img
-                  src={fotoPublicacion}
-                  alt="Vista previa"
-                  className="w-32 h-32 object-cover rounded-lg border border-gray-200"
-                />
+            <button
+              type="submit"
+              className="bg-primary text-white py-3 px-4 rounded-lg hover:bg-blue-950 transition duration-300 h-12"
+            >
+              Publicar
+            </button>
+          </div>
+          <div className="flex items-center space-x-4 w-full">
+            <label className="flex items-center cursor-pointer">
+              <input type="file" accept="image/*" className="hidden" onChange={handleImgChange} />
+              <CiImageOn className="text-primary text-3xl mr-2 cursor-pointer" />
+            </label>
+            <button
+              type="button"
+              onClick={() => setMostrarEmojis(!mostrarEmojis)}
+              className="text-primary text-2xl"
+            >
+              <BsEmojiSmileFill /> {/* Reemplazamos el emoji por el icono */}
+            </button>
+            {mostrarEmojis && (
+              <div className="absolute top-20">
+                <EmojiPicker onEmojiClick={onEmojiClick} />
               </div>
             )}
-          </form>
+          </div>
+          {fotoPublicacion && (
+            <div className="mt-4">
+              <img
+                src={fotoPublicacion}
+                alt="Vista previa"
+                className="w-32 h-32 object-cover rounded-lg border border-gray-200"
+              />
+            </div>
+          )}
+        </form>
+
+
         ) : (
           // Mensaje para usuarios que no son miembros ni admin
           <div className="text-center text-gray-500 text-lg mt-4">
