@@ -170,16 +170,19 @@
               </select>
 
               <div className="flex justify-end">
-                <button className="btn-outline bg-primary text-white p-2 rounded w-full mt-4 mr-2" type="button" onClick={onClose}>
-                  Cancelar
-                </button>
-                <button
-                  className={`bg-primary text-white p-2 rounded w-full mt-4${isUpdatingNotificacion ? " opacity-50 cursor-not-allowed" : ""}`}
+
+              <button
+                  className={`px-4 py-2 border rounded bg-primary text-white hover:bg-blue-950 mr-4${isUpdatingNotificacion ? " opacity-50 cursor-not-allowed" : ""}`}
                   type="submit"
                   disabled={isUpdatingNotificacion}
                 >
                   {isUpdatingNotificacion ? "Actualizando..." : "Actualizar"}
                 </button>
+                
+                <button className="px-4 py-2 bg-gray-300 text-gray-800 rounded-md  hover:bg-gray-400" type="button" onClick={onClose}>
+                  Cancelar
+                </button>
+                
               </div>
             </form>
           )}

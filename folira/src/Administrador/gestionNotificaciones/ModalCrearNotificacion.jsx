@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react';
+import Select from 'react-select';
 import useCreateNotificacion from '../../hooks/useCreateNotificacion.jsx';
 
 const ModalCrearNotificacion = ({ isOpen, onClose }) => {
@@ -10,9 +11,8 @@ const ModalCrearNotificacion = ({ isOpen, onClose }) => {
   const [users, setUsers] = useState([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
-  const {createNotificacion, isCreatingNotificacion} = useCreateNotificacion();
+  const { createNotificacion, isCreatingNotificacion } = useCreateNotificacion();
 
-  // Fetch users when the modal opens
   useEffect(() => {
     if (isOpen) {
       setLoading(true);
@@ -35,15 +35,13 @@ const ModalCrearNotificacion = ({ isOpen, onClose }) => {
 
   if (!isOpen) return null;
 
-  // Handle form input changes
-  const handleInputChange = (event) => {
+  const handleInputChange = (name, value) => {
     setNotificationDetails({
       ...notificationDetails,
-      [event.target.name]: event.target.value,
+      [name]: value,
     });
   };
 
-  // Handle create notification confirmation
   const handleCreateConfirm = () => {
     if (!notificationDetails.de || !notificationDetails.para || !notificationDetails.tipo) {
       setError("Todos los campos son obligatorios.");
@@ -60,6 +58,8 @@ const ModalCrearNotificacion = ({ isOpen, onClose }) => {
       });
   };
 
+  const userOptions = users.map((user) => ({ value: user._id, label: user.nombre }));
+
   return (
     <div className="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center z-50">
       <div className="bg-white rounded-lg shadow-lg p-6 w-96 relative">
@@ -75,57 +75,76 @@ const ModalCrearNotificacion = ({ isOpen, onClose }) => {
         ) : (
           <>
             <label className="block mb-2">De:</label>
-            <select
-              name="de"
-              value={notificationDetails.de}
-              onChange={handleInputChange}
-              className="w-full border border-gray-300 rounded p-2 mb-4"
-            >
-              <option value="">Seleccionar usuario</option>
-              {users.map((user) => (
-                <option key={user._id} value={user._id}>{user.nombre}</option>
-              ))}
-            </select>
+            <Select
+              options={userOptions}
+              value={userOptions.find((option) => option.value === notificationDetails.de)}
+              onChange={(option) => handleInputChange('de', option.value)}
+              placeholder="Seleccionar usuario"
+              styles={{
+                menu: (base) => ({
+                  ...base,
+                  maxHeight: '150px', // O puedes quitar esta propiedad
+                  overflowY: 'hidden', // Esto elimina el scroll
+                }),
+              }}
+            
+            />
 
             <label className="block mb-2">Para:</label>
-            <select
-              name="para"
-              value={notificationDetails.para}
-              onChange={handleInputChange}
-              className="w-full border border-gray-300 rounded p-2 mb-4"
-            >
-              <option value="">Seleccionar usuario</option>
-              {users.map((user) => (
-                <option key={user._id} value={user._id}>{user.nombre}</option>
-              ))}
-            </select>
+            <Select
+              options={userOptions}
+              value={userOptions.find((option) => option.value === notificationDetails.para)}
+              onChange={(option) => handleInputChange('para', option.value)}
+              placeholder="Seleccionar usuario"
+              styles={{
+                menu: (base) => ({
+                  ...base,
+                  maxHeight: '150px', // O puedes quitar esta propiedad
+                  overflowY: 'hidden', // Esto elimina el scroll
+                }),
+              }}
+              
+            />
 
             <label className="block mb-2">Tipo de Notificación:</label>
-            <select
-              name="tipo"
-              value={notificationDetails.tipo}
-              onChange={handleInputChange}
-              className="w-full border border-gray-300 rounded p-2 mb-4"
-            >
-              <option value="">Seleccionar tipo</option>
-              <option value="seguidor">Seguidor</option>
-              <option value="like">Like</option>
-              <option value="insignia">Insignia</option>
-              <option value="denuncia">Denuncia</option>
-              <option value="comentario">Comentario</option>
-            </select>
+            <Select
+              options={[
+                { value: 'seguidor', label: 'Seguidor' },
+                { value: 'like', label: 'Like' },
+                { value: 'insignia', label: 'Insignia' },
+                { value: 'denuncia', label: 'Denuncia' },
+                { value: 'comentario', label: 'Comentario' },
+              ]}
+              value={[
+                { value: 'seguidor', label: 'Seguidor' },
+                { value: 'like', label: 'Like' },
+                { value: 'insignia', label: 'Insignia' },
+                { value: 'denuncia', label: 'Denuncia' },
+                { value: 'comentario', label: 'Comentario' },
+              ].find((option) => option.value === notificationDetails.tipo)}
+              onChange={(option) => handleInputChange('tipo', option.value)}
+              placeholder="Seleccionar tipo"
+              styles={{
+                menu: (base) => ({
+                  ...base,
+                  maxHeight: '150px',
+                  overflowY: 'auto',
+                }),
+              }}
+              
+            />
 
-            <div className="flex justify-end">
+            <div className="flex justify-end mt-4">
               <button
                 onClick={handleCreateConfirm}
-                className="bg-blue-500 text-white px-4 py-2 rounded mr-2"
+                className="px-4 py-2 border rounded bg-primary text-white hover:bg-blue-950 mr-4"
                 disabled={isCreatingNotificacion}
               >
                 {isCreatingNotificacion ? "Creando..." : "Crear"}
               </button>
               <button
                 onClick={onClose}
-                className="bg-gray-300 text-black px-4 py-2 rounded"
+                className="px-4 py-2 bg-gray-300 text-gray-800 rounded-md  hover:bg-gray-400"
                 disabled={isCreatingNotificacion}
               >
                 Cancelar

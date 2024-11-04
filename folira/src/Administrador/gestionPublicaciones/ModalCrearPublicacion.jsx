@@ -108,23 +108,29 @@ function ModalCrearPublicacion({ isOpen, onClose }) {
 
   return (
     <div
-      className="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center z-50"
-      onClick={onClose}
-    >
-      <div
-        className="bg-white p-5 rounded-lg w-80 md:w-96 relative overflow-hidden"
-        onClick={(e) => e.stopPropagation()}
-      >
-        <div className="border-b-2 border-primary pb-2 mb-5">
-          <h2 className="text-lg text-center text-primary">CREAR PUBLICACIÓN</h2>
-        </div>
+  className="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center z-50"
+  onClick={onClose}
+>
+  <div
+    className="bg-white p-5 rounded-lg w-80 md:w-[40%]  relative flex flex-col"
+    onClick={(e) => e.stopPropagation()}
+  >
+    <div className="border-b-2 border-primary pb-2 mb-5">
+      <h2 className="text-lg text-center text-primary">CREAR PUBLICACIÓN</h2>
+    </div>
 
-        {loading ? (
-          <p>Cargando...</p>
-        ) : error ? (
-          <p>Error: {error}</p>
-        ) : (
-          <form onSubmit={handleSubmit} className="overflow-y-auto max-h-80 text-[#503B31] text-lg modal-scrollbar">
+    {loading ? (
+      <p>Cargando...</p>
+    ) : error ? (
+      <p>Error: {error}</p>
+    ) : (
+      <div className="flex-1">
+        <form
+          onSubmit={handleSubmit}
+          className="text-[#503B31] text-lg modal-scrollbar grid grid-cols-1 md:grid-cols-2 gap-4"
+        >
+          {/* Contenido del formulario */}
+          <div>
             <label className="block mb-1 text-primary">Contenido</label>
             <textarea
               name="contenido"
@@ -134,29 +140,30 @@ function ModalCrearPublicacion({ isOpen, onClose }) {
               className="w-full p-2 mb-3 border rounded focus:border-primary focus:outline-none"
               required
             />
-
             <label className="block mb-1 text-primary">Foto de Publicación</label>
             <div className="relative group/cover">
-                <img
-                    src={fotoPublicacion || "/defaultImage.png"}
-                    className="h-52 w-full object-cover"
-                    alt="cover"
-                />
-                <div
-                    className="absolute top-2 right-2 rounded-full p-2 bg-gray-800 bg-opacity-75 cursor-pointer opacity-0 group-hover/cover:opacity-100 transition duration-200"
-                    onClick={() => fotoPublicacionRef.current.click()}
-                >
-                    <span className="w-5 h-5 text-white">Editar</span>
-                </div>
-                <input
-                    type="file"
-                    hidden
-                    accept="image/*"
-                    ref={fotoPublicacionRef}
-                    onChange={(e) => handleImgChange(e, "fotoPost")}
-                    />
+              <img
+                src={fotoPublicacion || "/defaultImage.png"}
+                className="h-52 w-full object-cover"
+                alt="cover"
+              />
+              <div
+                className="absolute top-2 right-2 rounded-full p-2 bg-gray-800 bg-opacity-75 cursor-pointer opacity-0 group-hover/cover:opacity-100 transition duration-200"
+                onClick={() => fotoPublicacionRef.current.click()}
+              >
+                <span className="w-5 h-5 text-white">Editar</span>
+              </div>
+              <input
+                type="file"
+                hidden
+                accept="image/*"
+                ref={fotoPublicacionRef}
+                onChange={(e) => handleImgChange(e, "fotoPost")}
+              />
             </div>
+          </div>
 
+          <div>
             <label className="block mb-1 text-primary">Usuario</label>
             <select
               name="userId"
@@ -171,7 +178,6 @@ function ModalCrearPublicacion({ isOpen, onClose }) {
                 </option>
               ))}
             </select>
-
             <div>
               <label className="flex items-center mb-1 text-primary">
                 <input
@@ -200,18 +206,33 @@ function ModalCrearPublicacion({ isOpen, onClose }) {
                 </div>
               )}
             </div>
-
-            <button
-              type="submit"
-              className="w-full bg-primary text-white py-2 rounded hover:bg-opacity-90 transition duration-200"
-              disabled={isCreatingPost}
-            >
-              {isCreatingPost ? "Creando..." : "Crear Publicación"}
-            </button>
-          </form>
-        )}
+          </div>
+        </form>
       </div>
+    )}
+
+    {/* Botones en la parte inferior */}
+    <div className="flex justify-end mt-4 space-x-3">
+      <button
+        type="button"
+        onClick={onClose}
+        className="px-4 py-2 bg-gray-300 text-gray-800 rounded-md hover:bg-gray-400"
+      >
+        Cerrar
+      </button>
+      <button
+        type="submit"
+        className="bg-primary text-white py-2 px-4 rounded-md hover:bg-blue-950"
+        disabled={isCreatingPost}
+      >
+        {isCreatingPost ? "Creando..." : "Crear Publicación"}
+      </button>
     </div>
+  </div>
+</div>
+
+
+
   );
 }
 

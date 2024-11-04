@@ -154,8 +154,8 @@ const ModalActualizarComunidad = ({ isOpen, onClose, token, comunidadId,obtenerC
 
   return (
 <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-50" onClick={onClose}>
-  <div className="relative bg-white p-6 rounded-lg w-full max-w-4xl max-h-[90vh] overflow-y-auto scrollbar-custom" onClick={(e) => e.stopPropagation()}>
-    <div className="border-b-2 border-primary pb-2 mb-4">
+<div className="relative bg-white p-6 rounded-lg w-full max-w-4xl max-h-[90vh] overflow-y-auto scrollbar-custom pb-0" onClick={(e) => e.stopPropagation()}>
+  <div className="border-b-2 border-primary pb-2 mb-4">
       <h2 className="text-xl text-primary text-center">Actualizar Comunidad</h2>
     </div>
 
@@ -292,8 +292,8 @@ const ModalActualizarComunidad = ({ isOpen, onClose, token, comunidadId,obtenerC
       </div>
     </div>
 
-    {/* Botón de actualizar a la derecha */}
-    <div className="flex justify-end mt-4">
+    {/* Botón de actualizar fijo en la parte inferior */}
+    <div className="sticky bottom-0 left-0 bg-white p-4 flex justify-end" style={{ paddingTop: '20px' }}>
       <button
         onClick={handleSubmit}
         disabled={isUpdatingcomunidad}
@@ -302,7 +302,6 @@ const ModalActualizarComunidad = ({ isOpen, onClose, token, comunidadId,obtenerC
         {isUpdatingcomunidad ? "Actualizando..." : "Actualizar Comunidad"}
       </button>
     </div>
-
 
   </div>
 </div>

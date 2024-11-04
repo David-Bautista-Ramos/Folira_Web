@@ -115,45 +115,51 @@ const ModalCrearReseña = ({ isOpen, onClose, token }) => {
 
   return (
     <div className="fixed inset-0 flex items-center justify-center z-50 bg-black bg-opacity-50">
-      <div className="bg-white rounded-lg shadow-lg p-6 w-[400px]">
-        <div className="flex justify-between items-center mb-4">
-          <h2 className="text-xl font-semibold">Crear Reseña</h2>
+  <div className="bg-white rounded-lg shadow-lg p-6 w-[60%] h-[79%] overflow-y-auto relative">
+    <div className="flex justify-between items-center mb-4">
+      <h2 className="text-xl font-semibold">Crear Reseña</h2>
+    </div>
+    <form onSubmit={handleSubmit}>
+      <div className="flex flex-col md:flex-row mb-4">
+        {/* Columna izquierda */}
+        <div className="flex-1 pr-2">
+          <label htmlFor="contenido" className="block text-sm font-medium text-gray-700">
+            Contenido
+          </label>
+          <textarea
+            id="contenido"
+            rows="4"
+            value={contenido}
+            onChange={(e) => setContenido(e.target.value)}
+            className="mt-1 block w-full p-2 border border-primary rounded-md resize-none"
+            required
+            style={{ maxHeight: '150px', overflowY: 'auto' }}
+          ></textarea>
+
+          <label htmlFor="calificacion" className="block text-sm font-medium text-gray-700 mt-4">
+            Calificación
+          </label>
+          <input
+            type="number"
+            id="calificacion"
+            value={calificacion}
+            onChange={(e) => setCalificacion(Number(e.target.value))}
+            min="1"
+            max="5"
+            required
+            className="mt-1 block w-full p-2 border border-primary rounded-md"
+          />
         </div>
-        <form onSubmit={handleSubmit}>
+
+        {/* Columna derecha */}
+        <div className="flex-1 pl-2">
+          {/* Usuario */}
           <div className="mb-4">
-            <label htmlFor="contenido" className="block text-sm font-medium text-gray-700">
-              Contenido
-            </label>
-            <textarea
-              id="contenido"
-              rows="4"
-              value={contenido}
-              onChange={(e) => setContenido(e.target.value)}
-              className="mt-1 block w-full p-2 border border-primary rounded-md"
-              required
-            ></textarea>
-          </div>
-          <div className="mb-4">
-            <label htmlFor="calificacion" className="block text-sm font-medium text-gray-700">
-              Calificación
-            </label>
-            <input
-              type="number"
-              id="calificacion"
-              value={calificacion}
-              onChange={(e) => setCalificacion(Number(e.target.value))}
-              min="1"
-              max="5"
-              required
-              className="mt-1 block w-full p-2 border border-primary rounded-md"
-            />
-          </div>
-          <div>
             <label className="block mb-1 text-primary">Usuario</label>
             <select
               value={selectedUsuario || ""}
               onChange={(e) => handleUsuarioChange(e.target.value)}
-              className="block w-full p-2 border border-primary rounded-md mb-4"
+              className="block w-full p-2 border border-primary rounded-md"
               required
             >
               <option value="" disabled>
@@ -166,69 +172,94 @@ const ModalCrearReseña = ({ isOpen, onClose, token }) => {
               ))}
             </select>
           </div>
-          <div>
+
+          {/* Autores */}
+          <div className="mb-4">
             <label className="block mb-1 text-primary">Autores</label>
             <button type="button" onClick={toggleAutores} className="bg-primary text-white p-2 rounded mb-2">
               {showAutores ? "Ocultar Autores" : "Mostrar Autores"}
             </button>
             {showAutores && (
-              <div className="flex flex-wrap">
+              <div className="grid grid-cols-2 gap-2 h-32 overflow-y-auto border border-gray-300 rounded p-2 bg-white">
                 {availableAutores.map((autor) => (
-                  <div key={autor._id} className="flex items-center mr-2">
+                  <label key={autor._id} className="flex items-center cursor-pointer">
                     <input
                       type="checkbox"
                       checked={selectedAutores.includes(autor._id)}
                       onChange={() => handleAutoresChange(autor._id)}
-                      className="mr-1"
+                      className="hidden"
                     />
-                    <span>{autor.nombre}</span>
-                  </div>
+                    <div
+                      className={`flex items-center border rounded-full p-1 px-2 text-xs ${
+                        selectedAutores.includes(autor._id) ? "bg-primary text-white" : "border-primary text-primary"
+                      }`}
+                    >
+                      {autor.nombre}
+                    </div>
+                  </label>
                 ))}
               </div>
             )}
           </div>
+
+          {/* Libros */}
           <div>
             <label className="block mb-1 text-primary">Libros</label>
             <button type="button" onClick={toggleLibros} className="bg-primary text-white p-2 rounded mb-2">
               {showLibros ? "Ocultar Libros" : "Mostrar Libros"}
             </button>
             {showLibros && (
-              <div className="flex flex-wrap">
+              <div className="grid grid-cols-2 gap-2 h-32 overflow-y-auto border border-gray-300 rounded p-2 bg-white">
                 {availableLibros.map((libro) => (
-                  <div key={libro._id} className="flex items-center mr-2">
+                  <label key={libro._id} className="flex items-center cursor-pointer">
                     <input
                       type="checkbox"
                       checked={selectedLibros.includes(libro._id)}
                       onChange={() => handleLibrosChange(libro._id)}
-                      className="mr-1"
+                      className="hidden"
                     />
-                    <span>{libro.titulo}</span>
-                  </div>
+                    <div
+                      className={`flex items-center border rounded-full p-1 px-2 text-xs ${
+                        selectedLibros.includes(libro._id) ? "bg-primary text-white" : "border-primary text-primary"
+                      }`}
+                    >
+                      {libro.titulo}
+                    </div>
+                  </label>
                 ))}
               </div>
             )}
           </div>
-          <div className="flex justify-end gap-4 mt-4">
-            <button
-              type="button"
-              className="px-4 py-2 bg-gray-300 text-gray-800 rounded-md hover:bg-gray-400"
-              onClick={onClose}
-            >
-              Cancelar
-            </button>
-            <button
-              type="submit"
-              className={`px-4 py-2 border rounded bg-primary text-white hover:bg-blue-950 ${
-                isCreatingResena ? "opacity-50 cursor-not-allowed" : ""
-              }`}
-              disabled={isCreatingResena}
-            >
-              Crear
-            </button>
-          </div>
-        </form>
+        </div>
       </div>
+    </form>
+
+    {/* Contenedor de botones fijado en la parte inferior */}
+    <div className="flex justify-end gap-4 mt-4 sticky mt-[60px] bg-white p-4">
+      <button
+        type="button"
+        className="px-4 py-2 bg-gray-300 text-gray-800 rounded-md hover:bg-gray-400"
+        onClick={onClose}
+      >
+        Cancelar
+      </button>
+      <button
+        type="submit"
+        className={`px-4 py-2 border rounded bg-primary text-white hover:bg-blue-950 ${
+          isCreatingResena ? "opacity-50 cursor-not-allowed" : ""
+        }`}
+        disabled={isCreatingResena}
+      >
+        Crear
+      </button>
     </div>
+  </div>
+</div>
+
+
+
+  
+
   );
 };
 

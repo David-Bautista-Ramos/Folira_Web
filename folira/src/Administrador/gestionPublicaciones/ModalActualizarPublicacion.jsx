@@ -1,5 +1,6 @@
 import { useState, useEffect, useRef } from "react";
 import useUpdatePublicacion from "../../hooks/useUpdatePost"; // Hook de actualización
+import Select from 'react-select';
 
 function ModalActualizarPublicacion({ isOpen, onClose, publicacionId }) {
   const [formData, setFormData] = useState({
@@ -84,96 +85,118 @@ function ModalActualizarPublicacion({ isOpen, onClose, publicacionId }) {
 
   if (!isOpen) return null;
 
-  return (
+  return (  
     <div
       className="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center z-50"
       onClick={onClose}
     >
       <div
-        className="bg-white p-5 rounded-lg w-80 md:w-96 relative"
+        className="bg-white p-5 rounded-lg w-80 md:w-[40%] relative flex flex-col"
         onClick={(e) => e.stopPropagation()}
       >
-        <h2 className="text-lg text-center mb-4">Actualizar Publicación</h2>
+      <div className="border-b-2 border-primary pb-2 mb-5">
+        <h2 className="text-lg text-center text-primary">Actualizar Publicación</h2>
+      </div>
 
         {loading ? (
           <p>Cargando...</p>
         ) : error ? (
           <p>Error: {error}</p>
         ) : (
-          <form onSubmit={handleSubmit}>
-            <label className="block mb-2">Contenido</label>
-            <textarea
-              name="contenido"
-              value={formData.contenido}
-              onChange={handleInputChange}
-              className="w-full p-2 border rounded mb-4"
-              required
-            />
 
-            <label className="block mb-2">Foto de Publicación</label>
-            <div className="relative group">
-              <img
-                src={formData.fotoPublicacion || "/defaultImage.png"}
-                alt="Foto"
-                className="w-full h-48 object-cover mb-2"
-              />
-              <input
-                type="file"
-                accept="image/*"
-                ref={fotoPublicacionRef}
-                onChange={handleImgChange}
-                className="hidden"
-              />
-              <button
-                type="button"
-                onClick={() => fotoPublicacionRef.current.click()}
-                className="mt-2 text-blue-500"
-              >
-                Cambiar Imagen
-              </button>
-            </div>
-
-            <label className="block mb-2">Usuario</label>
-            <select
-              name="userId"
-              value={formData.userId}
-              onChange={handleInputChange}
-              className="w-full p-2 border rounded mb-4"
-              required
+          <div className="flex-1"> 
+            <form
+              onSubmit={handleSubmit}
+              className="text-[#503B31] text-lg modal-scrollbar grid grid-cols-1 md:grid-cols-2 gap-4"
             >
-              {usuarios.map((usuario) => (
-                <option key={usuario._id} value={usuario._id}>
-                  {usuario.nombre} {usuario.apellido}
-                </option>
-              ))}
-            </select>
+              {/* Columna izquierda */}
+              <div>
+                <label className="block mb-1 text-primary">Contenido</label>
+                <textarea
+                  name="contenido"
+                  value={formData.contenido}
+                  onChange={handleInputChange}
+                  className="w-full p-2 mb-3 border rounded focus:border-primary focus:outline-none"
+                  required
+                />
+                
+                <label className="block mb-1 text-primary">Foto de Publicación</label>
+                <div className="relative group/cover">
+                  <img
+                    src={formData.fotoPublicacion || "/defaultImage.png"}
+                    className="h-52 w-full object-cover"
+                    alt="cover"
+                  />
+                  <div
+                    className="absolute top-2 right-2 rounded-full p-2 bg-gray-800 bg-opacity-75 cursor-pointer opacity-0 group-hover/cover:opacity-100 transition duration-200"
+                    onClick={() => fotoPublicacionRef.current.click()}
+                  >
+                    <span className="w-5 h-5 text-white">Editar</span>
+                  </div>
+                  <input
+                    type="file"
+                    hidden
+                    accept="image/*"
+                    ref={fotoPublicacionRef}
+                    onChange={(e) => handleImgChange(e, "fotoPost")}
+                  />
+                </div>
+              </div>
 
-            <label className="block mb-2">Comunidad</label>
-            <select
-              name="comunidadId"
-              value={formData.comunidadId}
-              onChange={handleInputChange}
-              className="w-full p-2 border rounded mb-4"
-            >
-              <option value="">Ninguna</option>
-              {comunidades.map((comunidad) => (
-                <option key={comunidad._id} value={comunidad._id}>
-                  {comunidad.nombre}
-                </option>
-              ))}
-            </select>
+              {/* Columna derecha */}
+              <div>
+                <label className="block mb-1 text-primary">Usuario</label>
+                <Select
+                  options={usuarios.map((usuario) => ({
+                    value: usuario._id,
+                    label: `${usuario.nombre} ${usuario.apellido}`
+                  }))}
+                  value={usuarios.find(user => user._id === formData.userId)}
+                  onChange={(selectedOption) =>
+                    handleInputChange({ target: { name: 'userId', value: selectedOption.value } })
+                  }
+                  className="mb-3"
+                  placeholder="Selecciona un usuario"
+                />
 
-            <button
-              type="submit"
-              className="w-full bg-blue-500 text-white py-2 rounded mt-4"
-              disabled={isUpdatingPost}
-            >
-              {isUpdatingPost ? "Actualizando..." : "Actualizar"}
-            </button>
-          </form>
+                <label className="block mb-2">Comunidad</label>
+                <Select
+                  options={comunidades.map((comunidad) => ({
+                    value: comunidad._id,
+                    label: comunidad.nombre
+                  }))}
+                  value={comunidades.find(comm => comm._id === formData.comunidadId)}
+                  onChange={(selectedOption) =>
+                    handleInputChange({ target: { name: 'comunidadId', value: selectedOption.value } })
+                  }
+                  className="mb-4"
+                  placeholder="Selecciona una comunidad"
+                  isClearable
+                />
+              </div>
+            </form>
+          </div>
         )}
+        {/* Botones en la parte inferior */}
+        <div className="flex justify-end mt-4 space-x-3">
+          <button
+            type="button"
+            onClick={onClose}
+            className="px-4 py-2 bg-gray-300 text-gray-800 rounded-md hover:bg-gray-400"
+          >
+            Cerrar
+          </button>
+          <button
+            type="submit"
+            className="bg-primary text-white py-2 px-4 rounded-md hover:bg-blue-950"
+            disabled={isUpdatingPost}
+          >
+            {isUpdatingPost ? "Actualizando..." : "Actualizar"}
+          </button>
+        </div>
       </div>
     </div>
+
   );
 }
 
