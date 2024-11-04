@@ -125,7 +125,9 @@ export const editarLibro = async (req, res) => {
         autores,
         estado,
       } = req.body;
-      let { portada } = req.body;
+  
+      // Foto enviada como parte de la solicitud (opcional)
+      const nuevaPortada = req.body.portada;
   
       // Buscar el libro por ID
       const libroExistente = await Libro.findById(id);
@@ -133,20 +135,20 @@ export const editarLibro = async (req, res) => {
         return res.status(404).json({ error: "Libro no encontrado." });
       }
   
+      // Mantener la portada actual por defecto
+      let portada = libroExistente.portada;
+  
       // Manejo de la portada del libro
-      if (portada) {
-        if (libroExistente.portada) {
-          // Eliminar la portada anterior de Cloudinary
-          await cloudinary.uploader.destroy(
-            libroExistente.portada.split("/").pop().split(".")[0]
-          );
+      if (nuevaPortada && nuevaPortada != portada) {
+        // Eliminar la imagen anterior solo si existe
+        if (portada) {
+          const publicId = portada.split("/").pop().split(".")[0];
+          await cloudinary.uploader.destroy(publicId);
         }
+  
         // Subir la nueva portada
-        const uploadedResponse = await cloudinary.uploader.upload(portada);
-        portada = uploadedResponse.secure_url;
-      } else {
-        // Si no se actualiza la portada, conservar la anterior
-        portada = libroExistente.portada;
+        const uploadedResponse = await cloudinary.uploader.upload(nuevaPortada);
+        portada = uploadedResponse.secure_url; // Actualizar la portada con la nueva URL
       }
   
       // Actualizar los datos del libro
@@ -158,7 +160,7 @@ export const editarLibro = async (req, res) => {
           fechaPublicacion,
           editorial,
           sinopsis,
-          portada, // Se incluye la portada actualizada o anterior
+          portada, // Usar la portada anterior o la nueva según corresponda
           calificacion,
           generos,
           autores,
@@ -177,6 +179,7 @@ export const editarLibro = async (req, res) => {
       res.status(500).json({ error: "Error al actualizar el libro." });
     }
   };
+  
   
 
 // Desactivar un libro

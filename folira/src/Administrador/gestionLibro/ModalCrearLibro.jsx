@@ -137,160 +137,156 @@ function ModalCrearLibro({ isOpen, onClose, token }) {
       <h2 className="text-lg text-center text-primary">CREAR LIBRO</h2>
     </div>
     <form onSubmit={handleSubmit} className="overflow-y-auto max-h-80 text-[#503B31] text-lg modal-scrollbar">
-      <label className="block mb-1 text-primary">Portada</label>
-      <div className="relative group/cover mb-4">
-        <img
-          src={fotoLibro || "/cover.png"}
-          className="h-52 w-[45%] object-cover"
-          alt="cover image"
-        />
-        <div
-          className="absolute top-2 left-[35%] rounded-full p-2 bg-gray-800 bg-opacity-75 cursor-pointer opacity-0 group-hover/cover:opacity-100 transition duration-200"
-          onClick={() => fotoLibroRef.current.click()}
-        >
-          <span className="w-5 h-5 text-white">Editar</span>
-        </div>
-        <input
-          type="file"
-          hidden
-          accept="image/*"
-          ref={fotoLibroRef}
-          onChange={handleImgChange}
-        />
-      </div>
 
       {/* Contenedor de columnas */}
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-        {/* Columna 1 */}
-        <div>
-          {/* Aquí puedes mover la sección de la imagen */}
-          <label className="block mb-1 text-primary">Titulo Del Libro</label>
-          <input
-            type="text"
-            name="titulo"
-            value={formData.titulo}
-            onChange={handleInputChange}
-            placeholder="Titulo del libro"
-            className="w-full p-2 mb-3 border rounded focus:border-primary focus:outline-none"
-          />
-          <label className="block mb-1 text-primary">ISBN</label>
-          <input
-            type="text"
-            name="isbn"
-            value={formData.isbn}
-            onChange={handleInputChange}
-            placeholder="ISBN del libro"
-            className="w-full p-2 mb-3 border rounded focus:border-primary focus:outline-none"
-          />
-          <label className="block mb-1 text-primary">Fecha de Publicación</label>
-          <input
-            type="date"
-            name="fechaPublicacion"
-            value={formData.fechaPublicacion}
-            onChange={handleInputChange}
-            placeholder="Fecha de publicación"
-            className="w-full p-2 mb-3 border rounded focus:border-primary focus:outline-none"
-          />
-          <label className="block mb-1 text-primary">Sinopsis</label>
-          <textarea
-            name="sinopsis"
-            value={formData.sinopsis}
-            onChange={handleInputChange}
-            placeholder="Sinopsis"
-            className="w-full p-2 mb-3 border rounded focus:border-primary focus:outline-none"
-          />
-        </div>
-
-        {/* Columna 2 */}
-        <div className="-mt-[63%]">
-          <label className="block mb-1 text-primary">Editorial</label>
-          <input
-            type="text"
-            name="editorial"
-            value={formData.editorial}
-            onChange={handleInputChange}
-            placeholder="Editorial"
-            className="w-full p-2 mb-3 border rounded focus:border-primary focus:outline-none"
-          />
-          <label className="block mb-1 text-primary">Saga</label>
-          <input
-            type="text"
-            name="saga"
-            value={formData.saga}
-            onChange={handleInputChange}
-            placeholder="Saga"
-            className="w-full p-2 mb-3 border rounded focus:border-primary focus:outline-none"
-          />
-          <label className="block mb-1 text-primary">Calificacion</label>
-          <input
-            type="text"
-            name="calificacion"
-            value={formData.calificacion}
-            onChange={handleInputChange}
-            placeholder="Calificacion"
-            className="w-full p-2 mb-3 border rounded focus:border-primary focus:outline-none"
-          />
-
-          {/* Autores */}
-          <div>
-            <label className="block mb-1 text-primary">Autores</label>
-            <button
-              type="button"
-              onClick={toggleAutores}
-              className="bg-primary text-white p-2 rounded mb-2"
-            >
-              {showAutores ? "Ocultar Autores" : "Mostrar Autores"}
-            </button>
-            {showAutores && (
-              <div className="flex flex-wrap">
-                {availableAutor.map((autor) => (
-                  <div key={autor.id || autor.nombre} className="flex items-center mr-2">
-                    <input
-                      type="checkbox"
-                      checked={selectedAutores.includes(autor._id)}
-                      onChange={() => handleAutoresChange(autor._id)}
-                      className="mr-1"
-                    />
-                    <span>{autor.nombre}</span>
-                  </div>
-                ))}
-              </div>
-            )}
-          </div>
-
-          {/* Géneros */}
-          <div>
-            <label className="block mb-1 text-primary">Géneros</label>
-            <button
-              type="button"
-              onClick={toggleGeneros}
-              className="bg-primary text-white p-2 rounded mb-2"
-            >
-              {showGeneros ? "Ocultar Géneros" : "Mostrar Géneros"}
-            </button>
-            {showGeneros && (
-              <div className="flex flex-wrap">
-                {availableGeneros.map((genero) => (
-                  <div key={genero.id || genero.nombre} className="flex items-center mr-2">
-                    <input
-                      type="checkbox"
-                      checked={selectedGeneros.includes(genero._id)}
-                      onChange={() => handleGeneroChange(genero._id)}
-                      className="mr-1"
-                    />
-                    <span>{genero.nombre}</span>
-                  </div>
-                ))}
-              </div>
-            )}
-          </div>
-        </div>
+  {/* Columna 1 */}
+  <div>
+    <label className="block mb-1 text-primary">Portada</label>
+    <div className="relative group/cover mb-4">
+      <img
+        src={fotoLibro || "/cover.png"}
+        className="h-52 w-full object-cover"
+        alt="cover image"
+      />
+      <div
+        className="absolute top-2 right-2 rounded-full p-2 bg-gray-800 bg-opacity-75 cursor-pointer opacity-0 group-hover/cover:opacity-100 transition duration-200"
+        onClick={() => fotoLibroRef.current.click()}
+      >
+        <span className="w-5 h-5 text-white">Editar</span>
       </div>
+      <input
+        type="file"
+        hidden
+        accept="image/*"
+        ref={fotoLibroRef}
+        onChange={handleImgChange}
+      />
+    </div>
 
-      
-    </form>
-   
-    <div className="border-t border-gray-300 flex justify-end">
+    {/* Inputs de la primera columna */}
+    <label className="block mb-1 text-primary">Titulo Del Libro</label>
+    <input
+      type="text"
+      name="titulo"
+      value={formData.titulo}
+      onChange={handleInputChange}
+      placeholder="Titulo del libro"
+      className="w-full p-2 mb-3 border rounded focus:border-primary focus:outline-none"
+    />
+    <label className="block mb-1 text-primary">ISBN</label>
+    <input
+      type="text"
+      name="isbn"
+      value={formData.isbn}
+      onChange={handleInputChange}
+      placeholder="ISBN del libro"
+      className="w-full p-2 mb-3 border rounded focus:border-primary focus:outline-none"
+    />
+    <label className="block mb-1 text-primary">Fecha de Publicación</label>
+    <input
+      type="date"
+      name="fechaPublicacion"
+      value={formData.fechaPublicacion}
+      onChange={handleInputChange}
+      className="w-full p-2 mb-3 border rounded focus:border-primary focus:outline-none"
+    />
+    <label className="block mb-1 text-primary">Sinopsis</label>
+    <textarea
+      name="sinopsis"
+      value={formData.sinopsis}
+      onChange={handleInputChange}
+      placeholder="Sinopsis"
+      className="w-full p-2 mb-3 border rounded focus:border-primary focus:outline-none"
+    />
+  </div>
+
+  {/* Columna 2 */}
+  <div className="mt-6 md:mt-0">
+    <label className="block mb-1 text-primary">Editorial</label>
+    <input
+      type="text"
+      name="editorial"
+      value={formData.editorial}
+      onChange={handleInputChange}
+      placeholder="Editorial"
+      className="w-full p-2 mb-3 border rounded focus:border-primary focus:outline-none"
+    />
+    <label className="block mb-1 text-primary">Saga</label>
+    <input
+      type="text"
+      name="saga"
+      value={formData.saga}
+      onChange={handleInputChange}
+      placeholder="Saga"
+      className="w-full p-2 mb-3 border rounded focus:border-primary focus:outline-none"
+    />
+    <label className="block mb-1 text-primary">Calificacion</label>
+    <input
+      type="number"
+      name="calificacion"
+      value={formData.calificacion}
+      onChange={handleInputChange}
+      placeholder="Calificacion"
+      className="w-full p-2 mb-3 border rounded focus:border-primary focus:outline-none"
+    />
+
+    {/* Autores */}
+    <div>
+      <label className="block mb-1 text-primary">Autores</label>
+      <button
+        type="button"
+        onClick={toggleAutores}
+        className="bg-primary text-white p-2 rounded mb-2"
+      >
+        {showAutores ? "Ocultar Autores" : "Mostrar Autores"}
+      </button>
+      {showAutores && (
+        <div className="flex flex-wrap">
+          {availableAutor.map((autor) => (
+            <div key={autor.id || autor.nombre} className="flex items-center mr-2">
+              <input
+                type="checkbox"
+                checked={selectedAutores.includes(autor._id)}
+                onChange={() => handleAutoresChange(autor._id)}
+                className="mr-1"
+              />
+              <span>{autor.nombre}</span>
+            </div>
+          ))}
+        </div>
+      )}
+    </div>
+
+    {/* Géneros */}
+    <div>
+      <label className="block mb-1 text-primary">Géneros</label>
+      <button
+        type="button"
+        onClick={toggleGeneros}
+        className="bg-primary text-white p-2 rounded mb-2"
+      >
+        {showGeneros ? "Ocultar Géneros" : "Mostrar Géneros"}
+      </button>
+      {showGeneros && (
+        <div className="flex flex-wrap">
+          {availableGeneros.map((genero) => (
+            <div key={genero.id || genero.nombre} className="flex items-center mr-2">
+              <input
+                type="checkbox"
+                checked={selectedGeneros.includes(genero._id)}
+                onChange={() => handleGeneroChange(genero._id)}
+                className="mr-1"
+              />
+              <span>{genero.nombre}</span>
+            </div>
+          ))}
+        </div>
+      )}
+    </div>
+  </div>
+</div>
+      <div className="border-t border-gray-300 flex justify-end">
     <button
         type="submit"
         className="bg-primary mt-3 text-white px-4 py-2 rounded-md hover:bg-blue-950"
@@ -306,6 +302,8 @@ function ModalCrearLibro({ isOpen, onClose, token }) {
         Cerrar
     </button>
 </div>
+      
+    </form>
 
       
   </div>

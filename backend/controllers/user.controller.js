@@ -585,7 +585,7 @@ export const actualizarUsuario = async (req, res) => {
     biografia,
   } = req.body;
   let { fotoPerfil, fotoPerfilBan } = req.body;
-
+  
   // Obtiene el ID del usuario desde los parámetros de la solicitud
   const userId = req.params.userId;
 

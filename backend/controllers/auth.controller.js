@@ -135,6 +135,13 @@ export const login = async (req, res) => {
         .json({ error: "Correo o contraseña incorrectos." });
     }
 
+    // Verificar si la cuenta está activa
+    if (!user.estado) {
+      return res
+        .status(403)
+        .json({ error: "La cuenta está desactivada. Contacta al soporte para más información." });
+    }
+
     // Comparar contraseñas
     const isPasswordCorrect = await bcrypt.compare(contrasena, user.contrasena);
     if (!isPasswordCorrect) {

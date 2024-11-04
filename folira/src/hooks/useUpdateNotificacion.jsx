@@ -16,7 +16,7 @@ const useUpdateNotificacion = (notificacionId) => {
         });
         const data = await res.json();
         if (!res.ok) {
-          throw new Error(data.error || "Something went wrong");
+          throw new Error(data.error || "algo salió mal");
         }
         return data;
       } catch (error) {
@@ -24,7 +24,7 @@ const useUpdateNotificacion = (notificacionId) => {
       }
     },
     onSuccess: () => {
-      toast.success("Notificacion updated successfully");
+      toast.success("Notificación actualizada exitosamente");
       Promise.all([
         queryClient.invalidateQueries({ queryKey: ["authUser"] }),
         queryClient.invalidateQueries({ queryKey: ["userProfile"] }),

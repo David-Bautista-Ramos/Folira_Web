@@ -127,8 +127,8 @@ export const obtenerNotificacionesId = async (req, res) => {
         const { id } = req.params;  // ID de la notificación
 
         const notificaciones = await Notification.findById(id)
-            .populate('de', 'nombre')
-            .populate('para', 'nombre');
+            .populate('de', 'nombre fotoPerfil')
+            .populate('para', 'nombre fotoPerfil');
            
 
         if (!notificaciones) {

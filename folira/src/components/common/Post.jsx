@@ -35,7 +35,7 @@ const Post = ({ post }) => {
         const data = await res.json();
 
         if (!res.ok) {
-          throw new Error(data.error || "Something went wrong");
+          throw new Error(data.error || "algo salió mal");
         }
         return data;
       } catch (error) {
@@ -43,7 +43,7 @@ const Post = ({ post }) => {
       }
     },
     onSuccess: () => {
-      toast.success("Post deleted successfully");
+      toast.success("Publicación eliminada exitosamente");
       queryClient.invalidateQueries({ queryKey: ["posts"] });
     },
   });
@@ -56,7 +56,7 @@ const Post = ({ post }) => {
         });
         const data = await res.json();
         if (!res.ok) {
-          throw new Error(data.error || "Something went wrong");
+          throw new Error(data.error || "algo salió mal");
         }
         return data;
       } catch (error) {
@@ -95,7 +95,7 @@ const Post = ({ post }) => {
         const data = await res.json();
 
         if (!res.ok) {
-          throw new Error(data.error || "Something went wrong");
+          throw new Error(data.error || "algo salió mal");
         }
         return data;
       } catch (error) {
@@ -103,7 +103,7 @@ const Post = ({ post }) => {
       }
     },
     onSuccess: () => {
-      toast.success("Comment posted successfully");
+      toast.success("Comentario publicado exitosamente");
       setComentarios("");
       queryClient.invalidateQueries({ queryKey: ["posts"] });
     },
@@ -122,7 +122,7 @@ const Post = ({ post }) => {
         const data = await res.json();
 
         if (!res.ok) {
-          throw new Error(data.error || "Something went wrong");
+          throw new Error(data.error || "algo salió mal");
         }
         return data;
       } catch (error) {
@@ -132,7 +132,7 @@ const Post = ({ post }) => {
       }
     },
     onSuccess: () => {
-      toast.success("Commentario eliminado con exito");
+      toast.success("Comentario eliminado con éxito");
       queryClient.invalidateQueries({ queryKey: ["posts"] });
     },
     onError: (error) => {

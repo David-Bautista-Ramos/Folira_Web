@@ -16,7 +16,7 @@ const useUpdatePublicacion = (publicacionId) => {
         });
         const data = await res.json();
         if (!res.ok) {
-          throw new Error(data.error || "Something went wrong");
+          throw new Error(data.error || "algo salió mal");
         }
         return data;
       } catch (error) {
@@ -24,7 +24,7 @@ const useUpdatePublicacion = (publicacionId) => {
       }
     },
     onSuccess: () => {
-      toast.success("Publicacion updated successfully");
+      toast.success("Publicación actualizada con éxito");
       Promise.all([
         queryClient.invalidateQueries({ queryKey: ["authUser"] }),
         queryClient.invalidateQueries({ queryKey: ["userProfile"] }),

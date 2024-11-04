@@ -38,7 +38,7 @@ const ModalInactivarDenuncia = ({ isOpen, onClose, denunciasId, obtenerDenuncias
                     }
                     const data = await response.json();
                     setDenuncia(data.denuncia);
-                    setDenunciadoSeleccionado(data.denuncia.denunciado?._id || '');
+                    setDenunciadoSeleccionado(data.denuncia.idUsuario._id || "");
                 } catch (error) {
                     setError(error.message);
                 }
@@ -109,19 +109,35 @@ const ModalInactivarDenuncia = ({ isOpen, onClose, denunciasId, obtenerDenuncias
                         </div>
                         <div className="mb-4">
                             <label className="block mb-1"><strong>Selecciona el Denunciado:</strong></label>
-                            <select
+                            <div className="relative">
+                                <select
                                 value={denunciadoSeleccionado}
                                 onChange={(e) => setDenunciadoSeleccionado(e.target.value)}
-                                className="w-full border rounded p-2"
-                            >
+                                className="w-full border rounded p-2 appearance-none"
+                                >
                                 <option value="">-- Selecciona un denunciado --</option>
                                 {Array.isArray(usuarios) && usuarios.map((usuario) => (
                                     <option key={usuario._id} value={usuario._id}>
-                                        {usuario.nombreCompleto}
+                                    {usuario.nombreCompleto}
                                     </option>
                                 ))}
-                            </select>
-                        </div>
+                                </select>
+                                <div className="absolute inset-y-0 right-0 flex items-center pr-2 pointer-events-none">
+                                {/* Agregar un ícono si es necesario */}
+                                </div>
+                            </div>
+                            {denunciadoSeleccionado && (
+                                <div className="flex items-center mt-2 p-2 border rounded shadow-sm">
+                                <img
+                                    src={usuarios.find(usuario => usuario._id === denunciadoSeleccionado)?.fotoPerfil}
+                                    alt="Foto del usuario"
+                                    className="w-10 h-10 rounded-full mr-3"
+                                />
+                                <span>{usuarios.find(usuario => usuario._id === denunciadoSeleccionado)?.nombreCompleto}</span>
+                                </div>
+                            )}
+                            </div>
+
                     </>
                 ) : (
                     <p>Cargando datos de la denuncia...</p>

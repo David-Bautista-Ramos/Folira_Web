@@ -16,7 +16,7 @@ const useUpdateAutor = (autorId) => {
         });
         const data = await res.json();
         if (!res.ok) {
-          throw new Error(data.error || "Something went wrong");
+          throw new Error(data.error || "algo salió mal");
         }
         return data;
       } catch (error) {
@@ -24,7 +24,7 @@ const useUpdateAutor = (autorId) => {
       }
     },
     onSuccess: () => {
-      toast.success("autor updated successfully");
+      toast.success("Autor actualizado exitosamente");
       Promise.all([
         queryClient.invalidateQueries({ queryKey: ["authUser"] }),
         queryClient.invalidateQueries({ queryKey: ["userProfile"] }),

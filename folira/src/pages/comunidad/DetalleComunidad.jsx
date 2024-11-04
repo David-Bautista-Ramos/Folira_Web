@@ -53,7 +53,7 @@ const handleConfirmInactivar = () => {
     onSuccess: () => {
       setContenido('');
       setFotoPublicacion(null);
-      toast.success('¡Post creado con éxito!');
+      toast.success('¡Publicación creada con éxito!');
       // Refresca los posts para que se muestren en la lista
       queryClient.invalidateQueries(['posts', id]);
     },

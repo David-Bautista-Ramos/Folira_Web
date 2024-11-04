@@ -1,5 +1,7 @@
 import Resena from "../models/resena.model.js";
-import Usuario from '../models/user.model.js'
+import Usuario from '../models/user.model.js';
+import Libro from '../models/libro.model.js'
+import Autor from '../models/autor.model.js'
 
 export const crearResena = async (req, res) => {
     try {
@@ -12,6 +14,22 @@ export const crearResena = async (req, res) => {
         // Validar que al menos uno de los dos campos sea proporcionado.
         if (!idLibro && !idAutor) {
             return res.status(400).json({ error: "Se debe proporcionar al menos un libro o un autor válido." });
+        }
+
+        // Verificar si el libro existe
+        if (idLibro) {
+            const libroExistente = await Libro.findById(idLibro);
+            if (!libroExistente) {
+                return res.status(404).json({ error: "Libro no encontrado." });
+            }
+        }
+
+        // Verificar si el autor existe
+        if (idAutor) {
+            const autorExistente = await Autor.findById(idAutor);
+            if (!autorExistente) {
+                return res.status(404).json({ error: "Autor no encontrado." });
+            }
         }
 
         const nuevaResena = new Resena({
@@ -30,6 +48,7 @@ export const crearResena = async (req, res) => {
         res.status(500).json({ error: "Error al crear la reseña." });
     }
 };
+
 
 export const obtenerResena =async(req, res) => {
     try {

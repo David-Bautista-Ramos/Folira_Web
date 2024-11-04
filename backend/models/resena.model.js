@@ -25,10 +25,12 @@ const ResenaSchema = new mongoose.Schema(
       idLibro: {
         type: mongoose.Schema.Types.ObjectId,
         ref: 'Libro',
+        default: null 
       },
       idAutor: {
         type: mongoose.Schema.Types.ObjectId,
         ref: 'Autor',
+        default: null 
       },
       estado: {
         type: Boolean,

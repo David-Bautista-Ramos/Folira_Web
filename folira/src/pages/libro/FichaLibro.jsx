@@ -73,8 +73,8 @@ const FichaTecnicaLibro = () => {
 
     return (
       <div>
-        <strong className="text-md">
-          Sinopsis: {isExpanded ? sinopsis : `${sinopsisCorta}...`}
+        <p className="text-md">
+          <strong>Sinopsis:</strong> {isExpanded ? sinopsis : `${sinopsisCorta}...`}
           {esLarga && (
             <span
               className="inline ml-2 cursor-pointer text-blue-500"
@@ -83,7 +83,7 @@ const FichaTecnicaLibro = () => {
               {isExpanded ? <><BsEyeSlash className="inline" /> Leer menos</> : <><BsEye className="inline" /> Leer más</>}
             </span>
           )}
-        </strong>
+        </p>
       </div>
     );
   };
@@ -230,9 +230,9 @@ if (isRedirecting) {
           />
           <div className="ml-6 flex flex-col flex-grow">
             <h2 className="text-2xl font-semibold">{titulo}</h2>
-            <strong className="text-lg font-medium">Autor: {autores.length > 0 ? autores.map((autor) => autor.nombre).join(', '): 'Autor no disponible'}</strong>
-            <strong className="text-md">Serie: {serie || 'N/A'}</strong>
-            <strong className="text-md">ISBN: {isbn}</strong>
+            <p className="text-lg font-medium"><strong>Autor:</strong> {autores.length > 0 ? autores.map((autor) => autor.nombre).join(', '): 'Autor no disponible'}</p>
+            <p className="text-md"><strong>Serie:</strong> {serie || 'N/A'}</p>
+            <p className="text-md"><strong>ISBN:</strong> {isbn}</p>
             <div className="text-md break-all">
               {renderSinopsis()}
             </div>

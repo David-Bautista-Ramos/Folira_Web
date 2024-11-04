@@ -123,65 +123,90 @@
           {loading && <div>Cargando usuarios...</div>}
           {error && <div className="text-red-500">{error}</div>}
           {!loading && !error && (
-            <form onSubmit={handleSubmit}>
-              <label className="block mb-1 text-primary">De</label>
-              <select
-                name="de"
-                value={selectedDeUsuario}
-                onChange={handleDeUsuarioChange}
-                className="w-full p-2 mb-3 border rounded focus:border-primary focus:outline-none"
-              >
-                <option value="">Seleccione un usuario</option>
-                {availableUsuarios.map((usuario) => (
-                  <option key={usuario._id} value={usuario._id}>
-                    {usuario.nombre}
-                  </option>
-                ))}
-              </select>
-
-              <label className="block mb-1 text-primary">Para</label>
-              <select
-                name="para"
-                value={selectedParaUsuario}
-                onChange={handleParaUsuarioChange}
-                className="w-full p-2 mb-3 border rounded focus:border-primary focus:outline-none"
-              >
-                <option value="">Seleccione un usuario</option>
-                {availableUsuarios.map((usuario) => (
-                  <option key={usuario._id} value={usuario._id}>
-                    {usuario.nombre}
-                  </option>
-                ))}
-              </select>
-
-              <label className="block mb-2">Tipo de Notificación:</label>
-              <select
-                name="tipo"
-                value={formData.tipo}
-                onChange={handleInputChange}
-                className="w-full border border-gray-300 rounded p-2 mb-4"
-              >
-                <option value="">Seleccionar tipo</option>
-                <option value="seguidor">Seguidor</option>
-                <option value="like">Like</option>
-                <option value="insignia">Insignia</option>
-                <option value="denuncia">Denuncia</option>
-                <option value="comentario">Comentario</option>
-              </select>
-
-              <div className="flex justify-end">
-                <button className="btn-outline bg-primary text-white p-2 rounded w-full mt-4 mr-2" type="button" onClick={onClose}>
-                  Cancelar
-                </button>
-                <button
-                  className={`bg-primary text-white p-2 rounded w-full mt-4${isUpdatingNotificacion ? " opacity-50 cursor-not-allowed" : ""}`}
-                  type="submit"
-                  disabled={isUpdatingNotificacion}
-                >
-                  {isUpdatingNotificacion ? "Actualizando..." : "Actualizar"}
-                </button>
-              </div>
-            </form>
+           <form onSubmit={handleSubmit}>
+           <label className="block mb-1 text-primary">De</label>
+           <select
+             name="de"
+             value={selectedDeUsuario}
+             onChange={handleDeUsuarioChange}
+             className="w-full p-2 mb-3 border rounded focus:border-primary focus:outline-none"
+           >
+             <option value="">Seleccione un usuario</option>
+             {availableUsuarios.map((usuario) => (
+               <option key={usuario._id} value={usuario._id}>
+                 {usuario.nombre}
+               </option>
+             ))}
+           </select>
+         
+           {/* Vista previa de la selección "De" */}
+           {selectedDeUsuario && (
+             <div className="flex items-center mt-2 p-2 border rounded shadow-sm">
+               <img
+                 src={availableUsuarios.find((usuario) => usuario._id === selectedDeUsuario)?.fotoPerfil}
+                 alt="Foto del usuario"
+                 className="w-10 h-10 rounded-full mr-3"
+               />
+               <span>{availableUsuarios.find((usuario) => usuario._id === selectedDeUsuario)?.nombre}</span>
+             </div>
+           )}
+         
+           <label className="block mb-1 text-primary">Para</label>
+           <select
+             name="para"
+             value={selectedParaUsuario}
+             onChange={handleParaUsuarioChange}
+             className="w-full p-2 mb-3 border rounded focus:border-primary focus:outline-none"
+           >
+             <option value="">Seleccione un usuario</option>
+             {availableUsuarios.map((usuario) => (
+               <option key={usuario._id} value={usuario._id}>
+                 {usuario.nombre}
+               </option>
+             ))}
+           </select>
+         
+           {/* Vista previa de la selección "Para" */}
+           {selectedParaUsuario && (
+             <div className="flex items-center mt-2 p-2 border rounded shadow-sm">
+               <img
+                 src={availableUsuarios.find((usuario) => usuario._id === selectedParaUsuario)?.fotoPerfil}
+                 alt="Foto del usuario"
+                 className="w-10 h-10 rounded-full mr-3"
+               />
+               <span>{availableUsuarios.find((usuario) => usuario._id === selectedParaUsuario)?.nombre}</span>
+             </div>
+           )}
+         
+           <label className="block mb-2">Tipo de Notificación:</label>
+           <select
+             name="tipo"
+             value={formData.tipo}
+             onChange={handleInputChange}
+             className="w-full border border-gray-300 rounded p-2 mb-4"
+           >
+             <option value="">Seleccionar tipo</option>
+             <option value="seguidor">Seguidor</option>
+             <option value="like">Like</option>
+             <option value="insignia">Insignia</option>
+             <option value="denuncia">Denuncia</option>
+             <option value="comentario">Comentario</option>
+           </select>
+         
+           <div className="flex justify-end">
+             <button className="btn-outline bg-primary text-white p-2 rounded w-full mt-4 mr-2" type="button" onClick={onClose}>
+               Cancelar
+             </button>
+             <button
+               className={`bg-primary text-white p-2 rounded w-full mt-4${isUpdatingNotificacion ? " opacity-50 cursor-not-allowed" : ""}`}
+               type="submit"
+               disabled={isUpdatingNotificacion}
+             >
+               {isUpdatingNotificacion ? "Actualizando..." : "Actualizar"}
+             </button>
+           </div>
+         </form>
+         
           )}
         </div>
       </div>

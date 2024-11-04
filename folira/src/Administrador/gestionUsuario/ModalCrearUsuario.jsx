@@ -232,9 +232,8 @@ const ModalCrearUsuario = ({ isOpen, onClose }) => {
               name="roles"
               onChange={handleInputChange}
             />
-          </form>
 
-          {/* Botones fijos en la parte inferior */}
+            {/* Botones fijos en la parte inferior */}
           <div className="modal-action flex justify-between">
             <button
               className="bg-primary text-white px-4 py-2 rounded-md ml-[62%] hover:bg-blue-950"
@@ -252,6 +251,7 @@ const ModalCrearUsuario = ({ isOpen, onClose }) => {
               Cancelar
             </button>
           </div>
+          </form>
         </div>
       </dialog>
     </>

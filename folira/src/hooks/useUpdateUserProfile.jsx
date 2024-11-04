@@ -15,7 +15,7 @@ const useUpdateUserProfile = ()=> {
 				});
 				const data = await res.json();
 				if (!res.ok) {
-					throw new Error(data.error || "Something went wrong");
+					throw new Error(data.error || "algo salió mal");
 				}
 				return data;
 			} catch (error) {
@@ -23,7 +23,7 @@ const useUpdateUserProfile = ()=> {
 			}
 		},
 		onSuccess: () => {
-			toast.success("Profile updated successfully");
+			toast.success("Perfil actualizado exitosamente");
 			Promise.all([
 				queryClient.invalidateQueries({ queryKey: ["authUser"] }),
 				queryClient.invalidateQueries({ queryKey: ["userProfile"] }),

@@ -75,8 +75,8 @@ const ModalCrearReseña = ({ isOpen, onClose, token }) => {
       contenido,
       calificacion,
       idUsuario: selectedUsuario, // Agregar el usuario seleccionado
-      idLibro: selectedAutores,
-      idAutor: selectedLibros,
+      idLibro: selectedLibros,
+      idAutor: selectedAutores,
     };
 
     try {

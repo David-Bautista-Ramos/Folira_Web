@@ -49,7 +49,7 @@ const SignUpPage = () => {
 				body: JSON.stringify({ correo, nombre, nombreCompleto, pais, contrasena }),
 			});
 			const data = await res.json();
-			if (!res.ok) throw new Error(data.error || "Failed to create account");
+			if (!res.ok) throw new Error(data.error || "No se pudo crear la cuenta");
 			return data;
 		},
 		onSuccess: () => {

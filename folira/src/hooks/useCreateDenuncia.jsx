@@ -16,7 +16,7 @@ function useCreateDenucia() {
                 });
                 const data = await res.json();
                 if (!res.ok) {
-                    throw new Error(data.error || "Something went wrong");
+                    throw new Error(data.error || "algo salió mal");
                 }
                 return data;
             } catch (error) {
@@ -24,7 +24,7 @@ function useCreateDenucia() {
             }
         },
         onSuccess: async () => { // Cambia a async
-            toast.success("Libro creado con éxito");
+            toast.success("Denuncia realizada con éxito");
             await Promise.all([ // Añade await aquí
                 queryClient.invalidateQueries({ queryKey: ["authUser"] }),
                 queryClient.invalidateQueries({ queryKey: ["userProfile"] }),

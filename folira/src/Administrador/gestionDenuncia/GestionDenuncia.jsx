@@ -257,7 +257,7 @@ function GestionDenuncia() {
                     </div>
                     <h2 className="font-semibold">Motivo: {obtenerTipoDenuncia(denuncia)}</h2>
                     <p>Fecha: {formatMemberSinceDate2(denuncia.updatedAt)}</p>
-                    <p>Estado: {denuncia.estado ? "Activo" : "Inactivo"}</p>
+                    <p className="font-semibold">Estado: {denuncia.estado ? "Activo" : "Inactivo"}</p>
                     <p>Motivo: {denuncia.motivo}</p>
                     {denuncia.tipo === "publicacion" && (
                                             <>

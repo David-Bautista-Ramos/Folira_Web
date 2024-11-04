@@ -32,7 +32,7 @@ const LoginPage = () => {
                 const data = await res.json();
 
                 if (!res.ok) {
-                    throw new Error(data.error || "Something went wrong");
+                    throw new Error(data.error || "algo salió mal");
                 }
             } catch (error) {
                 throw new Error(error);

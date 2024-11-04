@@ -17,13 +17,13 @@ const Comunidad = ({ authUser }) => {
       });
 
       if (!response.ok) {
-        throw new Error('Error fetching autores');
+        throw new Error('Error al recuperar los autores');
       }
 
       const data = await response.json();
       setAutores(data.autores || []); // Asegúrate de que la respuesta tiene el formato correcto
     } catch (error) {
-      console.error('Error fetching autores:', error);
+      console.error('Error al recuperar los autores:', error);
       setError('Error al cargar los autores');
     } finally {
       setLoading(false);

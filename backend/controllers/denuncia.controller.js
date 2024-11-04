@@ -123,7 +123,7 @@ export const obtenerDenunciaPorId = async (req, res) => {
         const { id } = req.params;
 
         const denuncia = await Denuncia.findById(id)
-            .populate('idUsuario', 'nombre')
+            .populate('idUsuario', 'nombre fotoPerfil')
             .populate({
                 path: 'idPublicacion',
                 model:"Post",

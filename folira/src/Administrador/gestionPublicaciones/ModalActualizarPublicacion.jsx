@@ -134,34 +134,67 @@ function ModalActualizarPublicacion({ isOpen, onClose, publicacionId }) {
             </div>
 
             <label className="block mb-2">Usuario</label>
-            <select
-              name="userId"
-              value={formData.userId}
-              onChange={handleInputChange}
-              className="w-full p-2 border rounded mb-4"
-              required
-            >
-              {usuarios.map((usuario) => (
-                <option key={usuario._id} value={usuario._id}>
-                  {usuario.nombre} {usuario.apellido}
-                </option>
-              ))}
-            </select>
+            <div className="relative mb-4">
+              <div className="w-full p-2 border rounded bg-white cursor-pointer">
+                <div className="flex items-center">
+                  {formData.userId && (
+                    <img
+                      src={usuarios.find((user) => user._id === formData.userId)?.fotoPerfil || 'default-profile.png'}
+                      alt="Foto de perfil"
+                      className="w-8 h-8 rounded-full mr-2"
+                    />
+                  )}
+                  <span>
+                    {usuarios.find((user) => user._id === formData.userId)?.nombre || 'Seleccione un usuario'}
+                  </span>
+                </div>
+              </div>
+              <select
+                name="userId"
+                value={formData.userId}
+                onChange={handleInputChange}
+                className="absolute inset-0 opacity-0 w-full h-full cursor-pointer"
+                required
+              >
+                {usuarios.map((usuario) => (
+                  <option key={usuario._id} value={usuario._id}>
+                    {usuario.nombre}
+                  </option>
+                ))}
+              </select>
+            </div>
+
 
             <label className="block mb-2">Comunidad</label>
-            <select
-              name="comunidadId"
-              value={formData.comunidadId}
-              onChange={handleInputChange}
-              className="w-full p-2 border rounded mb-4"
-            >
-              <option value="">Ninguna</option>
-              {comunidades.map((comunidad) => (
-                <option key={comunidad._id} value={comunidad._id}>
-                  {comunidad.nombre}
-                </option>
-              ))}
-            </select>
+            <div className="relative mb-4">
+              <div className="w-full p-2 border rounded bg-white cursor-pointer">
+                <div className="flex items-center">
+                  {formData.comunidadId && (
+                    <img
+                      src={comunidades.find((comunidad) => comunidad._id === formData.comunidadId)?.fotoComunidad || 'default-community.png'}
+                      alt="Imagen de la comunidad"
+                      className="w-8 h-8 rounded-full mr-2"
+                    />
+                  )}
+                  <span>
+                    {comunidades.find((comunidad) => comunidad._id === formData.comunidadId)?.nombre || 'Seleccione una comunidad'}
+                  </span>
+                </div>
+              </div>
+              <select
+                name="comunidadId"
+                value={formData.comunidadId}
+                onChange={handleInputChange}
+                className="absolute inset-0 opacity-0 w-full h-full cursor-pointer"
+              >
+                <option value="">Ninguna</option>
+                {comunidades.map((comunidad) => (
+                  <option key={comunidad._id} value={comunidad._id}>
+                    {comunidad.nombre}
+                  </option>
+                ))}
+              </select>
+            </div>
 
             <button
               type="submit"

@@ -75,7 +75,7 @@ const EditProfileModal = ({ authUser }) => {
 
 	const { updateProfile, isUpdatingProfile } = useUpdateUserProfile();
 	const [generosDisponibles, setGenerosDisponibles] = useState([]);
-	const [isActive, setIsActive] = useState(authUser.activo); // Estado local para el usuario activo
+	const [isActive, setIsActive] = useState(authUser.estado); // Estado inicial que refleja el estado real del usuario
 	const [showConfirmationModal, setShowConfirmationModal] = useState(false); // Estado para el modal de confirmación
 	const [showCurrent, setShowCurrent] = useState(false);
   	const [showNew, setShowNew] = useState(false);
@@ -121,27 +121,26 @@ const EditProfileModal = ({ authUser }) => {
 		}
 	  };
 	
-	  // Activar/Inactivar usuario
 	  const toggleEstadoUsuario = async () => {
 		try {
-			const url = isActive
-			? `/api/users/estadoDes/${authUser._id}` // Cambiado aquí para incluir el ID
-			:  `/api/users/estadoAct/${authUser._id}`; // Cambiado aquí para incluir el ID
+		  const url = isActive
+			? `/api/users/estadoDes/${authUser._id}` // Endpoint para desactivar
+			: `/api/users/estadoAct/${authUser._id}`; // Endpoint para activar
 	  
 		  const response = await fetch(url, {
 			method: "POST",
 			headers: {
 			  "Content-Type": "application/json",
 			},
-			body: JSON.stringify({ id: authUser.id }),
+			body: JSON.stringify({ id: authUser._id }),
 		  });
-	
+	  
 		  if (!response.ok) throw new Error("Error al cambiar el estado");
-
+	  
 		  setIsActive(!isActive);
 		  toast.success(`Usuario ${isActive ? "inactivado" : "activado"} correctamente`);
 		} catch (error) {
-			toast.error("Error al inactivar cuenta")
+		  toast.error("Error al cambiar el estado de la cuenta");
 		  console.error("Error al cambiar el estado:", error);
 		}
 	  };
@@ -190,23 +189,23 @@ const EditProfileModal = ({ authUser }) => {
 			<button
 				className="btn btn-outline rounded-full btn-sm"
 				onClick={handleToggleClick}
-			>
-				{isActive ? "Activar" : "Inactivar"}
+				>
+				{isActive ? "Inactivar" : "Activar"}
 			</button>
 
-			{/* Modal de confirmación */}
-			{showConfirmationModal && (
-				<dialog id='confirmation_modal' className='modal' open>
-					<div className='modal-box'>
-						<h3 className='font-bold'>Confirmación</h3>
-						<p>¿Estás seguro de que deseas {isActive ? "activar" : "inactivar"} la cuenta?</p>
-						<div className='modal-action'>
-							<button className='btn' onClick={handleConfirmToggle}>Sí</button>
-							<button className='btn' onClick={handleCancelToggle}>No</button>
-						</div>
-					</div>
-				</dialog>
-			)}
+		{/* Modal de confirmación */}
+		{showConfirmationModal && (
+		<dialog id="confirmation_modal" className="modal" open>
+			<div className="modal-box">
+			<h3 className="font-bold">Confirmación</h3>
+			<p>¿Estás seguro de que deseas {isActive ? "inactivar" : "activar"} la cuenta?</p>
+			<div className="modal-action">
+				<button className="btn" onClick={handleConfirmToggle}>Sí</button>
+				<button className="btn" onClick={handleCancelToggle}>No</button>
+			</div>
+			</div>
+		</dialog>
+		)}
 
 			<dialog id='edit_profile_modal' className='modal'>
 				<div className='modal-box border rounded-md border-blue-950 h-[500px]  shadow-md modal-scrollbar'>
@@ -353,7 +352,7 @@ const EditProfileModal = ({ authUser }) => {
 						</div>
 
 						<button className='btn btn-primary rounded-full btn-sm text-white hover:bg-blue-950'>
-							{isUpdatingProfile ? "Updating..." : "Update"}
+							{isUpdatingProfile ? "Actualizando..." : "Actualizar"}
 						</button>
 					</form>
 				</div>

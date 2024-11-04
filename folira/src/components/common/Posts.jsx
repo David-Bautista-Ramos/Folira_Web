@@ -30,7 +30,7 @@ const Posts = ({feedType, nombre, userId}) => {
 				const data = await res.json();
 
 				if(!res.ok){
-					throw new Error(data.error || "Something wnet wrong");
+					throw new Error(data.error || "algo salió mal");
 				}
 
 				return data;

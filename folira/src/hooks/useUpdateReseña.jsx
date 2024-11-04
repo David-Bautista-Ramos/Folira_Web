@@ -17,12 +17,12 @@ const useUpdateResena = (resenaId) => {
         
         // Si recibes una respuesta HTML (por ejemplo, un error 404), no podrás hacer .json()
         if (res.headers.get('content-type')?.includes('text/html')) {
-          throw new Error('Endpoint returned HTML. Verify URL or server-side issues.');
+          throw new Error('El punto final devolvió HTML. Verificar problemas de URL o del lado del servidor.');
         }
 
         const data = await res.json();
         if (!res.ok) {
-          throw new Error(data.error || "Something went wrong");
+          throw new Error(data.error || "algo salió mal");
         }
         return data;
       } catch (error) {
@@ -30,7 +30,7 @@ const useUpdateResena = (resenaId) => {
       }
     },
     onSuccess: () => {
-      toast.success("Reseña updated successfully");
+      toast.success("Reseña actualizada con éxito");
       Promise.all([
         queryClient.invalidateQueries({ queryKey: ["authUser"] }),
         queryClient.invalidateQueries({ queryKey: ["userProfile"] }),

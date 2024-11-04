@@ -44,7 +44,7 @@ const ProfilePage = () => {
         const res = await fetch(`/api/users/profile/${nombre}`);
         const data = await res.json();
         if (!res.ok) {
-          throw new Error(data.error || "Something went wrong");
+          throw new Error(data.error || "algo salió mal");
         }
         return data;
       } catch (error) {
@@ -102,7 +102,7 @@ const ProfilePage = () => {
                 <div className="flex flex-col">
                   <p className="font-bold text-lg">{user?.nombreCompleto}</p>
                   <span className="text-sm text-slate-500">
-                    {POSTS?.length} posts
+                    {POSTS?.length} publicaciones
                   </span>
                 </div>
               </div>
@@ -178,7 +178,7 @@ const ProfilePage = () => {
                       setfotoPerfilBan(null);
                     }}
                   >
-                    {isUpdatingProfile ? "Updating..." : "Upadte"}
+                    {isUpdatingProfile ? "Actualizando..." : "Actualizar"}
                   </button>
                 )}
               </div>
@@ -262,7 +262,7 @@ const ProfilePage = () => {
                   className="flex justify-center flex-1 p-3 hover:bg-secondary transition duration-300 relative cursor-pointer"
                   onClick={() => setFeedType("posts")}
                 >
-                  Posts
+                  Publicaciones
                   {feedType === "posts" && (
                     <div className="absolute bottom-0 w-10 h-1 rounded-full bg-primary" />
                   )}

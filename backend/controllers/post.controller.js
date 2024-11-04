@@ -482,8 +482,8 @@ export const obtenerPublicacionPorId = async (req, res) => {
 
     // Busca la publicación por su ID
     const publicacion = await Post.findById(postId)
-      .populate("user", "nombre nombreCompleto") // Poblamos los datos del usuario que creó la publicación
-      .populate("comentarios.user", "nombre nombreCompleto")
+      .populate("user", "nombre nombreCompleto fotoPerfil") // Poblamos los datos del usuario que creó la publicación
+      .populate("comentarios.user", "nombre nombreCompleto fotoComunidad")
       .populate("idComunidad");
 
     // Si la publicación no se encuentra, devuelve un 404

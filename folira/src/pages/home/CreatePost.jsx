@@ -33,7 +33,7 @@ const CreatePost = () => {
 		onSuccess: () => {
 			setContenido("");
 			setFotoPublicacion(null);
-			toast.success("Post creado con éxito");
+			toast.success("Publicación creado con éxito");
 			queryClient.invalidateQueries({ queryKey: ["posts"] });
 		},
 	});
