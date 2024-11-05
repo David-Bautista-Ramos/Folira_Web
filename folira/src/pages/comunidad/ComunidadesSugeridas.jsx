@@ -114,7 +114,7 @@ const ComunidadesSugeridas = () => {
           {comunidadesFiltradas.length === 0 ? (
             <p>No hay comunidades sugeridas.</p>
           ) : (
-            comunidadesFiltradas.map((comunidad) => (
+            comunidadesFiltradas.slice().reverse().map((comunidad) => (
               <ComunidadCard
                 key={comunidad._id}
                 comunidad={comunidad}

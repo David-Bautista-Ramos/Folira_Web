@@ -288,39 +288,41 @@ if (isRedirecting) {
         </form>
 
         {/* Renderizar solo las primeras 5 reseñas */}
-        <div className="mt-6">
-          {resenas.length === 0 ? ( // Comprobar si no hay reseñas
-            <p>No tiene reseñas.</p>
-          ) : (
-            resenas.slice(0, 5).map((reseña, index) => (
-              <div key={index} className="flex items-start mb-4 p-4 border border-gray-200 rounded-lg bg-gray-100 break-all">
-                <img 
-                  src={reseña.idUsuario.fotoPerfil || 'https://via.placeholder.com/48'} 
-                  alt={`${reseña.idUsuario.nombre} perfil`} 
-                  className="w-12 h-12 rounded-full mr-4"
-                  style={{ width: '48px', height: '48px' }} // Ajustar tamaño a 48x48
-                />
-                <div>
-                  <h3 className="font-semibold">{reseña.idUsuario.nombre}</h3>
-                  <p className="text-md">{reseña.contenido}</p>
-                </div>
-                <div className="flex mt-1">
-                          {renderEstrellasCom(reseña.calificacion)} {/* Renderización de estrellas */}
-                </div>
-              </div>
-            ))
-          )}
+       <div className="mt-6">
+  {resenas.length === 0 ? ( // Comprobar si no hay reseñas
+    <p>No tiene reseñas.</p>
+  ) : (
+    // Asegúrate de invertir el arreglo para que la reseña más reciente esté en la parte superior
+    resenas.slice().reverse().slice(0, 5).map((reseña, index) => (
+      <div key={index} className="flex items-start mb-4 p-4 border border-gray-200 rounded-lg bg-gray-100 break-all">
+        <img 
+          src={reseña.idUsuario.fotoPerfil || 'https://via.placeholder.com/48'} 
+          alt={`${reseña.idUsuario.nombre} perfil`} 
+          className="w-12 h-12 rounded-full mr-4"
+          style={{ width: '48px', height: '48px' }} // Ajustar tamaño a 48x48
+        />
+        <div>
+          <h3 className="font-semibold">{reseña.idUsuario.nombre}</h3>
+          <p className="text-md">{reseña.contenido}</p>
         </div>
+        <div className="flex mt-1">
+          {renderEstrellasCom(reseña.calificacion)} {/* Renderización de estrellas */}
+        </div>
+      </div>
+    ))
+  )}
+</div>
 
 
 
-        {isModalOpen && (
-          <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50 break-all  ">
-          <div className="bg-white rounded-lg p-6 ">
-            <h3 className="text-xl font-semibold mb-4">Reseñas</h3>
 
-            <div className="mb-4">
-              <h4 className="text-md font-medium">Filtrar por calificación:</h4>
+{isModalOpen && (
+          <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50 break-all">
+          <div className="bg-white rounded-lg p-4 w-[40%] max-h-[800px] overflow-hidden"> {/* Aumenté el max-h a 800px */}
+            <h3 className="text-lg font-semibold mb-2">Reseñas</h3>
+        
+            <div className="mb-2">
+              <h4 className="text-sm font-medium">Filtrar por calificación:</h4>
               <div className="flex">
                 {[1, 2, 3, 4, 5].map((star) => (
                   <div
@@ -339,26 +341,24 @@ if (isRedirecting) {
                 </div>
               </div>
             </div>
-
-
-            <div className="modal-container" style={{ width: '600px', maxHeight: '400px', overflowY: 'auto', scrollbarWidth: 'thin', scrollbarColor: '#111827 transparent' }}>
-            {loadingReseñas ? (
+        
+            <div className="modal-container" style={{ maxHeight: '400px', overflowY: 'auto', scrollbarWidth: 'thin', scrollbarColor: '#111827 transparent' }}> {/* Aumenté maxHeight a 400px */}
+              {loadingReseñas ? (
                 <p>Cargando reseñas...</p>
               ) : (
                 filteredReseñas.length > 0 ? (
-                  filteredReseñas.map((reseña) => (
-                    <div key={reseña._id} className="flex items-start mb-4 p-4 border border-gray-200 rounded-lg bg-gray-100">
+                  filteredReseñas.slice().reverse().map((reseña) => (
+                    <div key={reseña._id} className="flex items-start mb-2 p-2 border border-gray-200 rounded-lg bg-gray-100">
                       <img 
                         src={reseña.idUsuario.fotoPerfil || 'https://via.placeholder.com/48'} 
                         alt={`${reseña.idUsuario.nombre} perfil`} 
-                        className="w-12 h-12 rounded-full mr-4"
-                        style={{ width: '48px', height: '48px' }} // Ajustar tamaño a 48x48
+                        className="w-10 h-10 rounded-full mr-2" 
                       />
                       <div className="flex-grow">
-                        <h3 className="font-semibold">{reseña.idUsuario.nombre}</h3>
-                        <p className="text-md break-all mr-10">{reseña.contenido}</p> {/* Agregué break-all y margen para ajustar texto largo */}
+                        <h3 className="font-semibold text-sm">{reseña.idUsuario.nombre}</h3>
+                        <p className="text-sm break-all">{reseña.contenido}</p>
                         <div className="flex mt-1">
-                          {renderEstrellasCom(reseña.calificacion)} {/* Renderización de estrellas */}
+                          {renderEstrellasCom(reseña.calificacion)}
                         </div>
                       </div>
                       {reseña.idUsuario._id === authUser._id && (
@@ -366,7 +366,7 @@ if (isRedirecting) {
                           onClick={() => handleDeleteReseña(reseña._id)}
                           className="ml-2 text-red-500 hover:text-red-700"
                         >
-                          <FaTrash className="text-primary cursor-pointer hover:text-blue-900" /> {/* Botón de eliminar */}
+                          <FaTrash className="text-primary cursor-pointer hover:text-blue-900" />
                         </button>
                       )}
                     </div>
@@ -376,13 +376,14 @@ if (isRedirecting) {
                 )
               )}
             </div>
-              <button 
-                onClick={closeModal}       
-                className="mb-4 mt-10 ml-[500px] bg-primary hover:bg-blue-950 text-white px-4 py-2 rounded">
-                  Cerrar
-              </button>
-            </div>
+            
+            <button 
+              onClick={closeModal}       
+              className="mb-2 mt-4 bg-primary hover:bg-blue-950 text-white px-4 py-2 rounded ml-[85%]"> {/* Asegurando que el botón ocupe todo el ancho */}
+              Cerrar
+            </button>
           </div>
+        </div>
         )}
       </div>
     </div>

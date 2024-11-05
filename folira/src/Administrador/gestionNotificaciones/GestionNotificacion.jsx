@@ -6,7 +6,7 @@ import ModalActualizarNotificacion from "./ModalActualizarNotificacion";
 import ModalInactivarNotificacion from "./ModalInactivarNotificacion";
 import banner_notificacion from "../../assets/img/banner_gestion_notificaciones.png"; 
 import ModalFiltrarEstado from "../../components/common/FiltrarNotificacionEstado";
-import { FaUser, FaHeart, FaTriangleExclamation, FaRegMessage } from "react-icons/fa6";
+import { FaUser, FaHeart, FaTriangleExclamation, FaRegMessage, FaArrowRightToCity } from "react-icons/fa6";
 import ModalEliminarNotificacion from "./ModalEliminarNotificacion";
 import ModalFiltroEstado from "../../components/common/ModalListarDenuncia";
 import ModalCrearNotificacion from '../gestionNotificaciones/ModalCrearNotificacion';
@@ -159,6 +159,8 @@ function GestionNotificacion() {
         return <FaTriangleExclamation className="text-gray-600 text-2xl" />;
       case "comentario":
         return <FaRegMessage className="text-green-500 text-2xl" />;
+      case "comunidad":
+        return <FaArrowRightToCity className="text-cyan-800 text-2xl" />;
       default:
         return null;
     }
@@ -276,6 +278,7 @@ const handleVisibleCountChange = (event) => {
                       <p className="text-gray-700 mb-2">
                         Tipo: {notificacion.tipo.charAt(0).toUpperCase() + notificacion.tipo.slice(1)}
                       </p>
+                      <p>Mensaje: {notificacion.mensaje}</p>
                     </div>
                   </div>
                   <p className="text-gray-600">Estado: {notificacion.leido ? "Activo" : "Inactivo"}</p>

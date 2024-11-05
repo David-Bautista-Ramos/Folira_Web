@@ -3,7 +3,7 @@ import { Link } from 'react-router-dom';
 import LoadingSpinner from '../../components/common/LoadingSpinner';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { IoSettingsOutline } from 'react-icons/io5';
-import { FaUser, FaHeart, FaTrash, FaTriangleExclamation, FaRegMessage } from 'react-icons/fa6';
+import { FaUser, FaHeart, FaTrash, FaTriangleExclamation, FaRegMessage, FaArrowRightToCity } from 'react-icons/fa6';
 import toast from 'react-hot-toast';
 
 const NotificationPage = () => {
@@ -111,12 +111,13 @@ const NotificationPage = () => {
       ) : notifications?.length === 0 ? (
         <div className='text-center p-4 font-bold'>No notifications 🤔</div>
       ) : (
-        notifications.map((notification) => (
+        notifications.slice().reverse().map((notification) => (
           <div className='border-b border-gray-700' key={notification._id}>
             <div className='flex justify-between p-4'>
               <div className='flex gap-2 items-center'>
                 {notification.tipo === 'seguidor' && <FaUser className='w-5 h-5 text-primary' />}
                 {notification.tipo === 'like' && <FaHeart className='w-5 h-5 text-red-500' />}
+                {notification.tipo === 'comunidad' && <FaArrowRightToCity className='w-5 h-5 text-cyan-800' />}
                 {notification.tipo === 'denuncia' && (
                   <FaTriangleExclamation className='text-primary w-5 h-5' />
                 )}
@@ -130,6 +131,7 @@ const NotificationPage = () => {
                     </div>
                   </div>
                   <span className='font-bold'>@{notification.de?.nombre}</span>
+                  <span className='font-bold'>{notification.mensaje}</span>
                 </Link>
               </div>
 

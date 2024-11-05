@@ -31,6 +31,12 @@ const ModalTipoNotificacion = ({ isOpen, onClose, onFilter }) => {
             Comentario
           </button>
           <button
+            className="bg-cyan-800 text-white px-4 py-2 rounded"
+            onClick={() => onFilter("comunidad")}
+          >
+            Comunidad
+          </button>
+          <button
             className="bg-gray-300 text-black px-4 py-2 rounded mt-4"
             onClick={onClose}
           >

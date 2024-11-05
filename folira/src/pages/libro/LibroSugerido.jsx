@@ -136,7 +136,7 @@ const LibroSugerido = () => {
   />
 
   <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6">
-    {librosFiltrados.map((libro) => (
+    {librosFiltrados.slice().reverse().map((libro) => (
       <div
         key={libro._id}
         className="bg-white rounded-lg shadow-lg p-4 flex flex-col h-full justify-between"

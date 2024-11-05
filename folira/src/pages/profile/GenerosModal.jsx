@@ -8,7 +8,7 @@ const GenerosModal = ({ isOpen, onClose }) => {
     useEffect(() => {
         const fetchGeneros = async () => {
             try {
-                const response = await fetch('/api/geneLiter/getgeneros'); // Reemplaza con la URL de tu API
+                const response = await fetch('/api/geneLiter/generosactuser'); // Reemplaza con la URL de tu API
                 if (!response.ok) {
                     throw new Error('Error al cargar los géneros');
                 }

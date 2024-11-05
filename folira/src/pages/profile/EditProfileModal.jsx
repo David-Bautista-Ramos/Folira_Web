@@ -112,7 +112,7 @@ const EditProfileModal = ({ authUser }) => {
 	  // Obtener lista de géneros literarios
 	  const obtenerGeneros = async () => {
 		try {
-		  const response = await fetch("/api/geneLiter/getgeneros");
+		  const response = await fetch("/api/geneLiter/generosactuser");
 		  if (!response.ok) throw new Error("Error al obtener los géneros");
 		  const data = await response.json();
 		  setGenerosDisponibles(data);

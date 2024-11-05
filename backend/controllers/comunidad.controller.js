@@ -1,6 +1,8 @@
 import Comunidad from "../models/comunidad.model.js";
 import cloudinary from "cloudinary";
 import GeneroLiterario from "../models/generoLiterario.model.js";
+import Notification from '../models/notification.model.js'
+import User from '../models/user.model.js'
 
 // Crear una nueva comunidad
 export const crearComunidad = async (req, res) => {
@@ -77,6 +79,20 @@ export const crearComunidad = async (req, res) => {
       link,
     });
 
+    // Notificar a los miembros seleccionados
+    if (miembros && miembros.length > 0) {
+      const notifications = miembros.map((miembro) => {
+        return new Notification({
+          de: admin, // El administrador es quien envía la notificación
+          para: miembro,
+          tipo: "comunidad",
+          mensaje: `Te has unido a la nueva comunidad "${nuevaComunidad.nombre}".`,
+        });
+      });
+      
+      // Guardar todas las notificaciones
+      await Notification.insertMany(notifications);
+    }
     // Guardar la comunidad en la base de datos
     await nuevaComunidad.save();
     res.status(201).json({
@@ -196,12 +212,24 @@ export const listarComunidadesNoMiembro = async (req, res) => {
 
 
 // Controlador para que un usuario se una a una comunidad
+// Controlador para que un usuario se una a una comunidad
 export const unirseComunidad = async (req, res) => {
   try {
-    const { comunidadId,userId } = req.body; // ID de la comunidad a la que quiere unirse
+    const { comunidadId, userId } = req.body; // ID de la comunidad a la que quiere unirse
+
+    // Validar que se reciban los datos necesarios
+    if (!comunidadId || !userId) {
+      return res.status(400).json({ error: "Faltan datos requeridos" });
+    }
 
     // Buscar la comunidad
     const comunidad = await Comunidad.findById(comunidadId);
+    if (!comunidad) {
+      return res.status(404).json({ error: "Comunidad no encontrada" });
+    }
+
+    // Buscar la comunidad
+    const miembroo = await User.findById(userId);
     if (!comunidad) {
       return res.status(404).json({ error: "Comunidad no encontrada" });
     }
@@ -218,14 +246,25 @@ export const unirseComunidad = async (req, res) => {
     comunidad.miembros.push(userId);
     await comunidad.save();
 
-    return res
-      .status(200)
-      .json({ message: "Te has unido a la comunidad con éxito", comunidad });
+    // Crear una notificación para el administrador de la comunidad
+    const notification = new Notification({
+      de: userId,
+      para: comunidad.admin,
+      tipo: "comunidad",
+      mensaje: `${miembroo.nombre} se a unido a la comunidad "${comunidad.nombre}".`,
+    });
+    await notification.save();
+
+    return res.status(200).json({
+      message: "Te has unido a la comunidad con éxito",
+      comunidad,
+    });
   } catch (error) {
     console.error("Error al unirse a la comunidad:", error.message);
     return res.status(500).json({ error: "Error en el servidor" });
   }
 };
+
 
 export const salirComunidad = async (req, res) => {
   try {
