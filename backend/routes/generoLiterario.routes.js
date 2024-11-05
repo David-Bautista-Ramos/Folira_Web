@@ -9,6 +9,7 @@ import {
     obtenerGenerosDes,
     obtenerGeneros,
     obtenerGeneroId,
+    obtenerGenerosActUser,
   } from '../controllers/generoLiterario.controller.js';
 import { protectRoutes } from "../middleware/protectRoutes.js";
   
@@ -18,6 +19,7 @@ router.post('/generos',protectRoutes ,crearGenero); // Crear
 router.get('/getgeneros',protectRoutes,obtenerGeneros);
 router.get('/generoid/:id',protectRoutes,obtenerGeneroId);
 router.get('/generosact', protectRoutes, obtenerGenerosAct); // Obtener todos activos
+router.get('/generosactuser', protectRoutes, obtenerGenerosActUser); // Obtener todos activos
 router.get('/generosdes',protectRoutes, obtenerGenerosDes); // Obtener todos inactivos
 router.put('/updgeneros/:id',protectRoutes, editarGenero); // Editar
 router.put('/generos/desactivar/:id',protectRoutes, desactivarGenero); // Desactivar

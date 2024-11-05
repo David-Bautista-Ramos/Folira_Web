@@ -67,16 +67,18 @@ export const deteteNotification = async (req, res) => {
 // Crear una nueva notificación
 export const crearNotificacion = async (req, res) => {
     try {
-        const { de, para, tipo } = req.body;
+        const { de, para, tipo, mensaje } = req.body;
 
         const nuevaNotificacion = new Notification({
             de,
             para,
             tipo,
+            mensaje,
         });
 
         // Guardar la notificación en la base de datos
         await nuevaNotificacion.save();
+        return nuevaNotificacion; // Retorna la notificación creada
         res.status(201).json({ message: "Notificación creada con éxito", notificacion: Notification });
     } catch (error) {
         console.error("Error al crear la notificación:", error.message);
@@ -145,13 +147,13 @@ export const obtenerNotificacionesId = async (req, res) => {
 // Update Notification
 export const updateNotification = async (req, res) => {
     const { id } = req.params; // Notification ID from the URL
-    const { de, para, tipo } = req.body; // Data from the request body
+    const { de, para, tipo, mensaje } = req.body; // Data from the request body
   
     try {
       // Find the notification and update it
       const updatedNotification = await Notification.findByIdAndUpdate(
         id,
-        { de, para, tipo },
+        { de, para, tipo,mensaje },
         { new: true, runValidators: true } // Options: return updated doc, validate before saving
       );
   

@@ -61,7 +61,7 @@ const Comunidad = ({ authUser }) => {
 />
 
 <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6">
-  {filteredAutores.map((autor) => (
+  {filteredAutores.slice().reverse().map((autor) => (
     <div
       key={autor._id} // Asegúrate de que el id del autor se llama _id
       className="bg-white rounded-lg shadow-lg p-4 flex flex-col justify-between h-[300px]" // Distribuye el contenido de manera uniforme con altura fija

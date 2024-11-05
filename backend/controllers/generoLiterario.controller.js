@@ -54,6 +54,17 @@ export const obtenerGeneroId = async(req, res) => {
   }
 };
 
+export const obtenerGenerosActUser = async (req, res) => {
+  try {
+      const estado = true;
+      
+      const generos = await GeneroLiterario.find({ estado: estado });
+      res.status(200).json( generos);
+  } catch (error) {
+      console.error("Error al obtener los géneros literarios:", error.message);
+      res.status(500).json({ error: "Error al obtener los géneros literarios." });
+  }
+};
 export const obtenerGenerosAct = async (req, res) => {
     try {
         const estado = true;

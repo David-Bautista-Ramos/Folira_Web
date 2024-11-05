@@ -7,6 +7,7 @@ const ModalCrearNotificacion = ({ isOpen, onClose }) => {
     de: '',
     para: '',
     tipo: '',
+    mensaje:'',
   });
   const [users, setUsers] = useState([]);
   const [loading, setLoading] = useState(false);
@@ -119,6 +120,16 @@ const ModalCrearNotificacion = ({ isOpen, onClose }) => {
           }}
         />
 
+          <label className='block mb-2'>Mensaje</label>
+            <input
+             type="text"
+             name='mensaje'
+             onChange={handleInputChange}
+             value={notificationDetails.mensaje}
+             placeholder="Puedes dejar un mesaje para el usuario"
+             className="w-full p-2 mb-2 border rounded focus:border-primary focus:outline-none text-sm"
+          />
+
         <label className="block mb-2">Tipo de Notificación:</label>
         <Select
           name="tipo"
@@ -168,7 +179,6 @@ const ModalCrearNotificacion = ({ isOpen, onClose }) => {
     )}
   </div>
 </div>
-
 
   );
 };

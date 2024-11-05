@@ -8,8 +8,10 @@
       de: "",
       para: "",
       tipo: "",
+      mensaje:"",
     });
 
+    
     const [availableUsuarios, setAvailableUsuarios] = useState([]);
     const [selectedDeUsuario, setSelectedDeUsuario] = useState(""); // State for "de" user
     const [selectedParaUsuario, setSelectedParaUsuario] = useState(""); // State for "para" user
@@ -32,6 +34,7 @@
             de: notificacion.de || "",
             para: notificacion.para || "",
             tipo: notificacion.tipo || "",
+            mensaje: notificacion.mensaje || "",
           });
           setSelectedDeUsuario(notificacion.de._id || ""); // Correctly set "de" user
           setSelectedParaUsuario(notificacion.para._id || ""); // Correctly set "para" user
@@ -187,8 +190,17 @@
           </div>
         )}
 
+          <label className='block mb-2'>Mensaje</label>
+            <input
+             type="text"
+             name='mensaje'
+             onChange={handleInputChange}
+             value={formData.mensaje}
+             placeholder="Puedes dejar un mesaje para el usuario"
+             className="w-full p-2 mb-2 border rounded focus:border-primary focus:outline-none text-sm"
+          />
+
         <label className="block mb-2">Tipo de Notificación:</label>
-        
         <Select
           options={[
             { value: 'seguidor', label: 'Seguidor' },
@@ -226,6 +238,7 @@
           >
             {isUpdatingNotificacion ? "Actualizando..." : "Actualizar"}
           </button>
+
         </div>
       </form>
     )}

@@ -12,10 +12,13 @@ const notificationSchema = new mongoose.Schema(
       ref: 'User',
       required: true,
     },
+    mensaje:{
+      type:String
+    },
     tipo: {
       type: String,
       required: true,
-      enum:['seguidor','like','insignia','denuncia','comentario']
+      enum:['seguidor','like','comunidad','denuncia','comentario']
     },
     leido: {
       type: Boolean,

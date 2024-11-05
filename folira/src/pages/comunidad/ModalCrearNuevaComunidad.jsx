@@ -37,7 +37,7 @@ const ModalCrearNuevaComunidad = ({ isOpen, onClose, token, userId ,obtenerComun
   useEffect(() => {
     const fetchGeneros = async () => {
       try {
-        const response = await fetch('/api/geneLiter/getgeneros', {
+        const response = await fetch('/api/geneLiter/generosactuser', {
           method: 'GET',
           headers: {
             Authorization: `Bearer ${token}`,
