@@ -127,8 +127,10 @@ function ModalCrearAutor({ isOpen, onClose, obtenerAutores, token }) {
               <label className="block mb-1 text-primary">Seudónimo</label>
               <input type="text" name="seudonimo" value={formData.seudonimo} onChange={handleInputChange} placeholder="Seudónimo" className="w-full p-2 mb-3 border rounded focus:border-primary focus:outline-none" />
 
-              <label className="block mb-1 text-primary">Distinciones</label>
-              <textarea placeholder="Distinciones (separa por comas)" className="w-full border border-blue-950 rounded p-2 resize-y" value={formData.distinciones} name="distinciones" onChange={handleInputChange} rows={4} />
+              <label className="block mb-1 text-primary">Biografía</label>
+              <textarea name="biografia" value={formData.biografia} onChange={handleInputChange} placeholder="Biografía" className="w-full p-2 mb-3 border rounded focus:border-primary focus:outline-none" />
+
+
             </div>
 
             <div>
@@ -165,8 +167,9 @@ function ModalCrearAutor({ isOpen, onClose, obtenerAutores, token }) {
                 }}
               />
 
-              <label className="block mb-1 text-primary">Biografía</label>
-              <textarea name="biografia" value={formData.biografia} onChange={handleInputChange} placeholder="Biografía" className="w-full p-2 mb-3 border rounded focus:border-primary focus:outline-none" />
+              
+              <label className="block mb-1 text-primary">Distinciones</label>
+              <textarea placeholder="Distinciones (separa por comas)" className="w-full border border-blue-950 rounded p-2 resize-y" value={formData.distinciones} name="distinciones" onChange={handleInputChange} rows={4} />
 
               <h4 className='font-bold'>Selecciona hasta 5 géneros:</h4>
               <div className='grid grid-cols-2 gap-2'>
@@ -192,12 +195,17 @@ function ModalCrearAutor({ isOpen, onClose, obtenerAutores, token }) {
           </div>
         </div>
 
-        <button type="submit" className="w-full bg-primary text-white py-2 rounded hover:bg-secondary transition">
+        <div  className="flex justify-end">
+
+          <button type="submit" className="bg-primary mt-3 text-white px-4 py-2 rounded-md hover:bg-blue-950">
           {isCreatingAutor ? "Creando autor..." : "Crear autor"}
-        </button>
-        <button type="button" onClick={onClose} className="absolute top-3 right-3 text-gray-500 hover:text-gray-800 transition">
-          &times;
-        </button>
+          </button>
+
+          <button type="button" onClick={onClose} className="px-4 py-2 bg-gray-300 text-gray-800 rounded-md mt-3 ml-4 hover:bg-gray-400">
+            Cerrar
+          </button>
+        </div>
+        
       </form>
     </div>
   );

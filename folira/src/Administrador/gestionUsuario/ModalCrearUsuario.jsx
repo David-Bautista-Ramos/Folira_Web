@@ -81,53 +81,29 @@ const ModalCrearUsuario = ({ isOpen, onClose }) => {
       <div className="fixed inset-0 bg-black bg-opacity-50 z-50" />
 
       <dialog id="create_profile_modal" className="modal z-50" open>
-        <div className="modal-box border rounded-md border-blue-950 max-h-[800px] h-[700px] flex flex-col overflow-hidden">
+        <div className="modal-box border rounded-md border-blue-950 shadow-md p-6 relative max-h-[85vh] max-w-[120vh] overflow-y-auto">
           <h3 className="text-primary font-bold text-lg my-3">
             Crear Usuario
           </h3>
 
           {/* Contenedor del formulario con desplazamiento */}
           <form
-            className="text-primary flex flex-col gap-4 flex-grow overflow-y-auto"
-            style={{
-              scrollbarWidth: "thin",
-              scrollbarColor: "#111829 transparent",
-            }}
+            className="text-primary grid grid-cols-2 gap-x-8 gap-y-4 items-start"
             onSubmit={handleSubmit}
           >
-            {/* Estilos para WebKit */}
-            <style>
-              {`
-                .modal-box::-webkit-scrollbar {
-                  width: 8px;
-                }
-                .modal-box::-webkit-scrollbar-track {
-                  background: transparent;
-                }
-                .modal-box::-webkit-scrollbar-thumb {
-                  background-color: #111827;
-                  border-radius: 10px;
-                }
-                .modal-box::-webkit-scrollbar-thumb:hover {
-                  background: darkred;
-                }
-              `}
-            </style>
-
             {/* COVER IMG */}
-            <div className="relative group/cover">
+            <div className="col-span-2 relative">
               <img
                 src={fotoPerfilBan || "/cover.png"}
-                className="h-52 w-full object-cover"
+                className="h-40 w-full object-cover rounded-md"
                 alt="cover image"
               />
               <div
-                className="absolute top-5 right-2 rounded-full p-2 bg-gray-800 bg-opacity-75 cursor-pointer opacity-0 group-hover/cover:opacity-100 transition duration-200"
+                className="absolute top-2 right-2 rounded-full p-2 bg-gray-800 bg-opacity-75 cursor-pointer"
                 onClick={() => fotoPerfilBanRef.current.click()}
               >
                 <span className="w-5 h-5 text-white">Editar</span>
               </div>
-
               <input
                 type="file"
                 hidden
@@ -135,6 +111,21 @@ const ModalCrearUsuario = ({ isOpen, onClose }) => {
                 ref={fotoPerfilBanRef}
                 onChange={(e) => handleImgChange(e, "coverImg")}
               />
+            </div>
+
+            {/* USER AVATAR */}
+            <div className="absolute top-[30%] left-[15%] transform -translate-x-1/2 w-32">
+              <div className="avatar relative">
+                <div className="w-32 h-32 rounded-full border-4 border-white overflow-hidden">
+                  <img src={fotoPerfil || "/avatar-placeholder.png"} alt="profile avatar" />
+                  <div
+                    className="absolute top-[15%] right-3 p-1 bg-primary rounded-full cursor-pointer"
+                    onClick={() => fotoPerfilRef.current.click()}
+                  >
+                    <span className="w-4 h-4 text-white">Editar</span>
+                  </div>
+                </div>
+              </div>
               <input
                 type="file"
                 hidden
@@ -142,121 +133,133 @@ const ModalCrearUsuario = ({ isOpen, onClose }) => {
                 ref={fotoPerfilRef}
                 onChange={(e) => handleImgChange(e, "profileImg")}
               />
-
-              {/* USER AVATAR */}
-              <div className="absolute top-[10px] left-[10px] mt-[65px] z-10"> {/* Ajusta el top si es necesario */}
-                <div className="w-32 rounded-full relative">
-                  <img
-                    src={fotoPerfil || "/avatar-placeholder.png"}
-                    alt="profile avatar"
-                    className="border-4 border-white rounded-full"
-                  />
-                  <div className="absolute top-5 right-3 p-1 bg-primary rounded-full group-hover/avatar:opacity-100 opacity-0 cursor-pointer">
-                    <span
-                      className="w-4 h-4 text-white"
-                      onClick={() => fotoPerfilRef.current.click()}
-                    >
-                      Editar
-                    </span>
-                  </div>
-                </div>
-              </div>
             </div>
 
-            
-
             {/* FORMULARIO */}
-            <input
-              type="text"
-              placeholder="Nombre Usuario"
-              className="input border border-blue-950 rounded p-2 input-md"
-              value={formData.nombre}
-              name="nombre"
-              onChange={handleInputChange}
-            />
-
-            <input
-              type="text"
-              placeholder="Nombre Completo"
-              className="input border border-blue-950 rounded p-2 input-md"
-              value={formData.nombreCompleto}
-              name="nombreCompleto"
-              onChange={handleInputChange}
-            />
-
-            <input
-              type="email"
-              placeholder="Correo"
-              className="input border border-blue-950 rounded p-2 input-md"
-              value={formData.correo}
-              name="correo"
-              onChange={handleInputChange}
-            />
-
-            <Select
-                  id='pais'
-                  options={paises}
-                  value={paises.find(option => option.value === formData.pais) || null}
-                  onChange={(selectedOption) => {
-                    handleInputChange({ target: { name: 'pais', value: selectedOption.value } });
-                  }}
-                  className='flex-1'
-                  placeholder='Selecciona un país'
-                  styles={{
-                    control: (provided) => ({
-                      ...provided,
-                      border: '1px solid #111829', // Color del borde
-                      borderRadius: '0.375rem', // Bordes redondeados
-                      padding: '0.5rem', // Añade padding
-                      boxShadow: 'none', // Sin sombra
-                      '&:hover': {
-                        border: '1px solid #111829', // Color al hacer hover
-                      },
-                    }),
-                    placeholder: (provided) => ({
-                      ...provided,
-                      color: '#6B7280', // Color del texto del placeholder
-                    }),
-                    singleValue: (provided) => ({
-                      ...provided,
-                      color: '#111829', // Color del texto seleccionado
-                    }),
-                  }}
+            <div>
+              <label className="block mb-1 mt-[50px]">Nombre Usuario</label>
+              <input
+                type="text"
+                placeholder="Nombre Usuario"
+                className="input border border-blue-950 rounded p-2 w-full h-10"
+                value={formData.nombre}
+                name="nombre"
+                onChange={handleInputChange}
               />
+            </div>
 
-            <input
-              type="text"
-              placeholder="Rol"
-              className="input border border-blue-950 rounded p-2 input-md"
-              value={formData.roles}
-              name="roles"
-              onChange={handleInputChange}
-            />
+            <div>
+              <label className="block mb-1 mt-[50px]">Nombre Completo</label>
+              <input
+                type="text"
+                placeholder="Nombre Completo"
+                className="input border border-blue-950 rounded p-2 w-full h-10"
+                value={formData.nombreCompleto}
+                name="nombreCompleto"
+                onChange={handleInputChange}
+              />
+            </div>
 
-            {/* Botones fijos en la parte inferior */}
-          <div className="modal-action flex justify-between">
-            <button
-              className="bg-primary text-white px-4 py-2 rounded-md ml-[62%] hover:bg-blue-950"
-              type="submit"
-              disabled={isCreatingUser}
-              onClick={handleSubmit}
-            >
-              {isCreatingUser ? "Creando..." : "Crear"}
-            </button>
-            <button
-              className="mr-2 border border-gray-300 rounded-md px-4 py-2 hover:bg-gray-400"
-              type="button"
-              onClick={onClose}
-            >
-              Cancelar
-            </button>
-          </div>
+            <div>
+              <label className="block mb-1">Email</label>
+              <input
+                type="email"
+                placeholder="Correo"
+                className="input border border-blue-950 rounded p-2 w-full h-10"
+                value={formData.correo}
+                name="correo"
+                onChange={handleInputChange}
+              />
+            </div>
+
+            {/* Segunda columna - Contraseñas, País y Rol */}
+            <div>
+              <label className="block mb-1">Contraseña</label>
+              <input
+                type="password"
+                placeholder="Contraseña"
+                className="input border border-blue-950 rounded p-2 w-full h-10"
+                value={formData.contrasena}
+                name="contrasena"
+                onChange={handleInputChange}
+              />
+            </div>
+
+            <div>
+              <label className="block mb-1">Confirmar Contraseña</label>
+              <input
+                type="password"
+                placeholder="Confirmar Contraseña"
+                className="input border border-blue-950 rounded p-2 w-full h-10"
+                value={formData.confirmContrasena}
+                name="confirmContrasena"
+                onChange={handleInputChange}
+              />
+            </div>
+
+            <div>
+              <label className="block mb-1">País</label>
+              <input
+                type="text"
+                placeholder="País"
+                className="input border border-blue-950 rounded p-2 w-full h-10"
+                value={formData.pais}
+                name="pais"
+                onChange={handleInputChange}
+              />
+            </div>
+
+            <div>
+              <label className="block mb-1">Rol</label>
+              <input
+                type="text"
+                placeholder="Rol"
+                className="input border border-blue-950 rounded p-2 w-full h-10"
+                value={formData.roles}
+                name="roles"
+                onChange={handleInputChange}
+              />
+            </div>
+
+            <div className="col-span-1">
+              <label className="block mb-1">Biografía</label>
+              <textarea
+                placeholder="Biografía"
+                className="border border-blue-950 rounded p-2 w-full"
+                value={formData.biografia}
+                name="biografia"
+                onChange={handleInputChange}
+                maxLength={200}
+                rows={4}
+                style={{ resize: 'none', overflowWrap: 'break-word' }}
+              />
+            </div>
+
+            {/* Añade más campos del formulario según sea necesario */}
+            
+            {/* Botón de creación */}
+            <div className="modal-action col-span-2">
+              <button
+                className="bg-primary text-white px-4 py-2 rounded-md hover:bg-blue-950"
+                type="submit"
+              >
+                {isCreatingUser ? "Creando..." : "Crear"}
+              </button>
+              <button
+                className="border border-gray-300 rounded-md px-4 py-2 hover:bg-gray-400"
+                type="button"
+                onClick={onClose}
+              >
+                Cancelar
+              </button>
+            </div>
           </form>
         </div>
       </dialog>
     </>
   )}
 </>
+
 
 
   );
