@@ -64,9 +64,7 @@ const ModalCrearNotificacion = ({ isOpen, onClose }) => {
   return (
     <div className="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center z-50">
       <div className="bg-white rounded-lg shadow-lg p-6 w-96 relative">
-        <button onClick={onClose} className="absolute top-2 right-2 text-lg font-bold">
-          &times;
-        </button>
+
         <h2 className="text-xl font-semibold mb-4">Crear Notificación</h2>
 
         {loading ? (
@@ -127,14 +125,14 @@ const ModalCrearNotificacion = ({ isOpen, onClose }) => {
             <div className="flex justify-end">
               <button
                 onClick={handleCreateConfirm}
-                className="bg-blue-500 text-white px-4 py-2 rounded mr-2"
+                className="px-4 py-2 border rounded bg-primary text-white hover:bg-blue-950"
                 disabled={isCreatingNotificacion}
               >
                 {isCreatingNotificacion ? "Creando..." : "Crear"}
               </button>
               <button
                 onClick={onClose}
-                className="bg-gray-300 text-black px-4 py-2 rounded"
+                className="px-4 py-2 bg-gray-300 text-gray-800 rounded-md ml-4 hover:bg-gray-400"
                 disabled={isCreatingNotificacion}
               >
                 Cancelar

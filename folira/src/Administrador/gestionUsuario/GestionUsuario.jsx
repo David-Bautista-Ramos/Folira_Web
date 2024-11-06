@@ -218,7 +218,7 @@ function GestionUsuario() {
               </select>
 
               {/* Barra de búsqueda */}
-              <input
+              <input 
                 type="text"
                 placeholder="Buscar usuario..."
                 value={searchTerm}

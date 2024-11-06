@@ -156,7 +156,7 @@ const ModalCrearComunidad = ({ isOpen, onClose, token, obtenerComunidades }) => 
 
       {/* USER AVATAR */}
       <div className="relative mb-2 w-full">
-        <div className="absolute -bottom-[-15px] left-4 w-20 h-20"> 
+        <div className="absolute -bottom-[10px] left-4 w-20 h-20"> 
           <img
             src={fotoComunidad || "/avatar-placeholder.png"}
             className="w-full h-full rounded-full border-2 border-white mb-[20%]  object-cover"
@@ -283,7 +283,7 @@ const ModalCrearComunidad = ({ isOpen, onClose, token, obtenerComunidades }) => 
         <button
             type="button"
             onClick={onClose}
-            className="border border-gray-300 mt-3 ml-2 rounded-md px-4 py-2 hover:bg-gray-400 transition"
+            className="px-4 py-2 bg-gray-300 text-gray-800 rounded-md  mt-3 ml-4 hover:bg-gray-400"
         >
             Cancelar
         </button>

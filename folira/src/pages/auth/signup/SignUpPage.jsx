@@ -41,6 +41,15 @@ const SignUpPage = () => {
 		confirmarContrasena: "", // Nuevo campo para la confirmación de contraseña
 	});
 
+    const [formErrors, setFormErrors] = useState({
+        correo: "",
+        nombre: "",
+        contrasena: "",
+        confirmarContrasena: "",
+    });
+    
+
+
 	const { mutate, isError, isPending, error } = useMutation({
 		mutationFn: async ({ correo, nombre, nombreCompleto, pais, contrasena }) => {
 			const res = await fetch("/api/auth/signup", {
@@ -78,19 +87,46 @@ const SignUpPage = () => {
 		return <Navigate to="/" />; // Redirecciona al inicio
 	}
 
+    
+
+    
 	const handleInputChange = (e) => {
-		const { name, value } = e.target;
-	  
-		// Validar que el nombre completo solo contenga letras y espacios
-		if (name === 'nombreCompleto') {
-		  const soloLetras = /^[a-zA-ZáéíóúÁÉÍÓÚñÑ\s]*$/; // Expresión regular para letras y espacios
-		  if (!soloLetras.test(value)) {
-			return; // Si contiene algo diferente a letras/espacios, no actualizar el estado
-		  }
-		}
-	  
-		setFormData({ ...formData, [name]: value });
-	  };
+        const { name, value } = e.target;
+        let errorMessage = "";
+    
+        if (name === 'nombre') {
+            const validUsername = /^[a-zA-Z0-9]*$/; // Eliminamos \s para no permitir espacios
+            if (!validUsername.test(value)) {
+                errorMessage = "El nombre de usuario solo puede contener letras y números, sin espacios.";
+            }
+        }
+        
+    
+        if (name === 'correo') {
+            const validEmail = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+            if (value && !validEmail.test(value)) {
+                errorMessage = "Por favor, ingresa un correo electrónico válido.";
+            }
+        }
+    
+        if (name === 'contrasena') {
+            const validPassword = /^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d]{8,}$/;
+            if (value && !validPassword.test(value)) {
+                errorMessage = "La contraseña debe tener al menos 8 caracteres, incluir al menos una letra y un número.";
+            }
+        }
+    
+        if (name === 'confirmarContrasena') {
+            if (value && value !== formData.contrasena) {
+                errorMessage = "Las contraseñas no coinciden.";
+            }
+        }
+    
+        setFormErrors({ ...formErrors, [name]: errorMessage });
+        setFormData({ ...formData, [name]: value });
+    };
+    
+    
 	  
 
 	const handleChange = (selectedOption) => {
@@ -126,6 +162,7 @@ const SignUpPage = () => {
                                 value={formData.correo}
                             />
                         </label>
+                        {formErrors.correo && <span className="text-red-500 text-sm">{formErrors.correo}</span>}
                     </label>
 
                     {/* Campo de Nombre de Usuario */}
@@ -142,6 +179,7 @@ const SignUpPage = () => {
                                 value={formData.nombre}
                             />
                         </label>
+                        {formErrors.nombre && <span className="text-red-500 text-sm">{formErrors.nombre}</span>}
                     </label>
 
                     {/* Campo de Nombre Completo */}
@@ -192,8 +230,10 @@ const SignUpPage = () => {
                                 <FaEye onClick={() => setShowPassword(true)} className="cursor-pointer" />
                             )}
                         </label>
+                        {formErrors.contrasena && <span className="text-red-500 text-sm">{formErrors.contrasena}</span>}
                     </label>
 
+                    {/* Campo de Confirmar Contraseña */}
                     {/* Campo de Confirmar Contraseña */}
                     <label className='flex flex-col w-full'>
                         <span className='font-bold'>Confirmar Contraseña:</span>
@@ -213,7 +253,9 @@ const SignUpPage = () => {
                                 <FaEye onClick={() => setShowConfirmPassword(true)} className="cursor-pointer" />
                             )}
                         </label>
+                        {formErrors.confirmarContrasena && <span className="text-red-500 text-sm">{formErrors.confirmarContrasena}</span>}
                     </label>
+
 
                     <div className='col-span-1 md:col-span-2 flex justify-center'>
                         <button className='btn rounded-full btn-primary text-white'>

@@ -271,7 +271,7 @@ const ModalActualizarAutor = ({ isOpen, onClose, autorId, token, obtenerAutores 
                                         {isUpdatingAuthors ? "Actualizando..." : "Guardar"}
                                     </button>
                                     {isError && <p className='text-red-500'>{error.message}</p>}
-                                    <button className='border border-gray-300 rounded-md px-4 py-2 hover:bg-gray-400' type='button' onClick={onClose}>
+                                    <button className='px-4 py-2 bg-gray-300 text-gray-800 rounded-md  hover:bg-gray-400' type='button' onClick={onClose}>
                                         Cancelar
                                     </button>
                                 </div>

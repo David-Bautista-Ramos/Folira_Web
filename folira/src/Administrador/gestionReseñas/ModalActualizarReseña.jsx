@@ -248,14 +248,7 @@ const ModalActualizarReseña = ({
           </div>
 
           <div className="mt-4 flex justify-end">
-            <button
-              type="button"
-              onClick={onClose}
-              className="mr-2 border border-gray-300 rounded-md px-4 py-2"
-            >
-              Cancelar
-            </button>
-            <button
+          <button
               type="submit"
               disabled={isUpdatingResena}
               className={`bg-primary text-white px-4 py-2 rounded-md ${
@@ -264,6 +257,15 @@ const ModalActualizarReseña = ({
             >
               {isUpdatingResena ? "Actualizando..." : "Actualizar"}
             </button>
+
+            <button
+              type="button"
+              onClick={onClose}
+              className="px-4 py-2 bg-gray-300 text-gray-800 rounded-md  ml-4  hover:bg-gray-400"
+            >
+              Cancelar
+            </button>
+            
           </div>
         </form>
       </div>

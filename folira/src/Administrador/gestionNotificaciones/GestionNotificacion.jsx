@@ -241,6 +241,11 @@ const handleVisibleCountChange = (event) => {
 
             {/* Botones de "Estado", "Filtrar", y "Más" */}
             <div className="flex items-center gap-2 ml-auto mr-[50px]">
+
+              <button onClick={() => setIsCrearModalOpen(true)} title="Crear">
+                <BiPlus className="text-xl ml-4" />
+              </button>
+
               <button
                 onClick={() => setIsFilterModalOpen(true)}
                 className="bg-primary text-white px-4 py-2 rounded hover:bg-blue-950"
@@ -255,9 +260,7 @@ const handleVisibleCountChange = (event) => {
                 Filtrar
               </button>
 
-              <button onClick={() => setIsCrearModalOpen(true)} title="Crear">
-                <BiPlus className="text-xl" />
-              </button>
+              
             </div>
           </div>
 
@@ -274,14 +277,14 @@ const handleVisibleCountChange = (event) => {
                     <div>{getNotificationIcon(notificacion.tipo)}</div>
                     <div className="flex flex-col">
                       <span className="font-bold">{notificacion.de?.nombre} ha enviado una notificación</span>
-                      <span className="font-bold">{notificacion.para?.nombre} ha resibido la notificación</span>
+                      <span className="font-bold">{notificacion.para?.nombre} ha recibido la notificación</span>
                       <p className="text-gray-700 mb-2">
                         Tipo: {notificacion.tipo.charAt(0).toUpperCase() + notificacion.tipo.slice(1)}
                       </p>
                       <p>Mensaje: {notificacion.mensaje}</p>
                     </div>
                   </div>
-                  <p className="text-gray-600">Estado: {notificacion.leido ? "Activo" : "Inactivo"}</p>
+                  <p className="font-semibold mb-2">Estado: {notificacion.leido ? "Activo" : "Inactivo"}</p>
                   <div className="mt-auto flex justify-between items-center">
                     <div className="flex items-center gap-3">
                       <button onClick={() => handleOpenActivarModal(notificacion._id)} title="Activar">

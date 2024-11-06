@@ -36,30 +36,42 @@ function GestionPublicaciones() {
 
   
 
-  // Obtener publicaciones de la API
-const obtenerPublicaciones = async () => {
-  setIsLoading(true); // Inicia la carga
-  try {
-    const response = await fetch("/api/posts/all");
-    if (!response.ok) throw new Error("Error al obtener las publicaciones");
+    const obtenerPublicaciones = async () => {
+      setIsLoading(true); // Inicia la carga
+      try {
+        const response = await fetch("/api/posts/all", {
+          method: "GET",
+          headers: {
+            "Content-Type": "application/json",
+          },
+        });
+    
+        if (!response.ok) {
+          throw new Error("Error al obtener las publicaciones");
+        }
+    
+        const data = await response.json();
+        console.log(data); // Imprimir la respuesta para depurar
+    
+        // Verificar si la respuesta es un array
+        if (Array.isArray(data)) {
+          // Ordenar el array por fecha de forma descendente (de más reciente a más antigua)
+          const publicacionesOrdenadas = data.sort((a, b) => new Date(b.fecha) - new Date(a.fecha));
+          setPublicaciones(publicacionesOrdenadas);
+          setFilteredPublicacion(publicacionesOrdenadas);
+        } else {
+          console.error("La respuesta de publicaciones no es un array:", data);
+          setPublicaciones([]);
+          setFilteredPublicacion([]);
+        }
+      } catch (error) {
+        console.error("Error:", error);
+      } finally {
+        setIsLoading(false); // Finaliza la carga
+      }
+    };
+    
 
-    const data = await response.json();
-
-    if (Array.isArray(data)) {
-      const publicacionesInvertidas = data.reverse(); // Invierte el array
-      setPublicaciones(publicacionesInvertidas);
-      setFilteredPublicacion(publicacionesInvertidas);
-    } else {
-      console.error("La respuesta de publicaciones no es un array:", data);
-      setPublicaciones([]);
-      setFilteredPublicacion([]);
-    }
-  } catch (error) {
-    console.error("Error:", error);
-  } finally {
-    setIsLoading(false); // Finaliza la carga
-  }
-};
 
 useEffect(() => {
   obtenerPublicaciones();
@@ -241,16 +253,21 @@ useEffect(() => {
               />
             </div>
             
-            <button
-              onClick={() => setIsFilterModalOpen(true)}
-              className="bg-primary text-white px-4 py-2 ml-[360px] rounded hover:bg-blue-950"
-            >
-              Estado
-            </button>
+            <div className="flex items-center gap-4"> 
+              <button onClick={() =>setIsCrearModalOpen(true)} title="Crear">
+                <BiPlus className="text-xl" />
+              </button>
 
-            <button onClick={() =>setIsCrearModalOpen(true)} title="Crear">
-              <BiPlus className="text-xl" />
-            </button>
+                <button
+                onClick={() => setIsFilterModalOpen(true)}
+                className="bg-primary text-white px-4 py-2  rounded hover:bg-blue-950"
+              >
+                Estado
+              </button>
+
+             
+            </div>
+           
           </div>
 
           <div className="flex flex-wrap justify-center gap-6 p-6">
@@ -287,7 +304,7 @@ useEffect(() => {
                         >
                           {publicacion.user?.nombreCompleto}
                         </Link>
-                        <p>Estado: {obtenerEstadoTexto(publicacion.estado)}</p>
+                        <p className="font-semibold">Estado: {obtenerEstadoTexto(publicacion.estado)}</p>
                         <p>Tipo de publicación: {tipoPublicacion}</p> {/* Mostrar tipo de publicación */}
 
                       </div>

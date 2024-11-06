@@ -220,7 +220,7 @@ function GestionAutor() {
                 className="p-2 border border-gray-400 rounded w-[340px]"
               />
             </div>
-            <div className="flex items-center">
+            <div className="flex items-center gap-4">
               <button onClick={() => setIsCrearModalOpen(true)} title="Crear">
                 <BiPlus className="text-xl" />
               </button>

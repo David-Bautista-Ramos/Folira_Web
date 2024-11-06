@@ -242,18 +242,20 @@ function ModalCrearLibro({ isOpen, onClose, token }) {
         {showAutores ? "Ocultar Autores" : "Mostrar Autores"}
       </button>
       {showAutores && (
-        <div className="flex flex-wrap">
-          {availableAutor.map((autor) => (
-            <div key={autor.id || autor.nombre} className="flex items-center mr-2">
-              <input
-                type="checkbox"
-                checked={selectedAutores.includes(autor._id)}
-                onChange={() => handleAutoresChange(autor._id)}
-                className="mr-1"
-              />
-              <span>{autor.nombre}</span>
-            </div>
-          ))}
+        <div className="max-h-48 overflow-y-auto border border-gray-300 p-2 rounded">
+          <div className="flex flex-wrap">
+            {availableAutor.map((autor) => (
+              <div key={autor.id || autor.nombre} className="flex items-center mr-2 mb-2">
+                <input
+                  type="checkbox"
+                  checked={selectedAutores.includes(autor._id)}
+                  onChange={() => handleAutoresChange(autor._id)}
+                  className="mr-1"
+                />
+                <span>{autor.nombre}</span>
+              </div>
+            ))}
+          </div>
         </div>
       )}
     </div>
@@ -269,39 +271,42 @@ function ModalCrearLibro({ isOpen, onClose, token }) {
         {showGeneros ? "Ocultar Géneros" : "Mostrar Géneros"}
       </button>
       {showGeneros && (
-        <div className="flex flex-wrap">
-          {availableGeneros.map((genero) => (
-            <div key={genero.id || genero.nombre} className="flex items-center mr-2">
-              <input
-                type="checkbox"
-                checked={selectedGeneros.includes(genero._id)}
-                onChange={() => handleGeneroChange(genero._id)}
-                className="mr-1"
-              />
-              <span>{genero.nombre}</span>
-            </div>
-          ))}
+        <div className="max-h-48 overflow-y-auto border border-gray-300 p-2 rounded">
+          <div className="flex flex-wrap">
+            {availableGeneros.map((genero) => (
+              <div key={genero.id || genero.nombre} className="flex items-center mr-2 mb-2">
+                <input
+                  type="checkbox"
+                  checked={selectedGeneros.includes(genero._id)}
+                  onChange={() => handleGeneroChange(genero._id)}
+                  className="mr-1"
+                />
+                <span>{genero.nombre}</span>
+              </div>
+            ))}
+          </div>
         </div>
       )}
     </div>
-  </div>
-</div>
+
+      </div>
+    </div>
       <div className="border-t border-gray-300 flex justify-end">
-    <button
-        type="submit"
-        className="bg-primary mt-3 text-white px-4 py-2 rounded-md hover:bg-blue-950"
-        disabled={isCreatingLibro}
-    >
-        {isCreatingLibro ? "Creando..." : "Crear Libro"}
-    </button>
-    <button
-        type="button"
-        onClick={onClose}
-        className="border border-gray-300 mt-3 ml-2 rounded-md px-4 py-2 hover:bg-gray-400"
-    >
-        Cerrar
-    </button>
-</div>
+        <button
+            type="submit"
+            className="bg-primary mt-3 text-white px-4 py-2 rounded-md hover:bg-blue-950"
+            disabled={isCreatingLibro}
+        >
+            {isCreatingLibro ? "Creando..." : "Crear Libro"}
+        </button>
+        <button
+            type="button"
+            onClick={onClose}
+            className="px-4 py-2 bg-gray-300 text-gray-800 rounded-md mt-3 ml-4 hover:bg-gray-400"
+        >
+            Cerrar
+        </button>
+      </div>
       
     </form>
 

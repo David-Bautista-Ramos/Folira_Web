@@ -66,7 +66,7 @@ const ModalInactivarDenuncia = ({
         onClick={(e) => e.stopPropagation()}
       >
         <h2 className="text-2xl font-semibold text-gray-800 mb-4">
-          Desactivar Denuncia
+          Inactivar Denuncia
         </h2>
 
         {/* Mostrar el mensaje de error solo si hay un error y no estamos cargando */}
@@ -102,7 +102,7 @@ const ModalInactivarDenuncia = ({
             onClick={handleDesactivarDenuncia}
             disabled={loading}
           >
-            {loading ? "Desactivando..." : "Desactivar"}
+            {loading ? "Inactivando..." : "Inactivar"}
           </button>
         </div>
       </div>

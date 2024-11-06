@@ -297,10 +297,18 @@ const ModalActualizarComunidad = ({ isOpen, onClose, token, comunidadId,obtenerC
       <button
         onClick={handleSubmit}
         disabled={isUpdatingcomunidad}
-        className={`bg-primary text-white p-2 rounded ${isUpdatingcomunidad ? "opacity-50 cursor-not-allowed" : ""}`}
+        className={`bg-primary mt-3 text-white px-4 py-2 rounded-md hover:bg-blue-950 transition ${isUpdatingcomunidad ? "opacity-50 " : ""}`}
       >
         {isUpdatingcomunidad ? "Actualizando..." : "Actualizar Comunidad"}
       </button>
+
+      <button
+            type="button"
+            onClick={onClose}
+            className="px-4 py-2 bg-gray-300 text-gray-800 rounded-md  mt-3 ml-4 hover:bg-gray-400"
+        >
+            Cancelar
+        </button>
     </div>
 
 

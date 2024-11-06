@@ -299,7 +299,7 @@ function ModalActualizarLibro({ isOpen, onClose, libroId, obtenerLibros, token }
       </button>
       
       <button
-        className="border border-gray-300 mt-3 ml-2 rounded-md px-4 py-2 hover:bg-gray-400"
+        className="px-4 py-2 bg-gray-300 text-gray-800 rounded-md mt-3 ml-4  hover:bg-gray-400"
         onClick={onClose}
       >
         Cancelar

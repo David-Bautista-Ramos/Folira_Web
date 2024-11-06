@@ -153,7 +153,7 @@ const ModalActualizarUsuario = ({ isOpen, onClose, userId, token }) => {
                                 </div>
 
                                 {/* USER AVATAR */}
-                                <div className="absolute top-[20%] left-[19%] transform -translate-x-1/2 w-32">
+                                <div className="absolute top-[30%] left-[15%] transform -translate-x-1/2 w-32">
                                     <div className="avatar relative">
                                         <div className="w-32 h-32 rounded-full border-4 border-white overflow-hidden">
                                             <img src={fotoPerfil || "/avatar-placeholder.png"} alt="profile avatar" />
@@ -174,77 +174,111 @@ const ModalActualizarUsuario = ({ isOpen, onClose, userId, token }) => {
                                     />
                                 </div>
 
-                                {/* Primera columna - Información básica */}
-                                <div className="grid grid-cols-1 gap-6 pt-16">
+                                 {/* Primera columna - Información básica */}
+                                
+                                 <div>
+                                     <label className="block mb-1 mt-[50px]">Nombre Usuario</label>
                                     <input
                                         type="text"
                                         placeholder="Nombre Usuario"
-                                        className="input border border-blue-950 rounded p-2  h-10"
+                                        className="input border border-blue-950 rounded p-2 w-full h-10"
                                         value={formData.nombre}
                                         name="nombre"
                                         onChange={handleInputChange}
                                     />
+                                </div>
+                                   
+                                
+                                <div>
+                                    <label className="block mb-1 mt-[50px]">Nombre Completo</label>
                                     <input
                                         type="text"
                                         placeholder="Nombre Completo"
-                                        className="input border border-blue-950 rounded p-2  h-10"
+                                        className="input border border-blue-950 rounded p-2 w-full h-10"
                                         value={formData.nombreCompleto}
                                         name="nombreCompleto"
                                         onChange={handleInputChange}
                                     />
-                                    <textarea
-                                        placeholder="Biografía"
-                                        className="border border-blue-950 rounded p-2"
-                                        value={formData.biografia}
-                                        name="biografia"
-                                        onChange={handleInputChange}
-                                        maxLength={200}
-                                        rows={4}
-                                        style={{ resize: 'none', overflowWrap: 'break-word' }}
-                                    />
+                                </div>
+
+                                
+
+                                <div>
+                                    <label className="col-span-1">Email</label>
                                     <input
                                         type="email"
                                         placeholder="Correo"
-                                        className="input border border-blue-950 rounded p-2  h-10"
+                                        className="input border border-blue-950 rounded p-2 w-full h-10"
                                         value={formData.correo}
                                         name="correo"
                                         onChange={handleInputChange}
                                     />
                                 </div>
 
-                                {/* Segunda columna - Contraseñas, País y Rol */}
-                                <div className="grid grid-cols-1 -mt-[10px] gap-2 pt-16">
-                                    <input
-                                        type="password"
-                                        placeholder="Contraseña Actual"
-                                        className="input border border-blue-950 rounded p-2  h-10"
-                                        value={formData.currentcontrasena}
-                                        name="currentcontrasena"
-                                        onChange={handleInputChange}
-                                    />
-                                    <input
-                                        type="password"
-                                        placeholder="Contraseña Nueva"
-                                        className="input border border-blue-950 rounded p-2  h-10"
-                                        value={formData.newcontrasena}
-                                        name="newcontrasena"
-                                        onChange={handleInputChange}
-                                    />
+                                <div className="col-span-1 -mt-1">
+                                    <label className="block mb-1">País</label>
                                     <input
                                         type="text"
                                         placeholder="País"
-                                        className="input border border-blue-950 rounded p-2 h-10"
+                                        className="input border border-blue-950 rounded p-2 w-full h-10"
                                         value={formData.pais}
                                         name="pais"
                                         onChange={handleInputChange}
                                     />
+                                </div>
+                                    
+
+                                {/* Segunda columna - Contraseñas, País y Rol */}
+                                
+                                <div>
+                                    <label className="block mb-1">Contraseña Actual</label>
+                                    <input
+                                        type="password"
+                                        placeholder="Contraseña Actual"
+                                        className="input border border-blue-950 rounded p-2 w-full h-10"
+                                        value={formData.currentcontrasena}
+                                        name="currentcontrasena"
+                                        onChange={handleInputChange}
+                                    />
+                                </div>
+
+                                <div>
+                                    <label className="block mb-1">Contraseña Nueva</label>
+                                    <input
+                                        type="password"
+                                        placeholder="Contraseña Nueva"
+                                        className="input border border-blue-950 rounded p-2 w-full h-10"
+                                        value={formData.newcontrasena}
+                                        name="newcontrasena"
+                                        onChange={handleInputChange}
+                                    />
+                                </div>
+                                    
+                                
+
+                                <div className="col-span-1">
+                                    <label className="block mb-1">Rol</label>
                                     <input
                                        type="text"
                                        placeholder="Rol"
-                                       className="input border border-blue-950 rounded p-2  h-10"
+                                       className="input border border-blue-950 rounded p-2 w-full h-10"
                                        value={formData.roles}
                                        name="roles"
                                        onChange={handleInputChange}
+                                    />
+                                </div>
+
+                                <div>
+                                    <label className="col-span-1">Biografia</label>
+                                    <textarea
+                                        placeholder="Biografía"
+                                        className="border border-blue-950 rounded p-2 w-full"
+                                        value={formData.biografia}
+                                        name="biografia"
+                                        onChange={handleInputChange}
+                                        maxLength={200}
+                                        rows={4}
+                                        style={{ resize: 'none', overflowWrap: 'break-word' }}
                                     />
                                 </div>
 
@@ -286,7 +320,7 @@ const ModalActualizarUsuario = ({ isOpen, onClose, userId, token }) => {
                                 </button>
                                     {isError && <p className="text-red-500">{error.message}</p>}
                                     <button
-                                  className="border border-gray-300 rounded-md px-4 py-2 hover:bg-gray-400"
+                                  className="px-4 py-2 bg-gray-300 text-gray-800 rounded-md  hover:bg-gray-400"
                                   type="button"
                                   onClick={onClose}
                                 >

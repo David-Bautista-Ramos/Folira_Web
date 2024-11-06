@@ -255,10 +255,10 @@ function GestionDenuncia() {
                       />
                       <span className="font-bold">{denuncia.idUsuario?.nombreCompleto}</span>
                     </div>
-                    <h2 className="font-semibold">Motivo: {obtenerTipoDenuncia(denuncia)}</h2>
+                    <h2 className="font-semibold">Tipo: {obtenerTipoDenuncia(denuncia)}</h2>
                     <p>Fecha: {formatMemberSinceDate2(denuncia.updatedAt)}</p>
-                    <p className="font-semibold">Estado: {denuncia.estado ? "Activo" : "Inactivo"}</p>
                     <p>Motivo: {denuncia.motivo}</p>
+                    <p className="font-semibold">Estado: {denuncia.estado ? "Activo" : "Inactivo"}</p>
                     {denuncia.tipo === "publicacion" && (
                                             <>
                                                 <p className="text-gray-700 mb-2">

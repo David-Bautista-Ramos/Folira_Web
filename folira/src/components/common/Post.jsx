@@ -289,12 +289,12 @@ const Post = ({ post }) => {
                 >
                   <textarea
                     className="textarea w-full p-1 rounded text-md resize-none border focus:outline-none border-blue-950"
-                    placeholder="Add a comment..."
+                    placeholder="Escribe un comentario"
                     value={comentarios}
                     onChange={(e) => setComentarios(e.target.value)}
                   />
                   <button className="btn btn-primary rounded-full btn-sm text-white px-4">
-                    {isCommenting ? <LoadingSpinner size="md" /> : "Post"}
+                    {isCommenting ? <LoadingSpinner size="md" /> : "Publicar"}
                   </button>
                 </form>
               </div>

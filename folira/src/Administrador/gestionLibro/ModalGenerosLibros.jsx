@@ -127,7 +127,7 @@ function ModalGeneros({ isOpen, onClose }) {
             {isLoading ? (
               <GestionSkeleton /> // Muestra el componente de carga mientras se obtienen los datos
             ) : generos.length > 0 ? (
-              generos.map((genero,index) => (
+              generos.slice().reverse().map((genero,index) => (
                 <div
                   key={index}
                   className="flex flex-col bg-white border border-primary p-4 rounded-md mb-4"

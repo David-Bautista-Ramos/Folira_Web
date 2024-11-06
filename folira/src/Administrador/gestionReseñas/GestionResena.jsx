@@ -233,16 +233,18 @@ useEffect(() => {
                         />
                         </div>
                         
-                        <button
-                            onClick={() => setIsFilterModalOpen(true)}
-                            className="bg-primary text-white px-4 py-2 rounded ml-[370px] hover:bg-blue-950"
-                        >
-                            Estado
-                        </button>
+                        <div className="flex items-center gap-4"> 
+                            <button onClick={() => setIsCrearModalOpen(true)} title="Crear">
+                                <BiPlus className="text-xl " />
+                            </button> 
 
-                        <button onClick={() => setIsCrearModalOpen(true)} title="Crear">
-                            <BiPlus className="text-xl mr-3" />
-                        </button>
+                            <button
+                                onClick={() => setIsFilterModalOpen(true)}
+                                className="bg-primary text-white px-4 py-2 rounded hover:bg-blue-950"
+                            >
+                                Estado
+                            </button>
+                        </div>
                     </div>
 
                     <div className="flex flex-wrap justify-center gap-6 p-6">
