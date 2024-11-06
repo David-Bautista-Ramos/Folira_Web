@@ -1,7 +1,9 @@
-import { useState, useEffect, useCallback } from "react";
-import useUpdateNotificacion from "../../hooks/useUpdateNotificacion";
-import toast from "react-hot-toast";
-import Select from 'react-select';
+
+  import { useState, useEffect, useCallback } from "react";
+  import useUpdateNotificacion from "../../hooks/useUpdateNotificacion";
+  import toast from "react-hot-toast";
+  import Select from 'react-select';
+
 
 function ModalActualizarNotificacion({ isOpen, onClose, NotificacionId, obtenerNotificaciones, token }) {
   const [formData, setFormData] = useState({
@@ -11,11 +13,12 @@ function ModalActualizarNotificacion({ isOpen, onClose, NotificacionId, obtenerN
     mensaje: "",
   });
 
-  const [availableUsuarios, setAvailableUsuarios] = useState([]);
-  const [selectedDeUsuario, setSelectedDeUsuario] = useState(""); 
-  const [selectedParaUsuario, setSelectedParaUsuario] = useState("");
-  const [loading, setLoading] = useState(false);
-  const [error, setError] = useState('');
+
+    const [availableUsuarios, setAvailableUsuarios] = useState([]);
+    const [selectedDeUsuario, setSelectedDeUsuario] = useState(""); // State for "de" user
+    const [selectedParaUsuario, setSelectedParaUsuario] = useState(""); // State for "para" user
+    const [loading, setLoading] = useState(false);
+    const [error, setError] = useState('');
 
   const { updateNotificacion, isUpdatingNotificacion } = useUpdateNotificacion(NotificacionId);
 

@@ -129,7 +129,7 @@ const ModalActualizarUsuario = ({ isOpen, onClose, userId, token }) => {
                         <div className="modal-box border rounded-md border-blue-950 shadow-md p-6 relative max-h-[85vh] max-w-[120vh] overflow-y-auto">
                             <h3 className="text-primary font-bold text-lg my-3">Actualizar Usuario</h3>
 
-                            <form className="text-primary grid grid-cols-2 gap-4" onSubmit={handleSubmit}>
+                            <form className="text-primary grid grid-cols-2 gap-x-8 gap-y-4 items-start" onSubmit={handleSubmit}>
                                 {/* COVER IMG */}
                                 <div className="col-span-2 relative">
                                     <img
@@ -174,9 +174,10 @@ const ModalActualizarUsuario = ({ isOpen, onClose, userId, token }) => {
                                     />
                                 </div>
 
-                                 {/* Primera columna - Información básica */}
+                                {/* Primera columna - Información básica */}
                                 
-                                 <div>
+                                <div>
+
                                      <label className="block mb-1 mt-[50px]">Nombre Usuario</label>
                                     <input
                                         type="text"
@@ -254,7 +255,6 @@ const ModalActualizarUsuario = ({ isOpen, onClose, userId, token }) => {
                                     />
                                 </div>
                                     
-                                
 
                                 <div className="col-span-1">
                                     <label className="block mb-1">Rol</label>
@@ -266,6 +266,7 @@ const ModalActualizarUsuario = ({ isOpen, onClose, userId, token }) => {
                                        name="roles"
                                        onChange={handleInputChange}
                                     />
+
                                 </div>
 
                                 <div>

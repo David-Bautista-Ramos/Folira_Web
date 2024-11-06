@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react';
 import useCreateNotificacion from '../../hooks/useCreateNotificacion.jsx';
+import Select from 'react-select';
 
 const ModalCrearNotificacion = ({ isOpen, onClose }) => {
   const [notificationDetails, setNotificationDetails] = useState({
@@ -62,43 +63,63 @@ const ModalCrearNotificacion = ({ isOpen, onClose }) => {
   };
 
   return (
-    <div className="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center z-50">
-      <div className="bg-white rounded-lg shadow-lg p-6 w-96 relative">
+<div className="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center z-50">
+  <div className="bg-white rounded-lg shadow-lg p-6 w-96 relative">
+    <h2 className="text-xl font-semibold mb-4">Crear Notificación</h2>
 
-        <h2 className="text-xl font-semibold mb-4">Crear Notificación</h2>
+    {loading ? (
+      <p>Cargando usuarios...</p>
+    ) : error ? (
+      <p className="text-red-500">{error}</p>
+    ) : (
+      <>
+        <label className="block mb-2 text-primary">De:</label>
+        <Select
+          name="de"
+          value={users.find(user => user._id === notificationDetails.de) || null}
+          onChange={option => handleInputChange({ target: { name: 'de', value: option.value } })}
+          options={users.map(user => ({ value: user._id, label: user.nombre }))}
+          className="w-full mb-3"
+          classNamePrefix="select" // Esto permite un estilo más personalizado
+          styles={{
+            control: (provided) => ({
+              ...provided,
+              borderColor: 'gray',
+              boxShadow: 'none',
+              '&:hover': { borderColor: 'blue' }, // Cambiar color al pasar el ratón
+              minHeight: '38px', // Asegúrate de que el control tenga suficiente altura
+            }),
+            menu: (provided) => ({
+              ...provided,
+              overflowY: 'hidden', // Evita el scroll
+            }),
+          }}
+        />
 
-        {loading ? (
-          <p>Cargando usuarios...</p>
-        ) : error ? (
-          <p className="text-red-500">{error}</p>
-        ) : (
-          <>
-            <label className="block mb-2">De:</label>
-            <select
-              name="de"
-              value={notificationDetails.de}
-              onChange={handleInputChange}
-              className="w-full border border-gray-300 rounded p-2 mb-4"
-            >
-              <option value="">Seleccionar usuario</option>
-              {users.map((user) => (
-                <option key={user._id} value={user._id}>{user.nombre}</option>
-              ))}
-            </select>
+        <label className="block mb-1 text-primary">Para:</label>
+        <Select
+          name="para"
+          value={users.find(user => user._id === notificationDetails.para) || null}
+          onChange={option => handleInputChange({ target: { name: 'para', value: option.value } })}
+          options={users.map(user => ({ value: user._id, label: user.nombre }))}
+          className="w-full mb-3"
+          classNamePrefix="select" // Esto permite un estilo más personalizado
+          styles={{
+            control: (provided) => ({
+              ...provided,
+              borderColor: 'gray',
+              boxShadow: 'none',
+              '&:hover': { borderColor: 'blue' }, // Cambiar color al pasar el ratón
+              minHeight: '38px', // Asegúrate de que el control tenga suficiente altura
+            }),
+            menu: (provided) => ({
+              ...provided,
+              overflowY: 'hidden', // Evita el scroll
+            }),
+          }}
+        />
 
-            <label className="block mb-2">Para:</label>
-            <select
-              name="para"
-              value={notificationDetails.para}
-              onChange={handleInputChange}
-              className="w-full border border-gray-300 rounded p-2 mb-4"
-            >
-              <option value="">Seleccionar usuario</option>
-              {users.map((user) => (
-                <option key={user._id} value={user._id}>{user.nombre}</option>
-              ))}
-            </select>
-            <label className='block mb-2'>Mensaje</label>
+          <label className='block mb-2'>Mensaje</label>
             <input
              type="text"
              name='mensaje'
@@ -106,42 +127,57 @@ const ModalCrearNotificacion = ({ isOpen, onClose }) => {
              value={notificationDetails.mensaje}
              placeholder="Puedes dejar un mesaje para el usuario"
              className="w-full p-2 mb-2 border rounded focus:border-primary focus:outline-none text-sm"
-            />
-            <label className="block mb-2">Tipo de Notificación:</label>
-            <select
-              name="tipo"
-              value={notificationDetails.tipo}
-              onChange={handleInputChange}
-              className="w-full border border-gray-300 rounded p-2 mb-4"
-            >
-              <option value="">Seleccionar tipo</option>
-              <option value="seguidor">Seguidor</option>
-              <option value="like">Like</option>
-              <option value="insignia">Insignia</option>
-              <option value="denuncia">Denuncia</option>
-              <option value="comentario">Comentario</option>
-            </select>
+          />
 
-            <div className="flex justify-end">
-              <button
-                onClick={handleCreateConfirm}
-                className="px-4 py-2 border rounded bg-primary text-white hover:bg-blue-950"
-                disabled={isCreatingNotificacion}
-              >
-                {isCreatingNotificacion ? "Creando..." : "Crear"}
-              </button>
-              <button
-                onClick={onClose}
-                className="px-4 py-2 bg-gray-300 text-gray-800 rounded-md ml-4 hover:bg-gray-400"
-                disabled={isCreatingNotificacion}
-              >
-                Cancelar
-              </button>
-            </div>
-          </>
-        )}
-      </div>
-    </div>
+        <label className="block mb-2">Tipo de Notificación:</label>
+        <Select
+          name="tipo"
+          value={notificationDetails.tipo ? { value: notificationDetails.tipo, label: notificationDetails.tipo } : null}
+          onChange={option => handleInputChange({ target: { name: 'tipo', value: option.value } })}
+          options={[
+            { value: 'seguidor', label: 'Seguidor' },
+            { value: 'like', label: 'Like' },
+            { value: 'insignia', label: 'Insignia' },
+            { value: 'denuncia', label: 'Denuncia' },
+            { value: 'comentario', label: 'Comentario' },
+          ]}
+          className="w-full mb-4"
+          classNamePrefix="select" // Esto permite un estilo más personalizado
+          styles={{
+            control: (provided) => ({
+              ...provided,
+              borderColor: 'gray',
+              boxShadow: 'none',
+              '&:hover': { borderColor: 'blue' }, // Cambiar color al pasar el ratón
+              minHeight: '38px', // Asegúrate de que el control tenga suficiente altura
+            }),
+            menu: (provided) => ({
+              ...provided,
+              overflowY: 'hidden', // Evita el scroll
+            }),
+          }}
+        />
+
+        <div className="flex justify-end">
+          <button
+            onClick={handleCreateConfirm}
+            className="bg-primary mt-3 text-white px-4 py-2 rounded-md ml-2 hover:bg-blue-950"
+            disabled={isCreatingNotificacion}
+          >
+            {isCreatingNotificacion ? "Creando..." : "Crear"}
+          </button>
+          <button
+            onClick={onClose}
+            className="px-4 py-2 bg-gray-300 text-gray-800 rounded-md mt-3 ml-4 hover:bg-gray-400"
+            disabled={isCreatingNotificacion}
+          >
+            Cancelar
+          </button>
+        </div>
+      </>
+    )}
+  </div>
+</div>
   );
 };
 

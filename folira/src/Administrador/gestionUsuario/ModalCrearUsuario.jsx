@@ -147,7 +147,6 @@ const ModalCrearUsuario = ({ isOpen, onClose }) => {
                 onChange={handleInputChange}
               />
             </div>
-
             <div>
               <label className="block mb-1 mt-[50px]">Nombre Completo</label>
               <input
@@ -168,18 +167,6 @@ const ModalCrearUsuario = ({ isOpen, onClose }) => {
                 className="input border border-blue-950 rounded p-2 w-full h-10"
                 value={formData.correo}
                 name="correo"
-                onChange={handleInputChange}
-              />
-            </div>
-
-            <div className="col-span-1 -mt-1">
-              <label className="block mb-1">País</label>
-              <input
-                type="text"
-                placeholder="País"
-                className="input border border-blue-950 rounded p-2 w-full h-10"
-                value={formData.pais}
-                name="pais"
                 onChange={handleInputChange}
               />
             </div>
@@ -209,7 +196,17 @@ const ModalCrearUsuario = ({ isOpen, onClose }) => {
               />
             </div>
 
-            
+            <div>
+              <label className="block mb-1">País</label>
+              <input
+                type="text"
+                placeholder="País"
+                className="input border border-blue-950 rounded p-2 w-full h-10"
+                value={formData.pais}
+                name="pais"
+                onChange={handleInputChange}
+              />
+            </div>
 
             <div>
               <label className="block mb-1">Rol</label>
