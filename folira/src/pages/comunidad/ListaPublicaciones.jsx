@@ -146,7 +146,7 @@ const ListaPublicaciones = ({ posts, esAdmin, esMiembro }) => {
                 <h3 className="font-bold">Comentarios</h3>
                 <div className="max-h-60 overflow-auto mt-2">
                 {post.comentarios ? (
-                    post.comentarios.map((comment) => (
+                    post.comentarios.slice().reverse().map((comment) => (
                       <div key={comment._id} className="flex items-start gap-2 mb-2">
                       <img
                         src={comment.user.fotoPerfil || "/avatar-placeholder.png"}

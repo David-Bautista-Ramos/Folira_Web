@@ -7,7 +7,7 @@ function useCreateNotificacion() {
     const { mutateAsync: createNotificacion, isLoading: isCreatingNotificacion } = useMutation({
         mutationFn: async (formData) => {
             try {
-                const res = await fetch(`/api/notifications/notifi`, {
+                const res = await fetch(`/api/notifications/notifiad`, {
                     method: "POST",
                     headers: {
                         "Content-Type": "application/json",

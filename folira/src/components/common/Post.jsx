@@ -236,7 +236,7 @@ const Post = ({ post }) => {
                       No hay comentarios todavía 🤔 Sé el primero 😉
                     </p>
                   )}
-                  {post.comentarios.map((comentario) => (
+                  {post.comentarios.slice().reverse().map((comentario) => (
                     <div
                       key={comentario._id}
                       className="flex gap-2 items-start"

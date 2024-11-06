@@ -23,6 +23,7 @@ import DetallesComunidad from  './pages/comunidad/DetalleComunidad.jsx';
 import Index from './pages/Index.jsx';
 import RecuperarContrasena from './pages/auth/contraseña/RecuperarContrasena.jsx';
 import LibroSugerido from './pages/libro/LibroSugerido.jsx';
+import Amigos from './pages/amigos/Amigos.jsx';
 
 
 
@@ -138,6 +139,7 @@ function App() {
                 <Route path='/comunidad' element={authUser ? <Comunidad /> : <Navigate to='/login' />} />
                 <Route path='/libro' element={authUser ? <Libro /> : <Navigate to='/login' />} />
                 <Route path='/autor' element={authUser ? <Autor /> : <Navigate to='/login' />} />
+                <Route path='/amigos' element={authUser ? <Amigos /> : <Navigate to='/login' />} />
                 <Route path='/fichaLibro/:id' element={authUser ? <FichaTecnicaLibro libro={Libro} /> : <Navigate to='/login' />} />
                 <Route path='/fichaAutor/:id' element={authUser ? <FichaTecnicaAutor /> : <Navigate to='/login' />} />
                 <Route path='/detalleComunidad' element={authUser ? <DetallesComunidad /> : <Navigate to='/login' />} />   
@@ -164,6 +166,7 @@ function App() {
                   <Route path='/comunidad' element={authUser ? <Comunidad /> : <Navigate to='/login' />} />
                   <Route path='/libro' element={authUser ? <Libro /> : <Navigate to='/login' />} />
                   <Route path='/autor' element={authUser ? <Autor /> : <Navigate to='/login' />} />
+                  <Route path='/amigos' element={authUser ? <Amigos /> : <Navigate to='/login' />} />
                   <Route path='/fichaLibro/:id' element={authUser ? <FichaTecnicaLibro /> : <Navigate to='/login' />} />
                   <Route path='/fichaAutor/:id' element={authUser ? <FichaTecnicaAutor /> : <Navigate to='/login' />} />
                   <Route path='/detalleComunidad/:id' element={authUser ? <DetallesComunidad /> : <Navigate to='/login' />} />  

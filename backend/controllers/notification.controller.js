@@ -63,7 +63,26 @@ export const deteteNotification = async (req, res) => {
 
 
 {/*ADMIN*/}
+// Crear una nueva notificación
+export const crearNotificacionad = async (req, res) => {
+    try {
+        const { de, para, tipo, mensaje } = req.body;
 
+        const nuevaNotificacion = new Notification({
+            de,
+            para,
+            tipo,
+            mensaje,
+        });
+
+        // Guardar la notificación en la base de datos
+        await nuevaNotificacion.save();
+        res.status(201).json({ message: "Notificación creada con éxito", notificacion: Notification });
+    } catch (error) {
+        console.error("Error al crear la notificación:", error.message);
+        res.status(500).json({ error: "Error al crear la notificación." });
+    }
+};
 // Crear una nueva notificación
 export const crearNotificacion = async (req, res) => {
     try {
