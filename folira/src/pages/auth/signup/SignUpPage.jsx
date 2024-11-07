@@ -1,5 +1,5 @@
-import { Link, Navigate } from "react-router-dom";
-import { useState } from "react";
+import { Link, Navigate, useNavigate } from "react-router-dom";
+import {  useEffect, useState } from "react";
 import Folira_logo from "../../../assets/img/Folira_logo (1).svg";
 import { MdOutlineMail, MdPassword } from "react-icons/md";
 import { FaEye, FaEyeSlash, FaUser } from "react-icons/fa";
@@ -28,7 +28,10 @@ const SignUpPage = () => {
 		{ value: 'Venezuela', label: 'Venezuela' },
 	];
 
-	const [showPassword, setShowPassword] = useState(false);
+    const[correoExists, setCorreoExists] = useState(false);
+    const[nombreExists, setNombreExists] = useState(false);
+
+    const [showPassword, setShowPassword] = useState(false);
 	const [showConfirmPassword, setShowConfirmPassword] = useState(false); // Estado para mostrar/ocultar la confirmación de contraseña
 	const [selectedCountry, setSelectedCountry] = useState(null);
 	const [redirectToHome, setRedirectToHome] = useState(false);
@@ -47,12 +50,31 @@ const SignUpPage = () => {
         contrasena: "",
         confirmarContrasena: "",
     });
-    
 
+      // Función para redirigir
+
+      // Debounced check user existence
+   
+      useEffect(() => {
+        // Llama a la función de validación solo cuando el correo cambie
+        if (formData.correo.length > 0) {
+          validacionCorreo(formData.correo);
+        }
+      }, [formData.correo]); // Solo depende de formData.correo
+
+      useEffect(() => {
+        // Llama a la función de validación solo cuando el correo cambie
+        if (formData.nombre.length > 0) {
+          validacionNombre(formData.nombre);
+        }
+      }, [formData.nombre]); // Solo depende de formData.correo
+
+    const navigate = useNavigate(); // Declara navigate fuera del hook de mutación
 
 	const { mutate, isError, isPending, error } = useMutation({
+        
 		mutationFn: async ({ correo, nombre, nombreCompleto, pais, contrasena }) => {
-			const res = await fetch("/api/auth/signup", {
+            const res = await fetch("/api/auth/signup", {
 				method: "POST",
 				headers: { "Content-Type": "application/json" },
 				body: JSON.stringify({ correo, nombre, nombreCompleto, pais, contrasena }),
@@ -63,31 +85,59 @@ const SignUpPage = () => {
 		},
 		onSuccess: () => {
 			toast.success("Cuenta creada exitosamente");
+            navigate("/"); // Redirige directamente
 			setRedirectToHome(true); // Configura la redirección al inicio
 		},
 	});
 
-	const handleSubmit = (e) => {
-		e.preventDefault();
-		// Agrega el país seleccionado al formData
-		if (selectedCountry) {
-			setFormData((prev) => ({ ...prev, pais: selectedCountry.value }));
-		}
+	 const handleSubmit = (e) => {
+    e.preventDefault();
+    if (selectedCountry) {
+      setFormData((prev) => ({ ...prev, pais: selectedCountry.value }));
+    }
 
-		// Verifica si las contraseñas coinciden
-		if (formData.contrasena !== formData.confirmarContrasena) {
-			toast.error("Las contraseñas no coinciden");
-			return;
-		}
+    // Verifica si las contraseñas coinciden
+    if (formData.contrasena !== formData.confirmarContrasena) {
+      toast.error("Las contraseñas no coinciden");
+      return;
+    }
 
-		mutate(formData);
-	};
+    if (correoExists) {
+        toast.error("Este correo ya está registrado.");
+        return;
+      }
+      if (nombreExists) {
+        toast.error("Este nombre de usuario ya está registrado.");
+        return;
+      }
+  
+      mutate(formData);
 
-	if (redirectToHome) {
-		return <Navigate to="/" />; // Redirecciona al inicio
-	}
+  };
 
-    
+  if (redirectToHome) {
+    return <Navigate to="/" />;
+  }
+  const validacionCorreo = async (correo) => {
+    if (correo.length > 0) {
+      const response = await fetch(`/api/users/VerifiCOR?correo=${correo}`);
+      const result = await response.json();
+      setCorreoExists(result.exists);
+    } else {
+      setCorreoExists(false);
+    }
+  };
+
+  const validacionNombre = async (nombre) => {
+    if (nombre.length > 0) {
+      const response = await fetch(`/api/users/VerifiNOM?nombre=${nombre}`);
+      const result = await response.json();
+      setNombreExists(result.exists);
+    } else {
+      setNombreExists(false);
+    }
+  };
+
 
     
 	const handleInputChange = (e) => {
@@ -125,8 +175,7 @@ const SignUpPage = () => {
         setFormErrors({ ...formErrors, [name]: errorMessage });
         setFormData({ ...formData, [name]: value });
     };
-    
-    
+  
 	  
 
 	const handleChange = (selectedOption) => {
@@ -163,7 +212,8 @@ const SignUpPage = () => {
                             />
                         </label>
                         {formErrors.correo && <span className="text-red-500 text-sm">{formErrors.correo}</span>}
-                    </label>
+                        {correoExists && <span className="text-red-500 text-sm">Este correo ya está registrado.</span>}
+                        </label>
 
                     {/* Campo de Nombre de Usuario */}
                     <label className='flex flex-col w-full'>
@@ -180,7 +230,8 @@ const SignUpPage = () => {
                             />
                         </label>
                         {formErrors.nombre && <span className="text-red-500 text-sm">{formErrors.nombre}</span>}
-                    </label>
+                        {nombreExists && <span className="text-red-500 text-sm">Este nombre de usuario ya está registrado.</span>}
+                        </label>
 
                     {/* Campo de Nombre Completo */}
                     <label className='flex flex-col w-full'>

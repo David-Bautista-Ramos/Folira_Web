@@ -6,7 +6,7 @@ function ModalCrearPublicacion({ isOpen, onClose }) {
   const [formData, setFormData] = useState({
     contenido: "",
     userId: "",
-    comunidadId: "", // Aquí se mantendrá el ID de la comunidad
+    comunidadId: "",
   });
 
   const [fotoPublicacion, setfotoPublicacion] = useState("");
@@ -18,6 +18,9 @@ function ModalCrearPublicacion({ isOpen, onClose }) {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const { createPost, isCreatingPost } = useCreatePublicacion();
+
+  // Estado para controlar la búsqueda
+  const [busquedaUsuario, setBusquedaUsuario] = useState("");
 
   useEffect(() => {
     const fetchData = async () => {
@@ -61,7 +64,18 @@ function ModalCrearPublicacion({ isOpen, onClose }) {
     }));
   };
 
-  // Función para manejar el cambio en las imágenes
+  // Manejo de la búsqueda de usuario
+  const handleBusquedaChange = (e) => {
+    setBusquedaUsuario(e.target.value);
+  };
+
+  // Filtra usuarios basados en la búsqueda
+  const usuariosFiltrados = usuarios.filter((usuario) =>
+    `${usuario.nombre} ${usuario.apellido}`
+      .toLowerCase()
+      .includes(busquedaUsuario.toLowerCase())
+  );
+
   const handleImgChange = (e, state) => {
     const file = e.target.files[0];
     if (file) {
@@ -84,13 +98,12 @@ function ModalCrearPublicacion({ isOpen, onClose }) {
       await createPost({
         ...formData,
         fotoPublicacion,
-        comunidadId: esComunidad ? comunidadSeleccionada : "", // Envío de comunidadId correcto
+        comunidadId: esComunidad ? comunidadSeleccionada : "",
       });
 
-      // Resetear el formulario después de la creación
       setFormData({
         contenido: "",
-        userId: usuarios[0]?._id || "", // Para manejar caso sin usuarios
+        userId: usuarios[0]?._id || "",
         fotoPublicacion: null,
         comunidadId: "",
       });
@@ -137,27 +150,34 @@ function ModalCrearPublicacion({ isOpen, onClose }) {
 
             <label className="block mb-1 text-primary">Foto de Publicación</label>
             <div className="relative group/cover">
-                <img
-                    src={fotoPublicacion || "/defaultImage.png"}
-                    className="h-52 w-full object-cover"
-                    alt="cover"
-                />
-                <div
-                    className="absolute top-2 right-2 rounded-full p-2 bg-gray-800 bg-opacity-75 cursor-pointer opacity-0 group-hover/cover:opacity-100 transition duration-200"
-                    onClick={() => fotoPublicacionRef.current.click()}
-                >
-                    <span className="w-5 h-5 text-white">Editar</span>
-                </div>
-                <input
-                    type="file"
-                    hidden
-                    accept="image/*"
-                    ref={fotoPublicacionRef}
-                    onChange={(e) => handleImgChange(e, "fotoPost")}
-                    />
+              <img
+                src={fotoPublicacion || "/defaultImage.png"}
+                className="h-52 w-full object-cover"
+                alt="cover"
+              />
+              <div
+                className="absolute top-2 right-2 rounded-full p-2 bg-gray-800 bg-opacity-75 cursor-pointer opacity-0 group-hover/cover:opacity-100 transition duration-200"
+                onClick={() => fotoPublicacionRef.current.click()}
+              >
+                <span className="w-5 h-5 text-white">Editar</span>
+              </div>
+              <input
+                type="file"
+                hidden
+                accept="image/*"
+                ref={fotoPublicacionRef}
+                onChange={(e) => handleImgChange(e, "fotoPost")}
+              />
             </div>
 
             <label className="block mb-1 text-primary">Usuario</label>
+            <input
+              type="text"
+              value={busquedaUsuario}
+              onChange={handleBusquedaChange}
+              placeholder="Buscar usuario"
+              className="w-full p-2 mb-2 border rounded focus:border-primary focus:outline-none"
+            />
             <select
               name="userId"
               value={formData.userId}
@@ -165,7 +185,7 @@ function ModalCrearPublicacion({ isOpen, onClose }) {
               className="w-full p-2 mb-3 border rounded focus:border-primary focus:outline-none"
               required
             >
-              {usuarios.map((usuario) => (
+              {usuariosFiltrados.map((usuario) => (
                 <option key={usuario._id} value={usuario._id}>
                   {usuario.nombre} {usuario.apellido}
                 </option>

@@ -33,6 +33,7 @@ function GestionPublicaciones() {
     const [searchTerm, setSearchTerm] = useState(""); // Estado para la búsqueda
     const [currentPage, setCurrentPage] = useState(1); // Página actual
     const [totalPages, setTotalPages] = useState(1); // Número total de páginas
+    const [selectedType, setSelectedType] = useState(""); // Estado para el tipo de publicación
 
   
 
@@ -218,6 +219,30 @@ useEffect(() => {
     setVisibleCount(Number(event.target.value)); // Actualiza la cantidad visible
   };
 
+  useEffect(() => {
+    let publicacionesFiltradas = publicaciones;
+  
+    // Filtrar por búsqueda
+    if (searchTerm) {
+      publicacionesFiltradas = publicacionesFiltradas.filter((publicacion) => {
+        const nombre = publicacion.user?.nombre?.toLowerCase() || "";
+        const nombreCompleto = publicacion.user?.nombreCompleto?.toLowerCase() || "";
+        return nombre.includes(searchTerm.toLowerCase()) || nombreCompleto.includes(searchTerm.toLowerCase());
+      });
+    }
+  
+    // Filtrar por tipo de publicación
+    if (selectedType) {
+      publicacionesFiltradas = publicacionesFiltradas.filter((publicacion) => {
+        const tipoPublicacion = obtenerTipoPublicacion(publicacion.idComunidad);
+        return tipoPublicacion === selectedType;
+      });
+    }
+  
+    setFilteredPublicacion(publicacionesFiltradas);
+  }, [searchTerm, publicaciones, selectedType]); // Ahora dependemos del estado selectedType también
+  
+
   return (
     <div>
       <Nav />
@@ -265,7 +290,17 @@ useEffect(() => {
                 Estado
               </button>
 
-             
+             <div>
+              <select
+                value={selectedType}
+                onChange={(e) => setSelectedType(e.target.value)}
+                className="bg-white border border-gray-400 p-2 rounded"
+              >
+                <option value="">Seleccionar tipo</option>
+                <option value="General">General</option>
+                <option value="Comunidad">Comunidad</option>
+              </select>
+             </div>
             </div>
            
           </div>
@@ -290,7 +325,7 @@ useEffect(() => {
                     className="flex flex-col w-80 bg-white border p-4 rounded-md shadow-lg"
                   >
                     <div className="flex items-center mb-4">
-                      <Link to={`/profile/${publicacion.user?._id}`}>
+                      <Link to={`/profile/${publicacion.user?.nombre}`}>
                         <img
                           className="w-16 h-16 rounded-full"
                           src={publicacion.user?.fotoPerfil}
@@ -299,7 +334,7 @@ useEffect(() => {
                       </Link>
                       <div className="ml-4">
                         <Link
-                          to={`/profile/${publicacion.user?._id}`}
+                          to={`/profile/${publicacion.user?.nombre}`}
                           className="font-semibold text-lg"
                         >
                           {publicacion.user?.nombreCompleto}

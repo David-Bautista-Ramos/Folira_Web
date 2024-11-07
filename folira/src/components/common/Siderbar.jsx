@@ -103,7 +103,7 @@ const Sidebar = () => {
 
             <li className='flex justify-center md:justify-start relative'>
                 <Link
-                    to={`/amigos/${authUser?.nombre}`}
+                    to={`/amigos`}
                     className='flex gap-3 items-center hover:bg-gray-200 transition-all rounded-full duration-300 py-2 pl-2 pr-4 max-w-fit cursor-pointer'
                 >
                     <div className='relative group'>

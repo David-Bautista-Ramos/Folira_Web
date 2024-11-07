@@ -37,7 +37,7 @@ const ComentariosModal = ({ isOpen, onClose, comentarios, publicacionId, obtener
     {comentarios.length > 0 ? (
       <div className="space-y-4 max-h-64 overflow-y-auto"> {/* Cambia max-h-64 según el tamaño que necesites */}
         <ul>
-          {comentarios.map((comentario) => (
+          {comentarios.slice().reverse().map((comentario) => (
             <div key={comentario._id} className="flex items-start mb-3">
               <img 
                 src={comentario.user.fotoPerfil} 
