@@ -1,7 +1,69 @@
 import { useEffect, useState, useRef } from "react";
 import useUpdateAutor from '../../hooks/useUpdateAutor.jsx';
+import Select from 'react-select';
+
 
 const ModalActualizarAutor = ({ isOpen, onClose, autorId, token, obtenerAutores }) => {
+
+    const paises = [
+        { value: 'Afganistán', label: 'Afganistán' },
+        { value: 'Alemania', label: 'Alemania' },
+        { value: 'Argentina', label: 'Argentina' },
+        { value: 'Australia', label: 'Australia' },
+        { value: 'Austria', label: 'Austria' },
+        { value: 'Bélgica', label: 'Bélgica' },
+        { value: 'Bolivia', label: 'Bolivia' },
+        { value: 'Brasil', label: 'Brasil' },
+        { value: 'Canadá', label: 'Canadá' },
+        { value: 'Chile', label: 'Chile' },
+        { value: 'China', label: 'China' },
+        { value: 'Colombia', label: 'Colombia' },
+        { value: 'Corea del Sur', label: 'Corea del Sur' },
+        { value: 'Costa Rica', label: 'Costa Rica' },
+        { value: 'Cuba', label: 'Cuba' },
+        { value: 'Dinamarca', label: 'Dinamarca' },
+        { value: 'Ecuador', label: 'Ecuador' },
+        { value: 'Egipto', label: 'Egipto' },
+        { value: 'El Salvador', label: 'El Salvador' },
+        { value: 'Emiratos Árabes Unidos', label: 'Emiratos Árabes Unidos' },
+        { value: 'España', label: 'España' },
+        { value: 'Estados Unidos', label: 'Estados Unidos' },
+        { value: 'Filipinas', label: 'Filipinas' },
+        { value: 'Francia', label: 'Francia' },
+        { value: 'Grecia', label: 'Grecia' },
+        { value: 'Guatemala', label: 'Guatemala' },
+        { value: 'Honduras', label: 'Honduras' },
+        { value: 'India', label: 'India' },
+        { value: 'Indonesia', label: 'Indonesia' },
+        { value: 'Irlanda', label: 'Irlanda' },
+        { value: 'Israel', label: 'Israel' },
+        { value: 'Italia', label: 'Italia' },
+        { value: 'Japón', label: 'Japón' },
+        { value: 'México', label: 'México' },
+        { value: 'Nicaragua', label: 'Nicaragua' },
+        { value: 'Noruega', label: 'Noruega' },
+        { value: 'Nueva Zelanda', label: 'Nueva Zelanda' },
+        { value: 'Países Bajos', label: 'Países Bajos' },
+        { value: 'Panamá', label: 'Panamá' },
+        { value: 'Paraguay', label: 'Paraguay' },
+        { value: 'Perú', label: 'Perú' },
+        { value: 'Polonia', label: 'Polonia' },
+        { value: 'Portugal', label: 'Portugal' },
+        { value: 'Reino Unido', label: 'Reino Unido' },
+        { value: 'República Checa', label: 'República Checa' },
+        { value: 'República Dominicana', label: 'República Dominicana' },
+        { value: 'Rusia', label: 'Rusia' },
+        { value: 'Sudáfrica', label: 'Sudáfrica' },
+        { value: 'Suecia', label: 'Suecia' },
+        { value: 'Suiza', label: 'Suiza' },
+        { value: 'Tailandia', label: 'Tailandia' },
+        { value: 'Turquía', label: 'Turquía' },
+        { value: 'Ucrania', label: 'Ucrania' },
+        { value: 'Uruguay', label: 'Uruguay' },
+        { value: 'Venezuela', label: 'Venezuela' },
+        { value: 'Vietnam', label: 'Vietnam' },
+    ];
+    
     const [formData, setFormData] = useState({
         nombre: "",
         seudonimo: "",
@@ -118,6 +180,15 @@ const ModalActualizarAutor = ({ isOpen, onClose, autorId, token, obtenerAutores 
         }
     };
 
+    const handleCountryChange = (selectedOption) => {
+        setFormData((prevData) => ({
+            ...prevData,
+            pais: selectedOption ? selectedOption.value : "",
+        }));
+    };
+    
+    
+
     return (
         <>
             {isOpen && (
@@ -226,14 +297,16 @@ const ModalActualizarAutor = ({ isOpen, onClose, autorId, token, obtenerAutores 
                                 />
 
 
-                                <input
-                                    type='text'
-                                    placeholder='País'
-                                    className='input border border-blue-950 rounded p-2 input-md'
-                                    value={formData.pais}
-                                    name='pais'
-                                    onChange={handleInputChange}
+                                <Select
+                                    value={paises.find((option) => option.value === formData.pais)}
+                                    options={paises}
+                                    onChange={handleCountryChange}
+                                    classNamePrefix="custom-select"
+                                    placeholder="Seleccione un país"
                                 />
+
+
+
 
                                 <input
                                     type='date'
