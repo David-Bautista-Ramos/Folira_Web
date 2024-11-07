@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { BsArrowLeft} from 'react-icons/bs';
+import { BsArrowLeft, BsEmojiSmileFill, BsEye, BsEyeSlash} from 'react-icons/bs';
 import { CiImageOn } from 'react-icons/ci';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import toast from 'react-hot-toast';
@@ -151,158 +151,169 @@ const handleConfirmInactivar = () => {
       <div className="flex flex-col border-r border-gray-300 min-h-screen bg-white p-6 rounded-lg shadow-lg">
         {/* Banner de la comunidad */}
     
-    {/* Título de la comunidad */}
-    <div className="flex items-center cursor-pointer gap-5 text-3xl -mt-4 border-b-2 border-gray-300 pb-2 mb-4">
-      <Link to="/comunidad">
-        <BsArrowLeft className="text-primary mr-2 text-lg" />
-      </Link>
-      <span className="text-xl text-primary font-bold flex items-center">{nombre}</span>
-    </div>
+      {/* Título de la comunidad */}
+      <div className="flex items-center cursor-pointer gap-5 text-3xl -mt-4 border-b-2 border-gray-300 pb-2 mb-4">
+        <Link to="/comunidad">
+          <BsArrowLeft className="text-primary mr-2 text-lg" />
+        </Link>
+        <span className="text-xl text-primary font-bold flex items-center">{nombre}</span>
+      </div>
     
-    <div className="relative">
-  {/* Columna 1: Imagen de banner */}
-  <div className="relative">
-    <img
-      src={fotoBanner} // Asegúrate de que este sea el nombre de la variable para el banner
-      alt="Banner de la comunidad"
-      className="h-80 w-full object-cover"
-    />
-  </div>
+      <div className="relative w-full">
+        {/* Columna 1: Imagen de banner */}
+        <div className="relative">
+          <img
+            src={fotoBanner} // Asegúrate de que este sea el nombre de la variable para el banner
+            alt="Banner de la comunidad"
+            className="h-52 w-full object-cover"
+          />
+        </div>
 
-  {/* Imagen de la comunidad sobre el banner y alineada a la derecha */}
-  <div className="absolute top-46 left-4 transform translate-y-[-50%]">
-    <img
-      src={fotoComunidad}
-      alt={nombre}
-      className="w-32 h-32 md:w-48 md:h-48 rounded-full border-4 border-white shadow-lg"
-    />
-  </div>
+        {/* Imagen de la comunidad sobre el banner y alineada a la derecha */}
+        <div className="absolute top-46 left-6 transform translate-y-[-50%]">
+          <img
+            src={fotoComunidad}
+            alt={nombre}
+            className="w-30 h-30 md:w-32 md:h-32 rounded-full border-4 border-white shadow-lg"
+          />
+        </div>
 
-  {/* Contenedor principal */}
-  <div className="relative flex flex-col items-center lg:items-start mb-4 space-y-4 p-4 mt-20">
-    {/* Botones: Alineados en la parte superior derecha */}
-    <div className="absolute top-[-50px] right-0 mt-0 mr-4 flex space-x-2">
-      {esMiembro && (
-        <button
-          onClick={handleSalirComunidad}
-          className="btn btn-outline rounded-full btn-sm"
-        >
-          Salir de la comunidad
-        </button>
-      )}
-      {esAdmin && (
-        <>
-          <button
-            onClick={() => setIsConfirmModalOpen(true)}
-            className="btn btn-outline rounded-full btn-sm"
-          >
-            Inactivar
-          </button>
-          <button
-            onClick={() => setIsActualizarModalOpen(true)}
-            className="btn btn-outline rounded-full btn-sm"
-          >
-            Actualizar
-          </button>
-        </>
-      )}
-      {!esMiembro && !esAdmin && (
-        <button
-          onClick={handleUnirseComunidad}
-          className="bg-primary hover:bg-blue-950 text-white py-2 px-4 rounded"
-        >
-          Unirme a la comunidad
-        </button>
-      )}
-    </div>
+        {/* Contenedor principal */}
+        <div className="relative flex flex-col items-center lg:items-start mb-4 space-y-4 p-4 mt-[70px]">
+          {/* Botones: Alineados en la parte superior derecha */}
+          <div className="absolute top-[-50px] right-0 mt-0 mr-4 flex space-x-2">
+            {esMiembro && (
+              <button
+                onClick={handleSalirComunidad}
+                className="btn btn-outline rounded-full btn-sm"
+              >
+                Salir de la comunidad
+              </button>
+            )}
+            {esAdmin && (
+              <>
+                <button
+                  onClick={() => setIsConfirmModalOpen(true)}
+                  className="btn btn-outline rounded-full btn-sm"
+                >
+                  Inactivar
+                </button>
+                <button
+                  onClick={() => setIsActualizarModalOpen(true)}
+                  className="btn btn-outline rounded-full btn-sm"
+                >
+                  Actualizar
+                </button>
+              </>
+            )}
+            {!esMiembro && !esAdmin && (
+              <button
+                onClick={handleUnirseComunidad}
+                className="bg-primary hover:bg-blue-950 text-white py-2 px-4 rounded"
+              >
+                Unirme a la comunidad
+              </button>
+            )}
+          </div>
 
-    {/* Información de la comunidad */}
-    <div className="flex flex-col flex-grow">
-      <h2 className="text-2xl font-semibold mb-2">{nombre}</h2>
-      <p className="text-lg mb-2">
-        <strong>Administrador:</strong> {admin?.nombre}
-      </p>
-      <p className="text-lg mb-4">
-        <strong>Descripción:</strong>{' '}
-        <span className="break-words">
-          {expandirDescripcion ? descripcion : `${descripcion.substring(0, 100)}...`}
-        </span>
-        {descripcion.length > 100 && (
-          <button onClick={toggleDescripcion} className="ml-2 text-blue-600">
-            {expandirDescripcion ? 'Mostrar menos' : 'Mostrar más'}
-          </button>
-        )}
-      </p>
-      <div className="text-lg mb-4">
-        <ModalMiembrosComunidad miembros={miembros} />
-      </div>
-      <p className="text-lg mb-4">
-        <strong>Enlace de conexión:</strong>{' '}
-        <a
-          href={link}
-          target="_blank"
-          rel="noopener noreferrer"
-          className="text-blue-600 underline"
-        >
-          {link}
-        </a>
-      </p>
-      <strong className="text-lg mb-2">Géneros Literarios:</strong>
-      <div className="flex flex-wrap gap-6">
-        {generoLiterarios.length > 0 ? (
-          generoLiterarios.map((genero) => (
-            <div
-              key={genero.nombre}
-              className="flex items-center border rounded-full p-2 bg-white min-w-[120px] max-w-[150px] truncate"
-            >
-              <img src={genero.fotoGenero} alt={genero.nombre} className="w-8 h-8 mr-2" />
-              <span className="truncate">{genero.nombre}</span>
+          {/* Información de la comunidad */}
+          <div className="flex flex-col flex-grow">
+            <h2 className="text-2xl font-semibold mb-2">{nombre}</h2>
+            <p className="text-lg mb-2">
+              <strong>Administrador:</strong> {admin?.nombre}
+            </p>
+
+            {/* Lo agregue y cambie */}
+            <p className="text-lg mb-4">
+              <strong>Descripción:</strong>{' '}
+              <span className="break-all">
+                {expandirDescripcion ? descripcion : `${descripcion.substring(0, 100)}...`}
+              </span>
+              {descripcion.length > 100 && (
+                <button onClick={toggleDescripcion} className="ml-2 text-blue-950 font-semibold  flex items-center ">
+                  {expandirDescripcion ? 'Mostrar menos' : 'Mostrar más'}
+                  {expandirDescripcion ? <BsEyeSlash className="ml-1" /> : <BsEye className="ml-1" />}
+                </button>
+              )}
+            </p>
+
+            <div className="text-lg mb-4">
+              <ModalMiembrosComunidad miembros={miembros} />
             </div>
-          ))
-        ) : (
-          <span>No tiene géneros asignados</span>
-        )}
+            <p className="text-lg mb-4">
+              <strong>Enlace de conexión:</strong>{' '}
+              <a
+                href={link}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="text-blue-600 underline"
+              >
+                {link}
+              </a>
+            </p>
+            <strong className="text-lg mb-2">Géneros Literarios:</strong>
+            <div className="flex flex-wrap gap-6">
+              {generoLiterarios.length > 0 ? (
+                generoLiterarios.map((genero) => (
+                  <div
+                    key={genero.nombre}
+                    className="flex items-center border rounded-full p-2 bg-white min-w-[120px] max-w-[150px] truncate"
+                  >
+                    <img src={genero.fotoGenero} alt={genero.nombre} className="w-8 h-8 mr-2" />
+                    <span className="truncate">{genero.nombre}</span>
+                  </div>
+                ))
+              ) : (
+                <span>No tiene géneros asignados</span>
+              )}
+            </div>
+          </div>
+        </div>
       </div>
-    </div>
-  </div>
-</div>
 
         <div className="flex flex-col mt-8">
           <h2 className="text-2xl font-semibold mb-4">Publicaciones</h2>
           {esMiembro || esAdmin ? (
           // Formulario de creación de publicaciones (solo visible para miembros y admin)
           <form className="flex flex-col space-y-4 items-center" onSubmit={handleSubmit}>
-            <textarea
-              className="border border-primary rounded-lg w-full h-20 p-4 mb-4 resize-none focus:outline-none"
-              value={contenido}
-              onChange={(e) => setContenido(e.target.value)}
-              placeholder="¿Qué quieres compartir?"
-            />
-            <div className="flex items-center justify-between w-full">
-              <label className="flex items-center cursor-pointer">
-                <input type="file" accept="image/*" className="hidden" onChange={handleImgChange} />
-                <CiImageOn className="text-primary text-3xl mr-2 cursor-pointer" />
-                <span>Subir imagen</span>
-              </label>
-              <button
-                type="button"
-                onClick={() => setMostrarEmojis(!mostrarEmojis)}
-                className="text-primary text-2xl"
-              >
-                😃
-              </button>
-              {mostrarEmojis && (
-                <div className="absolute top-20">
-                  <EmojiPicker onEmojiClick={onEmojiClick} />
-                </div>
-              )}
+            {/* Contenedor para el textarea y el botón */}
+            <div className="flex w-full items-center space-x-2">
+              <textarea
+                className="border border-primary rounded-lg flex-grow p-2 resize-none focus:outline-none h-12"
+                value={contenido}
+                onChange={(e) => setContenido(e.target.value)}
+                placeholder="¿Qué quieres compartir?"
+              />
               <button
                 type="submit"
-                className="bg-primary text-white py-2 px-4 rounded-lg hover:bg-blue-950 transition duration-300"
+                className="bg-primary text-white py-2 px-4 rounded-lg hover:bg-blue-950 transition duration-300 h-12"
               >
                 Publicar
               </button>
             </div>
+
+            {/* Contenedor para los botones adicionales (Agregue esto)*/} 
+              <div className="flex items-center justify-between w-full">
+                <label className="flex items-center cursor-pointer">
+                  <input type="file" accept="image/*" className="hidden" onChange={handleImgChange} />
+                  <CiImageOn className="text-primary text-3xl mr-2 cursor-pointer" />
+                  <button
+                    type="button"
+                    onClick={() => setMostrarEmojis(!mostrarEmojis)}
+                    className="text-primary text-2xl"
+                  >
+                    <BsEmojiSmileFill />
+                  </button>
+                </label>
+                {mostrarEmojis && (
+                  <div className="absolute top-20">
+                    <EmojiPicker onEmojiClick={onEmojiClick} />
+                  </div>
+                )}
+              </div>
+
+
+            {/* Vista previa de la imagen */}
             {fotoPublicacion && (
               <div className="mt-4">
                 <img
@@ -313,6 +324,7 @@ const handleConfirmInactivar = () => {
               </div>
             )}
           </form>
+
         ) : (
           // Mensaje para usuarios que no son miembros ni admin
           <div className="text-center text-gray-500 text-lg mt-4">

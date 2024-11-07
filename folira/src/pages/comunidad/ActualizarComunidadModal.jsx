@@ -286,6 +286,10 @@ const ModalActualizarComunidad = ({ isOpen, onClose, token, comunidadId }) => {
       >
         {isUpdatingcomunidad ? "Actualizando..." : "Actualizar Comunidad"}
       </button>
+          {/* Agregue esto */}
+      <button className="px-4 py-2 bg-gray-300 text-gray-800 rounded-md ml-4 hover:bg-gray-400" onClick={onClose}>
+            Cancelar
+      </button>
     </div>
 
 

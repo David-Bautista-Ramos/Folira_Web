@@ -1,13 +1,16 @@
-import { useEffect, useState, useCallback } from 'react'; // Importa useCallback
+import { useEffect, useState, useCallback } from 'react';
 import { Link } from 'react-router-dom';
 import { useQuery } from "@tanstack/react-query";
+import { BsArrowLeft, BsArrowRight } from 'react-icons/bs';
 
 const LibroSugerido = () => {
     const [libros, setLibros] = useState([]);
-    const [librosGuardados, setLibrosGuardados] = useState(new Set()); // Usamos un Set para un acceso rápido
+    const [librosGuardados, setLibrosGuardados] = useState(new Set());
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
-    const [filtro, setFiltro] = useState(""); // Estado para manejar el filtro
+    const [filtro, setFiltro] = useState(""); 
+    const [currentPage, setCurrentPage] = useState(1); // Página actual
+    const [booksPerPage, setBooksPerPage] = useState(6); // Libros por página
     const { data: authUser } = useQuery({ queryKey: ["authUser"] });
 
     const fetchLibros = async () => {
@@ -77,7 +80,7 @@ const LibroSugerido = () => {
 
             const result = await response.json();
             console.log('Libro guardado con éxito:', result);
-            setLibrosGuardados(prev => new Set(prev).add(libroId)); // Agregar el libro a los guardados
+            setLibrosGuardados(prev => new Set(prev).add(libroId));
         } catch (error) {
             console.error('Error al guardar el libro:', error);
         }
@@ -103,7 +106,7 @@ const LibroSugerido = () => {
             console.log('Libro eliminado con éxito:', result);
             setLibrosGuardados(prev => {
                 const updated = new Set(prev);
-                updated.delete(libroId); // Eliminar el libro de los guardados
+                updated.delete(libroId);
                 return updated;
             });
         } catch (error) {
@@ -111,10 +114,24 @@ const LibroSugerido = () => {
         }
     };
 
-    // Filtrar libros según el texto ingresado en el buscador
+    // Filtrar libros
     const librosFiltrados = libros.filter((libro) =>
         libro.titulo.toLowerCase().includes(filtro.toLowerCase())
     );
+
+    // Calcular número total de páginas
+    const totalPages = Math.ceil(librosFiltrados.length / booksPerPage);
+
+    // Obtener los libros de la página actual
+    const indexOfLastBook = currentPage * booksPerPage;
+    const indexOfFirstBook = indexOfLastBook - booksPerPage;
+    const currentBooks = librosFiltrados.slice(indexOfFirstBook, indexOfLastBook);
+
+    const handlePageChange = (pageNumber) => {
+        if (pageNumber > 0 && pageNumber <= totalPages) {
+            setCurrentPage(pageNumber);
+        }
+    };
 
     if (loading) {
         return <div>Cargando...</div>;
@@ -123,70 +140,90 @@ const LibroSugerido = () => {
     if (error) {
         return <div>{error}</div>;
     }
-    
+
     return (
-<div className="p-6">
-  {/* Buscador */}
-  <input
-    type="text"
-    placeholder="Buscar libro por título..."
-    value={filtro}
-    onChange={(e) => setFiltro(e.target.value)}
-    className="w-full p-2 mb-4 border rounded focus:outline-none focus:border-primary"
-  />
+        <div className="p-6">
+            {/* Buscador */}
+            <input
+                type="text"
+                placeholder="Buscar libro por título..."
+                value={filtro}
+                onChange={(e) => setFiltro(e.target.value)}
+                className="w-full p-2 mb-4 border rounded focus:outline-none focus:border-primary"
+            />
 
-  <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6">
-    {librosFiltrados.slice().reverse().map((libro) => (
-      <div
-        key={libro._id}
-        className="bg-white rounded-lg shadow-lg p-4 flex flex-col h-full justify-between"
-      >
-        <Link
-          to={`/fichaLibro/${libro._id}`}
-          className="flex flex-col items-center"
-        >
-          <img
-            src={libro.portada}
-            alt={libro.titulo}
-            className="w-35 h-60 object-cover rounded"
-          />
-          <h2
-            className="text-lg font-semibold mt-4 text-center mb-3"
-            style={{
-              display: '-webkit-box',
-              WebkitLineClamp: 2, // Limitar a 2 líneas
-              WebkitBoxOrient: 'vertical',
-              overflow: 'hidden',
-              textOverflow: 'ellipsis',
-            }}
-          >
-            {libro.titulo}
-          </h2>
-        </Link>
+            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6">
+                {currentBooks.slice().reverse().map((libro) => (
+                    <div
+                        key={libro._id}
+                        className="bg-white rounded-lg shadow-lg p-4 flex flex-col h-full justify-between"
+                    >
+                        <Link
+                            to={`/fichaLibro/${libro._id}`}
+                            className="flex flex-col items-center"
+                        >
+                            <img
+                                src={libro.portada}
+                                alt={libro.titulo}
+                                className="w-35 h-60 object-cover rounded"
+                            />
+                            <h2
+                                className="text-lg font-semibold mt-4 text-center mb-3"
+                                style={{
+                                    display: '-webkit-box',
+                                    WebkitLineClamp: 2,
+                                    WebkitBoxOrient: 'vertical',
+                                    overflow: 'hidden',
+                                    textOverflow: 'ellipsis',
+                                }}
+                            >
+                                {libro.titulo}
+                            </h2>
+                        </Link>
 
-        {/* Botón siempre abajo */}
-        <button
-          onClick={() => {
-            if (librosGuardados.has(libro._id)) {
-              handleRemove(libro._id); // Eliminar si ya está guardado
-            } else {
-              handleSave(libro._id); // Guardar si no está guardado
-            }
-          }}
-          className={`mt-auto w-full rounded px-4 py-2 ${
-            librosGuardados.has(libro._id) ? 'bg-slate-600' : 'bg-gray-800'
-          } text-white hover:${
-            librosGuardados.has(libro._id) ? 'bg-slate-700' : 'bg-gray-900'
-          } transition`}
-        >
-          {librosGuardados.has(libro._id) ? 'Eliminar' : 'Guardar'}
-        </button>
-      </div>
-    ))}
-  </div>
-</div>
+                        {/* Botón siempre abajo */}
+                        <button
+                            onClick={() => {
+                                if (librosGuardados.has(libro._id)) {
+                                    handleRemove(libro._id); 
+                                } else {
+                                    handleSave(libro._id); 
+                                }
+                            }}
+                            className={`mt-auto w-full rounded px-4 py-2 ${
+                                librosGuardados.has(libro._id) ? 'bg-slate-600' : 'bg-gray-800'
+                            } text-white hover:${
+                                librosGuardados.has(libro._id) ? 'bg-slate-700' : 'bg-gray-900'
+                            } transition`}
+                        >
+                            {librosGuardados.has(libro._id) ? 'Eliminar' : 'Guardar'}
+                        </button>
+                    </div>
+                ))}
+            </div>
 
-      
+            {/* Paginación */}
+            <div className="flex justify-center mt-4 gap-4">
+              <button
+                    onClick={() => handlePageChange(currentPage - 1)}
+                    className="bg-primary text-white rounded-full px-4 py-2 hover:bg-blue-950"
+                    disabled={currentPage === 1}
+                >
+                  <BsArrowLeft />
+                </button>
+                <span className="flex items-center">
+                    Página {currentPage} de {totalPages}
+                </span>
+                <button
+                    onClick={() => handlePageChange(currentPage + 1)}
+                    className="bg-primary text-white rounded-full px-4 py-2 hover:bg-blue-950"
+                    disabled={currentPage === totalPages}
+                >
+                  <BsArrowRight
+                    />
+                </button>
+            </div>
+        </div>
     );
 };
 

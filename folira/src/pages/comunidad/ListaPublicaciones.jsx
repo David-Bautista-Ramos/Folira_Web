@@ -13,6 +13,8 @@ const ListaPublicaciones = ({ posts, esAdmin, esMiembro }) => {
   const [previewImage, setPreviewImage] = useState(null);
   const [openCommentModal, setOpenCommentModal] = useState(null);
   const { data: authUser } = useQuery({ queryKey: ["authUser"] });
+  const [liked, setLiked] = useState(false);
+
 
   const isMyComment = (commentUserId) => authUser?._id === commentUserId;
   
@@ -113,19 +115,19 @@ const ListaPublicaciones = ({ posts, esAdmin, esMiembro }) => {
                   <>
                     {/* Botón de Like */}
                     <button onClick={() => handleLikePost.mutate(post._id)} className="flex items-center gap-1">
-                      <FaRegHeart className="text-red-500" />
+                      <FaRegHeart className="w-4 h-4 cursor-pointer text-slate-500 hover:text-pink-500" />
                       <span>{post.likes.length}</span>
                     </button>
 
                     {/* Botón de Comentario */}
                     <button onClick={() => setOpenCommentModal(post._id)} className="flex items-center gap-1">
-                      <FaRegComment />
+                      <FaRegComment className="w-4 h-4 text-slate-500 hover:text-blue-950" />
                       <span>{post.comentarios.length}</span>
                     </button>
 
                     {/* Botón de Reportar */}
                     <button onClick={() => handleReportPost(post._id)} className="flex items-center gap-1">
-                      <BiError className="text-yellow-500" />
+                      <BiError className="w-6 h-6 text-slate-500 hover:text-yellow-500" />
                       <span>{post.denuncias !== undefined ? post.denuncias : 0}</span>
                     </button>
                   </>
@@ -136,79 +138,89 @@ const ListaPublicaciones = ({ posts, esAdmin, esMiembro }) => {
             </div>
 
 
+
             {/* Modal de Comentarios */}
-            <dialog 
-              id={`comments_modal_${post._id}`} 
+            <dialog
+              id={`comments_modal_${post._id}`}
               className="modal fixed inset-0 bg-black bg-opacity-30 flex items-center justify-center"
               open={openCommentModal === post._id}
+              onClick={(e) => {
+                if (e.target === e.currentTarget) {
+                  setOpenCommentModal(null); // Cierra el modal cuando se hace clic fuera del contenido del modal
+                }
+              }}
             >
-              <div className="modal-box bg-white rounded-lg p-6 relative">
-                <h3 className="font-bold">Comentarios</h3>
-                <div className="max-h-60 overflow-auto mt-2">
-                {post.comentarios ? (
-                    post.comentarios.slice().reverse().map((comment) => (
-                      <div key={comment._id} className="flex items-start gap-2 mb-2">
-                      <img
-                        src={comment.user.fotoPerfil || "/avatar-placeholder.png"}
-                        alt="Perfil"
-                        className="w-8 h-8 rounded-full"
-                      />
-                      <div className="flex-1">
-                        <div className="flex items-center gap-2">
-                          <span className="font-bold">{comment.user.nombreCompleto}</span>
-                          <span className="text-sm text-gray-500">@{comment.user.nombre}</span>
+              <div className="modal-box rounded border border-blue-950 p-6 relative">
+                <h3 className="font-bold text-lg mb-4">COMENTARIOS</h3>
+                <div className="flex flex-col gap-3 max-h-60 overflow-auto mt-2">
+                  {post.comentarios?.length === 0 && (
+                    <p className="text-sm text-slate-500">
+                      No hay comentarios todavía 🤔 Sé el primero 😉
+                    </p>
+                  )}
+                  {post.comentarios?.slice().reverse().map((comment) => (
+                    <div key={comment._id} className="flex gap-2 items-start">
+                      <div className="avatar">
+                        <div className="w-8 rounded-full">
+                          <img
+                            src={comment.user?.fotoPerfil || "/avatar-placeholder.png"}
+                            alt="Profile"
+                          />
+                        </div>
+                      </div>
+                      <div className="flex flex-col">
+                        <div className="flex items-center gap-1">
+                          <span className="font-bold mr-2">
+                            {comment.user?.nombreCompleto}
+                          </span>
+                          <span className="text-blue-950 text-sm">
+                            @{comment.user?.nombre}
+                          </span>
                           {isMyComment(comment.user._id) && (
-                            <FaTrash
-                              className="text-primary hover:blue-950 ml-[65px] cursor-pointer"
-                              onClick={() =>
-                                handleDeleteComment.mutate({ postId: post._id, commentId: comment._id })
-                              }
-                            />
+                            <span className="text-blue-950 flex flex-1 ml-auto">
+                              <FaTrash
+                                className="cursor-pointer hover:text-blue-950"
+                                onClick={() =>
+                                  handleDeleteComment.mutate({
+                                    postId: post._id,
+                                    commentId: comment._id,
+                                  })
+                                }
+                              />
+                            </span>
                           )}
                         </div>
-                        <p className="break-all">{comment.text}</p>
+                        <div className="text-sm break-all">{comment.text}</div>
                       </div>
                     </div>
-                    ))
-                  ) : (
-                    <p>No hay comentarios.</p>
-                  )}
-
+                  ))}
                 </div>
                 {canInteract() ? (
                   <form
-                  onSubmit={(e) => {
-                    e.preventDefault();
-                    handleCommentPost.mutate(post._id);
-                  }}
-                  className="mt-4 flex gap-2"
-                >
-                  <textarea
-                    className="textarea  w-full h-12 resize-none border border-gray-300 focus:outline-none focus:border-blue-950"  // Fijar altura y evitar que se expanda
-                    placeholder="Escribe un comentario..."
-                    value={comentario}
-                    onChange={(e) => setComentario(e.target.value)}
-                  />
-                  <button type="submit" className="btn btn-primary hover:bg-blue-950">
-                    Publicar
-                  </button>
-                  <button
-                    type="button"
-                    className="btn btn-secondary"
-                    onClick={() => {
-                      setOpenCommentModal(null);
-                      setPreviewImage(null);
+                    onSubmit={(e) => {
+                      e.preventDefault();
+                      handleCommentPost.mutate(post._id);
                     }}
+                    className="flex gap-2 items-center mt-4 border-t border-blue-950 pt-2"
                   >
-                    Cerrar
-                  </button>
-                </form>
-                
+                    <textarea
+                      className="textarea w-full p-1 h-[20px] rounded text-md resize-none border focus:outline-none border-blue-950"
+                      placeholder="Escribe un comentario..."
+                      value={comentario}
+                      onChange={(e) => setComentario(e.target.value)}
+                    />
+                    <button type="submit" className="btn btn-primary rounded-full btn-sm text-white px-4">
+                      Publicar
+                    </button>
+                    
+                  </form>
                 ) : (
                   <p className="text-gray-500">Inicia sesión para comentar.</p>
                 )}
               </div>
             </dialog>
+
+
 
 
             <ModalDenuncia

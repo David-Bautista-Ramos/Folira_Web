@@ -3,6 +3,7 @@ import { FaSpinner, FaTrash } from "react-icons/fa";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import toast from "react-hot-toast";
 import { Link } from "react-router-dom"; 
+import { BsArrowLeft, BsArrowRight } from "react-icons/bs";
 
 const LibrosTuyos = () => {
   const queryClient = useQueryClient();
@@ -10,6 +11,10 @@ const LibrosTuyos = () => {
   const [filtro, setFiltro] = useState(""); // Estado para manejar el filtro
   const { data: authUser } = useQuery({ queryKey: ["authUser"] });
   const [isLoading, setIsLoading] = useState(true);
+  
+  // Paginación
+  const [currentPage, setCurrentPage] = useState(1); // Página actual
+  const booksPerPage = 6; // Libros por página
 
   const fetchLibrosGuardados = useCallback(async () => {
     if (!authUser || !authUser._id) return;
@@ -77,92 +82,116 @@ const LibrosTuyos = () => {
     libro.titulo.toLowerCase().includes(filtro.toLowerCase())
   );
 
+  // Calcular los libros a mostrar en la página actual
+  const indexOfLastBook = currentPage * booksPerPage;
+  const indexOfFirstBook = indexOfLastBook - booksPerPage;
+  const currentBooks = librosFiltrados.slice(indexOfFirstBook, indexOfLastBook);
+
+  // Cambiar de página
+  const paginate = (pageNumber) => setCurrentPage(pageNumber);
+
   return (
-<div className="p-4">
+    <div className="p-4">
 
-  {/* Buscador */}
-<input
-  type="text"
-  placeholder="Buscar libro por título..."
-  value={filtro}
-  onChange={(e) => setFiltro(e.target.value)}
-  className="w-full p-2 mb-4 border rounded focus:outline-none focus:border-primary"
-/>
+      {/* Buscador */}
+      <input
+        type="text"
+        placeholder="Buscar libro por título..."
+        value={filtro}
+        onChange={(e) => setFiltro(e.target.value)}
+        className="w-full p-2 mb-4 border rounded focus:outline-none focus:border-primary"
+      />
 
-
-  {isLoading ? (
-    <p>Cargando...</p>
-  ) : librosFiltrados.length === 0 ? (
-    <p>No tienes libros guardados.</p>
-  ) : (
-    <div className="p-6">
-      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6">
-        {librosFiltrados.slice().reverse().map((libro) => (
-          <div
-            key={libro._id}
-            className="bg-white rounded-lg shadow-lg p-4 flex flex-col justify-between h-full"
-          >
-            <Link to={`/fichaLibro/${libro._id}`} className="flex flex-col items-center">
-              <img
-                src={libro.portada}
-                alt={libro.titulo}
-                className="w-35 h-60 object-cover rounded"
-              />
-              <h2
-                className="text-lg font-semibold mt-4 text-center"
-                style={{
-                  display: '-webkit-box',
-                  WebkitLineClamp: 2, // Limitar a 2 líneas
-                  WebkitBoxOrient: 'vertical',
-                  overflow: 'hidden',
-                  textOverflow: 'ellipsis',
-                }}
+      {isLoading ? (
+        <p>Cargando...</p>
+      ) : librosFiltrados.length === 0 ? (
+        <p>No tienes libros guardados.</p>
+      ) : (
+        <div className="p-6">
+          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6">
+            {currentBooks.reverse().map((libro) => (
+              <div
+                key={libro._id}
+                className="bg-white rounded-lg shadow-lg p-4 flex flex-col justify-between h-full"
               >
-                {libro.titulo}
-              </h2>
-            </Link>
+                <Link to={`/fichaLibro/${libro._id}`} className="flex flex-col items-center">
+                  <img
+                    src={libro.portada}
+                    alt={libro.titulo}
+                    className="w-35 h-60 object-cover rounded"
+                  />
+                  <h2
+                    className="text-lg font-semibold mt-4 text-center"
+                    style={{
+                      display: '-webkit-box',
+                      WebkitLineClamp: 2, // Limitar a 2 líneas
+                      WebkitBoxOrient: 'vertical',
+                      overflow: 'hidden',
+                      textOverflow: 'ellipsis',
+                    }}
+                  >
+                    {libro.titulo}
+                  </h2>
+                </Link>
 
-            <div className="mt-auto">
-              <button
-                onClick={() => handleSaveToggle(libro._id)}
-                className={`mt-4 w-full rounded px-4 py-2 ${
-                  librosGuardados.some((l) => l._id === libro._id)
-                    ? "bg-slate-600"
-                    : "bg-gray-800"
-                } text-white hover:${
-                  librosGuardados.some((l) => l._id === libro._id)
-                    ? "bg-slate-700"
-                    : "bg-gray-900"
-                } transition`}
-              >
-                {librosGuardados.some((l) => l._id === libro._id)
-                  ? "Eliminar"
-                  : "Guardar"}
-              </button>
+                <div className="mt-auto">
+                  <button
+                    onClick={() => handleSaveToggle(libro._id)}
+                    className={`mt-4 w-full rounded px-4 py-2 ${
+                      librosGuardados.some((l) => l._id === libro._id)
+                        ? "bg-slate-600"
+                        : "bg-gray-800"
+                    } text-white hover:${
+                      librosGuardados.some((l) => l._id === libro._id)
+                        ? "bg-slate-700"
+                        : "bg-gray-900"
+                    } transition`}
+                  >
+                    {librosGuardados.some((l) => l._id === libro._id)
+                      ? "Eliminar"
+                      : "Guardar"}
+                  </button>
 
-              {libro.userId === authUser?._id && (
-                <div className="flex gap-1 items-center mt-2">
-                  {!isDeleting ? (
-                    <FaTrash
-                      className="cursor-pointer hover:text-red-500"
-                      onClick={() => deleteLibro(libro._id)}
-                    />
-                  ) : (
-                    <FaSpinner className="animate-spin text-blue-500" />
+                  {libro.userId === authUser?._id && (
+                    <div className="flex gap-1 items-center mt-2">
+                      {!isDeleting ? (
+                        <FaTrash
+                          className="cursor-pointer hover:text-red-500"
+                          onClick={() => deleteLibro(libro._id)}
+                        />
+                      ) : (
+                        <FaSpinner className="animate-spin text-blue-500" />
+                      )}
+                    </div>
                   )}
                 </div>
-              )}
-            </div>
+              </div>
+            ))}
           </div>
-        ))}
-      </div>
+
+          {/* Paginación */}
+          <div className="flex justify-center mt-4 gap-4">
+          <button
+              onClick={() => paginate(currentPage - 1)}
+              disabled={currentPage === 1}
+              className="bg-primary text-white rounded-full px-4 py-2 hover:bg-blue-950"
+            >
+              <BsArrowLeft />
+            </button>
+            <span className="px-4 py-2 text-gray-800">
+              Página {currentPage}
+            </span>
+            <button
+              onClick={() => paginate(currentPage + 1)}
+              disabled={currentPage * booksPerPage >= librosFiltrados.length}
+              className="px-4 py-2 bg-gray-300 text-gray-800 rounded-r-md disabled:opacity-50"
+            >
+              <BsArrowRight  />
+            </button>
+          </div>
+        </div>
+      )}
     </div>
-  )}
-</div>
-
-
-
-
   );
 };
 
