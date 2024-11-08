@@ -16,7 +16,7 @@ const Amigos = ({ authUser }) => {
             }
             onClick={() => setFeedType("amigos")}
           >
-            Posibles Amigos 
+            Sugerencias de Amigos 
             {feedType === "amigos" && (
               <div className='absolute bottom-0 w-10 h-1 rounded-full bg-primary'></div>
             )}

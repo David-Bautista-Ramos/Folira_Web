@@ -169,8 +169,13 @@ const ModalActualizarReseña = ({
               onChange={handleInputChange}
               className="mt-1 block w-full p-2 border border-primary rounded-md"
               required
+              maxLength={550} // Limita el número de caracteres a 550
             ></textarea>
+
+            {/* Contador de caracteres */}
+            <p className="text-sm text-gray-500">{formData.contenido.length}/550 caracteres</p>
           </div>
+
 
           <div className="mb-4">
             <label

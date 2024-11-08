@@ -1,6 +1,7 @@
 import { useEffect, useState, useRef } from "react";
 import useUpdateUsers from "../../hooks/useUpdateUsers";
 import Select from "react-select"; // Importa react-select
+import { BsEye, BsEyeSlash } from "react-icons/bs";
 
 
 const ModalActualizarUsuario = ({ isOpen, onClose, userId, token }) => {
@@ -82,6 +83,18 @@ const ModalActualizarUsuario = ({ isOpen, onClose, userId, token }) => {
 
     const fotoPerfilBanRef = useRef(null);
     const fotoPerfilRef = useRef(null);
+
+    const [showCurrentPassword, setShowCurrentPassword] = useState(false);
+
+    const [showNewPassword, setShowNewPassword] = useState(false);
+
+    const toggleNewPasswordVisibility = () => {
+        setShowNewPassword(!showNewPassword);
+    };
+
+    const toggleCurrentPasswordVisibility = () => {
+        setShowCurrentPassword(!showCurrentPassword);
+    };
 
     const handleImgChange = (e, state) => {
         const file = e.target.files[0];
@@ -297,27 +310,55 @@ const ModalActualizarUsuario = ({ isOpen, onClose, userId, token }) => {
                                 
                                 <div>
                                     <label className="block mb-1">Contraseña Actual</label>
-                                    <input
-                                        type="password"
+                                    <div className="relative">
+                                        <input
+                                        type={showCurrentPassword ? 'text' : 'password'}
                                         placeholder="Contraseña Actual"
-                                        className="input border border-blue-950 rounded p-2 w-full h-10"
+                                        className="input border border-blue-950 rounded p-2 w-full h-10 pr-10"
                                         value={formData.currentcontrasena}
                                         name="currentcontrasena"
                                         onChange={handleInputChange}
-                                    />
-                                </div>
+                                        />
+                                        {/* Mostrar el icono según el estado de visibilidad */}
+                                        {showCurrentPassword ? (
+                                        <BsEye
+                                            onClick={toggleCurrentPasswordVisibility}
+                                            className="absolute right-3 top-3 cursor-pointer text-blue-950"
+                                        />
+                                        ) : (
+                                        <BsEyeSlash
+                                            onClick={toggleCurrentPasswordVisibility}
+                                            className="absolute right-3 top-3 cursor-pointer text-blue-950"
+                                        />
+                                        )}
+                                    </div>
+                                    </div>
 
-                                <div>
-                                    <label className="block mb-1">Contraseña Nueva</label>
-                                    <input
-                                        type="password"
-                                        placeholder="Contraseña Nueva"
-                                        className="input border border-blue-950 rounded p-2 w-full h-10"
-                                        value={formData.newcontrasena}
-                                        name="newcontrasena"
-                                        onChange={handleInputChange}
-                                    />
-                                </div>
+                                    <div>
+                                        <label className="block mb-1">Contraseña Nueva</label>
+                                        <div className="relative">
+                                            <input
+                                            type={showNewPassword ? 'text' : 'password'}
+                                            placeholder="Contraseña Nueva"
+                                            className="input border border-blue-950 rounded p-2 w-full h-10 pr-10"
+                                            value={formData.newcontrasena}
+                                            name="newcontrasena"
+                                            onChange={handleInputChange}
+                                            />
+                                            {/* Mostrar el icono según el estado de visibilidad */}
+                                            {showNewPassword ? (
+                                            <BsEye
+                                                onClick={toggleNewPasswordVisibility}
+                                                className="absolute right-3 top-3 cursor-pointer  text-blue-950"
+                                            />
+                                            ) : (
+                                            <BsEyeSlash
+                                                onClick={toggleNewPasswordVisibility}
+                                                className="absolute right-3 top-3 cursor-pointer text-blue-950"
+                                            />
+                                            )}
+                                        </div>
+                                    </div>
                                     
 
                                 <div className="col-span-1">
@@ -333,8 +374,8 @@ const ModalActualizarUsuario = ({ isOpen, onClose, userId, token }) => {
 
                                 </div>
 
-                                <div>
-                                    <label className="col-span-1">Biografia</label>
+                                <div className="col-span-1">
+                                    <label className="col-span-1">Biografía</label>
                                     <textarea
                                         placeholder="Biografía"
                                         className="border border-blue-950 rounded p-2 w-full"
@@ -345,6 +386,9 @@ const ModalActualizarUsuario = ({ isOpen, onClose, userId, token }) => {
                                         rows={4}
                                         style={{ resize: 'none', overflowWrap: 'break-word' }}
                                     />
+                                    <div className="text-right text-sm text-gray-500 mt-1">
+                                        {formData.biografia.length} / 200 caracteres 
+                                    </div>
                                 </div>
 
                                 {/* Selección de géneros literarios */}

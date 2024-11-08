@@ -139,14 +139,19 @@ function ModalCrearPublicacion({ isOpen, onClose }) {
         ) : (
           <form onSubmit={handleSubmit} className="overflow-y-auto max-h-80 text-[#503B31] text-lg modal-scrollbar">
             <label className="block mb-1 text-primary">Contenido</label>
-            <textarea
-              name="contenido"
-              value={formData.contenido}
-              onChange={handleInputChange}
-              placeholder="Escribe tu publicación"
-              className="w-full p-2 mb-3 border rounded focus:border-primary focus:outline-none"
-              required
-            />
+              <textarea
+                name="contenido"
+                value={formData.contenido}
+                onChange={handleInputChange}
+                placeholder="Escribe tu publicación"
+                className="w-full p-2 mb-3 border rounded focus:border-primary focus:outline-none"
+                maxLength={550} // Limita la cantidad de caracteres a 550
+                required
+              />
+
+              {/* Contador de caracteres */}
+              <p className="text-sm text-gray-500">{formData.contenido.length}/550 caracteres</p>
+
 
             <label className="block mb-1 text-primary">Foto de Publicación</label>
             <div className="relative group/cover">

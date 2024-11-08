@@ -196,7 +196,13 @@ const ModalCrearComunidad = ({ isOpen, onClose, token, obtenerComunidades }) => 
           name="descripcion"
           placeholder="Descripción de la comunidad"
           className="w-full p-2 mb-2 border rounded focus:border-primary focus:outline-none text-sm"
+          maxLength={200} // Limita a 200 caracteres
+          rows={4} // Puedes ajustar el número de filas si es necesario
         />
+
+        {/* Contador de caracteres */}
+        <p className="text-sm text-gray-500">{formData.descripcion.length}/200 caracteres</p>
+
 
         {/* Admin Selector */}
         <h4 className="text-sm font-bold mb-1">Selecciona 1 Usuario como Administrador:</h4>

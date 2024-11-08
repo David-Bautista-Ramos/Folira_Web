@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
 import { Link, Navigate, useParams } from 'react-router-dom'; // Importa useParams
 import { useQuery } from '@tanstack/react-query';
-import { BsArrowLeft, BsStar, BsStarFill } from 'react-icons/bs';
+import { BsArrowLeft, BsEye, BsEyeSlash, BsStar, BsStarFill } from 'react-icons/bs';
 import { FaTrash } from 'react-icons/fa';
 
 const FichaTecnicaAutor = () => {
@@ -27,6 +27,12 @@ const formatearFecha = (fechaISO) => {
   return formateador.format(new Date(fechaISO));
 };
 
+const [isBiografiaVisible, setIsBiografiaVisible] = useState(false); // Estado para controlar la visibilidad
+
+// Función para alternar la visibilidad de la biografía
+const toggleBiografiaVisibility = () => {
+    setIsBiografiaVisible(!isBiografiaVisible);
+};
   useEffect(() => {
     const fetchAutor = async () => {
       try {
@@ -201,7 +207,22 @@ const formatearFecha = (fechaISO) => {
                 <p className="text-lg">
                   <strong>Fecha de Nacimiento:</strong> {fechaNacimiento ? formatearFecha(fechaNacimiento) : 'N/A'}
                 </p>
-                <p className="text-lg"><strong>Biografia:</strong> {biografia}</p>
+                <p className="text-lg">
+                <strong>Biografía:</strong>
+                    {biografia.length > 150 && !isBiografiaVisible
+                        ? `${biografia.slice(0, 100)}...`
+                        : biografia}
+                </p>
+
+                {/* Icono de ojo para alternar la visibilidad */}
+                {biografia.length > 100 && (
+                    <button
+                        onClick={toggleBiografiaVisibility}
+                        className="text-xl text-blue-950 cursor-pointer"
+                    >
+                        {isBiografiaVisible ? <BsEyeSlash /> : <BsEye />}
+                    </button>
+                )}                
                 <p className="text-lg"><strong>Distinciones:</strong> {distinciones || 'N/A'}</p>
                 <div className='flex flex-col mt-4 -mb-3'>
                 </div>
@@ -237,49 +258,56 @@ const formatearFecha = (fechaISO) => {
               Ver Reseñas
             </button>
 
-            {/* Campo de texto para escribir comentario */}
             <form onSubmit={handleSubmit} className="mt-4">
               <label className="block text-md font-medium">Escribe una reseña:</label>
+              
               <div className="flex items-center mt-2">
                 {renderEstrellas(calificacion)}
               </div>
-              <input
-                type="text"
-                value={comentario}
-                onChange={(e) => setComentario(e.target.value)}
-                className="w-[510px] mr-5 mt-2 p-2 border rounded"
-                placeholder="Escribe tu reseña..."
-              />
-              <button type="submit" className="mt-2 bg-primary text-white px-4 py-2 rounded">
-                Enviar
-              </button>
+
+              <div className="flex items-center mt-2">
+                <input
+                  type="text"
+                  value={comentario}
+                  onChange={(e) => setComentario(e.target.value)}
+                  className="w-[510px] p-2 border rounded"
+                  placeholder="Escribe tu reseña..."
+                />
+                <button 
+                  type="submit" 
+                  className="bg-primary text-white px-4 py-2 rounded ml-3"
+                >
+                  Enviar
+                </button>
+              </div>
             </form>
+
 
            {/* Renderizar solo las primeras 5 reseñas */}
            <div className="mt-6">
-  {resenas.length === 0 ? ( // Comprobar si no hay reseñas
-    <p>No tiene reseñas.</p>
-  ) : (
-    // Crear una copia del arreglo, invertirlo y limitarlo a las últimas 5 reseñas
-    resenas.slice().reverse().slice(0, 5).map((reseña, index) => (
-      <div key={index} className="flex items-start mb-4 p-4 border border-gray-200 rounded-lg bg-gray-100 break-all">
-        <img 
-          src={reseña.idUsuario.fotoPerfil || 'https://via.placeholder.com/48'} 
-          alt={`${reseña.idUsuario.nombre} perfil`} 
-          className="w-12 h-12 rounded-full mr-4"
-          style={{ width: '48px', height: '48px' }} // Ajustar tamaño a 48x48
-        />
-        <div>
-          <h3 className="font-semibold">{reseña.idUsuario.nombre}</h3>
-          <p className="text-md">{reseña.contenido}</p>
-        </div>
-        <div className="flex mt-1">
-          {renderEstrellas(reseña.calificacion)} {/* Renderización de estrellas */}
-        </div>
-      </div>
-    ))
-  )}
-</div>
+              {resenas.length === 0 ? ( // Comprobar si no hay reseñas
+                <p>No tiene reseñas.</p>
+              ) : (
+                // Crear una copia del arreglo, invertirlo y limitarlo a las últimas 5 reseñas
+                resenas.slice().reverse().slice(0, 5).map((reseña, index) => (
+                  <div key={index} className="flex items-start mb-4 p-4 border border-gray-200 rounded-lg bg-gray-100 break-all">
+                    <img 
+                      src={reseña.idUsuario.fotoPerfil || 'https://via.placeholder.com/48'} 
+                      alt={`${reseña.idUsuario.nombre} perfil`} 
+                      className="w-12 h-12 rounded-full mr-4"
+                      style={{ width: '48px', height: '48px' }} // Ajustar tamaño a 48x48
+                    />
+                    <div>
+                      <h3 className="font-semibold">{reseña.idUsuario.nombre}</h3>
+                      <p className="text-md">{reseña.contenido}</p>
+                    </div>
+                    <div className="flex mt-1">
+                      {renderEstrellas(reseña.calificacion)} {/* Renderización de estrellas */}
+                    </div>
+                  </div>
+                ))
+              )}
+            </div>
 
 
           {/* Modal para mostrar las reseñas */}

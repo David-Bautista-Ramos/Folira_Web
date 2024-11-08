@@ -79,16 +79,16 @@ useEffect(() => {
 }, []);
 
 
- // Filtrado por búsqueda
+// Filtrado por búsqueda
 useEffect(() => {
   if (searchTerm) {
     // Filtrar las publicaciones que coincidan con el término de búsqueda
-    const usuariosFiltrados = publicaciones.filter((publicacion) => {
+    const publicacionesFiltradas = publicaciones.filter((publicacion) => {
       const nombre = publicacion.user?.nombre?.toLowerCase() || "";
       const nombreCompleto = publicacion.user?.nombreCompleto?.toLowerCase() || "";
       return nombre.includes(searchTerm.toLowerCase()) || nombreCompleto.includes(searchTerm.toLowerCase());
     });
-    setFilteredPublicacion(usuariosFiltrados);
+    setFilteredPublicacion(publicacionesFiltradas);
   } else {
     // Si no hay búsqueda, mostramos todas las publicaciones
     setFilteredPublicacion(publicaciones);

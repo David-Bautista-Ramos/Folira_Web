@@ -212,8 +212,13 @@ const ModalActualizarComunidad = ({ isOpen, onClose, token, comunidadId }) => {
           onChange={handleInputChange}
           name="descripcion"
           placeholder="Descripción de la comunidad"
+          maxLength={200} // Limita a 200 caracteres
           className="w-full p-2 mb-2 border rounded focus:border-primary focus:outline-none text-sm"
         />
+        <p className="text-xs text-gray-500">
+          {(formData.descripcion?.length || 0)}/200 caracteres
+        </p>
+
 
     <label className="block mb-1">Link</label>
         <input

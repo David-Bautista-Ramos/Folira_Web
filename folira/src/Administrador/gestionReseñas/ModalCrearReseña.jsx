@@ -120,19 +120,25 @@ const ModalCrearReseña = ({ isOpen, onClose, token }) => {
           <h2 className="text-xl font-semibold">Crear Reseña</h2>
         </div>
         <form onSubmit={handleSubmit}>
-          <div className="mb-4">
-            <label htmlFor="contenido" className="block text-sm font-medium text-gray-700">
-              Contenido
-            </label>
-            <textarea
-              id="contenido"
-              rows="4"
-              value={contenido}
-              onChange={(e) => setContenido(e.target.value)}
-              className="mt-1 block w-full p-2 border border-primary rounded-md"
-              required
-            ></textarea>
-          </div>
+          
+        <div className="mb-4">
+          <label htmlFor="contenido" className="block text-sm font-medium text-gray-700">
+            Contenido
+          </label>
+          <textarea
+            id="contenido"
+            rows="4"
+            value={contenido}
+            onChange={(e) => setContenido(e.target.value)}
+            className="mt-1 block w-full p-2 border border-primary rounded-md"
+            required
+            maxLength={550} // Limita la cantidad de caracteres a 550
+          ></textarea>
+
+          {/* Contador de caracteres */}
+          <p className="text-sm text-gray-500">{contenido.length}/550 caracteres</p>
+        </div>
+
           <div className="mb-4">
             <label htmlFor="calificacion" className="block text-sm font-medium text-gray-700">
               Calificación

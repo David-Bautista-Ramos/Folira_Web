@@ -1,4 +1,4 @@
-import { MdHomeFilled, MdMessage } from "react-icons/md";
+import { MdHomeFilled, MdMessage, MdTipsAndUpdates } from "react-icons/md";
 import { IoNotifications } from "react-icons/io5";
 import {  FaUser } from "react-icons/fa";
 import { Link } from "react-router-dom";
@@ -107,12 +107,12 @@ const Sidebar = () => {
                     className='flex gap-3 items-center hover:bg-gray-200 transition-all rounded-full duration-300 py-2 pl-2 pr-4 max-w-fit cursor-pointer'
                 >
                     <div className='relative group'>
-                        <FaUser className='text-blue-950 w-6 h-6' />
+                        < MdTipsAndUpdates    className='text-blue-950 w-6 h-6' />
                         <span className='absolute bottom-10 left-1/2 transform -translate-x-1/2 bg-gray-700 text-white text-xs rounded-md py-1 px-2 opacity-0 group-hover:opacity-100 transition-opacity duration-300 md:hidden'>
                             Amigos
                         </span>
                     </div>
-                    <span className='text-lg hidden md:block'>Amigos</span>
+                    <span className='text-lg hidden md:block'>Sugerencias</span>
                 </Link>
             </li>
 

@@ -217,7 +217,13 @@ const ModalActualizarComunidad = ({ isOpen, onClose, token, comunidadId,obtenerC
           name="descripcion"
           placeholder="Descripción de la comunidad"
           className="w-full p-2 mb-2 border rounded focus:border-primary focus:outline-none text-sm"
+          maxLength={200} // Limita a 200 caracteres
+          rows={4} // Puedes ajustar el número de filas si es necesario
         />
+
+        {/* Contador de caracteres */}
+        <p className="text-sm text-gray-500">{formData.descripcion?.length || 0}/200 caracteres</p>
+
 
 <h4 className="text-sm font-bold mb-2">
               Selecciona 1 Usuario como Administrador:

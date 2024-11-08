@@ -283,6 +283,7 @@ const handleConfirmInactivar = () => {
                 value={contenido}
                 onChange={(e) => setContenido(e.target.value)}
                 placeholder="¿Qué quieres compartir?"
+                maxLength={550} // Limita la cantidad de caracteres a 550
               />
               <button
                 type="submit"
@@ -291,6 +292,10 @@ const handleConfirmInactivar = () => {
                 Publicar
               </button>
             </div>
+
+            {/* Contador de caracteres */}
+            <p className="text-sm mr-[80%] text-gray-500">{contenido.length}/550 caracteres</p>
+
 
             {/* Contenedor para los botones adicionales (Agregue esto)*/} 
               <div className="flex items-center justify-between w-full">

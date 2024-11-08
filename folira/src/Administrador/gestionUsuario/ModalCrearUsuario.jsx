@@ -1,6 +1,7 @@
 import { useState, useRef } from "react";
 import useCreateUser from "../../hooks/useCreateUser"; // Hook para crear usuario
 import Select from "react-select"; // Importa react-select
+import { BsEye, BsEyeSlash } from "react-icons/bs";
 
 const ModalCrearUsuario = ({ isOpen, onClose }) => {
 
@@ -63,6 +64,17 @@ const ModalCrearUsuario = ({ isOpen, onClose }) => {
     { value: 'Vietnam', label: 'Vietnam' },
 ];
 
+const [showPassword, setShowPassword] = useState(false);
+
+  const togglePasswordVisibility = () => {
+    setShowPassword(!showPassword);
+  };
+
+  const [showConfirmPassword, setShowConfirmPassword] = useState(false);
+
+  const toggleConfirmPasswordVisibility = () => {
+    setShowConfirmPassword(!showConfirmPassword);
+  };
 
   const [formData, setFormData] = useState({
     nombre: "",
@@ -70,6 +82,7 @@ const ModalCrearUsuario = ({ isOpen, onClose }) => {
     correo: "",
     pais: "",
     roles: "",
+    biografia: '',
   });
   const [fotoPerfilBan, setFotoPerfilBan] = useState(null);
   const [fotoPerfil, setFotoPerfil] = useState(null);
@@ -220,26 +233,54 @@ const ModalCrearUsuario = ({ isOpen, onClose }) => {
 
                 <div>
                   <label className="block mb-1">Contraseña</label>
-                  <input
-                    type="password"
-                    placeholder="Contraseña"
-                    className="input border border-blue-950 rounded p-2 w-full h-10"
-                    value={formData.contrasena}
-                    name="contrasena"
-                    onChange={handleInputChange}
-                  />
+                  <div className="relative">
+                    <input
+                      type={showPassword ? 'text' : 'password'}
+                      placeholder="Contraseña"
+                      className="input border border-blue-950 rounded p-2 w-full h-10 pr-10"
+                      value={formData.contrasena}
+                      name="contrasena"
+                      onChange={handleInputChange}
+                    />
+                    {/* Mostrar el icono según el estado de visibilidad */}
+                    {showPassword ? (
+                      <BsEye
+                        onClick={togglePasswordVisibility}
+                        className="absolute right-3 top-3 cursor-pointer  text-blue-950"
+                      />
+                    ) : (
+                      < BsEyeSlash
+                        onClick={togglePasswordVisibility}
+                        className="absolute right-3 top-3 cursor-pointer  text-blue-950"
+                      />
+                    )}
+                  </div>
                 </div>
 
                 <div>
                   <label className="block mb-1">Confirmar Contraseña</label>
-                  <input
-                    type="password"
-                    placeholder="Confirmar Contraseña"
-                    className="input border border-blue-950 rounded p-2 w-full h-10"
-                    value={formData.confirmContrasena}
-                    name="confirmContrasena"
-                    onChange={handleInputChange}
-                  />
+                  <div className="relative">
+                    <input
+                      type={showConfirmPassword ? 'text' : 'password'}
+                      placeholder="Confirmar Contraseña"
+                      className="input border border-blue-950 rounded p-2 w-full h-10 pr-10"
+                      value={formData.confirmContrasena}
+                      name="confirmContrasena"
+                      onChange={handleInputChange}
+                    />
+                    {/* Mostrar el icono según el estado de visibilidad */}
+                    {showConfirmPassword ? (
+                      <BsEye
+                        onClick={toggleConfirmPasswordVisibility}
+                        className="absolute right-3 top-3 cursor-pointer text-blue-950"
+                      />
+                    ) : (
+                      < BsEyeSlash
+                        onClick={toggleConfirmPasswordVisibility}
+                        className="absolute right-3 top-3 cursor-pointer text-blue-950"
+                      />
+                    )}
+                  </div>
                 </div>
 
                 <div>
@@ -276,7 +317,11 @@ const ModalCrearUsuario = ({ isOpen, onClose }) => {
                     maxLength={200}
                     rows={4}
                   />
+                  <div className="text-right text-sm text-gray-500 mt-1">
+                    {formData.biografia.length} / 200 caracteres 
+                  </div>
                 </div>
+
 
                 <div className="modal-action col-span-2">
                   <button

@@ -157,9 +157,14 @@ const ModalCrearNuevaComunidad = ({ isOpen, onClose, token, userId, obtenerComun
                 onChange={handleInputChange}
                 name="descripcion"
                 placeholder="Descripción de la comunidad"
+                maxLength={200} // Limita a 200 caracteres
                 className="w-full p-2 border rounded focus:border-primary focus:outline-none text-sm"
               />
+              <p className="text-xs text-gray-500 mt-1">
+                {formData.descripcion.length}/200 caracteres
+              </p>
             </div>
+
 
             <div>
               <label className="block mb-1">Link</label>
