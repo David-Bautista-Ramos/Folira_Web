@@ -234,11 +234,9 @@ export const updateUser = async (req, res) => {
         _id: { $in: generoLiterarioPreferido },
       });
       if (generos.length !== generoLiterarioPreferido.length) {
-        return res
-          .status(400)
-          .json({
-            error: "Algunos géneros literarios seleccionados son inválidos",
-          });
+        return res.status(400).json({
+          error: "Algunos géneros literarios seleccionados son inválidos",
+        });
       }
       user.generoLiterarioPreferido = generos.map((genero) => genero._id); // Actualiza los géneros literarios del usuario
     }
@@ -585,7 +583,7 @@ export const actualizarUsuario = async (req, res) => {
     biografia,
   } = req.body;
   let { fotoPerfil, fotoPerfilBan } = req.body;
-  
+
   // Obtiene el ID del usuario desde los parámetros de la solicitud
   const userId = req.params.userId;
 
@@ -668,8 +666,8 @@ export const actualizarUsuario = async (req, res) => {
     user.correo = correo || user.correo;
     user.pais = pais || user.pais;
     user.biografia = biografia || user.biografia;
-    user.roles = roles || user.roles,
-    user.fotoPerfil = fotoPerfil || user.fotoPerfil;
+    (user.roles = roles || user.roles),
+      (user.fotoPerfil = fotoPerfil || user.fotoPerfil);
     user.fotoPerfilBan = fotoPerfilBan || user.fotoPerfilBan;
 
     // Guardar los cambios en el usuario
@@ -849,3 +847,55 @@ function generateRandomPassword() {
   }
   return password;
 }
+
+export const verficacionCorreoUser = async (req, res) => {
+  const { correo } = req.query;
+
+  try {
+    const user = await User.findOne({ correo: correo });
+
+    if (user) {
+      return res.json({ exists: true });
+    }
+
+    res.json({ exists: false });
+  } catch (error) {
+    res
+      .status(500)
+      .json({ error: "Hubo un problema con la validación del correo." });
+  }
+};
+
+export const verficacionNombreUser = async (req, res) => {
+  const { nombre } = req.query;
+
+  try {
+    const user = await User.findOne({ nombre: nombre });
+
+    if (user) {
+      return res.json({ exists: true });
+    }
+
+    res.json({ exists: false });
+  } catch (error) {
+    res
+      .status(500)
+      .json({ error: "Hubo un problema con la validación del nombre." });
+  }
+};
+
+
+export const obtenerUserActAmg = async (req, res) => {
+  try {
+    const estado = true;
+
+    // Filtra los usuarios activos y selecciona solo los campos nombre y fotoPerfil
+    const users = await User.find({ estado: estado }).select('nombre fotoPerfil');
+    
+    // Envía la respuesta con los usuarios filtrados
+    res.status(200).json(users);
+  } catch (error) {
+    console.error("Error al obtener los usuarios:", error.message);
+    res.status(500).json({ error: "Error al obtener los usuarios." });
+  }
+};

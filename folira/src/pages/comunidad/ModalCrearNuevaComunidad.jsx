@@ -1,15 +1,15 @@
 import { useState, useRef, useEffect } from 'react';
 import useCreateComunidad from '../../hooks/useCreateComunidad';
 
-const ModalCrearNuevaComunidad = ({ isOpen, onClose, token, userId ,obtenerComunidades}) => {
+const ModalCrearNuevaComunidad = ({ isOpen, onClose, token, userId, obtenerComunidades }) => {
   const [formData, setFormData] = useState({
     nombre: "", 
     descripcion: "", 
     fotoComunidad: "", 
     fotoBanner: "", 
-    generoLiterarios: [],
-    admin: userId ,
-    link: "",
+    generoLiterarios: [], 
+    admin: userId, 
+    link: "", 
   });
 
   const { createComuniad, isCreatingComunidad } = useCreateComunidad(obtenerComunidades);
@@ -88,35 +88,37 @@ const ModalCrearNuevaComunidad = ({ isOpen, onClose, token, userId ,obtenerComun
 
   return (
     <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-50" onClick={onClose}>
-      <div className="relative bg-white p-6 rounded-lg w-full max-w-md" onClick={(e) => e.stopPropagation()}>
+      <div className="relative bg-white p-6 rounded-lg w-full max-w-4xl max-h-[90vh] overflow-y-auto scrollbar-custom" onClick={(e) => e.stopPropagation()}>
         <div className="border-b-2 border-primary pb-2 mb-4">
           <h2 className="text-xl text-primary text-center">Crear Comunidad</h2>
         </div>
 
-        <div className="relative mb-8">
+        <div className="grid grid-cols-2 gap-4 relative mb-6">
           {/* COVER IMG */}
-          <img
-            src={fotoBanner || "/cover.png"}
-            className="h-40 w-full object-cover rounded-lg"
-            alt="cover image"
-          />
-          <button
-            className="absolute top-2 right-2 bg-gray-700 text-white p-1 rounded-full opacity-75 hover:opacity-100"
-            onClick={() => fotoBannerRef.current.click()}
-          >
-            Editar
-          </button>
-          <input
-            type="file"
-            hidden
-            accept="image/*"
-            ref={fotoBannerRef}
-            onChange={(e) => handleImgChange(e, "coverImg")}
-          />
+          <div className="col-span-2">
+            <img
+              src={fotoBanner || "/cover.png"}
+              className="h-32 w-full object-cover rounded-lg"
+              alt="cover image"
+            />
+            <button
+              className="absolute top-2 right-2 bg-gray-700 text-white p-1 rounded-full opacity-75 hover:opacity-100"
+              onClick={() => fotoBannerRef.current.click()}
+            >
+              Editar
+            </button>
+            <input
+              type="file"
+              hidden
+              accept="image/*"
+              ref={fotoBannerRef}
+              onChange={(e) => handleImgChange(e, "coverImg")}
+            />
+          </div>
 
           {/* USER AVATAR */}
-          <div className="absolute bottom-[-30px] left-4 w-24 h-24">
-            <img
+          <div className="absolute bottom-[-25px] left-4 w-20 h-20">
+          <img
               src={fotoComunidad || "/avatar-placeholder.png"}
               className="w-full h-full rounded-full border-2 border-white object-cover"
               alt="profile avatar"
@@ -133,62 +135,86 @@ const ModalCrearNuevaComunidad = ({ isOpen, onClose, token, userId ,obtenerComun
         </div>
 
         {/* Input fields */}
-        <label className="block mb-1">Nombre</label>
-        <input
-          type="text"
-          value={formData.nombre}
-          onChange={handleInputChange}
-          name="nombre"
-          placeholder="Nombre de la comunidad"
-          className="w-full p-2 mb-3 border rounded focus:border-primary focus:outline-none text-sm"
-        />
-
-        <label className="block mb-1">Descripción</label>
-        <textarea
-          value={formData.descripcion}
-          onChange={handleInputChange}
-          name="descripcion"
-          placeholder="Descripción de la comunidad"
-          className="w-full p-2 mb-3 border rounded focus:border-primary focus:outline-none text-sm"
-        />
-         <label className="block mb-1">Link</label>
-        <input
-          type="text"
-          value={formData.link}
-          onChange={handleInputChange}
-          name="link"
-          placeholder="Link de reuniones para la comunidad"
-          className="w-full p-2 mb-3 border rounded focus:border-primary focus:outline-none text-sm"
-        />
-
-        <h4 className="text-sm font-bold mb-2">Selecciona hasta 5 géneros literarios:</h4>
-        <div className="grid grid-cols-2 gap-2 mb-4 h-32 overflow-y-auto border rounded p-2">
-          {generoLiterarioOpciones.map((genero) => (
-            <label key={genero._id} className="flex items-center cursor-pointer">
+        <div className="grid grid-cols-2 gap-4 mb-6">
+          {/* Primera columna: Nombre, Descripción y Link */}
+          <div className="space-y-4">
+            <div>
+              <label className="block mb-1">Nombre</label>
               <input
-                type="checkbox"
-                name="generoLiterarios"
-                value={genero._id}
-                checked={formData.generoLiterarios.includes(genero._id)}
+                type="text"
+                value={formData.nombre}
                 onChange={handleInputChange}
-                className="hidden"
+                name="nombre"
+                placeholder="Nombre de la comunidad"
+                className="w-full p-2 border rounded focus:border-primary focus:outline-none text-sm"
               />
-              <div
-                className={`flex items-center border rounded-full p-1 px-2 text-xs ${formData.generoLiterarios.includes(genero._id) ? "bg-primary text-white" : "border-primary text-primary"}`}
-              >
-                {genero.nombre}
-              </div>
-            </label>
-          ))}
+            </div>
+
+            <div>
+              <label className="block mb-1">Descripción</label>
+              <textarea
+                value={formData.descripcion}
+                onChange={handleInputChange}
+                name="descripcion"
+                placeholder="Descripción de la comunidad"
+                className="w-full p-2 border rounded focus:border-primary focus:outline-none text-sm"
+              />
+            </div>
+
+            <div>
+              <label className="block mb-1">Link</label>
+              <input
+                type="text"
+                value={formData.link}
+                onChange={handleInputChange}
+                name="link"
+                placeholder="Link de reuniones para la comunidad"
+                className="w-full p-2 border rounded focus:border-primary focus:outline-none text-sm"
+              />
+            </div>
+          </div>
+
+          {/* Segunda columna: Géneros literarios */}
+          <div className="space-y-4">
+            <h4 className="text-sm font-bold mb-2">Selecciona hasta 5 géneros literarios:</h4>
+            <div className="grid grid-cols-2 gap-2 mb-4 h-32 overflow-y-auto border rounded p-2">
+              {generoLiterarioOpciones.map((genero) => (
+                <label key={genero._id} className="flex items-center cursor-pointer">
+                  <input
+                    type="checkbox"
+                    name="generoLiterarios"
+                    value={genero._id}
+                    checked={formData.generoLiterarios.includes(genero._id)}
+                    onChange={handleInputChange}
+                    className="hidden"
+                  />
+                  <div
+                    className={`flex items-center border rounded-full p-1 px-2 text-xs ${formData.generoLiterarios.includes(genero._id) ? "bg-primary text-white" : "border-primary text-primary"}`}
+                  >
+                    {genero.nombre}
+                  </div>
+                </label>
+              ))}
+            </div>
+          </div>
         </div>
 
-        <button
-          onClick={handleSubmit}
-          disabled={isCreatingComunidad}
-          className={`w-full py-2 rounded bg-primary text-white hover:bg-blue-600 transition-opacity ${isCreatingComunidad ? "opacity-50 cursor-not-allowed" : ""}`}
-        >
-          {isCreatingComunidad ? "Creando..." : "Crear Comunidad"}
-        </button>
+
+        <div className="flex justify-end mt-4"> 
+            <button
+            onClick={handleSubmit}
+            disabled={isCreatingComunidad}
+            className={`bg-primary text-white p-2 rounded ${isCreatingComunidad ? "opacity-50 cursor-not-allowed" : ""}`}
+          >
+            {isCreatingComunidad ? "Creando..." : "Crear Comunidad"}
+          </button>
+
+          {/* Agregue esto */}
+          <button className="px-4 py-2 bg-gray-300 text-gray-800 rounded-md ml-4 hover:bg-gray-400" onClick={onClose}>
+                Cancelar
+          </button>
+        </div>
+        
       </div>
     </div>
   );

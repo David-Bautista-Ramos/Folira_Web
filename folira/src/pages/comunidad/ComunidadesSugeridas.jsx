@@ -1,9 +1,11 @@
 import { useQuery } from '@tanstack/react-query';
 import { useEffect, useState, useCallback } from 'react';
 import { Link } from 'react-router-dom';
-import ModalCrearNuevaComunidad from './ModalCrearNuevaComunidad.jsx'; // Importa el modal
+import ModalCrearNuevaComunidad from './ModalCrearNuevaComunidad.jsx';
 import toast from 'react-hot-toast';
 import { FaPlus } from 'react-icons/fa';
+import { BsArrowRight, BsArrowLeft } from 'react-icons/bs';
+
 
 // Componente para cada tarjeta de comunidad
 const ComunidadCard = ({ comunidad, unirseComunidad }) => (
@@ -38,7 +40,9 @@ const ComunidadesSugeridas = () => {
   const [comunidades, setComunidades] = useState([]);
   const [filtro, setFiltro] = useState('');
   const [loading, setLoading] = useState(true);
-  const [isCrearModalOpen, setIsCrearModalOpen] = useState(false); // Estado para el modal de crear comunidad
+  const [isCrearModalOpen, setIsCrearModalOpen] = useState(false);
+  const [currentPage, setCurrentPage] = useState(1); // Página actual
+  const [pageSize] = useState(6); // Comunidades por página
 
   const { data: authUser } = useQuery({ queryKey: ['authUser'] });
 
@@ -89,32 +93,41 @@ const ComunidadesSugeridas = () => {
     !comunidad.miembros.includes(authUser._id) && comunidad.nombre.toLowerCase().includes(filtro.toLowerCase())
   );
 
+  // Paginación: obtener las comunidades a mostrar en la página actual
+  const indexOfLastCommunity = currentPage * pageSize;
+  const indexOfFirstCommunity = indexOfLastCommunity - pageSize;
+  const comunidadesToShow = comunidadesFiltradas.slice(indexOfFirstCommunity, indexOfLastCommunity);
+
+  // Calcular el número total de páginas
+  const totalPages = Math.ceil(comunidadesFiltradas.length / pageSize);
+
   return (
     <div className="p-6">
+      <div className="flex mb-4 items-center">
+        <button
+          onClick={() => setIsCrearModalOpen(true)} // Abre el modal para crear comunidad
+          className="mr-3 p-2 bg-primary text-white rounded-full hover:bg-blue-950 "
+        >
+          <FaPlus />
+        </button>
 
-      <button
-        onClick={() => setIsCrearModalOpen(true)} // Abre el modal para crear comunidad
-        className="mr-3 p-2 bg-primary text-white rounded-full hover:bg-blue-950 "
-      >
-        <FaPlus />
-      </button>
+        <input
+          type="text"
+          placeholder="Buscar comunidad..."
+          value={filtro}
+          onChange={(e) => setFiltro(e.target.value)}
+          className="border border-gray-300 rounded p-2 mb-4 w-[565px] mt-4 focus:outline-none focus:border-blue-950"
+        />
+      </div>
 
-      <input
-        type="text"
-        placeholder="Buscar comunidad..."
-        value={filtro}
-        onChange={(e) => setFiltro(e.target.value)}
-        className="border border-gray-300 rounded p-2 mb-4 w-[565px] mt-4 focus:outline-none focus:border-blue-950" // Agregamos margen superior y borde rojo en focus
-      />
-      
       {loading ? (
         <p>Cargando comunidades...</p>
       ) : (
         <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6">
-          {comunidadesFiltradas.length === 0 ? (
+          {comunidadesToShow.length === 0 ? (
             <p>No hay comunidades sugeridas.</p>
           ) : (
-            comunidadesFiltradas.slice().reverse().map((comunidad) => (
+            comunidadesToShow.reverse().map((comunidad) => (
               <ComunidadCard
                 key={comunidad._id}
                 comunidad={comunidad}
@@ -125,13 +138,34 @@ const ComunidadesSugeridas = () => {
         </div>
       )}
 
+      {/* Controles de paginación */}
+      <div className="flex justify-center mt-4 gap-4">
+        <button
+          onClick={() => setCurrentPage((prevPage) => Math.max(prevPage - 1, 1))}
+          disabled={currentPage === 1}
+          className="bg-primary text-white rounded-full px-4 py-2 hover:bg-blue-950"
+          >
+          <BsArrowLeft />
+        </button>
+        <span className="flex items-center">
+          Página {currentPage} de {totalPages}
+        </span>
+        <button
+          onClick={() => setCurrentPage((prevPage) => Math.min(prevPage + 1, totalPages))}
+          disabled={currentPage === totalPages}
+          className="bg-primary text-white rounded-full px-4 py-2 hover:bg-blue-950"
+        >
+          <BsArrowRight  />
+        </button>
+      </div>
+
       {/* Modal para crear comunidad */}
       <ModalCrearNuevaComunidad
         isOpen={isCrearModalOpen}
         onClose={() => setIsCrearModalOpen(false)}
         token={authUser.token}
         userId={authUser._id}
-        obtenerComunidades={fetchComunidades} // Llama a esta función para actualizar la lista
+        obtenerComunidades={fetchComunidades}
       />
     </div>
   );
