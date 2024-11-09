@@ -13,7 +13,6 @@ const ListaPublicaciones = ({ posts, esAdmin, esMiembro }) => {
   const [previewImage, setPreviewImage] = useState(null);
   const [openCommentModal, setOpenCommentModal] = useState(null);
   const { data: authUser } = useQuery({ queryKey: ["authUser"] });
-  const [liked, setLiked] = useState(false);
 
 
   const isMyComment = (commentUserId) => authUser?._id === commentUserId;

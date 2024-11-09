@@ -101,7 +101,7 @@ const TusComunidades = () => {
   // Calcular el rango de comunidades que deben mostrarse en la página actual
   const startIndex = (page - 1) * pageSize;
   const endIndex = page * pageSize;
-  const comunidadesPaginadas = comunidadesFiltradas.slice(startIndex, endIndex);
+  const comunidadesPaginadas = comunidadesFiltradas.reverse().slice(startIndex, endIndex);
 
   // Función para manejar la paginación
   const handleNextPage = () => {

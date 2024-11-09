@@ -26,7 +26,6 @@ const Autor = ({authUser}) => {
       </div>
       {/* Insignias según el tipo seleccionado */}
       {feedType === "autorSuger" && <AutorSugerido authUser={authUser}/>}      
-              
           </div>
       </>
   );

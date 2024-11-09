@@ -328,7 +328,7 @@ useEffect(() => {
                       <Link to={`/profile/${publicacion.user?.nombre}`}>
                         <img
                           className="w-16 h-16 rounded-full"
-                          src={publicacion.user?.fotoPerfil}
+                          src={publicacion.user?.fotoPerfil || "/avatar-placeholder.png"}
                           alt="Profile"
                         />
                       </Link>
@@ -341,7 +341,10 @@ useEffect(() => {
                         </Link>
                         <p className="font-semibold">Estado: {obtenerEstadoTexto(publicacion.estado)}</p>
                         <p>Tipo de publicación: {tipoPublicacion}</p> {/* Mostrar tipo de publicación */}
-
+                        <p>{publicacion.titulo} 
+                          {tipoPublicacion === "Comunidad" && (
+                            <span className="ml-2 text-sm text-gray-800"> - {publicacion.idComunidad?.nombre}</span>
+                          )}</p>
                       </div>
                     </div>
 

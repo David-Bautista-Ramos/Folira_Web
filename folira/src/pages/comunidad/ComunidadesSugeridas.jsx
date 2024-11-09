@@ -96,7 +96,7 @@ const ComunidadesSugeridas = () => {
   // Paginación: obtener las comunidades a mostrar en la página actual
   const indexOfLastCommunity = currentPage * pageSize;
   const indexOfFirstCommunity = indexOfLastCommunity - pageSize;
-  const comunidadesToShow = comunidadesFiltradas.slice(indexOfFirstCommunity, indexOfLastCommunity);
+  const comunidadesToShow = comunidadesFiltradas.reverse().slice(indexOfFirstCommunity, indexOfLastCommunity);
 
   // Calcular el número total de páginas
   const totalPages = Math.ceil(comunidadesFiltradas.length / pageSize);
@@ -127,7 +127,7 @@ const ComunidadesSugeridas = () => {
           {comunidadesToShow.length === 0 ? (
             <p>No hay comunidades sugeridas.</p>
           ) : (
-            comunidadesToShow.reverse().map((comunidad) => (
+            comunidadesToShow.map((comunidad) => (
               <ComunidadCard
                 key={comunidad._id}
                 comunidad={comunidad}

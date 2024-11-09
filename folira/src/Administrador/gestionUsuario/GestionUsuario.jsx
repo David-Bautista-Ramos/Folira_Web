@@ -255,7 +255,7 @@ function GestionUsuario() {
                     <div className="w-24 h-24 bg-gray-300 rounded-full border border-primary overflow-hidden mr-4">
                       <img
                         className="object-cover w-full h-full"
-                        src={usuario.fotoPerfil || "url_de_la_imagen_usuario"}
+                        src={usuario.fotoPerfil || "/avatar-placeholder.png"}
                         alt="Usuario"
                       />
                     </div>
@@ -350,7 +350,7 @@ function GestionUsuario() {
           {/* Modal para Crear Usuario */}
           <ModalCrearUsuario
             isOpen={isCrearModalOpen}
-            onClose={() => setIsCrearModalOpen(false)}
+            onClose={() => {setIsCrearModalOpen(false),obtenerUsuarios()}}
             obtenerUsuarios={obtenerUsuarios} // Para refrescar la lista de usuarios
           />
 

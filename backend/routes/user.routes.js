@@ -1,5 +1,5 @@
 import express from 'express';
-import {activar, actualizarUsuario, cambiarEstadoUsuario, crearUser, desactivar, eliminarUsuario, followUnfollowUser, getSuggestedUsers, getUserProfile, obtenerUserAct, obtenerUserActAmg, obtenerUsersDes, obtenerUsuarioPorId, obtenerUsuarios, recuperarContraseña, updateUser, verficacionCorreoUser, verficacionNombreUser} from '../controllers/user.controller.js'
+import {activar, actualizarUsuario, cambiarEstadoUsuario, crearUser, desactivar, eliminarUsuario, followUnfollowUser, getSuggestedUsers, getUserProfile, obtenerUserAct, obtenerUserActAmg, obtenerUsersDes, obtenerUsuarioPorId, obtenerUsuarios, recuperarContraseña, updateUser, verficacionCorreoUser, verficacionNombreCompleUser, verficacionNombreUser} from '../controllers/user.controller.js'
 import { protectRoutes } from '../middleware/protectRoutes.js';
 // import  from '../controllers/obtenerUserPorNombre.controller.js'
 
@@ -28,6 +28,7 @@ router.post("/RecupearPass",recuperarContraseña);
 
 router.get("/VerifiCOR",verficacionCorreoUser);
 router.get("/VerifiNOM",verficacionNombreUser)
+router.get("/VerifiNOMCOMPL",verficacionNombreCompleUser)
 
 router.get("/useractamg",protectRoutes,obtenerUserActAmg);
 

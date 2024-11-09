@@ -103,6 +103,7 @@ export const followUnfollowUser = async (req, res) => {
         tipo: "seguidor",
         de: req.user._id,
         para: userToModify._id,
+        mensaje:`El usuario ${req.user.nombre} te a empezado a seguir`,
       });
 
       await newNotification.save();
@@ -897,5 +898,24 @@ export const obtenerUserActAmg = async (req, res) => {
   } catch (error) {
     console.error("Error al obtener los usuarios:", error.message);
     res.status(500).json({ error: "Error al obtener los usuarios." });
+  }
+};
+
+
+export const verficacionNombreCompleUser = async (req, res) => {
+  const { nombreCompleto } = req.query;
+
+  try {
+    const user = await User.findOne({ nombreCompleto: nombreCompleto });
+
+    if (user) {
+      return res.json({ exists: true });
+    }
+
+    res.json({ exists: false });
+  } catch (error) {
+    res
+      .status(500)
+      .json({ error: "Hubo un problema con la validación del nombre." });
   }
 };

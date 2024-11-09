@@ -1,7 +1,6 @@
 import { useState, useRef } from "react";
 import useCreateUser from "../../hooks/useCreateUser"; // Hook para crear usuario
 import Select from "react-select"; // Importa react-select
-import { BsEye, BsEyeSlash } from "react-icons/bs";
 
 const ModalCrearUsuario = ({ isOpen, onClose }) => {
 
@@ -64,17 +63,6 @@ const ModalCrearUsuario = ({ isOpen, onClose }) => {
     { value: 'Vietnam', label: 'Vietnam' },
 ];
 
-const [showPassword, setShowPassword] = useState(false);
-
-  const togglePasswordVisibility = () => {
-    setShowPassword(!showPassword);
-  };
-
-  const [showConfirmPassword, setShowConfirmPassword] = useState(false);
-
-  const toggleConfirmPasswordVisibility = () => {
-    setShowConfirmPassword(!showConfirmPassword);
-  };
 
   const [formData, setFormData] = useState({
     nombre: "",
@@ -114,16 +102,21 @@ const [showPassword, setShowPassword] = useState(false);
 
   const { createUser, isCreatingUser } = useCreateUser(); // Función de creación de usuario
 
-  // Función para manejar el submit del formulario
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-    // Enviar datos del formulario y las imágenes
-    await createUser({
-      ...formData,
-      fotoPerfil,
-      fotoPerfilBan,
-    });
-  };
+ // Función para manejar el submit del formulario
+const handleSubmit = async (e) => {
+  e.preventDefault();
+  // Enviar datos del formulario y las imágenes
+  const success = await createUser({
+    ...formData,
+    fotoPerfil,
+    fotoPerfilBan,
+  });
+  
+  // Cerrar el modal si la creación fue exitosa
+  if (success) {
+    onClose();
+  }
+};
 
   const handleCountryChange = (selectedOption) => {
     setFormData((prevData) => ({
@@ -229,58 +222,6 @@ const [showPassword, setShowPassword] = useState(false);
                     name="correo"
                     onChange={handleInputChange}
                   />
-                </div>
-
-                <div>
-                  <label className="block mb-1">Contraseña</label>
-                  <div className="relative">
-                    <input
-                      type={showPassword ? 'text' : 'password'}
-                      placeholder="Contraseña"
-                      className="input border border-blue-950 rounded p-2 w-full h-10 pr-10"
-                      value={formData.contrasena}
-                      name="contrasena"
-                      onChange={handleInputChange}
-                    />
-                    {/* Mostrar el icono según el estado de visibilidad */}
-                    {showPassword ? (
-                      <BsEye
-                        onClick={togglePasswordVisibility}
-                        className="absolute right-3 top-3 cursor-pointer  text-blue-950"
-                      />
-                    ) : (
-                      < BsEyeSlash
-                        onClick={togglePasswordVisibility}
-                        className="absolute right-3 top-3 cursor-pointer  text-blue-950"
-                      />
-                    )}
-                  </div>
-                </div>
-
-                <div>
-                  <label className="block mb-1">Confirmar Contraseña</label>
-                  <div className="relative">
-                    <input
-                      type={showConfirmPassword ? 'text' : 'password'}
-                      placeholder="Confirmar Contraseña"
-                      className="input border border-blue-950 rounded p-2 w-full h-10 pr-10"
-                      value={formData.confirmContrasena}
-                      name="confirmContrasena"
-                      onChange={handleInputChange}
-                    />
-                    {/* Mostrar el icono según el estado de visibilidad */}
-                    {showConfirmPassword ? (
-                      <BsEye
-                        onClick={toggleConfirmPasswordVisibility}
-                        className="absolute right-3 top-3 cursor-pointer text-blue-950"
-                      />
-                    ) : (
-                      < BsEyeSlash
-                        onClick={toggleConfirmPasswordVisibility}
-                        className="absolute right-3 top-3 cursor-pointer text-blue-950"
-                      />
-                    )}
-                  </div>
                 </div>
 
                 <div>

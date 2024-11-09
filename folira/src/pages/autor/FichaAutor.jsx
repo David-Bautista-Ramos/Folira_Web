@@ -185,7 +185,6 @@ const toggleBiografiaVisibility = () => {
 
   return (
     <div className='flex-[4_4_0] border-r border-primary min-h-screen '>
-|    
       <div className="flex flex-col p-6 bg-white rounded-lg shadow-lg relative">
       <div className="flex items-center cursor-pointer gap-5 text-3xl -mt-4 border-b-2 border-gray-300 pb-2 mb-4" onClick={handleRedirect}>
           <Link to="/autor  "> 

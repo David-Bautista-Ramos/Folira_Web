@@ -266,7 +266,7 @@ useEffect(() => {
                                                 <Link to={`/profile/${resena.idUsuario?.nobre}`}>
                                                     <img
                                                         className="object-cover w-full h-full"
-                                                        src={resena.idUsuario?.fotoPerfil || "url_de_imagen_predeterminada"}
+                                                        src={resena.idUsuario?.fotoPerfil || "/avatar-placeholder.png"}
                                                         alt="Perfil"
                                                     />
                                                 </Link>

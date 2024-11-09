@@ -74,8 +74,9 @@ const AmigoSugeridos = () => {
                         style={{ boxShadow: '0 4px 6px rgba(0, 0, 0, 0.3)' }}
                     >
                         <Link to={`/profile/${amigo?.nombre}`} className="no-underline">
+                            
                             <img
-                                src={amigo.fotoPerfil}
+                                src={amigo.fotoPerfil || "/avatar-placeholder.png"}
                                 alt={`Perfil de ${amigo.nombre}`}
                                 className="w-32 h-32 object-cover rounded-full mb-2 mx-auto"
                             />
