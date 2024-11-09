@@ -204,9 +204,9 @@ const Post = ({ post }) => {
           {post.fotoPublicacion && (
             <img
               src={post.fotoPublicacion}
-              className="h-80 object-contain rounded-lg border border-blue-950"
+              className="w-full h-88 object-cover mt-2"
               alt="Post"
-            />
+            /> 
           )}
         </div>
 

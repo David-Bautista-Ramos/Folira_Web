@@ -124,11 +124,12 @@ const ModalCrearComunidad = ({ isOpen, onClose, token, obtenerComunidades }) => 
   if (!isOpen) return null;
 
   return (
-    <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-50" onClick={onClose}>
-  <div className="relative bg-white p-2 rounded-lg w-full max-w-3xl" onClick={(e) => e.stopPropagation()}>
-    <div className="border-b-2 border-primary pb-2 mb-2">
-      <h2 className="text-xl text-primary text-center">Crear Comunidad</h2>
-    </div>
+<div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-50" onClick={onClose}>
+<div  className="relative bg-white p-6 rounded-lg w-full max-w-4xl max-h-[90vh] overflow-y-auto scrollbar-custom" // Limitar la altura del modal
+       onClick={(e) => e.stopPropagation()}>
+    <div className="border-b-2 border-primary pb-2 mb-4">
+          <h2 className="text-xl text-primary text-center">Crear Comunidad</h2>
+        </div>
 
     {/* Sección de imágenes */}
     <div className="flex flex-col mb-2">

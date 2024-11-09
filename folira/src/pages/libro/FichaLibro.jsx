@@ -226,7 +226,11 @@ if (isRedirecting) {
             src={portada} 
             alt={titulo} 
             className="w-1/3 h-[auto] rounded-lg object-cover"
-            style={{ flexShrink: 0 }}
+            style={{
+              flexShrink: 0,
+              maxHeight: '300px',  // Ajusta la altura máxima de la imagen
+              objectFit: 'cover',  // Mantiene la proporción sin distorsionar la imagen
+            }}
           />
           <div className="ml-6 flex flex-col flex-grow">
             <h2 className="text-2xl font-semibold">{titulo}</h2>
