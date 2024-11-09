@@ -193,8 +193,8 @@ export const commentOnPostAd = async (req, res) => {
 
     if (!post) {
       return res.status(404).json({ error: "No se ha encontrado la publicación" });
-    }
-
+    }    
+    
     const comment = { user: userId, text };
 
     post.comentarios.push(comment);
@@ -204,6 +204,7 @@ export const commentOnPostAd = async (req, res) => {
       de: userId,
       para: post.user,
       tipo: "comentario",
+      mensaje:`ha comentado una de tus publicaciónes`
     });
     await notification.save();
 
@@ -238,6 +239,7 @@ export const commentOnPost = async (req, res) => {
       de: userId,
       para: post.user,
       tipo: "comentario",
+      mensaje:`ha comentado una de tus publicaciónes`
     });
     await notification.save();
 
@@ -280,6 +282,7 @@ export const likeUnlikePost = async (req, res) => {
         de: userId,
         para: post.user,
         tipo: "like",
+        mensaje: `te a dado un like en una publicacion tuya`
       });
       await notification.save();
 

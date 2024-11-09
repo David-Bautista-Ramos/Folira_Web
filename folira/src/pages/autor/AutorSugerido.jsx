@@ -62,7 +62,7 @@ const Comunidad = ({ authUser }) => {
   // Lógica para obtener los autores de la página actual
   const indexOfLastAuthor = currentPage * authorsPerPage;
   const indexOfFirstAuthor = indexOfLastAuthor - authorsPerPage;
-  const currentAuthors = sortedAutores.slice(indexOfFirstAuthor, indexOfLastAuthor);
+  const currentAuthors = sortedAutores.reverse().slice(indexOfFirstAuthor, indexOfLastAuthor);
 
   // Calcular el número total de páginas
   const totalPages = Math.ceil(sortedAutores.length / authorsPerPage);

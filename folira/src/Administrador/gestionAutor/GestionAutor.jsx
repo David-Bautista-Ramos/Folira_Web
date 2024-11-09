@@ -247,7 +247,7 @@ function GestionAutor() {
                     <div className="w-24 h-24 bg-gray-300 rounded-full border border-primary overflow-hidden mr-4">
                       <img
                         className="object-cover w-full h-full"
-                        src={autor.fotoAutor || "url_de_la_imagen_autor"}
+                        src={autor.fotoAutor || "/avatar-placeholder.png"}
                         alt="Autor"
                       />
                     </div>

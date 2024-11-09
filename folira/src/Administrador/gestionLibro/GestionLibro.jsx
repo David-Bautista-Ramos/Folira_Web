@@ -262,7 +262,7 @@ function GestionLibro() {
                     <div className="w-24 h-36 bg-gray-300 rounded border border-primary overflow-hidden mr-4">
                       <img
                         className="object-cover w-full h-full"
-                        src={libro.portada || "url_de_la_imagen_libro"}
+                        src={libro.portada || "/book-placeholder.png"}
                         alt="Libro"
                       />
                     </div>

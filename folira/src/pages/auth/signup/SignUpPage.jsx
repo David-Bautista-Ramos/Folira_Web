@@ -71,6 +71,7 @@ const SignUpPage = () => {
 
     const[correoExists, setCorreoExists] = useState(false);
     const[nombreExists, setNombreExists] = useState(false);
+    const[nombreCompletoExists, setNombreCompletoExists] = useState(false);
 
     const [showPassword, setShowPassword] = useState(false);
 	const [showConfirmPassword, setShowConfirmPassword] = useState(false); // Estado para mostrar/ocultar la confirmación de contraseña
@@ -109,6 +110,13 @@ const SignUpPage = () => {
           validacionNombre(formData.nombre);
         }
       }, [formData.nombre]); // Solo depende de formData.correo
+
+      useEffect(() => {
+        // Llama a la función de validación solo cuando el correo cambie
+        if (formData.nombreCompleto.length > 0) {
+          validacionNombreCompleto(formData.nombreCompleto);
+        }
+      }, [formData.nombreCompleto]); // Solo depende de formData.correo
 
     const navigate = useNavigate(); // Declara navigate fuera del hook de mutación
 
@@ -151,6 +159,11 @@ const SignUpPage = () => {
         toast.error("Este nombre de usuario ya está registrado.");
         return;
       }
+
+      if (nombreCompletoExists) {
+        toast.error("Este nombre completo de usuario ya está registrado.");
+        return;
+      }
   
       mutate(formData);
 
@@ -179,6 +192,15 @@ const SignUpPage = () => {
     }
   };
 
+  const validacionNombreCompleto = async (nombreCompleto) => {
+    if (nombreCompleto.length > 0) {
+      const response = await fetch(`/api/users/VerifiNOMCOMPL?nombreCompleto=${nombreCompleto}`);
+      const result = await response.json();
+      setNombreCompletoExists(result.exists);
+    } else {
+      setNombreCompletoExists(false);
+    }
+  };
 
     
 	const handleInputChange = (e) => {
@@ -288,6 +310,7 @@ const SignUpPage = () => {
                                 value={formData.nombreCompleto}
                             />
                         </label>
+                        {nombreCompletoExists && <span className="text-red-500 text-sm">Este nombre completo de usuario ya está registrado.</span>}
                     </label>
 
                     {/* Selección de País */}

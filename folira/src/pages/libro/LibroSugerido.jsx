@@ -3,6 +3,7 @@ import { Link } from 'react-router-dom';
 import { useQuery } from "@tanstack/react-query";
 import { BsArrowLeft, BsArrowRight } from 'react-icons/bs';
 
+
 const LibroSugerido = () => {
     const [libros, setLibros] = useState([]);
     const [librosGuardados, setLibrosGuardados] = useState(new Set());
@@ -10,7 +11,7 @@ const LibroSugerido = () => {
     const [error, setError] = useState(null);
     const [filtro, setFiltro] = useState(""); 
     const [currentPage, setCurrentPage] = useState(1); // Página actual
-    const [booksPerPage, setBooksPerPage] = useState(6); // Libros por página
+    const [booksPerPage] = useState(6); // Libros por página
     const { data: authUser } = useQuery({ queryKey: ["authUser"] });
 
     const fetchLibros = async () => {
@@ -125,7 +126,7 @@ const LibroSugerido = () => {
     // Obtener los libros de la página actual
     const indexOfLastBook = currentPage * booksPerPage;
     const indexOfFirstBook = indexOfLastBook - booksPerPage;
-    const currentBooks = librosFiltrados.slice(indexOfFirstBook, indexOfLastBook);
+    const currentBooks = librosFiltrados.reverse().slice(indexOfFirstBook, indexOfLastBook);
 
     const handlePageChange = (pageNumber) => {
         if (pageNumber > 0 && pageNumber <= totalPages) {
@@ -153,7 +154,7 @@ const LibroSugerido = () => {
             />
 
             <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6">
-                {currentBooks.slice().reverse().map((libro) => (
+                {currentBooks.map((libro) => (
                     <div
                         key={libro._id}
                         className="bg-white rounded-lg shadow-lg p-4 flex flex-col h-full justify-between"
@@ -163,7 +164,7 @@ const LibroSugerido = () => {
                             className="flex flex-col items-center"
                         >
                             <img
-                                src={libro.portada}
+                                src={libro.portada && libro.portada !== "" ? libro.portada :"/book-placeholder.png"}
                                 alt={libro.titulo}
                                 className="w-35 h-60 object-cover rounded"
                             />

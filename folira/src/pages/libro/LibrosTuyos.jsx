@@ -85,7 +85,7 @@ const LibrosTuyos = () => {
   // Calcular los libros a mostrar en la página actual
   const indexOfLastBook = currentPage * booksPerPage;
   const indexOfFirstBook = indexOfLastBook - booksPerPage;
-  const currentBooks = librosFiltrados.slice(indexOfFirstBook, indexOfLastBook);
+  const currentBooks = librosFiltrados.reverse().slice(indexOfFirstBook, indexOfLastBook);
 
   // Cambiar de página
   const paginate = (pageNumber) => setCurrentPage(pageNumber);
@@ -109,7 +109,7 @@ const LibrosTuyos = () => {
       ) : (
         <div className="p-6">
           <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6">
-            {currentBooks.reverse().map((libro) => (
+            {currentBooks.map((libro) => (
               <div
                 key={libro._id}
                 className="bg-white rounded-lg shadow-lg p-4 flex flex-col justify-between h-full"

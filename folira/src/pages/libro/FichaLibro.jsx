@@ -223,7 +223,7 @@ if (isRedirecting) {
 
         <div className="flex">
           <img 
-            src={portada} 
+            src={portada || "/book-placeholder.png"} 
             alt={titulo} 
             className="w-1/3 h-[auto] rounded-lg object-cover"
             style={{ flexShrink: 0 }}

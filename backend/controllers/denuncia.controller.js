@@ -67,6 +67,7 @@ export const crearDenuncia = async (req, res) => {
       de: denuncianteId, // Quien hace la denuncia
       para: denunciadoId, // El denunciado
       tipo: "denuncia",
+      mensaje: `te a denunciado por ${motivo}`
     });
 
     // Guardar la denuncia y la notificación en la base de datos

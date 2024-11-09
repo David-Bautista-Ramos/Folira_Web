@@ -249,7 +249,7 @@ function GestionDenuncia() {
                   <div key={index} className="bg-white shadow-lg rounded-lg w-[320px] p-2 mb-4 border">
                     <div className="flex gap-4 mb-2">
                       <img
-                        src={denuncia.idUsuario?.fotoPerfil}
+                        src={denuncia.idUsuario?.fotoPerfil || "/avatar-placeholder.png"}
                         alt="Perfil Denunciante"
                         className="w-8 h-8 rounded-full"
                       />

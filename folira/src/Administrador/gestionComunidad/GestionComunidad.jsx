@@ -262,7 +262,7 @@ function GestionComunidad() {
                       <img
                         className="object-cover w-full h-full"
                         src={
-                          comunidad.fotoComunidad || "url_de_la_imagen_usuario"
+                          comunidad.fotoComunidad || "/avatar-placeholder.png"
                         } // Usa la foto del usuario
                         alt="Usuario"
                       />
