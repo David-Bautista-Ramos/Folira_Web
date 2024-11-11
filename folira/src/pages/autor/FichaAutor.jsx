@@ -380,7 +380,6 @@ const toggleBiografiaVisibility = () => {
                 </button>
               </div>
             </div>
-            
             )}
       </div>
     </div> 
