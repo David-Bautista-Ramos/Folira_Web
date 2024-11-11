@@ -47,7 +47,7 @@ const AmigoSugeridos = () => {
     // Calcular la paginación
     const totalPaginas = Math.ceil(filteredAmigos.length / amigosPorPagina);
     const inicioIndice = (currentPage - 1) * amigosPorPagina;
-    const amigosPaginados = filteredAmigos.slice(inicioIndice, inicioIndice + amigosPorPagina);
+    const amigosPaginados = filteredAmigos.reverse().slice(inicioIndice, inicioIndice + amigosPorPagina);
 
     // Cambiar de página
     const cambiarPagina = (nuevaPagina) => {
