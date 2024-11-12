@@ -77,6 +77,8 @@ const SignUpPage = () => {
 	const [showConfirmPassword, setShowConfirmPassword] = useState(false); // Estado para mostrar/ocultar la confirmación de contraseña
 	const [selectedCountry, setSelectedCountry] = useState(null);
 	const [redirectToHome, setRedirectToHome] = useState(false);
+
+
 	const [formData, setFormData] = useState({
 		correo: "",
 		nombre: "",
@@ -137,6 +139,7 @@ const SignUpPage = () => {
             navigate("/"); // Redirige directamente
 			setRedirectToHome(true); // Configura la redirección al inicio
 		},
+
 	});
 
 	 const handleSubmit = (e) => {
@@ -254,7 +257,6 @@ const SignUpPage = () => {
     <div className='flex-1 flex flex-col -ml-[100px] justify-center items-center '>
         <div className='lg:w-[140%] mx-auto md:mx-20 ml-10 flex flex-col'>
             <h1 className='text-4xl font-extrabold text-primary mb-4'>Únete hoy.</h1>
-
             {/* Contenedor scrollable */}
             <div className='overflow-y-auto max-h-[70vh] scrollable-container'>
                 <form className='grid grid-cols-1 md:grid-cols-2 gap-4' onSubmit={handleSubmit}>

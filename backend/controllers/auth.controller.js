@@ -22,7 +22,6 @@ const userValidationSchema = Yup.object().shape({
       /^[a-zA-Z0-9]+$/,
       "El nombre solo puede contener letras y números."
     ),
-
   nombreCompleto: Yup.string()
     .required("El nombre completo es obligatorio.")
     .min(5, "El nombre completo debe tener al menos 5 caracteres.")
@@ -31,8 +30,7 @@ const userValidationSchema = Yup.object().shape({
       /^[a-zA-ZáéíóúÁÉÍÓÚñÑ\s]+$/,
       "El nombre completo solo puede contener letras y espacios."
     ),
-
-    correo: Yup.string()
+  correo: Yup.string()
     .required("El correo es obligatorio.")
     .email("Formato de correo inválido.")
     .test("is-valid-domain", "El dominio del correo no es válido.", (value) => {
@@ -42,15 +40,11 @@ const userValidationSchema = Yup.object().shape({
       }
       return true;
     }),
-  
-
-    contrasena: Yup.string()
+  contrasena: Yup.string()
     .required("La contraseña es obligatoria.")
     .min(8, "La contraseña debe tener al menos 8 caracteres.")
     .matches(/[A-Za-z]/, "La contraseña debe contener al menos una letra.")
     .matches(/\d/, "La contraseña debe contener al menos un número."),
-  
-
   pais: Yup.string()
     .required("El país es obligatorio.")
     .min(3, "El país debe tener al menos 3 caracteres.")
@@ -113,9 +107,10 @@ export const signup = async (req, res) => {
       roles: newUser.roles,
     });
   } catch (error) {
-    if (error.name === "Error de validación") {
+    if (error.name === "ValidationError") {
       // Error de validación de Yup
-      return res.status(400).json({ error: error.errors.join(", ") });
+      const validationErrors = error.inner.map((err) => err.message); // Recopila todos los mensajes de error
+      return res.status(400).json({ error: validationErrors.join(", ") });
     }
     console.error("Error en el controlador de registro:", error.message);
     return res.status(500).json({ error: "Error en el servidor." });
