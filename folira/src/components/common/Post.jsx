@@ -278,7 +278,7 @@ const Post = ({ post }) => {
                           </span>
                         )}
                         </div>
-                        <div className="text-sm">{comentario.text}</div>
+                        <div className="text-sm break-all">{comentario.text}</div>
                       </div>
                     </div>
                   ))}
