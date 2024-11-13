@@ -425,7 +425,7 @@ const ModalActualizarUsuario = ({ isOpen, onClose, userId, token }) => {
                                     className="bg-primary text-white px-4 py-2 rounded-md hover:bg-blue-950"
                                     type="submit"
                                   >
-                                  {isUpdatingUsers ? "Actualizando..." : "Guardar"}
+                                  {isUpdatingUsers ? "Actualizando..." : "Actualizar"}
                                 </button>
                                     {isError && <p className="text-red-500">{error.message}</p>}
                                     <button

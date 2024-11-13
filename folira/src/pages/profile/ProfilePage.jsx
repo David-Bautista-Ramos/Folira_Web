@@ -164,7 +164,7 @@ const ProfilePage = () => {
                     className="btn btn-outline rounded-full btn-sm"
                     onClick={() => follow(user?._id)}
                   >
-                    {isPending && "Loading..."}
+                    {isPending && "Siguiendo..."}
                     {!isPending && amIFollowing && "Dejar de seguir"}
                     {!isPending && !amIFollowing && "Seguir"}
                   </button>

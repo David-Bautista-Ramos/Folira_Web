@@ -149,132 +149,133 @@ const ModalActualizarReseña = ({
 
   return (
     <div className="fixed inset-0 flex items-center justify-center z-50 bg-black bg-opacity-50">
-      <div className="bg-white rounded-lg shadow-lg p-6 w-[400px]">
-        <div className="flex justify-between items-center mb-4">
-          <h2 className="text-xl font-semibold">Actualizar Reseña</h2>
-        </div>
-        <form onSubmit={handleSubmit}>
-          <div className="mb-4">
-            <label
-              htmlFor="contenido"
-              className="block text-sm font-medium text-gray-700"
-            >
-              Contenido
-            </label>
-            <textarea
-              id="contenido"
-              name="contenido"
-              rows="4"
-              value={formData.contenido}
-              onChange={handleInputChange}
-              className="mt-1 block w-full p-2 border border-primary rounded-md"
-              required
-              maxLength={550} // Limita el número de caracteres a 550
-            ></textarea>
-
-            {/* Contador de caracteres */}
-            <p className="text-sm text-gray-500">{formData.contenido.length}/550 caracteres</p>
-          </div>
-
-
-          <div className="mb-4">
-            <label
-              htmlFor="calificacion"
-              className="block text-sm font-medium text-gray-700"
-            >
-              Calificación
-            </label>
-            <input
-              type="number"
-              id="calificacion"
-              name="calificacion"
-              value={formData.calificacion}
-              onChange={handleInputChange}
-              min="1"
-              max="5"
-              required
-              className="mt-1 block w-full p-2 border border-primary rounded-md"
-            />
-          </div>
-
-          <div className="mb-4">
-            <label className="block mb-1 text-primary">Usuario</label>
-            <select
-              value={selectedUsuario}
-              onChange={handleUsuarioChange}
-              className="block w-full p-2 border border-primary rounded-md"
-              required
-            >
-              <option value="" disabled>
-                Selecciona un usuario
-              </option>
-              {availableUsuarios.map((usuario) => (
-                <option key={usuario._id} value={usuario._id}>
-                  {usuario.nombre}
-                </option>
-              ))}
-            </select>
-          </div>
-
-          <div className="mb-4">
-            <label className="block mb-1 text-primary">Autor</label>
-            <select
-              value={selectedAutor}
-              onChange={handleAutorChange}
-              className="block w-full p-2 border border-primary rounded-md"
-            >
-              <option value="" disabled>
-                Selecciona un autor
-              </option>
-              {availableAutores.map((autor) => (
-                <option key={autor._id} value={autor._id}>
-                  {autor.nombre}
-                </option>
-              ))}
-            </select>
-          </div>
-
-          <div className="mb-4">
-            <label className="block mb-1 text-primary">Libro</label>
-            <select
-              value={selectedLibro}
-              onChange={handleLibroChange}
-              className="block w-full p-2 border border-primary rounded-md"
-            >
-              <option value="" disabled>
-                Selecciona un libro
-              </option>
-              {availableLibros.map((libro) => (
-                <option key={libro._id} value={libro._id}>
-                  {libro.titulo}
-                </option>
-              ))}
-            </select>
-          </div>
-
-          <div className="mt-4 flex justify-end">
-          <button
-              type="submit"
-              disabled={isUpdatingResena}
-              className={`bg-primary text-white px-4 py-2 rounded-md ${
-                isUpdatingResena ? "opacity-50" : ""
-              }`}
-            >
-              {isUpdatingResena ? "Actualizando..." : "Actualizar"}
-            </button>
-
-            <button
-              type="button"
-              onClick={onClose}
-              className="px-4 py-2 bg-gray-300 text-gray-800 rounded-md  ml-4  hover:bg-gray-400"
-            >
-              Cancelar
-            </button>
-            
-          </div>
-        </form>
-      </div>
+  <div className="modal-box border rounded-md border-blue-950 shadow-md p-6 relative max-h-[85vh] max-w-[120vh] overflow-y-auto"> {/* Ajuste de ancho para mayor espacio */}
+    <div className="flex justify-between items-center mb-4">
+      <h2 className="text-xl font-semibold">Actualizar Reseña</h2>
     </div>
+    <form onSubmit={handleSubmit}>
+      <div className="grid grid-cols-2 gap-4">
+        
+        <div className="col-span-2">
+          <label
+            htmlFor="contenido"
+            className="block text-sm font-medium text-gray-700"
+          >
+            Contenido
+          </label>
+          <textarea
+            id="contenido"
+            name="contenido"
+            rows="4"
+            value={formData.contenido}
+            onChange={handleInputChange}
+            className="mt-1 block w-full p-2 border border-primary rounded-md"
+            required
+            maxLength={550}
+          ></textarea>
+          <p className="text-sm text-gray-500">{formData.contenido.length}/550 caracteres</p>
+        </div>
+
+        <div>
+          <label
+            htmlFor="calificacion"
+            className="block text-sm font-medium text-gray-700"
+          >
+            Calificación
+          </label>
+          <input
+            type="number"
+            id="calificacion"
+            name="calificacion"
+            value={formData.calificacion}
+            onChange={handleInputChange}
+            min="1"
+            max="5"
+            required
+            className="mt-1 block w-full p-2 border border-primary rounded-md"
+          />
+        </div>
+
+        <div>
+          <label className="block text-sm font-medium text-gray-700">Usuario</label>
+          <select
+            value={selectedUsuario}
+            onChange={handleUsuarioChange}
+            className="block w-full p-2 border border-primary rounded-md"
+            required
+          >
+            <option value="" disabled>
+              Selecciona un usuario
+            </option>
+            {availableUsuarios.map((usuario) => (
+              <option key={usuario._id} value={usuario._id}>
+                {usuario.nombre}
+              </option>
+            ))}
+          </select>
+        </div>
+
+        <div>
+          <label className="block text-sm font-medium text-gray-700">Autor</label>
+          <select
+            value={selectedAutor}
+            onChange={handleAutorChange}
+            className="block w-full p-2 border border-primary rounded-md"
+          >
+            <option value="" disabled>
+              Selecciona un autor
+            </option>
+            {availableAutores.map((autor) => (
+              <option key={autor._id} value={autor._id}>
+                {autor.nombre}
+              </option>
+            ))}
+          </select>
+        </div>
+
+        <div>
+          <label className="block text-sm font-medium text-gray-700">Libro</label>
+          <select
+            value={selectedLibro}
+            onChange={handleLibroChange}
+            className="block w-full p-2 border border-primary rounded-md"
+          >
+            <option value="" disabled>
+              Selecciona un libro
+            </option>
+            {availableLibros.map((libro) => (
+              <option key={libro._id} value={libro._id}>
+                {libro.titulo}
+              </option>
+            ))}
+          </select>
+        </div>
+        
+      </div>
+
+      <div className="mt-4 flex justify-end space-x-4">
+        <button
+          type="submit"
+          disabled={isUpdatingResena}
+          className={`bg-primary text-white px-4 py-2 rounded-md ${
+            isUpdatingResena ? "opacity-50" : ""
+          }`}
+        >
+          {isUpdatingResena ? "Actualizando..." : "Actualizar"}
+        </button>
+
+        <button
+          type="button"
+          onClick={onClose}
+          className="px-4 py-2 bg-gray-300 text-gray-800 rounded-md hover:bg-gray-400"
+        >
+          Cancelar
+        </button>
+      </div>
+    </form>
+  </div>
+</div>
+
   );
 };
 export default ModalActualizarReseña;

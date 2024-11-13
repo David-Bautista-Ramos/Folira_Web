@@ -46,7 +46,7 @@ const ComentariosModal = ({ isOpen, onClose, comentarios, publicacionId, obtener
               />
               <div className="flex-1">
                 <strong className="block">{comentario.user.nombreCompleto}</strong>
-                <p className="text-gray-700">{comentario.text}</p>
+                <p className="text-gray-700 break-all">{comentario.text}</p>
 
                 <div className="flex gap-2 mt-2">
                   <button
@@ -74,9 +74,9 @@ const ComentariosModal = ({ isOpen, onClose, comentarios, publicacionId, obtener
       
       <button
         onClick={handleOpenCrearModal}
-        className="bg-primary text-white px-4 py-2 ml-[26%] rounded hover:bg-slate-400"
+        className="bg-primary text-white px-4 py-2 ml-[50%] rounded hover:bg-slate-400"
       >
-        Crear Comentario
+        Crear 
       </button>
 
       <button

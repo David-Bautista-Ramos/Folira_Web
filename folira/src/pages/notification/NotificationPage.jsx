@@ -85,7 +85,7 @@ const NotificationPage = () => {
   return (
     <div className='flex-[4_4_0] border-r border-primary min-h-screen relative'>
       <div className='flex justify-between items-center p-4 border-b border-gray-700'>
-        <p className='font-bold'>Notifications</p>
+        <p className='font-bold'>Notificaciones</p>
         <div className='dropdown'>
           <div tabIndex={0} role='button' className='m-1'>
             <IoSettingsOutline className='w-4' />
@@ -109,7 +109,7 @@ const NotificationPage = () => {
           Error al cargar notificaciones 😥
         </div>
       ) : notifications?.length === 0 ? (
-        <div className='text-center p-4 font-bold'>No notifications 🤔</div>
+        <div className='text-center p-4 font-bold'>No tienes notificaciones 🤔</div>
       ) : (
         notifications.slice().reverse().map((notification) => (
           <div className='border-b border-gray-700' key={notification._id}>

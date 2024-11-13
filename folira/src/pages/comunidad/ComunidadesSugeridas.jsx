@@ -3,7 +3,7 @@ import { useEffect, useState, useCallback } from 'react';
 import { Link } from 'react-router-dom';
 import ModalCrearNuevaComunidad from './ModalCrearNuevaComunidad.jsx';
 import toast from 'react-hot-toast';
-import { FaPlus } from 'react-icons/fa';
+// import { FaPlus } from 'react-icons/fa';
 import { BsArrowRight, BsArrowLeft } from 'react-icons/bs';
 
 
@@ -104,12 +104,12 @@ const ComunidadesSugeridas = () => {
   return (
     <div className="p-6">
       <div className="flex mb-4 items-center">
-        <button
+        {/* <button
           onClick={() => setIsCrearModalOpen(true)} // Abre el modal para crear comunidad
           className="mr-3 p-2 bg-primary text-white rounded-full hover:bg-blue-950 "
         >
           <FaPlus />
-        </button>
+        </button> */}
 
         <input
           type="text"

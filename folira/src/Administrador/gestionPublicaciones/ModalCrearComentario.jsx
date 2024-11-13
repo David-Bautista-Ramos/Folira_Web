@@ -94,26 +94,38 @@ const ModalCrearComentario = ({
                         </select>
                     </div>
                     <textarea
-                        className="w-full p-2 border border-primary rounded mb-4"
-                        rows="4"
-                        placeholder="Escribe tu comentario aquí..."
-                        value={text}
-                        onChange={(e) => setText(e.target.value)}
+                    className="w-full p-2 border border-primary rounded mb-4"
+                    rows="4"
+                    placeholder="Escribe tu comentario aquí..."
+                    value={text}
+                    onChange={(e) => {
+                        // Limitar el texto a 550 caracteres
+                        if (e.target.value.length <= 550) {
+                        setText(e.target.value);
+                        }
+                    }}
                     />
+
+                    <span className="text-sm text-gray-500">{text.length} / 550 caracteres</span>
+
+
                     <div className="flex justify-end">
-                        <button
-                            type="button"
-                            className="bg-gray-300 text-black rounded px-4 py-2 mr-2 hover:bg-gray-400"
-                            onClick={onClose}
-                        >
-                            Cancelar
-                        </button>
-                        <button
+
+                    <button
                             type="submit"
                             className="px-4 py-2 border rounded bg-primary text-white hover:bg-blue-950"
                         >
                             Crear
                         </button>
+
+                        <button
+                            type="button"
+                            className="bg-gray-300 text-black rounded px-4 py-2 ml-4 hover:bg-gray-400"
+                            onClick={onClose}
+                        >
+                            Cancelar
+                        </button>
+                        
                     </div>
                 </form>
             </div>

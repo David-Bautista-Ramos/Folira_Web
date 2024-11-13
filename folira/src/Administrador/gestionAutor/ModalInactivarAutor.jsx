@@ -42,15 +42,18 @@ function ModalInactivarAutor({ isOpen, onClose, autorId,obtenerAutores }) {
           {error && <p className="text-red-500">{error}</p>} {/* Mostrar error si existe */}
 
           <div className="flex justify-end gap-4 mt-4">
-            <button className="px-4 py-2 bg-gray-300 text-gray-800 rounded-md  hover:bg-gray-400" onClick={onClose} disabled={loading}>
-              Cancelar
-            </button>
-            <button className="px-4 py-2 border rounded bg-primary text-white hover:bg-blue-950"
+
+          <button className="px-4 py-2 border rounded bg-primary text-white hover:bg-blue-950"
             onClick={handleInactivarAutores}
             disabled={loading}
           >
             {loading ? 'Inactivando...' : 'Inactivar'}
             </button>
+            
+            <button className="px-4 py-2 bg-gray-300 text-gray-800 rounded-md  hover:bg-gray-400" onClick={onClose} disabled={loading}>
+              Cancelar
+            </button>
+            
           </div>
         </div>
       </div>

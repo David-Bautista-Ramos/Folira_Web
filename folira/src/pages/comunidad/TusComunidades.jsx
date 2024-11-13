@@ -2,7 +2,7 @@ import { useQuery } from '@tanstack/react-query';
 import { useEffect, useState, useCallback } from 'react';
 import { Link } from 'react-router-dom';
 import ModalCrearNuevaComunidad from './ModalCrearNuevaComunidad';
-import { FaPlus } from 'react-icons/fa';
+// import { FaPlus } from 'react-icons/fa';
 import toast from 'react-hot-toast';
 import { BsArrowLeft, BsArrowRight } from 'react-icons/bs';
 
@@ -119,12 +119,12 @@ const TusComunidades = () => {
   return (
     <div className="p-6">
       <div className="flex mb-4 items-center">
-        <button
+        {/* <button
           onClick={() => setIsActualizarModalOpen(true)} // Abre el modal
           className="mr-3 p-2 bg-primary text-white rounded-full hover:bg-blue-950 w-8 h-8 flex items-center justify-center"
         >
           <FaPlus />
-        </button>
+        </button> */}
 
         <input
           type="text"

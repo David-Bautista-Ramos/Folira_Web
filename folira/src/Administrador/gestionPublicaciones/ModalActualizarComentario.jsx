@@ -64,7 +64,7 @@ const ModalEditarComentario = ({
 
     return (
         <div className="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center z-50">
-            <div className="bg-white rounded-lg shadow-lg max-w-lg w-full p-6">
+            <div className="modal-box border rounded-md border-blue-950 shadow-md p-6 relative max-h-[85vh] max-w-[80vh] overflow-y-auto">
                 <h2 className="text-lg font-bold mb-4">Editar Comentario</h2>
                 {error && <p className="text-red-500">{error}</p>}
                 <form onSubmit={handleSubmit}>
@@ -88,19 +88,21 @@ const ModalEditarComentario = ({
                         onChange={(e) => setText(e.target.value)}
                     />
                     <div className="flex justify-end">
+                    <button
+                            type="submit"
+                            className="px-4 py-2 border rounded bg-primary  text-white hover:bg-blue-950"
+                        >
+                            Actualizar
+                        </button>
+
                         <button
                             type="button"
-                            className="bg-gray-300 text-black rounded px-4 py-2 mr-2 hover:bg-gray-400"
+                            className="bg-gray-300 text-black rounded ml-4 px-4 py-2 mr-2 hover:bg-gray-400"
                             onClick={onClose}
                         >
                             Cancelar
                         </button>
-                        <button
-                            type="submit"
-                            className="px-4 py-2 border rounded bg-primary text-white hover:bg-blue-950"
-                        >
-                            Guardar
-                        </button>
+                       
                     </div>
                 </form>
             </div>

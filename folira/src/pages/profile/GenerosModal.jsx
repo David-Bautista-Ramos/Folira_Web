@@ -57,7 +57,7 @@ const GenerosModal = ({ isOpen, onClose }) => {
                     )}
                 </div>
 
-                <button className='mt-6 bg-primary text-white px-4 py-2 rounded hover:bg-blue-950' onClick={onClose}>
+                <button className='mt-6 bg-primary text-white px-4 py-2 ml-[80%] rounded hover:bg-blue-950' onClick={onClose}>
                     Cerrar
                 </button>
             </div>

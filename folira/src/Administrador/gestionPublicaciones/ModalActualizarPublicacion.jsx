@@ -1,5 +1,7 @@
 import { useState, useEffect, useRef } from "react";
 import useUpdatePublicacion from "../../hooks/useUpdatePost"; // Hook de actualización
+import Select from 'react-select';
+
 
 function ModalActualizarPublicacion({ isOpen, onClose, publicacionId }) {
   const [formData, setFormData] = useState({
@@ -85,128 +87,134 @@ function ModalActualizarPublicacion({ isOpen, onClose, publicacionId }) {
   if (!isOpen) return null;
 
   return (
-    <div
-      className="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center z-50"
-      onClick={onClose}
-    >
-      <div
-        className="bg-white p-5 rounded-lg w-80 md:w-96 relative"
-        onClick={(e) => e.stopPropagation()}
-      >
-        <h2 className="text-lg text-center mb-4">Actualizar Publicación</h2>
+<div
+  className="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center z-50"
+  onClick={onClose}
+>
+  <div
+    className="modal-box border rounded-md border-blue-950 shadow-md p-6 relative max-h-[85vh] max-w-[120vh] overflow-y-auto"
+    onClick={(e) => e.stopPropagation()}
+  >
+    <h2 className="text-lg text-center mb-4">Actualizar Publicación</h2>
 
-        {loading ? (
-          <p>Cargando...</p>
-        ) : error ? (
-          <p>Error: {error}</p>
-        ) : (
-          <form onSubmit={handleSubmit}>
-            <label className="block mb-2">Contenido</label>
-            <textarea
-              name="contenido"
-              value={formData.contenido}
-              onChange={handleInputChange}
-              className="w-full p-2 border rounded mb-4"
+    {loading ? (
+      <p>Cargando...</p>
+    ) : error ? (
+      <p>Error: {error}</p>
+    ) : (
+      <form onSubmit={handleSubmit} className="grid grid-cols-2 gap-4">
+        {/* Columna Izquierda */}
+        <div className="col-span-2 md:col-span-1">
+          <label className="block mb-2">Contenido</label>
+          <textarea
+            name="contenido"
+            value={formData.contenido}
+            onChange={handleInputChange}
+            className="w-full p-2 border rounded mb-4"
+            required
+          />
+
+          <label className="block mb-2">Foto de Publicación</label>
+          <div className="relative group">
+            <img
+              src={formData.fotoPublicacion || "/defaultImage.png"}
+              alt="Foto"
+              className="w-full h-48 object-cover mb-2"
+            />
+            <input
+              type="file"
+              accept="image/*"
+              ref={fotoPublicacionRef}
+              onChange={handleImgChange}
+              className="hidden"
+            />
+            <button
+              type="button"
+              onClick={() => fotoPublicacionRef.current.click()}
+              className="mt-2 text-blue-500"
+            >
+              Cambiar Imagen
+            </button>
+          </div>
+        </div>
+
+        {/* Columna Derecha */}
+        <div className="col-span-2 md:col-span-1">
+          <label className="block mb-2">Usuario</label>
+          <div className="relative mb-4">
+            <Select
+              options={usuarios.map((usuario) => ({
+                value: usuario._id,
+                label: usuario.nombre,
+              }))}
+              value={{
+                value: formData.userId,
+                label:
+                  usuarios.find((user) => user._id === formData.userId)
+                    ?.nombre || "Seleccione un usuario",
+              }}
+              onChange={(selectedOption) =>
+                handleInputChange({
+                  target: { name: "userId", value: selectedOption.value },
+                })
+              }
+              className="react-select-container"
+              classNamePrefix="react-select"
               required
             />
+          </div>
 
-            <label className="block mb-2">Foto de Publicación</label>
-            <div className="relative group">
-              <img
-                src={formData.fotoPublicacion || "/defaultImage.png"}
-                alt="Foto"
-                className="w-full h-48 object-cover mb-2"
-              />
-              <input
-                type="file"
-                accept="image/*"
-                ref={fotoPublicacionRef}
-                onChange={handleImgChange}
-                className="hidden"
-              />
-              <button
-                type="button"
-                onClick={() => fotoPublicacionRef.current.click()}
-                className="mt-2 text-blue-500"
-              >
-                Cambiar Imagen
-              </button>
-            </div>
+          <label className="block mb-2">Comunidad</label>
+          <div className="relative mb-4">
+            <Select
+              options={[
+                { value: "", label: "Ninguna" },
+                ...comunidades.map((comunidad) => ({
+                  value: comunidad._id,
+                  label: comunidad.nombre,
+                })),
+              ]}
+              value={{
+                value: formData.comunidadId,
+                label:
+                  comunidades.find(
+                    (comunidad) => comunidad._id === formData.comunidadId
+                  )?.nombre || "Seleccione una comunidad",
+              }}
+              onChange={(selectedOption) =>
+                handleInputChange({
+                  target: { name: "comunidadId", value: selectedOption.value },
+                })
+              }
+              className="react-select-container"
+              classNamePrefix="react-select"
+            />
+          </div>
+        </div>
 
-            <label className="block mb-2">Usuario</label>
-            <div className="relative mb-4">
-              <div className="w-full p-2 border rounded bg-white cursor-pointer">
-                <div className="flex items-center">
-                  {formData.userId && (
-                    <img
-                      src={usuarios.find((user) => user._id === formData.userId)?.fotoPerfil || 'default-profile.png'}
-                      alt="Foto de perfil"
-                      className="w-8 h-8 rounded-full mr-2"
-                    />
-                  )}
-                  <span>
-                    {usuarios.find((user) => user._id === formData.userId)?.nombre || 'Seleccione un usuario'}
-                  </span>
-                </div>
-              </div>
-              <select
-                name="userId"
-                value={formData.userId}
-                onChange={handleInputChange}
-                className="absolute inset-0 opacity-0 w-full h-full cursor-pointer"
-                required
-              >
-                {usuarios.map((usuario) => (
-                  <option key={usuario._id} value={usuario._id}>
-                    {usuario.nombre}
-                  </option>
-                ))}
-              </select>
-            </div>
+        {/* Botón de actualización en una sola fila */}
+        <div className="col-span-2">
+          <button
+            type="submit"
+            className="px-4 py-2 border rounded bg-primary ml-[70%] text-white hover:bg-blue-950"
+            disabled={isUpdatingPost}
+          >
+            {isUpdatingPost ? "Actualizando..." : "Actualizar"}
+          </button>
+
+          <button
+            className="px-4 py-2 bg-gray-300 text-gray-800 ml-4 rounded-md hover:bg-gray-400"
+            onClick={onClose}
+          >
+            Cancelar
+          </button>
+        </div>
+      </form>
+    )}
+  </div>
+</div>
 
 
-            <label className="block mb-2">Comunidad</label>
-            <div className="relative mb-4">
-              <div className="w-full p-2 border rounded bg-white cursor-pointer">
-                <div className="flex items-center">
-                  {formData.comunidadId && (
-                    <img
-                      src={comunidades.find((comunidad) => comunidad._id === formData.comunidadId)?.fotoComunidad || 'default-community.png'}
-                      alt="Imagen de la comunidad"
-                      className="w-8 h-8 rounded-full mr-2"
-                    />
-                  )}
-                  <span>
-                    {comunidades.find((comunidad) => comunidad._id === formData.comunidadId)?.nombre || 'Seleccione una comunidad'}
-                  </span>
-                </div>
-              </div>
-              <select
-                name="comunidadId"
-                value={formData.comunidadId}
-                onChange={handleInputChange}
-                className="absolute inset-0 opacity-0 w-full h-full cursor-pointer"
-              >
-                <option value="">Ninguna</option>
-                {comunidades.map((comunidad) => (
-                  <option key={comunidad._id} value={comunidad._id}>
-                    {comunidad.nombre}
-                  </option>
-                ))}
-              </select>
-            </div>
-
-            <button
-              type="submit"
-              className="w-full bg-blue-500 text-white py-2 rounded mt-4"
-              disabled={isUpdatingPost}
-            >
-              {isUpdatingPost ? "Actualizando..." : "Actualizar"}
-            </button>
-          </form>
-        )}
-      </div>
-    </div>
   );
 }
 

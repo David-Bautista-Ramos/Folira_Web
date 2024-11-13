@@ -86,6 +86,14 @@ function ModalCrearGenero({ isOpen, onClose , obtenerGenerosLiterarios}) {
         />
 
         <div className="flex justify-end gap-2">
+        <button
+            type="submit"
+            className="px-4 py-2 bg-primary text-white rounded-md hover:bg-blue-950"
+            disabled={isCreatingGenero}
+          >
+            {isCreatingGenero ? "Creando..." : "Crear "}
+          </button>
+          
           <button
             className="px-4 py-2 bg-gray-300 text-gray-800 rounded-md hover:bg-gray-400"
             onClick={() => onClose() }
@@ -93,13 +101,7 @@ function ModalCrearGenero({ isOpen, onClose , obtenerGenerosLiterarios}) {
           >
             Cancelar
           </button>
-          <button
-            type="submit"
-            className="px-4 py-2 bg-primary text-white rounded-md hover:bg-blue-950"
-            disabled={isCreatingGenero}
-          >
-            {isCreatingGenero ? "Creando..." : "Crear Género"}
-          </button>
+          
         </div>
       </form>
     </div>

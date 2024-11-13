@@ -341,7 +341,7 @@ const ModalActualizarAutor = ({ isOpen, onClose, autorId, token, obtenerAutores 
                                 {/* Submit button moved here */}
                                 <div className="modal-action sticky bottom-0 left-0 right-0 p-4 bg-white border-t border-gray-300 flex justify-between">
                                     <button className="bg-primary text-white px-4 py-2 rounded-md hover:bg-blue-950 ml-[52%]" type='submit' disabled={isUpdatingAuthors}>
-                                        {isUpdatingAuthors ? "Actualizando..." : "Guardar"}
+                                        {isUpdatingAuthors ? "Actualizando..." : "Actualizar"}
                                     </button>
                                     {isError && <p className='text-red-500'>{error.message}</p>}
                                     <button className='px-4 py-2 bg-gray-300 text-gray-800 rounded-md  hover:bg-gray-400' type='button' onClick={onClose}>
