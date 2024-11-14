@@ -116,7 +116,7 @@ const LibrosTuyos = () => {
               >
                 <Link to={`/fichaLibro/${libro._id}`} className="flex flex-col items-center">
                   <img
-                    src={libro.portada}
+                    src={libro.portada || "/book-placeholder.png"}
                     alt={libro.titulo}
                     className="w-35 h-60 object-cover rounded"
                   />
