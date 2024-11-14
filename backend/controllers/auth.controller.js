@@ -44,11 +44,8 @@ const userValidationSchema = Yup.object().shape({
     .required("La contraseña es obligatoria.")
     .min(8, "La contraseña debe tener al menos 8 caracteres.")
     .matches(/[A-Za-z]/, "La contraseña debe contener al menos una letra.")
-    .matches(/\d/, "La contraseña debe contener al menos un número."),
-  pais: Yup.string()
-    .required("El país es obligatorio.")
-    .min(3, "El país debe tener al menos 3 caracteres.")
-    .max(56, "El país no puede exceder los 56 caracteres."),
+    .matches(/\d/, "La contraseña debe contener al menos un número.")
+    .matches(/[!@#$%^&*(),.?":{}|<>]/, "La contraseña debe contener al menos un carácter especial."),
 });
 
 // Sign up - Registro
