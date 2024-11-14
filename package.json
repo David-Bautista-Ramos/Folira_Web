@@ -3,8 +3,14 @@
   "version": "1.0.0",
   "main": "backend/server.js",
   "scripts": {
-    "dev": "nodemon backend/server.js",
-    "start": "node  backend/server.js"
+    "install:frontend": "cd folira && npm install",
+    "install:backend": "cd backend && npm install",
+    "build:frontend": "cd folira && npm run build",
+    "build:backend": "echo 'No build step needed for backend'",
+    "start:frontend": "cd folira && npm start",
+    "start:backend": "node backend/server.js",
+    "build": "npm run install:frontend && npm run install:backend && npm run build:frontend && npm run build:backend",
+    "start": "npm run start:frontend & npm run start:backend"
   },
   "keywords": [],
   "author": "",
@@ -28,6 +34,7 @@
     "yup": "^1.4.0"
   },
   "devDependencies": {
-    "nodemon": "^3.1.0"
+    "nodemon": "^3.1.0",
+    "serve": "^14.2.4"
   }
 }
