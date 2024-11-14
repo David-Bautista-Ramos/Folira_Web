@@ -192,46 +192,56 @@ const toggleBiografiaVisibility = () => {
           </Link>
             <span className="text-xl text-primary font-bold flex items-center">{nombre}</span> {/* Título del libro */}
         </div>
-            <div className="flex">
-            <img 
-                src={fotoAutor} 
-                alt={nombre} 
-                className="w-1/3 h-[auto] rounded-lg object-cover" // Cambiado a `h-full` para que la imagen ocupe toda la altura
-                style={{ flexShrink: 0 }} // Para evitar que la imagen se ajuste
-              />
-              <div className="ml-6 flex flex-col flex-grow">
-                <h2 className="text-2xl font-semibold">{nombre}</h2>
-                <p className="text-lg"><strong>Seudonimo:</strong> {seudonimo}</p>
-                <p className="text-lg"><strong>País:</strong> {pais}</p>
-                <p className="text-lg">
-                  <strong>Fecha de Nacimiento:</strong> {fechaNacimiento ? formatearFecha(fechaNacimiento) : 'N/A'}
-                </p>
-                <p className="text-lg">
-                <strong>Biografía:</strong>
-                    {biografia.length > 150 && !isBiografiaVisible
-                        ? `${biografia.slice(0, 100)}...`
-                        : biografia}
-                </p>
+        <div className="flex items-start space-x-6">
+        {/* Columna izquierda: Imagen del autor y botón de reseñas */}
+        <div className="flex flex-col items-start">
+          <img 
+            src={fotoAutor || "/avatar-placeholder.png"} 
+            alt={nombre} 
+            className="w-52 h-52 rounded-full object-cover"
+            style={{ flexShrink: 0 }} 
+          />
+          {/* Botón para ver reseñas */}
+          <button 
+            onClick={openModal} 
+            className="bg-primary hover:bg-blue-950 text-white font-bold py-2 w-[180px] px-4 rounded mt-4"
+          >
+            Ver Reseñas
+          </button>
+        </div>
 
-                {/* Icono de ojo para alternar la visibilidad */}
-                {biografia.length > 100 && (
-                    <button
-                        onClick={toggleBiografiaVisibility}
-                        className="text-xl text-blue-950 cursor-pointer"
-                    >
-                        {isBiografiaVisible ? <BsEyeSlash /> : <BsEye />}
-                    </button>
-                )}                
-                <p className="text-lg"><strong>Distinciones:</strong> {distinciones || 'N/A'}</p>
-                <div className='flex flex-col mt-4 -mb-3'>
-                </div>
-                <div className="flex items-center mt-2">
-              <strong>Calificación General:</strong> 
-              {renderEstrellas(calificacionPromedio)} {/* Mostrar calificación promedio en estrellas */}
-            </div>              
-            {/* Usamos flex y flex-wrap para que los géneros se acomoden según el espacio disponible */}
-            <strong>Generos Literarios</strong>
-            <div className='flex flex-wrap gap-4'>
+        {/* Columna derecha: Información del autor */}
+        <div className="flex flex-col flex-grow">
+          <h2 className="text-2xl font-semibold">{nombre}</h2>
+          <p className="text-lg"><strong>Seudonimo:</strong> {seudonimo}</p>
+          <p className="text-lg"><strong>País:</strong> {pais}</p>
+          <p className="text-lg">
+            <strong>Fecha de Nacimiento:</strong> {fechaNacimiento ? formatearFecha(fechaNacimiento) : 'N/A'}
+          </p>
+          <p className="text-lg"><strong>Biografía:</strong></p>
+          
+          <div className="text-md break-all max-h-[90px] overflow-y-auto scrollbar-thin scrollbar-thumb-primary scrollbar-track-gray-200">
+            {biografia.length > 150 && !isBiografiaVisible
+              ? `${biografia.slice(0, 100)}...`
+              : biografia}
+          </div>
+          
+          {/* Icono de ojo para alternar la visibilidad */}
+          {biografia.length > 100 && (
+            <button
+              onClick={toggleBiografiaVisibility}
+              className="text-xl text-blue-950 cursor-pointer"
+            >
+              {isBiografiaVisible ? <BsEyeSlash /> : <BsEye />}
+            </button>
+          )}
+          <p className="text-lg"><strong>Distinciones:</strong> {distinciones || 'N/A'}</p>
+          <div className="flex items-center mt-2">
+            <strong>Calificación General:</strong>
+            {renderEstrellas(calificacionPromedio)} {/* Mostrar calificación promedio en estrellas */}
+          </div>
+          <strong>Generos Literarios</strong>
+          <div className='flex flex-wrap gap-4'>
             {generos.length > 0 ? (
               generos.map((genero) => (
                 <div 
@@ -243,19 +253,16 @@ const toggleBiografiaVisibility = () => {
                 </div>
               ))
             ) : (
-              <span>No tiene géneros asignados</span> // Mensaje cuando no hay géneros
+              <span>No tiene géneros asignados</span>
             )}
           </div>
-            </div>
-            </div>
+        </div>
+      </div>
 
-            {/* Botón para ver reseñas */}
-            <button 
-              onClick={openModal} 
-              className="mt-4 ml-2 bg-primary hover:bg-blue-950 text-white font-bold py-2 w-[180px] px-4 rounded"
-            >
-              Ver Reseñas
-            </button>
+
+
+            
+            
 
             <form onSubmit={handleSubmit} className="mt-4">
               <label className="block text-md font-medium">Escribe una reseña:</label>

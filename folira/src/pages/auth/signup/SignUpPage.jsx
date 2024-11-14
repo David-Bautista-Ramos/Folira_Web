@@ -226,10 +226,11 @@ const SignUpPage = () => {
         }
     
         if (name === 'contrasena') {
-            const validPassword = /^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d]{8,}$/;
+          const validPassword = /^(?=.*[A-Za-z])(?=.*\d)(?=.*[!@#$%^&*(),.?":{}|<>])[A-Za-z\d+!@#$%^&*(),.?":{}|<>]{8,}$/;
             if (value && !validPassword.test(value)) {
-                errorMessage = "La contraseña debe tener al menos 8 caracteres, incluir al menos una letra y un número.";
+              errorMessage = "La contraseña debe tener al menos 8 caracteres, incluir al menos una letra, un número y un carácter especial.";
             }
+  
         }
     
         if (name === 'confirmarContrasena') {

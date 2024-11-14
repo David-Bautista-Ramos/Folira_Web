@@ -94,7 +94,7 @@ const Comunidad = ({ authUser }) => {
             {/* Enlace solo en la imagen */}
             <Link to={`/fichaAutor/${autor._id}`} className="no-underline">
               <img
-                src={autor.fotoAutor} // Asegúrate de que la URL de imagen está disponible
+                src={autor.fotoAutor || "/avatar-placeholder.png"} // Asegúrate de que la URL de imagen está disponible
                 alt={autor.nombre}
                 className="w-32 h-32 object-cover rounded-full mb-2 mx-auto" // Imagen centrada horizontalmente
               />

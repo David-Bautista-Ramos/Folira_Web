@@ -274,6 +274,13 @@ html, body {
 
 /* ------------------------------------------- */
 
+/* Estilos para el scrollbar */
+.scrollbar-thin {
+  scrollbar-width: thin;
+}
+.scrollbar-thumb-primary {
+  scrollbar-color: #111827 transparent; /* Cambia este color según tu paleta */
+}
 
 
 
