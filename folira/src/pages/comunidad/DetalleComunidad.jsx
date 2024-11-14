@@ -163,7 +163,7 @@ const handleConfirmInactivar = () => {
         {/* Columna 1: Imagen de banner */}
         <div className="relative">
           <img
-            src={fotoBanner} // Asegúrate de que este sea el nombre de la variable para el banner
+            src={fotoBanner  || "/cover.png"} // Asegúrate de que este sea el nombre de la variable para el banner
             alt="Banner de la comunidad"
             className="h-52 w-full object-cover"
           />
@@ -172,7 +172,7 @@ const handleConfirmInactivar = () => {
         {/* Imagen de la comunidad sobre el banner y alineada a la derecha */}
         <div className="absolute top-46 left-6 transform translate-y-[-50%]">
           <img
-            src={fotoComunidad}
+            src={fotoComunidad || "/avatar-placeholder.png"}
             alt={nombre}
             className="w-30 h-30 md:w-32 md:h-32 rounded-full border-4 border-white shadow-lg"
           />

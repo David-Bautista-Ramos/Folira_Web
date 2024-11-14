@@ -15,7 +15,7 @@ const ComunidadCard = ({ comunidad, unirseComunidad }) => (
   >
     <Link to={`/DetalleComunidad/${comunidad._id}`} className="no-underline">
       <img
-        src={comunidad.fotoComunidad || 'https://via.placeholder.com/125'}
+        src={comunidad.fotoComunidad || "/avatar-placeholder.png"}
         alt={comunidad.nombre}
         className="w-32 h-32 object-cover rounded-full mb-2"
       />

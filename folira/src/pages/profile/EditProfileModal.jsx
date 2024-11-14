@@ -247,19 +247,19 @@ const EditProfileModal = ({ authUser }) => {
 								onChange={handleInputChange}
 							/>
 
-<label htmlFor='biografia' className='text-blue-950 font-semibold'>Biografía</label>
-<textarea
-    id='biografia'
-    placeholder='Biografía'
-    className='w-full border border-blue-950 rounded p-2 input-md'
-    value={formData.biografia}
-    name='biografia'
-    onChange={(e) => setFormData({ ...formData, biografia: e.target.value })}
-    maxLength={200}
-    rows={4}
-    style={{ resize: 'none', overflowWrap: 'break-word' }}
-/>
-<p>{formData.biografia.length}/200 caracteres</p>
+							<label htmlFor='biografia' className='text-blue-950 font-semibold'>Biografía</label>
+							<textarea
+								id='biografia'
+								placeholder='Biografía'
+								className='w-full border border-blue-950 rounded p-2 input-md'
+								value={formData.biografia}
+								name='biografia'
+								onChange={(e) => setFormData({ ...formData, biografia: e.target.value })}
+								maxLength={200}
+								rows={4}
+								style={{ resize: 'none', overflowWrap: 'break-word' }}
+							/>
+							<p>{formData.biografia.length}/200 caracteres</p>
 
 						</div>
 

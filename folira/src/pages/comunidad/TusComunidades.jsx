@@ -14,7 +14,7 @@ const ComunidadCard = ({ comunidad, salirComunidad }) => {
     <div className="bg-white rounded-lg shadow-lg p-4 flex flex-col items-center h-full" style={{ boxShadow: '0 4px 6px rgba(0, 0, 0, 0.3)' }}>
       <Link to={`/DetalleComunidad/${comunidad._id}`} className="no-underline">
         <img
-          src={comunidad.fotoComunidad || 'https://via.placeholder.com/125'}
+          src={comunidad.fotoComunidad || "/avatar-placeholder.png"}
           alt={comunidad.nombre}
           className="w-32 h-32 object-cover rounded-full mb-2"
         />
