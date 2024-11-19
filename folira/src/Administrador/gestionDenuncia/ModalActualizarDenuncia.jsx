@@ -83,7 +83,7 @@ const ModalInactivarDenuncia = ({ isOpen, onClose, denunciasId, obtenerDenuncias
     return (
         <div className="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center z-50" onClick={onClose}>
             <div className="bg-white p-6 rounded-lg shadow-lg max-w-sm w-full relative" onClick={(e) => e.stopPropagation()}>
-                <h2 className="text-2xl font-semibold text-gray-800 mb-4">Desactivar Denuncia</h2>
+                <h2 className="text-2xl font-semibold text-gray-800 mb-4">Actualizar Denuncia</h2>
 
                 {error && <p className="text-red-500">Error: {error}</p>}
 
@@ -144,19 +144,21 @@ const ModalInactivarDenuncia = ({ isOpen, onClose, denunciasId, obtenerDenuncias
                 )}
 
                 <div className="flex justify-end gap-4 mt-4">
-                    <button
-                        className="px-4 py-2 bg-gray-300 text-gray-800 rounded-md hover:bg-gray-400"
-                        onClick={onClose}
-                    >
-                        Cancelar
-                    </button>
-                    <button
+                <button
                         className={`px-4 py-2 border rounded bg-primary text-white hover:bg-blue-950 ${loading ? 'opacity-50' : ''}`}
                         onClick={handleActualizarDenuncia}
                         disabled={loading || !denunciadoSeleccionado} // Desactivar si no hay usuario seleccionado
                     >
                         {loading ? "Actualizando..." : "Actualizar"}
                     </button>
+                    
+                    <button
+                        className="px-4 py-2 bg-gray-300 text-gray-800 rounded-md hover:bg-gray-400"
+                        onClick={onClose}
+                    >
+                        Cancelar
+                    </button>
+                    
                 </div>
             </div>
         </div>

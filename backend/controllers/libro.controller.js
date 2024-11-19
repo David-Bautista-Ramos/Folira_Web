@@ -7,7 +7,7 @@ import cloudinary from "cloudinary";
 
 export const crearLibro = async (req, res) => {
     try {
-        const { titulo, isbn, fechaPublicacion, editorial, sinopsis, portada, calificacion, generos, autores } = req.body;
+        const { titulo, isbn, fechaPublicacion,serie,  editorial, sinopsis, portada, calificacion, generos, autores } = req.body;
 
         // Verificar si el ISBN ya existe
         const libroExistente = await Libro.findOne({ isbn });
@@ -46,6 +46,7 @@ export const crearLibro = async (req, res) => {
             fechaPublicacion,
             editorial,
             sinopsis,
+            serie,
             portada,
             calificacion,
             generos: generosObjectIds,
@@ -120,6 +121,7 @@ export const editarLibro = async (req, res) => {
         fechaPublicacion,
         editorial,
         sinopsis,
+        serie,
         calificacion,
         generos,
         autores,
@@ -160,6 +162,7 @@ export const editarLibro = async (req, res) => {
           fechaPublicacion,
           editorial,
           sinopsis,
+          serie,
           portada, // Usar la portada anterior o la nueva según corresponda
           calificacion,
           generos,

@@ -116,7 +116,7 @@ const ComunidadesSugeridas = () => {
           placeholder="Buscar comunidad..."
           value={filtro}
           onChange={(e) => setFiltro(e.target.value)}
-          className="border border-gray-300 rounded p-2 mb-4 w-[565px] mt-4 focus:outline-none focus:border-blue-950"
+          className="border border-gray-300 rounded p-2 mb-4 w-[645px] mt-4 focus:outline-none focus:border-blue-950"
         />
       </div>
 

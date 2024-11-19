@@ -6,7 +6,7 @@ function ModalCrearLibro({ isOpen, onClose, token }) {
     titulo: "",
     isbn: "",
     calificacion: "",
-    saga: "",
+    serie: "",
     fechaPublicacion: "",
     editorial: "",
     sinopsis: "",
@@ -68,7 +68,7 @@ function ModalCrearLibro({ isOpen, onClose, token }) {
         titulo: "",
         isbn: "",
         calificacion: "",
-        saga: "",
+        serie: "",
         fechaPublicacion: "",
         editorial: "",
         sinopsis: "",
@@ -215,8 +215,8 @@ function ModalCrearLibro({ isOpen, onClose, token }) {
     <label className="block mb-1 text-primary">Saga</label>
     <input
       type="text"
-      name="saga"
-      value={formData.saga}
+      name="serie"
+      value={formData.serie}
       onChange={handleInputChange}
       placeholder="Saga"
       className="w-full p-2 mb-3 border rounded focus:border-primary focus:outline-none"

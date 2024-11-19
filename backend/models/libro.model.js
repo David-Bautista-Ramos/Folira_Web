@@ -1,4 +1,5 @@
 import mongoose from "mongoose";
+import { string } from "yup";
 
 const LibroSchema = new mongoose.Schema(
     {
@@ -34,6 +35,9 @@ const LibroSchema = new mongoose.Schema(
       estado: {
         type: Boolean,
         default: true,
+      },
+      serie: {
+        type: String,
       },
       generos: [{
         type: mongoose.Schema.Types.ObjectId,

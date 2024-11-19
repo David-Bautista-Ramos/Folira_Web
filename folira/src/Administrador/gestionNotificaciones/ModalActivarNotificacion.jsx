@@ -47,19 +47,22 @@ function ModalActivarNotificacion({ isOpen, onClose, NotificacionId, obtenerNoti
         <p className="mb-5 text-gray-600 text-base">¿Estás seguro de que deseas marcar como leida esta notificacion?</p>
 
         <div className="flex justify-end gap-4 mt-4">
-          <button 
-            className="px-4 py-2 bg-gray-300 text-gray-800 rounded-md  hover:bg-gray-400 " 
-            onClick={onClose}
-          >
-            Cancelar
-          </button>   
-          <button
+
+        <button
             className={`px-4 py-2 border rounded bg-primary text-white hover:bg-blue-950 ${loading ? 'opacity-50' : ''}`}
             onClick={handleOpenActivarModal}
             disabled={loading}
           >
             {loading ? "Activando..." : "Activar"}
           </button>
+          
+          <button 
+            className="px-4 py-2 bg-gray-300 text-gray-800 rounded-md  hover:bg-gray-400 " 
+            onClick={onClose}
+          >
+            Cancelar
+          </button>   
+          
         </div>
       </div>
     </div>

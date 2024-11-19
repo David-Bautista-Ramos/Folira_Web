@@ -9,6 +9,7 @@ function ModalActualizarLibro({ isOpen, onClose, libroId, obtenerLibros, token }
     fechaPublicacion: "",
     editorial: "",
     sinopsis: "",
+    serie: "",
   });
 
   const [fotoLibro, setFotoLibro] = useState("");
@@ -39,6 +40,7 @@ function ModalActualizarLibro({ isOpen, onClose, libroId, obtenerLibros, token }
           fechaPublicacion: libro.fechaPublicacion? new Date(libro.fechaPublicacion).toISOString().split('T')[0] : "",
           editorial: libro.editorial || "",
           sinopsis: libro.sinopsis || "",
+          serie: libro.serie || "",
         });
         setFotoLibro(libro.portada || "");
         setSelectedGeneros(libro.generos.map(g => g._id) || []); // Asegúrate de que `libro.generos` sea un array de objetos
@@ -64,6 +66,8 @@ function ModalActualizarLibro({ isOpen, onClose, libroId, obtenerLibros, token }
       [name]: value,
     }));
   };
+
+  
 
   const handleImgChange = (e) => {
     const file = e.target.files[0];
@@ -106,6 +110,7 @@ function ModalActualizarLibro({ isOpen, onClose, libroId, obtenerLibros, token }
         titulo: "",
         isbn: "",
         calificacion: "",
+        serie: "",
         fechaPublicacion: "",
         editorial: "",
         sinopsis: "",
@@ -239,6 +244,17 @@ function ModalActualizarLibro({ isOpen, onClose, libroId, obtenerLibros, token }
           placeholder="Sinopsis del libro"
           className="w-full p-2 mb-3 border rounded focus:border-primary focus:outline-none h-20" // Ajusta la altura aquí
         />
+
+        <label className="block mb-1 mt-3 text-primary">Saga</label>
+        <input
+          type="text"
+          name="serie"
+          value={formData.serie}
+          onChange={handleInputChange}
+          placeholder="Saga"
+          className="w-full p-2 mb-3 border rounded focus:border-primary focus:outline-none"
+        />
+
         <label className="block mb-1 text-primary">Calificación</label>
         <textarea
           name="calificacion"

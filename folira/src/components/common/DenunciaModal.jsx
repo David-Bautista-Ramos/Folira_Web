@@ -83,7 +83,7 @@ const ModalDenuncia = ({ postId, tipoDenuncia }) => {
             onChange={(e) => setMotivo(e.target.value)}
             required
           >
-            <option value='' disabled>Motive de la denuncia</option>
+            <option value='' disabled>Motivo de la denuncia</option>
             <option value='Muestra de odio'>Muestra de odio</option>
             <option value='Suplantación de identidad'>Suplantación de identidad</option>
             <option value='Contenido Violento y explícito'>Contenido Violento y explícito</option>

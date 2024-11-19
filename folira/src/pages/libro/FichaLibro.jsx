@@ -227,7 +227,7 @@ if (isRedirecting) {
           <img 
             src={portada || "/book-placeholder.png"}  
             alt={titulo} 
-            className="w-1/3 h-[auto] rounded-lg object-cover"
+            className="w-[38%] h-[60%]  rounded-lg object-cover"
             style={{ flexShrink: 0 }}
           />
           <div className="ml-6 flex flex-col flex-grow relative">
@@ -264,13 +264,13 @@ if (isRedirecting) {
         </div>
 
         <button
-          className="mt-4 bg-primary hover:bg-blue-950 text-white font-bold py-2 w-[210px] px-4 rounded"
+          className="-mt-[30px] bg-primary hover:bg-blue-950 text-white font-bold py-2 w-[210px] px-4 rounded"
           onClick={openModal}
         >
           Ver reseñas
         </button>
 
-        <form onSubmit={handleSubmit} className="mt-4 ">
+        <form onSubmit={handleSubmit} className="mt-[40px] ">
           <label className="block text-md font-medium mb-2">Escribe una reseña:</label>
           <div className="flex items-center mt-2 mb-2">{renderEstrellas(calificacion)}</div>
 

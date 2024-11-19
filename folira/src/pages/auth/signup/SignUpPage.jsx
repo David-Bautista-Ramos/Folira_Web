@@ -149,6 +149,13 @@ const SignUpPage = () => {
     }
 
     // Verifica si las contraseñas coinciden
+     // Verificar que el nombre completo solo contenga letras y espacios
+     const nombreCompletoRegex = /^[a-zA-ZáéíóúÁÉÍÓÚñÑ\s]+$/;
+     if (!nombreCompletoRegex.test(formData.nombreCompleto)) {
+         toast.error("El nombre completo solo puede contener letras y espacios.");
+         return;
+     }
+     
     if (formData.contrasena !== formData.confirmarContrasena) {
       toast.error("Las contraseñas no coinciden");
       return;
@@ -158,6 +165,7 @@ const SignUpPage = () => {
         toast.error("Este correo ya está registrado.");
         return;
       }
+
       if (nombreExists) {
         toast.error("Este nombre de usuario ya está registrado.");
         return;
@@ -211,13 +219,19 @@ const SignUpPage = () => {
         let errorMessage = "";
     
         if (name === 'nombre') {
-            const validUsername = /^[a-zA-Z0-9]*$/; // Eliminamos \s para no permitir espacios
-            if (!validUsername.test(value)) {
-                errorMessage = "El nombre de usuario solo puede contener letras y números, sin espacios.";
-            }
+          const validUsername = /^[a-zA-Z0-9]*$/; // Eliminamos \s para no permitir espacios
+          if (!validUsername.test(value)) {
+              errorMessage = "El nombre de usuario solo puede contener letras y números, sin espacios.";
+          }
         }
         
-    
+        if (name === 'nombreCompleto') {
+          const validFullName = /^[a-zA-Z\s]*$/; // Solo letras y espacios
+          if (!validFullName.test(value)) {
+              errorMessage = "El nombre completo solo puede contener letras y espacios.";
+            }
+        }
+
         if (name === 'correo') {
             const validEmail = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
             if (value && !validEmail.test(value)) {

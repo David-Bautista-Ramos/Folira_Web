@@ -15,13 +15,14 @@ const validDomains = [
 // Esquema de validación usando Yup
 const userValidationSchema = Yup.object().shape({
   nombre: Yup.string()
-    .required("El nombre es obligatorio.")
-    .min(3, "El nombre debe tener al menos 3 caracteres.")
-    .max(50, "El nombre no puede tener más de 50 caracteres.")
-    .matches(
-      /^[a-zA-Z0-9]+$/,
-      "El nombre solo puede contener letras y números."
-    ),
+  .required("El nombre es obligatorio.")
+  .min(3, "El nombre debe tener al menos 3 caracteres.")
+  .max(50, "El nombre no puede tener más de 50 caracteres.")
+  .matches(
+    /^[a-zA-Z0-9]+$/,
+    "El nombre solo puede contener letras y números."
+  ),
+
   nombreCompleto: Yup.string()
     .required("El nombre completo es obligatorio.")
     .min(5, "El nombre completo debe tener al menos 5 caracteres.")
@@ -30,6 +31,8 @@ const userValidationSchema = Yup.object().shape({
       /^[a-zA-ZáéíóúÁÉÍÓÚñÑ\s]+$/,
       "El nombre completo solo puede contener letras y espacios."
     ),
+
+
   correo: Yup.string()
     .required("El correo es obligatorio.")
     .email("Formato de correo inválido.")

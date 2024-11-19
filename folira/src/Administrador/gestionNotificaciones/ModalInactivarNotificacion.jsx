@@ -43,19 +43,22 @@ const ModalInactivarNotificacion = ({  isOpen, onClose, NotificacionId, obtenerN
         <p className="mb-4">¿Estás seguro de que deseas inactivar las notificaciones?</p>
         
         <div className="flex justify-end gap-4 mt-4">
-          <button 
-            className="px-4 py-2 bg-gray-300 text-gray-800 rounded-md  hover:bg-gray-400 " 
-            onClick={onClose}
-          >
-            Cancelar
-          </button>   
-          <button
+
+        <button
             className={`px-4 py-2 border rounded bg-primary text-white hover:bg-blue-950 ${loading ? 'opacity-50' : ''}`}
             onClick={handleOpenActivarModal}
             disabled={loading}
           >
             {loading ? "Inactivando..." : "Inactivar"}
           </button>
+          
+          <button 
+            className="px-4 py-2 bg-gray-300 text-gray-800 rounded-md  hover:bg-gray-400 " 
+            onClick={onClose}
+          >
+            Cancelar
+          </button>   
+          
         </div>
       </div>
     </div>

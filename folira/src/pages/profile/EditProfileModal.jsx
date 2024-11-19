@@ -215,7 +215,7 @@ const EditProfileModal = ({ authUser }) => {
 
 			<dialog id='edit_profile_modal' className='modal'>
 				<div className='modal-box border rounded-md border-blue-950 h-[500px]  shadow-md modal-scrollbar'>
-					<h3 className='text-primary font-bold text-lg my-3'>Actualizar mi perfil</h3>
+					<h3 className='text-primary font-bold text-lg my-3'>Editar mi perfil</h3>
 					<form
 						className='text-primary flex flex-col gap-4'
 						onSubmit={(e) => {
