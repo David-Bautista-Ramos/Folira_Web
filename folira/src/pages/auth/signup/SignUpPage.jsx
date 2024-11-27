@@ -259,9 +259,11 @@ const SignUpPage = () => {
   
 	  
 
-	const handleChange = (selectedOption) => {
-		setSelectedCountry(selectedOption);
-	};
+    const handleChange = (selectedOption) => {
+      setSelectedCountry(selectedOption);
+      setFormData((prev) => ({ ...prev, pais: selectedOption.value }));
+  };
+  
 
 	return (
 <div className='max-w-screen-xl mx-auto flex h-screen px-10 '>

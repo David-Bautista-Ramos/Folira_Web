@@ -109,7 +109,9 @@ export const signup = async (req, res) => {
   } catch (error) {
     if (error.name === "ValidationError") {
       // Error de validación de Yup
-      const validationErrors = error.inner.map((err) => err.message); // Recopila todos los mensajes de error
+      const validationErrors = Array.isArray(error.inner) 
+      ? error.inner.map((err) => err.message) 
+      : []; // Recopila todos los mensajes de error
       return res.status(400).json({ error: validationErrors.join(", ") });
     }
     console.error("Error en el controlador de registro:", error.message);

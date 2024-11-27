@@ -1,10 +1,9 @@
-import express from 'express';
-import { registrarEvento } from '../controllers/constaryEntregarInsig.js'; // Asegúrate de que la ruta sea correcta
-import { protectRoutes } from '../middleware/protectRoutes.js';
+// import express from 'express';
+// import { protectRoutes } from '../middleware/protectRoutes.js';
 
-const router = express.Router();
+// const router = express.Router();
 
 
-router.post('/eventos',protectRoutes, registrarEvento); // Registrar evento de usuario
+// router.post('/eventos',protectRoutes, registrarEvento); // Registrar evento de usuario
 
-export default router;
+// export default router;

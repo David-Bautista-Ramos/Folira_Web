@@ -75,7 +75,6 @@ function App() {
     // Limpiar el intervalo al desmontar
     return () => clearInterval(intervalRef.current);
   }, [authUser]); // Dependencia de authUser para pausar/reanudar
-
   // Proporciona el valor del tiempo al contexto
   const value = { timeSpentRef };
 
